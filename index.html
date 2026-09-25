@@ -21,16 +21,82 @@
 <section id="account" class="hidden"><div class="card"><h2>👤 الحساب</h2><div id="accountInfo"></div></div></section>
 </div></div>
 <script>
-const URL="https://cvakitsdwxkksxemdhxj.supabase.co",KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA",db=supabase.createClient(URL,KEY);
-let user=null,profile=null,exercise=null,test=[];
+let db=null,user=null,profile=null,exercise=null,test=[];
+const SUPABASE_URL="https://cvakitsdwxkksxemdhxj.supabase.co";
+const SUPABASE_KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA";
+const SITE_URL="https://aalrehilli.github.io/ipv4-subnetting-trainer/";
 const $=x=>document.getElementById(x);
+function setMsg(t,g=false){const el=$("authMsg");if(el)el.innerHTML=`<div class="${g?'good':'bad'}">${t}</div>`;}
+function initSupabase(){
+  if(!window.supabase || typeof window.supabase.createClient!=="function"){
+    setMsg("❌ تعذر تحميل مكتبة Supabase. حدّث الصفحة بـ Ctrl+F5 ثم جرّب مرة أخرى.");
+    return false;
+  }
+  try{db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);return true;}
+  catch(e){setMsg("❌ تعذر الاتصال بخدمة الحسابات: "+(e.message||e));return false;}
+}
 function showLogin(){$("login").classList.remove("hidden");$("app").classList.add("hidden");$("nav").classList.add("hidden")}
 function showApp(){$("login").classList.add("hidden");$("app").classList.remove("hidden");$("nav").classList.remove("hidden");$("trainerNav").classList.toggle("hidden",!["trainer","admin"].includes(profile?.role));renderDashboard();renderAccount()}
 function msg(id,t,g=false){$(id).innerHTML=`<div class="${g?'good':'bad'}">${t}</div>`}
-async function boot(){let s=await db.auth.getSession();if(s.data.session){user=s.data.session.user;await loadProfile();showApp()}else showLogin()}
-async function loadProfile(){let r=await db.from("profiles").select("*").eq("id",user.id).single();profile=r.data}
-async function signup(){let email=$("email").value.trim(),password=$("password").value,full_name=$("fullName").value.trim(),student_id=$("studentId").value.trim(),group_name=$("groupName").value.trim();if(!email||password.length<6||!full_name||!student_id)return msg("authMsg","❌ أدخل البريد وكلمة المرور والاسم ورقم المتدرب.");let r=await db.auth.signUp({email,password,options:{data:{full_name,student_id,group_name}}});if(r.error)return msg("authMsg","❌ "+r.error.message);msg("authMsg","✅ تم إنشاء الحساب. قد تحتاج لتأكيد البريد الإلكتروني.",true)}
-async function signin(){let r=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(r.error)msg("authMsg","❌ "+r.error.message);else{user=r.data.user;await loadProfile();showApp()}}
+async function boot(){
+  if(!initSupabase())return;
+  try{
+    const {data,error}=await db.auth.getSession();
+    if(error){setMsg("❌ تعذر قراءة جلسة الدخول: "+error.message);return;}
+    if(data.session){user=data.session.user;await loadProfile();showApp();}else showLogin();
+  }catch(e){setMsg("❌ خطأ في تشغيل المنصة: "+(e.message||e));}
+}
+async function loadProfile(){
+  const r=await db.from("profiles").select("*").eq("id",user.id).maybeSingle();
+  if(r.error){profile=null;console.warn("Profile error",r.error);return r;}
+  profile=r.data;return r;
+}
+async function signup(){
+  const email=$("email").value.trim(),password=$("password").value,full_name=$("fullName").value.trim(),student_id=$("studentId").value.trim(),group_name=$("groupName").value.trim();
+  if(!db){setMsg("❌ الخدمة غير جاهزة. حدّث الصفحة بـ Ctrl+F5.");return;}
+  if(!email||!password||!full_name||!student_id){setMsg("❌ أدخل البريد وكلمة المرور والاسم ورقم المتدرب.");return;}
+  if(password.length<6){setMsg("❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل.");return;}
+  setMsg("⏳ جارٍ إنشاء الحساب...",true);
+  try{
+    const {data,error}=await db.auth.signUp({
+      email,password,
+      options:{data:{full_name,student_id,group_name},emailRedirectTo:SITE_URL}
+    });
+    if(error){
+      console.error("Supabase signup error",error);
+      const m=(error.message||"").toLowerCase();
+      if(m.includes("already registered"))setMsg("❌ هذا البريد الإلكتروني مستخدم مسبقًا. استخدم تسجيل الدخول.");
+      else if(m.includes("password"))setMsg("❌ كلمة المرور غير مقبولة. استخدم 6 أحرف أو أكثر.");
+      else setMsg("❌ فشل إنشاء الحساب: "+error.message);
+      return;
+    }
+    if(data?.session){
+      user=data.user;
+      const pr=await loadProfile();
+      if(pr.error){setMsg("⚠️ تم إنشاء الحساب، لكن لم يتم إنشاء ملف المتدرب في جدول profiles. نفّذ SQL الخاص بالـ trigger ثم أعد المحاولة.");return;}
+      showApp();
+      setMsg("✅ تم إنشاء الحساب وتسجيل الدخول بنجاح.",true);
+      return;
+    }
+    setMsg("✅ تم إنشاء الحساب. افتح بريدك الإلكتروني واضغط رابط التأكيد، ثم ارجع للمنصة وسجّل الدخول.",true);
+  }catch(e){
+    console.error("Signup exception",e);
+    setMsg("❌ حدث خطأ غير متوقع: "+(e?.message||e));
+  }
+}
+async function signin(){
+  if(!db){setMsg("❌ الخدمة غير جاهزة. حدّث الصفحة بـ Ctrl+F5.");return;}
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||!password){setMsg("❌ أدخل البريد الإلكتروني وكلمة المرور.");return;}
+  setMsg("⏳ جارٍ تسجيل الدخول...",true);
+  try{
+    const {data,error}=await db.auth.signInWithPassword({email,password});
+    if(error){setMsg("❌ "+error.message);return;}
+    user=data.user;const pr=await loadProfile();
+    if(pr.error||!profile){setMsg("❌ تم الدخول لكن ملف المتدرب غير موجود. راجع جدول profiles وTrigger الخاص بإنشاء الملف.");return;}
+    showApp();
+  }catch(e){setMsg("❌ حدث خطأ غير متوقع: "+(e?.message||e));}
+}
 async function logout(){await db.auth.signOut();location.reload()}
 function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="trainer")renderTrainer();if(id==="account")renderAccount()}
 function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".")}
@@ -44,5 +110,7 @@ async function renderDashboard(){let a=(await db.from("attempts").select("*").eq
 async function renderTrainer(){if(!["trainer","admin"].includes(profile?.role))return;let a=(await db.from("attempts").select("*,profiles(full_name,student_id)").order("submitted_at",{ascending:false})).data||[],e=(await db.from("exercise_attempts").select("*,profiles(full_name,student_id)").order("created_at",{ascending:false})).data||[],r=[...a.map(x=>({n:x.profiles?.full_name||"",id:x.profiles?.student_id||"",t:"اختبار",d:x.submitted_at,s:x.percentage,z:`${x.correct_answers}/${x.total_questions}`})),...e.map(x=>({n:x.profiles?.full_name||"",id:x.profiles?.student_id||"",t:"تمرين",d:x.created_at,s:x.score,z:x.is_correct?"صحيح":"خطأ"}))],avg=r.length?Math.round(r.reduce((x,y)=>x+Number(y.s),0)/r.length):0;$("trainerStats").innerHTML=`<div class="grid"><div class="card"><div class="muted">المحاولات</div><div class="kpi">${r.length}</div></div><div class="card"><div class="muted">المتوسط</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">المتدربون</div><div class="kpi">${new Set(r.map(x=>x.id)).size}</div></div></div>`;$("trainerTable").innerHTML=r.length?`<table><tr><th>المتدرب</th><th>الرقم</th><th>النوع</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${r.map(x=>`<tr><td>${x.n}</td><td>${x.id}</td><td>${x.t}</td><td>${new Date(x.d).toLocaleString("ar-SA")}</td><td>${x.s}%</td><td>${x.z}</td></tr>`).join("")}</table>`:"لا توجد نتائج."}
 function renderAccount(){$("accountInfo").innerHTML=profile?`<div class="stat"><b>الاسم</b><span>${profile.full_name}</span></div><div class="stat"><b>رقم المتدرب</b><span>${profile.student_id||"—"}</span></div><div class="stat"><b>الشعبة</b><span>${profile.group_name||"—"}</span></div><div class="stat"><b>الصلاحية</b><span>${profile.role}</span></div><div class="stat"><b>البريد</b><span>${user.email}</span></div>`:""}
 async function exportCSV(){let r=(await db.from("attempts").select("percentage,correct_answers,total_questions,submitted_at,profiles(full_name,student_id)")).data||[],rows=[["Student","Student ID","Type","Date","Score","Details"],...r.map(x=>[x.profiles?.full_name||"",x.profiles?.student_id||"","Exam",x.submitted_at,x.percentage,`${x.correct_answers}/${x.total_questions}`])],csv="\ufeff"+rows.map(x=>x.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ipv4_subnetting_results.csv";a.click()}
-boot();
+window.addEventListener("error",e=>{console.error(e.error||e.message);if($("authMsg"))setMsg("❌ خطأ في الصفحة: "+(e.message||"خطأ JavaScript"));});
+window.addEventListener("unhandledrejection",e=>{console.error(e.reason);if($("authMsg"))setMsg("❌ خطأ في الاتصال: "+(e.reason?.message||e.reason||"خطأ غير معروف"));});
+window.addEventListener("DOMContentLoaded",boot);
 </script></body></html>
