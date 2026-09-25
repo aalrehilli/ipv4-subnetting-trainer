@@ -4,7 +4,21 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}
-<style>.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}</style></head><body>
+<style>.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}
+.qbank-tools{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:12px 0}
+.qbank-tools input,.qbank-tools select{width:100%;padding:10px;border:1px solid #cbd9e5;border-radius:8px}
+.qstats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.qstat{background:#f5f9fd;border:1px solid #d7e5f0;border-radius:10px;padding:10px 14px;min-width:120px}
+.qstat b{display:block;font-size:20px;color:#0759a5}
+.qactions{display:flex;gap:5px;flex-wrap:wrap}
+.qactions button{padding:7px 10px!important;font-size:12px!important}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
+.modal.hidden{display:none}
+.modal-card{width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:14px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.preview-option{padding:10px;border:1px solid #d8e6f1;border-radius:8px;margin:7px 0}
+.preview-match{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:9px;border-bottom:1px solid #e6eef5}
+@media(max-width:800px){.qbank-tools{grid-template-columns:1fr 1fr}.preview-match{grid-template-columns:1fr}}
+</style></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V13 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
@@ -23,7 +37,14 @@
 <div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
-<div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div id="questionsTable"></div></div>
+<div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
+<input id="qSearch" placeholder="🔎 بحث في نص السؤال..." oninput="renderQuestionBank()">
+<select id="qFilterType" onchange="renderQuestionBank()"><option value="">كل الأنواع</option><option value="short">إجابة قصيرة</option><option value="mcq">اختيار من متعدد</option><option value="true_false">صح / خطأ</option><option value="matching">وصل بين العمودين</option></select>
+<select id="qFilterDifficulty" onchange="renderQuestionBank()"><option value="">كل المستويات</option><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select>
+<select id="qFilterTopic" onchange="renderQuestionBank()"><option value="">كل التصنيفات</option><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select>
+</div>
+<div id="qStats" class="qstats"></div>
+<div id="questionsTable"></div></div>
 </div><div id="trainerAnalytics" class="hidden"><h3>📈 تحليلات الاختبارات</h3><div id="trainerAnalyticsArea"></div></div>
 <div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>إنشاء اختبار جديد</h3><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار واختيار الأسئلة تلقائيًا</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
 <section id="certificate" class="hidden">
@@ -133,7 +154,7 @@ function renderTestQuestions(){
     const q=parseQuestion(x[1],x[3],x[4],x[5]);
     if(q.type==='matching') return renderMatchingQuestion(x,i);
     if(q.type==='true_false') return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><label class="optionLabel"><input type="radio" name="t${i}" value="true" style="width:auto"> ✅ صح</label><label class="optionLabel"><input type="radio" name="t${i}" value="false" style="width:auto"> ❌ خطأ</label></div>`;
-    if(q.type==='mcq' || q.options.length>=2) return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div>${q.options.map(o=>`<label class="optionLabel" style="display:block;background:white;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer"><input type="radio" name="t${i}" value="${o.key}" style="width:auto;margin-left:7px"> <b>${o.key})</b> ${esc(o.text)}</label>`).join('')}</div>`;
+    if(q.type==='mcq' || q.options.length>=2){ const opts=[...q.options].sort(()=>Math.random()-.5); return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div>${opts.map(o=>`<label class="optionLabel" style="display:block;background:white;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer"><input type="radio" name="t${i}" value="${o.key}" style="width:auto;margin-left:7px"> <b>${o.key})</b> ${esc(o.text)}</label>`).join('')}</div>`;}
     return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><input id="t${i}" placeholder="اكتب الإجابة المطلوبة"><div class="muted">اكتب الإجابة المطلوبة.</div></div>`;
   }).join('');
   $('submitTest').classList.remove('hidden');
@@ -280,9 +301,59 @@ function renderMCQChoices(){
 function addMatchRow(){const i=$('matchRows').children.length;$('matchRows').insertAdjacentHTML('beforeend',`<div class="match-row"><input id="ml_${i}" placeholder="العمود الأول"><input id="mr_${i}" placeholder="العمود الثاني"></div>`);}
 async function loadTrainerQuestions(){
   const r=await db.from("trainer_questions").select("*").order("created_at",{ascending:false});
-  if(r.error){$("questionsTable").innerHTML=`<div class="bad">❌ لم يتم العثور على جدول بنك الأسئلة. نفّذ SQL الخاص بـ V14 أولًا.<br>${esc(r.error.message)}</div>`;return;}
+  if(r.error){$("questionsTable").innerHTML=`<div class="bad">❌ لم يتم تحميل بنك الأسئلة. تأكد من تنفيذ SQL الخاص بـ V14.<br>${esc(r.error.message)}</div>`;return;}
   trainerQuestionRows=r.data||[];
-  $("questionsTable").innerHTML=trainerQuestionRows.length?`<table><tr><th>السؤال</th><th>النوع</th><th>التصنيف</th><th>المستوى</th><th>الإجابة</th><th>الإجراء</th></tr>${trainerQuestionRows.map(x=>`<tr><td style="text-align:right">${esc(x.question_text)}</td><td>${({'short':'إجابة قصيرة','mcq':'اختيار من متعدد','true_false':'صح/خطأ','matching':'وصل بين العمودين'}[x.question_type||'short'])}</td><td>${esc(x.topic)}</td><td>${esc(x.difficulty)}</td><td>${esc(x.correct_answer||'—')}</td><td><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">حذف</button></td></tr>`).join("")}</table>`:"لا توجد أسئلة بعد.";
+  renderQuestionBank();
+}
+function questionTypeLabel(t){return ({short:'إجابة قصيرة',mcq:'اختيار من متعدد',true_false:'صح / خطأ',matching:'وصل بين العمودين'}[t||'short'])||t;}
+function renderQuestionBank(){
+  const search=($("qSearch")?.value||"").trim().toLowerCase();
+  const ft=$("qFilterType")?.value||"", fd=$("qFilterDifficulty")?.value||"", fp=$("qFilterTopic")?.value||"";
+  const rows=trainerQuestionRows.filter(x=>{
+    const text=String(x.question_text||"").toLowerCase();
+    return (!search||text.includes(search)) && (!ft||(x.question_type||"short")===ft) && (!fd||x.difficulty===fd) && (!fp||x.topic===fp);
+  });
+  const all=trainerQuestionRows;
+  $("qStats").innerHTML=`
+    <div class="qstat">إجمالي الأسئلة<b>${all.length}</b></div>
+    <div class="qstat">اختيار من متعدد<b>${all.filter(x=>(x.question_type||'short')==='mcq').length}</b></div>
+    <div class="qstat">صح / خطأ<b>${all.filter(x=>x.question_type==='true_false').length}</b></div>
+    <div class="qstat">وصل<b>${all.filter(x=>x.question_type==='matching').length}</b></div>
+  `;
+  $("questionsTable").innerHTML=rows.length?`<table><tr><th>#</th><th>السؤال</th><th>النوع</th><th>التصنيف</th><th>المستوى</th><th>الإجراء</th></tr>${rows.map((x,i)=>`<tr>
+<td>${i+1}</td><td style="text-align:right">${esc(x.question_text)}</td><td>${questionTypeLabel(x.question_type)}</td><td>${esc(x.topic||"")}</td><td>${esc(x.difficulty||"")}</td>
+<td><div class="qactions"><button class="primary" onclick="previewTrainerQuestion('${x.id}')">👁️ معاينة</button><button class="light" onclick="duplicateTrainerQuestion('${x.id}')">📄 نسخ</button><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">🗑️ حذف</button></div></td>
+</tr>`).join("")}</table>`:`<div class="muted">لا توجد أسئلة مطابقة للبحث أو الفلاتر.</div>`;
+}
+function findTrainerQuestion(id){return trainerQuestionRows.find(x=>x.id===id);}
+function parseJsonSafe(v, fallback=[]){try{return typeof v==="string"?JSON.parse(v||"[]"):(v||fallback)}catch(e){return fallback}}
+function previewTrainerQuestion(id){
+  const x=findTrainerQuestion(id); if(!x)return;
+  const type=x.question_type||"short", stem=esc(x.question_text||"");
+  let body=`<div class="question"><h3 style="margin-top:0">${stem}</h3><div class="muted">النوع: ${questionTypeLabel(type)} — ${esc(x.topic||"")} — ${esc(x.difficulty||"")}</div>`;
+  if(type==="mcq"){
+    const opts=parseJsonSafe(x.options_json,[]);
+    body+=opts.map(o=>`<div class="preview-option"><b>${esc(o.key)})</b> ${esc(o.text)}</div>`).join("");
+    body+=`<div class="good" style="margin-top:10px">الإجابة الصحيحة: ${esc(x.correct_answer)}</div>`;
+  }else if(type==="true_false"){
+    body+=`<div class="preview-option">✅ صح</div><div class="preview-option">❌ خطأ</div><div class="good">الإجابة الصحيحة: ${x.correct_answer==="true"?"صح":"خطأ"}</div>`;
+  }else if(type==="matching"){
+    const pairs=parseJsonSafe(x.matching_json,[]);
+    body+=`<div class="muted">شكل السؤال للمتدرب:</div>`+pairs.map(p=>`<div class="preview-match"><span>${esc(p.left)}</span><span>اختر المطابقة من القائمة</span></div>`).join("");
+  }else{
+    body+=`<div class="preview-option">✏️ حقل إدخال الإجابة</div><div class="good">الإجابة الصحيحة: ${esc(x.correct_answer||"")}</div>`;
+  }
+  body+=`</div>`;
+  $("questionPreviewBody").innerHTML=body;$("questionPreviewModal").classList.remove("hidden");
+}
+function closeQuestionPreview(){$("questionPreviewModal").classList.add("hidden");}
+async function duplicateTrainerQuestion(id){
+  const x=findTrainerQuestion(id); if(!x)return;
+  const payload={question_text:(x.question_text||"")+" — نسخة",correct_answer:x.correct_answer||"",difficulty:x.difficulty||"easy",topic:x.topic||"FLSM",created_by:user.id,question_type:x.question_type||"short",options_json:x.options_json||null,matching_json:x.matching_json||null};
+  const r=await db.from("trainer_questions").insert(payload);
+  if(r.error){alert("تعذر نسخ السؤال: "+r.error.message);return;}
+  await loadTrainerQuestions();
+  msg("questionMsg","✅ تم نسخ السؤال بنجاح.",true);
 }
 async function addTrainerQuestion(){
   const question_text=$("qText").value.trim(),difficulty=$("qDifficulty").value,topic=$("qTopic").value,type=$("qType").value;
@@ -498,7 +569,14 @@ function renderCertificate(x){
 function printCertificate(){
  const el=$('certificatePrint'); if(!el)return;
  const w=window.open('','_blank','width=1000,height=750');
- w.document.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>شهادة إتمام المقرر</title><style>body{font-family:Tahoma,Arial;padding:40px;background:#fff;color:#17324d}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:8px double #0759a5;padding:60px;text-align:center;min-height:520px;display:flex;flex-direction:column;justify-content:center}.certificate h1{font-size:42px;color:#0759a5}.certificate h2{font-size:28px}.name{font-size:34px;font-weight:bold;margin:25px}.certno{font-family:monospace}.badge{display:inline-block;background:#0759a5;color:#fff;padding:8px 14px;border-radius:20px;align-self:center}button{display:none}@media print{body{padding:0}}</style></head><body>${el.outerHTML}</body></html>`);
+ w.document.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>شهادة إتمام المقرر</title><style>body{font-family:Tahoma,Arial;padding:40px;background:#fff;color:#17324d}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:8px double #0759a5;padding:60px;text-align:center;min-height:520px;display:flex;flex-direction:column;justify-content:center}.certificate h1{font-size:42px;color:#0759a5}.certificate h2{font-size:28px}.name{font-size:34px;font-weight:bold;margin:25px}.certno{font-family:monospace}.badge{display:inline-block;background:#0759a5;color:#fff;padding:8px 14px;border-radius:20px;align-self:center}button{display:none}@media print{body{padding:0}}</style></head><body>${el.outerHTML}<div id="questionPreviewModal" class="modal hidden" onclick="if(event.target===this)closeQuestionPreview()">
+<div class="modal-card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+<h3 style="margin:0;color:#0759a5">👁️ معاينة السؤال</h3>
+<button type="button" class="primary red" onclick="closeQuestionPreview()">إغلاق</button>
+</div>
+<div id="questionPreviewBody" style="margin-top:15px"></div>
+</div></div></body></html>`);
  w.document.close();w.focus();setTimeout(()=>w.print(),300);
 }
 
