@@ -64,10 +64,24 @@ function msg(id,t,g=false){const el=$(id);if(el)el.innerHTML=`<div class="${g?'g
 async function boot(){
   if(!initSupabase())return;
   try{
-    const {data,error}=await db.auth.getSession();
-    if(error){console.error(error);showLogin();return;}
-    if(!data.session){showLogin();return;}
-    user=data.session.user;
+    let {data,error}=await db.auth.getSession();
+    if(error) console.warn('getSession:',error);
+    let session=data?.session||null;
+    if(!session){
+      try{
+        const raw=sessionStorage.getItem('ipv4_auth_session');
+        if(raw){
+          const saved=JSON.parse(raw);
+          if(saved?.access_token && saved?.refresh_token){
+            const restored=await db.auth.setSession({access_token:saved.access_token,refresh_token:saved.refresh_token});
+            if(!restored.error) session=restored.data.session;
+            if(session) sessionStorage.removeItem('ipv4_auth_session');
+          }
+        }
+      }catch(e){console.warn('session restore:',e);}
+    }
+    if(!session){showLogin();return;}
+    user=session.user;
     await loadProfile();
     // لا نمنع دخول المتدرب إذا تعذر تحميل profiles؛ نستخدم بيانات Auth كخطة احتياطية.
     if(!profile){

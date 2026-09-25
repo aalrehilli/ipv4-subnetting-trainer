@@ -69,7 +69,8 @@ document.getElementById('form').addEventListener('submit',async(e)=>{
  if(error){showMsg('msg','❌ '+error.message,'error');$('submit').disabled=false;$('submit').textContent='تسجيل الدخول';return}
  const {data:sessionData}=await db.auth.getSession();
  if(!sessionData?.session){showMsg('msg','❌ تم التحقق من كلمة المرور ولكن لم يتم حفظ جلسة الدخول. حدّث الصفحة وحاول مرة أخرى.','error');$('submit').disabled=false;$('submit').textContent='تسجيل الدخول';return;}
+ sessionStorage.setItem('ipv4_auth_session', JSON.stringify(sessionData.session));
  showMsg('msg','✅ تم تسجيل الدخول بنجاح. جارٍ فتح المنصة...','success');
- window.location.replace(SITE_URL);
+ setTimeout(()=>window.location.replace('./index.html?login=1'),250);
 });
 </script></body></html>
