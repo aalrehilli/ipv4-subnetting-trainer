@@ -17,7 +17,7 @@
 <section id="practice" class="hidden"><div class="card"><h2>🎯 التمارين</h2><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select><button class="primary orange" onclick="startExercise()">ابدأ تمرينًا</button><div id="practiceArea"></div></div></section>
 <section id="tests" class="hidden"><div class="card"><h2>🏆 الاختبارات</h2><select id="testLevel"><option value="basic">الأساسيات</option><option value="medium">متوسط</option><option value="advanced">شامل</option></select><select id="testCount"><option>10</option><option>15</option><option>20</option></select><button class="primary green" onclick="startTest()">بدء الاختبار</button><div id="publishedTests" class="question"></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V10 • CLASS C + FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V11 • CLASS C + FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden"><div class="card"><h2>📊 لوحة المتدرب</h2><div id="studentDashboard"></div></div><div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div></section>
@@ -33,7 +33,7 @@
 <section id="account" class="hidden"><div class="card"><h2>👤 الحساب</h2><div id="accountInfo"></div></div></section>
 </div></div>
 <script>
-let db=null,user=null,profile=null,exercise=null,test=[],trainerStudents=[],trainerQuestionRows=[];
+let db=null,user=null,profile=null,exercise=null,test=[],trainerStudents=[],trainerQuestionRows=[],coursePracticeLessonId=null;
 let currentExamId=null,currentExamTitle='',testStartedAt=null,testDurationMinutes=0,timerHandle=null,testSubmitted=false;
 const SUPABASE_URL="https://cvakitsdwxkksxemdhxj.supabase.co";
 const SUPABASE_KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA";
@@ -115,7 +115,7 @@ function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.class
 function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".")}
 function problem(level){let a=level==="easy"?[2,4,8]:level==="medium"?[3,5,6,7,8,10,12]:[5,6,7,9,10,11,12,13,14,15,16],need=a[Math.floor(Math.random()*a.length)],o=Math.floor(Math.random()*223)+1,b=Math.ceil(Math.log2(need)),p=24+b,block=2**(32-p);return{network:`192.168.${o}.0`,need,bits:b,prefix:p,mask:ip((0xffffffff<<(32-p))>>>0),block,hosts:block-2}}
 function startExercise(){exercise=problem($("level").value),q=exercise;$("practiceArea").innerHTML=`<div class="question"><h3>${q.network}/24 → ${q.need} شبكات</h3><label>Borrowed Bits</label><input id="eb"><label>New Prefix</label><input id="ep"><label>Subnet Mask</label><input id="em"><label>Magic Number</label><input id="eg"><label>Hosts/Subnet</label><input id="eh"><button class="primary" onclick="checkSteps()">تحقق</button><div id="sf"></div></div>`}
-async function checkSteps(){let q=exercise,a=[$("eb").value.trim(),$("ep").value.trim().replace("/",""),$("em").value.trim(),$("eg").value.trim(),$("eh").value.trim()],b=[String(q.bits),String(q.prefix),q.mask,String(q.block),String(q.hosts)],ok=a.every((v,i)=>v===b[i]);$("sf").innerHTML=ok?'<div class="good">✅ صحيح وتم حفظ النتيجة.</div>':'<div class="bad">❌ توجد إجابة غير صحيحة.</div>';if(ok)await db.from("exercise_attempts").insert({student_id:user.id,score:100,is_correct:true,borrowed_bits_answer:a[0],prefix_answer:a[1],subnet_mask_answer:a[2],magic_number_answer:a[3],hosts_answer:a[4]})}
+async function checkSteps(){let q=exercise,a=[$("eb").value.trim(),$("ep").value.trim().replace("/",""),$("em").value.trim(),$("eg").value.trim(),$("eh").value.trim()],b=[String(q.bits),String(q.prefix),q.mask,String(q.block),String(q.hosts)],ok=a.every((v,i)=>v===b[i]);$("sf").innerHTML=ok?'<div class="good">✅ صحيح وتم حفظ النتيجة.</div>':'<div class="bad">❌ توجد إجابة غير صحيحة.</div>';if(ok){await db.from("exercise_attempts").insert({student_id:user.id,score:100,is_correct:true,borrowed_bits_answer:a[0],prefix_answer:a[1],subnet_mask_answer:a[2],magic_number_answer:a[3],hosts_answer:a[4]});await markCoursePractice(100);}}
 function tq(level){let q=problem(level==="advanced"?"hard":level==="medium"?"medium":"easy"),t=Math.floor(Math.random()*5);if(level==="basic")t=Math.floor(Math.random()*2);if(level==="medium")t=1+Math.floor(Math.random()*3);return t===0?[`${q.network}/24 إلى ${q.need}: Borrowed Bits؟`,String(q.bits)]:t===1?[`${q.network}/24 إلى ${q.need}: New Prefix؟`,String(q.prefix)]:t===2?[`${q.network}/24 إلى ${q.need}: Subnet Mask؟`,q.mask]:t===3?[`/${q.prefix}: Magic Number؟`,String(q.block)]:[`/${q.prefix}: Hosts/Subnet؟`,String(q.hosts)]}
 
 async function loadPublishedExams(){
@@ -350,16 +350,72 @@ async function loadCourse(){
  if(!box)return;
  const lr=await db.from('course_lessons').select('*').eq('is_active',true).order('lesson_no');
  let lessons=lr.error||!(lr.data||[]).length?courseFallback:lr.data;
- const pr=await db.from('lesson_progress').select('lesson_id,completed,completed_at').eq('user_id',user.id);
+ const pr=await db.from('lesson_progress').select('lesson_id,completed,completed_at,practice_completed,practice_score,practice_completed_at').eq('user_id',user.id);
  const pmap=new Map((pr.data||[]).map(x=>[x.lesson_id,x]));
+ const ar=await db.from('course_lesson_activities').select('id,lesson_id,activity_type,title,exam_id,sort_order').eq('is_active',true).order('sort_order');
+ const amap=new Map();
+ (ar.data||[]).forEach(a=>{if(!amap.has(a.lesson_id))amap.set(a.lesson_id,[]);amap.get(a.lesson_id).push(a);});
  const done=lessons.filter(x=>pmap.get(x.id)?.completed).length;
+ const practiceDone=lessons.filter(x=>pmap.get(x.id)?.practice_completed).length;
  const pct=lessons.length?Math.round(done/lessons.length*100):0;
- prog.innerHTML=`<div class="stat"><b>تقدم المقرر</b><span>${done} / ${lessons.length} دروس — ${pct}%</span></div><div class="progress"><div class="bar" style="width:${pct}%"></div></div>`;
- box.innerHTML=lessons.map((x,i)=>{const p=pmap.get(x.id),d=!!p?.completed;return `<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><span class="badge">الدرس ${x.lesson_no||i+1}</span> <b style="font-size:18px">${esc(x.title)}</b></div><span class="muted">⏱️ ${x.duration_minutes||x.duration||20} دقيقة</span></div><div style="margin-top:15px;line-height:1.9">${x.content_html||x.content||''}</div><div style="margin-top:12px;display:flex;gap:8px;align-items:center"><button class="primary ${d?'':'green'}" onclick="toggleLesson('${x.id}',${d?'false':'true'})">${d?'↩️ إعادة فتح الدرس':'✅ إكمال الدرس'}</button><span class="${d?'good':'muted'}">${d?'تم الإكمال ✓':'غير مكتمل'}</span></div></div>`}).join('');
+ const mastery=lessons.length?Math.round(((done+practiceDone)/(lessons.length*2))*100):0;
+ prog.innerHTML=`<div class="grid"><div class="stat"><b>الدروس المكتملة</b><span>${done} / ${lessons.length}</span></div><div class="stat"><b>التمارين المكتملة</b><span>${practiceDone} / ${lessons.length}</span></div><div class="stat"><b>الإتقان</b><span>${mastery}%</span></div></div><div class="progress"><div class="bar" style="width:${mastery}%"></div></div>`;
+ box.innerHTML=lessons.map((x,i)=>{
+   const p=pmap.get(x.id)||{},d=!!p.completed,pd=!!p.practice_completed;
+   const acts=amap.get(x.id)||[];
+   const practice=acts.find(a=>a.activity_type==='practice');
+   const exam=acts.find(a=>a.activity_type==='exam' && a.exam_id);
+   return `<div class="card">
+     <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+       <div><span class="badge">الدرس ${x.lesson_no||i+1}</span> <b style="font-size:18px">${esc(x.title)}</b></div>
+       <span class="muted">⏱️ ${x.duration_minutes||x.duration||20} دقيقة</span>
+     </div>
+     <div style="margin-top:15px;line-height:1.9">${x.content_html||x.content||''}</div>
+     <div style="margin-top:14px;padding-top:12px;border-top:1px solid #e5edf4">
+       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+         <button class="primary ${d?'':'green'}" onclick="toggleLesson('${x.id}',${d?'false':'true'})">${d?'↩️ إعادة فتح الدرس':'✅ إكمال الدرس'}</button>
+         ${practice?`<button class="primary orange" onclick="startCoursePractice('${x.id}',${x.lesson_no||i+1})">${pd?'🔁 إعادة التمرين':'🎯 ابدأ تمرين الدرس'}</button>`:''}
+         ${exam?`<button class="primary purple" onclick="startCourseExam('${exam.exam_id}')">📝 ابدأ الاختبار</button>`:''}
+       </div>
+       <div style="margin-top:9px;display:flex;gap:10px;flex-wrap:wrap">
+         <span class="${d?'good':'muted'}">${d?'الدرس مكتمل ✓':'الدرس غير مكتمل'}</span>
+         <span class="${pd?'good':'muted'}">${pd?`التمرين مكتمل ✓ (${Number(p.practice_score||100)}%)`:'التمرين غير مكتمل'}</span>
+       </div>
+     </div>
+   </div>`;
+ }).join('');
+}
+
+function startCoursePractice(lessonId,lessonNo){
+ coursePracticeLessonId=lessonId;
+ page('practice');
+ const levels=['easy','medium','hard'];
+ const level=lessonNo<=2?'easy':lessonNo<=6?'medium':'hard';
+ $('level').value=level;
+ startExercise();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function startCourseExam(examId){
+ if(!examId){msg('courseLessons','❌ لا يوجد اختبار مرتبط بهذا الدرس.');return;}
+ page('tests');
+ await startPublishedExam(examId);
+}
+
+async function markCoursePractice(score){
+ if(!coursePracticeLessonId)return;
+ const r=await db.from('lesson_progress').upsert({
+   user_id:user.id,
+   lesson_id:coursePracticeLessonId,
+   practice_completed:score>=60,
+   practice_score:score,
+   practice_completed_at:new Date().toISOString()
+ },{onConflict:'user_id,lesson_id'});
+ if(r.error)console.warn('course practice progress:',r.error.message);
 }
 
 async function toggleLesson(id,completed){
- if(String(id).startsWith('local-')){msg('courseLessons',completed?'':'');await loadCourse();return;}
+ if(String(id).startsWith('local-')){await loadCourse();return;}
  const r=await db.from('lesson_progress').upsert({user_id:user.id,lesson_id:id,completed,completed_at:completed?new Date().toISOString():null},{onConflict:'user_id,lesson_id'});
  if(r.error){alert('تعذر حفظ تقدم الدرس: '+r.error.message);return;}
  await loadCourse();
