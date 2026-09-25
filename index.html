@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة IPv4 Subnetting — FLSM</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f4f8fc;color:#17324d}
+header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:800}.sub{font-size:12px;opacity:.9;margin-top:4px}
+nav{display:flex;gap:6px;flex-wrap:wrap}nav button{border:0;background:#ffffff20;color:#fff;padding:9px 12px;border-radius:9px;cursor:pointer;font-weight:bold}nav button:hover,nav button.active{background:#fff;color:#0759a5}
+.container{max-width:1200px;margin:auto;padding:22px}.card{background:#fff;border:1px solid #dce8f2;border-radius:17px;padding:20px;margin-bottom:17px;box-shadow:0 5px 18px #17324d12}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.stat{background:#f5f9fd;border-radius:10px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}
+h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:#fff;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}
+input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}
+button.primary{background:#0759a5;color:#fff;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.red{background:#bd3434!important}.purple{background:#7048a8!important}
+.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}
+.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}
+table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:#fff}
+.kpi{font-size:27px;font-weight:800;color:#0759a5}.muted{color:#65788a;font-size:13px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}
+.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}
+#toast{position:fixed;bottom:20px;left:20px;background:#17324d;color:#fff;padding:12px 16px;border-radius:9px;display:none}
+@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • منصة تدريب المتدربين</div></div>
+<nav>
+<button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button>
+<button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button>
+<button onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button>
+</nav>
+</header>
+<div class="container">
+
+<section id="home">
+<div class="card hero"><span class="badge">Class C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1>
+<p>نسخة قابلة للنشر التدريجي: حساب متدرب، حفظ محلي للنتائج، تمارين، اختبارات، ولوحة متابعة للمدرب على نفس الجهاز.</p>
+<div class="grid">
+<div class="card"><h2>🎯 التمارين</h2><p>حل خطوة بخطوة مع تصحيح فوري.</p></div>
+<div class="card"><h2>🏆 الاختبارات</h2><p>اختبارات عشوائية مع درجة ونسبة.</p></div>
+<div class="card"><h2>📊 المتابعة</h2><p>إحصائيات المحاولات والنجاح.</p></div>
+</div></div>
+<div class="card"><h2>حالة الحساب</h2><div id="homeAccount"></div></div>
+</section>
+
+<section id="account" class="hidden"><div class="card">
+<h2>👤 حساب المتدرب</h2><p class="muted">هذه النسخة تستخدم LocalStorage للتجربة. عند النشر الفعلي يمكن ربطها بقاعدة بيانات.</p>
+<label>اسم المتدرب</label><input id="studentName" placeholder="مثال: أحمد محمد">
+<label>رقم المتدرب</label><input id="studentId" placeholder="مثال: 20260001">
+<label>الشعبة</label><input id="studentGroup" placeholder="مثال: شبكات 1">
+<button class="primary green" onclick="saveAccount()">حفظ الحساب</button>
+<button class="primary red" onclick="clearAll()">مسح بيانات هذا المتصفح</button>
+<div id="accountMsg"></div></div></section>
+
+<section id="practice" class="hidden"><div class="card">
+<h2>🎯 التمارين</h2><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select>
+<button class="primary orange" onclick="startExercise()">ابدأ تمرينًا</button><div id="practiceArea"></div></div></section>
+
+<section id="tests" class="hidden"><div class="card">
+<h2>🏆 الاختبارات</h2><select id="testLevel"><option value="basic">اختبار 1 — الأساسيات</option><option value="medium">اختبار 2 — متوسط</option><option value="advanced">اختبار 3 — شامل</option></select>
+<select id="testCount"><option value="10">10 أسئلة</option><option value="15">15 سؤالًا</option><option value="20">20 سؤالًا</option></select>
+<button class="primary green" onclick="startTest()">بدء الاختبار</button><div id="testArea"></div>
+<button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
+
+<section id="dashboard" class="hidden"><div class="card">
+<h2>📊 لوحة المتدرب</h2><div id="studentDashboard"></div></div>
+<div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div></section>
+
+<section id="trainer" class="hidden"><div class="card">
+<h2>👨‍🏫 لوحة المدرب</h2><p class="muted">تعرض هذه النسخة بيانات المحاولات المحفوظة في المتصفح الحالي فقط.</p>
+<div id="trainerStats"></div><button class="primary purple" onclick="exportCSV()">تصدير النتائج CSV</button></div>
+<div class="card"><h2>قائمة المحاولات</h2><div id="trainerTable"></div></div></section>
+</div><div id="toast"></div>
+
+<script>
+const KEY='subnetTrainerV3';
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{account:{name:'',id:'',group:''},attempts:[]};
+let exercise=null,test=[];
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function toast(s){let t=document.getElementById('toast');t.textContent=s;t.style.display='block';setTimeout(()=>t.style.display='none',2200)}
+function page(id,btn){document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='dashboard')renderDashboard();if(id==='trainer')renderTrainer();if(id==='account')loadAccount();if(id==='home')renderHome()}
+function saveAccount(){data.account={name:studentName.value.trim(),id:studentId.value.trim(),group:studentGroup.value.trim()};save();document.getElementById('accountMsg').innerHTML='<div class="good">✅ تم حفظ بيانات المتدرب.</div>';renderHome()}
+function loadAccount(){studentName.value=data.account.name;studentId.value=data.account.id;studentGroup.value=data.account.group}
+function clearAll(){if(confirm('هل تريد مسح الحساب والنتائج من هذا المتصفح؟')){localStorage.removeItem(KEY);location.reload()}}
+function renderHome(){document.getElementById('homeAccount').innerHTML=data.account.name?`<b>${data.account.name}</b> — ${data.account.id||'بدون رقم'} — ${data.account.group||'بدون شعبة'}<br><span class="muted">عدد المحاولات: ${data.attempts.length}</span>`:'<span class="muted">لم يتم إنشاء حساب بعد. افتح «الحساب».</span>'}
+function intIp(s){let a=s.split('.').map(Number);return (((a[0]*256+a[1])*256+a[2])*256+a[3])>>>0}
+function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.')}
+function problem(level){let needs=level==='easy'?[2,4,8]:level==='medium'?[3,5,6,7,8,10,12]:[5,6,7,9,10,11,12,13,14,15,16];let need=needs[Math.floor(Math.random()*needs.length)],o=Math.floor(Math.random()*223)+1,b=Math.ceil(Math.log2(need)),p=24+b,block=2**(32-p);return{network:`192.168.${o}.0`,need,bits:b,prefix:p,mask:ip((0xffffffff<<(32-p))>>>0),block,hosts:block-2}}
+function startExercise(){let level=document.getElementById('level').value;exercise=problem(level);let q=exercise;document.getElementById('practiceArea').innerHTML=`<div class="question"><h3>شبكة ${q.network}/24 → ${q.need} Subnets</h3>
+<label>Borrowed Bits</label><input id="eb"><label>New Prefix</label><input id="ep"><label>Subnet Mask</label><input id="em"><label>Magic Number</label><input id="eg"><label>Hosts/Subnet</label><input id="eh">
+<button class="primary" onclick="checkSteps()">تحقق من الخطوات</button><div id="sf"></div><hr><p><b>بعد ذلك:</b> استخدم الحاسبة الذهنية لتحديد أول شبكة وعناوينها.</p></div>`}
+function checkSteps(){let q=exercise,a=[eb.value.trim(),ep.value.trim().replace('/',''),em.value.trim(),eg.value.trim(),eh.value.trim()],b=[q.bits,''+q.prefix,q.mask,''+q.block,''+q.hosts];let ok=a.every((x,i)=>x===b[i]);let f=document.getElementById('sf');f.innerHTML=ok?'<div class="good">✅ كل خطوات FLSM صحيحة. تم تسجيل إتمام التمرين.</div>':'<div class="bad">❌ راجع إحدى الخطوات ثم أعد المحاولة.</div>';if(ok){data.attempts.push({type:'تمرين',date:new Date().toLocaleString('ar-SA'),name:data.account.name||'غير مسجل',score:100,details:`${q.network}/24 → ${q.need} Subnets`});save()}}
+function testQ(level){let q=problem(level==='advanced'?'hard':level==='medium'?'medium':'easy'),types=level==='basic'?[0,1]:level==='medium'?[1,2,3]:[0,1,2,3,4],t=types[Math.floor(Math.random()*types.length)];if(t===0)return[` ${q.network}/24 إلى ${q.need} شبكات: Borrowed Bits؟`,''+q.bits];if(t===1)return[` ${q.network}/24 إلى ${q.need} شبكات: New Prefix؟`,''+q.prefix];if(t===2)return[` ${q.network}/24 إلى ${q.need} شبكات: Subnet Mask؟`,q.mask];if(t===3)return[`لديك /${q.prefix}: Magic Number؟`,''+q.block];return[`لديك /${q.prefix}: Hosts/Subnet؟`,''+q.hosts]}
+function startTest(){let level=testLevel.value,count=+testCount.value;test=Array.from({length:count},()=>testQ(level));testArea.innerHTML=test.map((x,i)=>`<div class="question"><b>${i+1}. ${x[0]}</b><input id="t${i}" placeholder="الإجابة"></div>`).join('');submitTest.classList.remove('hidden');score.innerHTML=''}
+function gradeTest(){let s=0;test.forEach((x,i)=>{if(document.getElementById('t'+i).value.trim().replace('/','')===x[1].replace('/',''))s++});let pct=Math.round(s/test.length*100);data.attempts.push({type:'اختبار',date:new Date().toLocaleString('ar-SA'),name:data.account.name||'غير مسجل',score:pct,details:`${s}/${test.length}`});save();score.innerHTML=`<div class="good"><h3>النتيجة: ${s}/${test.length} — ${pct}%</h3><div class="progress"><div class="bar" style="width:${pct}%"></div></div></div>`}
+function renderDashboard(){let a=data.attempts,avg=a.length?Math.round(a.reduce((s,x)=>s+x.score,0)/a.length):0,tests=a.filter(x=>x.type==='اختبار'),last=a.at(-1);studentDashboard.innerHTML=`<div class="grid"><div class="card"><div class="muted">المحاولات</div><div class="kpi">${a.length}</div></div><div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">الاختبارات</div><div class="kpi">${tests.length}</div></div></div><p>${last?`آخر نشاط: <b>${last.type}</b> — ${last.score}% — ${last.date}`:'ابدأ أول تمرين لظهور تقدمك هنا.'}</p>`;attemptTable.innerHTML=a.length?`<table><tr><th>النوع</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${a.slice().reverse().map(x=>`<tr><td>${x.type}</td><td>${x.date}</td><td>${x.score}%</td><td>${x.details}</td></tr>`).join('')}</table>`:'لا توجد محاولات.'}
+function renderTrainer(){let a=data.attempts,avg=a.length?Math.round(a.reduce((s,x)=>s+x.score,0)/a.length):0;trainerStats.innerHTML=`<div class="grid"><div class="card"><div class="muted">إجمالي المحاولات</div><div class="kpi">${a.length}</div></div><div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">الاختبارات</div><div class="kpi">${a.filter(x=>x.type==='اختبار').length}</div></div></div>`;trainerTable.innerHTML=a.length?`<table><tr><th>المتدرب</th><th>النوع</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${a.slice().reverse().map(x=>`<tr><td>${x.name}</td><td>${x.type}</td><td>${x.date}</td><td>${x.score}%</td><td>${x.details}</td></tr>`).join('')}</table>`:'لا توجد بيانات.'}
+function exportCSV(){let rows=[['Student','Type','Date','Score','Details'],...data.attempts.map(x=>[x.name,x.type,x.date,x.score,x.details])];let csv='\\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='subnetting_results.csv';a.click()}
+renderHome();
+</script>
+</body></html>
