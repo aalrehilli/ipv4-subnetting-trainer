@@ -340,6 +340,7 @@ function previewTrainerQuestion(id){
   }else if(type==="matching"){
     const pairs=parseJsonSafe(x.matching_json,[]);
     body+=`<div class="muted">شكل السؤال للمتدرب:</div>`+pairs.map(p=>`<div class="preview-match"><span>${esc(p.left)}</span><span>اختر المطابقة من القائمة</span></div>`).join("");
+    body+=`<div class="good" style="margin-top:12px">المطابقات الصحيحة:</div>`+pairs.map(p=>`<div class="preview-option"><b>${esc(p.left)}</b> ← ${esc(p.right)}</div>`).join("");
   }else{
     body+=`<div class="preview-option">✏️ حقل إدخال الإجابة</div><div class="good">الإجابة الصحيحة: ${esc(x.correct_answer||"")}</div>`;
   }
@@ -576,7 +577,8 @@ function printCertificate(){
 <button type="button" class="primary red" onclick="closeQuestionPreview()">إغلاق</button>
 </div>
 <div id="questionPreviewBody" style="margin-top:15px"></div>
-</div></div></body></html>`);
+</div></div>
+</body></html>`);
  w.document.close();w.focus();setTimeout(()=>w.print(),300);
 }
 
