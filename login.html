@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تسجيل الدخول | منصة IPv4 Subnetting</title><style>
+:root{
+  --blue:#0864ad;
+  --blue2:#0b75c9;
+  --green:#159447;
+  --red:#c62828;
+  --bg:#f4f8fc;
+  --card:#fff;
+  --border:#cbdbea;
+  --text:#123;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,#f5f9fd,#edf5fb);font-family:Tahoma,Arial,sans-serif;color:var(--text);direction:rtl}
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{width:min(560px,100%);background:var(--card);border:1px solid #d7e4ef;border-radius:18px;box-shadow:0 12px 35px rgba(20,60,90,.10);padding:30px}
+.logo{font-size:38px;text-align:center;font-weight:800;color:#075ca5;margin-bottom:8px}
+.subtitle{text-align:center;color:#64788a;margin-bottom:24px}
+label{display:block;font-size:16px;margin:16px 0 7px}
+input{width:100%;padding:14px 15px;border:1px solid var(--border);border-radius:10px;font-size:16px;outline:none;background:#fff}
+input:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(11,117,201,.10)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+button,.btn{border:0;border-radius:10px;padding:13px 20px;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+.primary{background:var(--blue);color:#fff}.green{background:var(--green);color:#fff}.light{background:#eef5fb;color:var(--blue);border:1px solid #d5e4f0}
+button:disabled{opacity:.55;cursor:not-allowed}
+.links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:20px}
+.links a{color:var(--blue);text-decoration:none;font-weight:700}
+.msg{display:none;margin-top:16px;padding:13px 15px;border-radius:10px;line-height:1.7}
+.msg.show{display:block}.success{background:#e8f7ed;color:#146b34}.error{background:#fdecec;color:#a21d1d}.info{background:#edf6ff;color:#125a92}
+.small{text-align:center;color:#6d7d8a;font-size:13px;margin-top:22px;line-height:1.7}
+.password-row{position:relative}.password-row input{padding-left:75px}
+.toggle{position:absolute;left:8px;top:7px;padding:7px 10px;border:0;background:#eef5fb;color:#075ca5;border-radius:8px;cursor:pointer}
+h1{margin:0 0 8px;text-align:center;color:#075ca5}
+.hidden{display:none!important}
+</style></head>
+<body><div class="wrap"><main class="card">
+<div class="logo">🔐 دخول المنصة</div>
+<div class="subtitle">الوصول إلى حسابك ونتائجك المحفوظة مركزيًا في Supabase.</div>
+<form id="form">
+<label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="email" required>
+<label>كلمة المرور</label><div class="password-row"><input id="password" type="password" autocomplete="current-password" required><button type="button" class="toggle" onclick="togglePassword('password',this)">إظهار</button></div>
+<div class="actions"><button class="primary" id="submit">تسجيل الدخول</button></div>
+<div id="msg" class="msg"></div>
+</form>
+<div class="links">
+<a href="register.html">إنشاء حساب جديد</a>
+<a href="forgot-password.html">نسيت كلمة المرور؟</a>
+</div>
+<div class="small">إذا كان البريد يحتاج إلى تأكيد، افتح رسالة التحقق ثم عد إلى صفحة الدخول.</div>
+</main></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://cvakitsdwxkksxemdhxj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA';
+const SITE_URL = 'https://aalrehilli.github.io/ipv4-subnetting-trainer/';
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function $(id){return document.getElementById(id)}
+function showMsg(id,text,type='info'){const el=$(id);el.className='msg show '+type;el.textContent=text}
+function clearMsg(id){const el=$(id);el.className='msg';el.textContent=''}
+function togglePassword(id,btn){const i=$(id);i.type=i.type==='password'?'text':'password';btn.textContent=i.type==='password'?'إظهار':'إخفاء'}
+function go(page){window.location.href=page}
+async function signOutIfAny(){try{await db.auth.signOut()}catch(e){}}
+
+document.getElementById('form').addEventListener('submit',async(e)=>{
+ e.preventDefault(); clearMsg('msg'); $('submit').disabled=true; $('submit').textContent='جارٍ الدخول...';
+ const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+ if(error){showMsg('msg','❌ '+error.message,'error');$('submit').disabled=false;$('submit').textContent='تسجيل الدخول';return}
+ showMsg('msg','✅ تم تسجيل الدخول بنجاح. جارٍ فتح المنصة...','success');
+ setTimeout(()=>window.location.href=SITE_URL,500);
+});
+</script></body></html>
