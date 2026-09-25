@@ -3,7 +3,7 @@
 <title>IPv4 Subnetting Trainer — V13</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}
 <style>.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}</style></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V13 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
@@ -23,7 +23,7 @@
 <div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
-<div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div class="grid"><div><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div id="questionsTable"></div></div>
+<div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div id="questionsTable"></div></div>
 </div><div id="trainerAnalytics" class="hidden"><h3>📈 تحليلات الاختبارات</h3><div id="trainerAnalyticsArea"></div></div>
 <div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>إنشاء اختبار جديد</h3><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار واختيار الأسئلة تلقائيًا</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
 <section id="certificate" class="hidden">
@@ -116,31 +116,43 @@ async function loadPublishedExams(){
   const rows=(r.data||[]).filter(x=>(!x.group_name||x.group_name===profile?.group_name)&&(!x.starts_at||x.starts_at<=now)&&(!x.ends_at||x.ends_at>=now));
   $('publishedTests').innerHTML=rows.length?'<h3>📋 الاختبارات المنشورة</h3>'+rows.map(x=>`<div class="stat"><span><b>${esc(x.title)}</b> — ${esc(x.topic)} — ${x.question_count} سؤال — ${x.duration_minutes} دقيقة</span><button class="primary green" onclick="startPublishedExam('${x.id}')">بدء الاختبار</button></div>`).join(''):'<div class="muted">لا توجد اختبارات منشورة متاحة لك حاليًا.</div>';
 }
-function parseQuestion(text){
+function parseQuestion(text,type='short',options=null,matching=null){
   const raw=String(text||'').replace(/\r/g,'');
   const lines=raw.split('\n').map(x=>x.trim()).filter(Boolean);
-  const stem=[]; const options=[];
-  for(const line of lines){
-    const m=line.match(/^([A-D])\)\s*(.+)$/i);
-    if(m) options.push({key:m[1].toUpperCase(),text:m[2].trim()});
-    else stem.push(line);
-  }
-  return {stem:stem.join('\n'),options};
+  const stem=[]; const opts=[];
+  for(const line of lines){const m=line.match(/^([A-D])\)\s*(.+)$/i);if(m)opts.push({key:m[1].toUpperCase(),text:m[2].trim()});else stem.push(line);}
+  return {type:type||'short',stem:stem.join('\n'),options:options&&options.length?options:opts,matching:matching||[]};
+}
+function renderMatchingQuestion(x,i){
+  let pairs=[];try{pairs=typeof x[4]==='string'?JSON.parse(x[4]||'[]'):(x[4]||[]);}catch(e){pairs=[];}
+  const rights=pairs.map((p,j)=>({id:j,text:p.right})).sort(()=>Math.random()-.5);
+  return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(x[1])}</div><div class="muted">وصل كل عنصر من العمود الأول بما يناسبه من العمود الثاني:</div>${pairs.map((p,j)=>`<div class="matching-answer"><span><b>${esc(p.left)}</b></span><select id="m${i}_${j}"><option value="">اختر المطابقة</option>${rights.map(r=>`<option value="${r.id}">${esc(r.text)}</option>`).join('')}</select></div>`).join('')}</div>`;
 }
 function renderTestQuestions(){
   $('testArea').innerHTML=test.map((x,i)=>{
-    const q=parseQuestion(x[1]);
-    if(q.options.length===4){
-      return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><div class="muted" style="margin-bottom:8px">اختر إجابة واحدة:</div>${q.options.map(o=>`<label class="optionLabel" style="display:block;background:white;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer"><input type="radio" name="t${i}" value="${o.key}" style="width:auto;margin-left:7px"> <b>${o.key})</b> ${esc(o.text)}</label>`).join('')}</div>`;
-    }
-    return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><input id="t${i}" placeholder="اكتب إجابتك"><div class="muted">اكتب الإجابة المطلوبة.</div></div>`;
+    const q=parseQuestion(x[1],x[3],x[4],x[5]);
+    if(q.type==='matching') return renderMatchingQuestion(x,i);
+    if(q.type==='true_false') return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><label class="optionLabel"><input type="radio" name="t${i}" value="true" style="width:auto"> ✅ صح</label><label class="optionLabel"><input type="radio" name="t${i}" value="false" style="width:auto"> ❌ خطأ</label></div>`;
+    if(q.type==='mcq' || q.options.length>=2) return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div>${q.options.map(o=>`<label class="optionLabel" style="display:block;background:white;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer"><input type="radio" name="t${i}" value="${o.key}" style="width:auto;margin-left:7px"> <b>${o.key})</b> ${esc(o.text)}</label>`).join('')}</div>`;
+    return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><input id="t${i}" placeholder="اكتب الإجابة المطلوبة"><div class="muted">اكتب الإجابة المطلوبة.</div></div>`;
   }).join('');
   $('submitTest').classList.remove('hidden');
 }
 function selectedAnswer(i){
-  const radio=document.querySelector(`input[name="t${i}"]:checked`);
-  if(radio) return radio.value.trim();
-  const inp=$('t'+i); return inp ? inp.value.trim() : '';
+  const x=test[i];
+  if(x && x[3]==='matching'){
+    let pairs=[];try{pairs=typeof x[5]==='string'?JSON.parse(x[5]||'[]'):(x[5]||[]);}catch(e){pairs=[];}
+    const ans={}; pairs.forEach((p,j)=>{const v=$(`m${i}_${j}`)?.value;if(v!=='')ans[j]=Number(v);}); return JSON.stringify(ans);
+  }
+  const radio=document.querySelector(`input[name="t${i}"]:checked`);if(radio)return radio.value.trim();const inp=$('t'+i);return inp?inp.value.trim():'';
+}
+function isAnswerCorrect(x,ans){
+  if(x[3]==='matching'){
+    let pairs=[];try{pairs=typeof x[5]==='string'?JSON.parse(x[5]||'[]'):(x[5]||[]);}catch(e){pairs=[];}
+    let a={};try{a=JSON.parse(ans||'{}');}catch(e){a={};}
+    return pairs.every((p,j)=>Number(a[j])===j);
+  }
+  return String(ans||'').trim().toLowerCase()===String(x[2]||'').trim().toLowerCase();
 }
 function stopTimer(){if(timerHandle){clearInterval(timerHandle);timerHandle=null;}}
 function startTimer(){
@@ -161,9 +173,9 @@ async function startPublishedExam(id){
   const ex=await db.from('trainer_exams').select('*').eq('id',id).single();
   if(ex.error){msg('score','❌ '+ex.error.message);return;}
   currentExamTitle=ex.data.title; testDurationMinutes=Number(ex.data.duration_minutes||30); testStartedAt=new Date();
-  const r=await db.from('trainer_exam_questions').select('question_order,trainer_questions(id,question_text,correct_answer)').eq('exam_id',id).order('question_order');
+  const r=await db.from('trainer_exam_questions').select('question_order,trainer_questions(id,question_text,correct_answer,question_type,options_json,matching_json)').eq('exam_id',id).order('question_order');
   if(r.error){msg('score','❌ '+r.error.message);return;}
-  test=(r.data||[]).map(x=>[x.trainer_questions.id,x.trainer_questions.question_text,x.trainer_questions.correct_answer]);
+  test=(r.data||[]).map(x=>[x.trainer_questions.id,x.trainer_questions.question_text,x.trainer_questions.correct_answer,x.trainer_questions.question_type||'short',x.trainer_questions.options_json||[],x.trainer_questions.matching_json||[]]);
   if(!test.length){msg('score','❌ لا توجد أسئلة مرتبطة بهذا الاختبار.');return;}
   $('testMeta').classList.remove('hidden');$('testMeta').innerHTML=`<div class="card" style="margin-bottom:10px"><h3 style="margin:0 0 5px">📝 ${esc(currentExamTitle)}</h3><div class="muted">${test.length} سؤال — ${testDurationMinutes} دقيقة</div></div>`;
   renderTestQuestions();
@@ -180,7 +192,7 @@ function startTest(){
 async function gradeTest(autoSubmit=false){
   if(testSubmitted||!test.length)return;
   testSubmitted=true; stopTimer(); $('submitTest').classList.add('hidden');
-  let s=0; test.forEach((x,i)=>{const ans=selectedAnswer(i);if(ans.toLowerCase()===String(x[2]).trim().toLowerCase())s++;});
+  let s=0; test.forEach((x,i)=>{const ans=selectedAnswer(i);if(isAnswerCorrect(x,ans))s++;});
   const pct=Math.round(s/test.length*100);
   const started=testStartedAt?testStartedAt.toISOString():new Date().toISOString();
   const examId=currentExamId;
@@ -189,12 +201,12 @@ async function gradeTest(autoSubmit=false){
   const r=await db.from('attempts').insert(payload).select('id').single();
   if(r.error){testSubmitted=false;return msg('score','❌ تعذر حفظ النتيجة: '+r.error.message);}
   if(r.data?.id && examId){
-    const answerRows=test.map((x,i)=>{const ans=selectedAnswer(i);return {attempt_id:r.data.id,question_id:x[0],question_order:i+1,selected_answer:ans||null,correct_answer:x[2],is_correct:ans.toLowerCase()===String(x[2]).trim().toLowerCase()};});
+    const answerRows=test.map((x,i)=>{const ans=selectedAnswer(i);return {attempt_id:r.data.id,question_id:x[0],question_order:i+1,selected_answer:ans||null,correct_answer:x[2],is_correct:isAnswerCorrect(x,ans)};});
     const ar=await db.from('attempt_answers').insert(answerRows);
     if(ar.error){console.warn('attempt_answers:',ar.error.message);}
   }
   $('score').innerHTML=`<div class="good"><h3>النتيجة: ${s}/${test.length} — ${pct}%</h3><p>${autoSubmit?'⏰ انتهى الوقت وتم تسليم الاختبار تلقائيًا.':'✅ تم تسليم الاختبار وحفظ النتيجة.'}</p><div class="progress"><div class="bar" style="width:${pct}%"></div></div></div>`;
-  document.querySelectorAll('#testArea input').forEach(x=>x.disabled=true);
+  document.querySelectorAll('#testArea input,#testArea select').forEach(x=>x.disabled=true);
   $('testTimer').innerHTML='<div class="good">✅ انتهى الاختبار.</div>';
 }
 
@@ -254,21 +266,45 @@ async function changeRole(id,role){
 }
 async function promoteStudent(id){if(confirm("هل تريد تحويل هذا المتدرب إلى مدرب؟"))await changeRole(id,"trainer")}
 async function demoteStudent(id){if(confirm("هل تريد إعادة هذا الحساب إلى متدرب؟"))await changeRole(id,"student")}
+function setQuestionType(type){
+  $('qType').value=type;
+  ['qtShort','qtMCQ','qtTF','qtMatch'].forEach(id=>$(id)?.classList.remove('active'));
+  const map={short:'qtShort',mcq:'qtMCQ',true_false:'qtTF',matching:'qtMatch'};$(map[type])?.classList.add('active');
+  $('shortAnswerBox').classList.toggle('hidden',type!=='short');$('mcqBox').classList.toggle('hidden',type!=='mcq');$('tfBox').classList.toggle('hidden',type!=='true_false');$('matchBox').classList.toggle('hidden',type!=='matching');
+  if(type==='mcq' && !$('mcqChoices').children.length) renderMCQChoices();
+  if(type==='matching' && !$('matchRows').children.length){$('matchRows').innerHTML='';for(let i=0;i<4;i++)addMatchRow();}
+}
+function renderMCQChoices(){
+  $('mcqChoices').innerHTML=['A','B','C','D'].map(k=>`<div class="choice-row"><b>${k}</b><input id="choice_${k}" placeholder="الخيار ${k}"></div>`).join('')+`<label>الإجابة الصحيحة</label><select id="mcqAnswer"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>`;
+}
+function addMatchRow(){const i=$('matchRows').children.length;$('matchRows').insertAdjacentHTML('beforeend',`<div class="match-row"><input id="ml_${i}" placeholder="العمود الأول"><input id="mr_${i}" placeholder="العمود الثاني"></div>`);}
 async function loadTrainerQuestions(){
   const r=await db.from("trainer_questions").select("*").order("created_at",{ascending:false});
-  if(r.error){$("questionsTable").innerHTML=`<div class="bad">❌ لم يتم العثور على جدول بنك الأسئلة. نفّذ SQL المرفق مع الإصدار V5 أولًا.<br>${esc(r.error.message)}</div>`;return;}
+  if(r.error){$("questionsTable").innerHTML=`<div class="bad">❌ لم يتم العثور على جدول بنك الأسئلة. نفّذ SQL الخاص بـ V14 أولًا.<br>${esc(r.error.message)}</div>`;return;}
   trainerQuestionRows=r.data||[];
-  $("questionsTable").innerHTML=trainerQuestionRows.length?`<table><tr><th>السؤال</th><th>التصنيف</th><th>المستوى</th><th>الإجابة</th><th>الإجراء</th></tr>${trainerQuestionRows.map(x=>`<tr><td style="text-align:right">${esc(x.question_text)}</td><td>${esc(x.topic)}</td><td>${esc(x.difficulty)}</td><td>${esc(x.correct_answer)}</td><td><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">حذف</button></td></tr>`).join("")}</table>`:"لا توجد أسئلة بعد.";
+  $("questionsTable").innerHTML=trainerQuestionRows.length?`<table><tr><th>السؤال</th><th>النوع</th><th>التصنيف</th><th>المستوى</th><th>الإجابة</th><th>الإجراء</th></tr>${trainerQuestionRows.map(x=>`<tr><td style="text-align:right">${esc(x.question_text)}</td><td>${({'short':'إجابة قصيرة','mcq':'اختيار من متعدد','true_false':'صح/خطأ','matching':'وصل بين العمودين'}[x.question_type||'short'])}</td><td>${esc(x.topic)}</td><td>${esc(x.difficulty)}</td><td>${esc(x.correct_answer||'—')}</td><td><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">حذف</button></td></tr>`).join("")}</table>`:"لا توجد أسئلة بعد.";
 }
 async function addTrainerQuestion(){
-  const question_text=$("qText").value.trim(),correct_answer=$("qAnswer").value.trim(),difficulty=$("qDifficulty").value,topic=$("qTopic").value;
-  if(!question_text||!correct_answer){msg("questionMsg","❌ أدخل نص السؤال والإجابة الصحيحة.");return;}
-  const r=await db.from("trainer_questions").insert({question_text,correct_answer,difficulty,topic,created_by:user.id});
+  const question_text=$("qText").value.trim(),difficulty=$("qDifficulty").value,topic=$("qTopic").value,type=$("qType").value;
+  if(!question_text){msg("questionMsg","❌ أدخل نص السؤال.");return;}
+  let correct_answer='',options_json=null,matching_json=null;
+  if(type==='short'){correct_answer=$("qAnswer").value.trim();if(!correct_answer)return msg("questionMsg","❌ أدخل الإجابة الصحيحة.");}
+  if(type==='true_false'){correct_answer=$("tfAnswer").value;}
+  if(type==='mcq'){
+    const opts=['A','B','C','D'].map(k=>({key:k,text:$(`choice_${k}`).value.trim()}));
+    if(opts.some(o=>!o.text))return msg("questionMsg","❌ أدخل الخيارات الأربعة.");
+    options_json=opts;correct_answer=$("mcqAnswer").value;
+  }
+  if(type==='matching'){
+    const pairs=[];for(let i=0;i<$('matchRows').children.length;i++){const l=$(`ml_${i}`)?.value.trim(),r=$(`mr_${i}`)?.value.trim();if(l&&r)pairs.push({left:l,right:r});}
+    if(pairs.length<2)return msg("questionMsg","❌ أضف عنصرين على الأقل للمطابقة.");
+    matching_json=pairs;correct_answer=JSON.stringify(pairs.map((p,i)=>({left:i,right:i})));
+  }
+  const r=await db.from("trainer_questions").insert({question_text,correct_answer,difficulty,topic,created_by:user.id,question_type:type,options_json,matching_json});
   if(r.error){msg("questionMsg","❌ "+r.error.message);return;}
-  $("qText").value="";$("qAnswer").value="";msg("questionMsg","✅ تمت إضافة السؤال بنجاح.",true);loadTrainerQuestions();
+  $("qText").value="";$("qAnswer").value="";['A','B','C','D'].forEach(k=>{if($(`choice_${k}`))$(`choice_${k}`).value='';});$('matchRows').innerHTML='';setQuestionType('short');msg("questionMsg","✅ تمت إضافة السؤال بنجاح.",true);loadTrainerQuestions();
 }
 async function deleteTrainerQuestion(id){if(!confirm("حذف السؤال؟"))return;const r=await db.from("trainer_questions").delete().eq("id",id);if(r.error){alert("تعذر حذف السؤال: "+r.error.message);return;}loadTrainerQuestions();}
-
 
 async function createTrainerExam(){
   if(!['trainer','admin'].includes(profile?.role))return;
@@ -462,7 +498,7 @@ function renderCertificate(x){
 function printCertificate(){
  const el=$('certificatePrint'); if(!el)return;
  const w=window.open('','_blank','width=1000,height=750');
- w.document.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>شهادة إتمام المقرر</title><style>body{font-family:Tahoma,Arial;padding:40px;background:#fff;color:#17324d}.certificate{border:8px double #0759a5;padding:60px;text-align:center;min-height:520px;display:flex;flex-direction:column;justify-content:center}.certificate h1{font-size:42px;color:#0759a5}.certificate h2{font-size:28px}.name{font-size:34px;font-weight:bold;margin:25px}.certno{font-family:monospace}.badge{display:inline-block;background:#0759a5;color:#fff;padding:8px 14px;border-radius:20px;align-self:center}button{display:none}@media print{body{padding:0}}</style></head><body>${el.outerHTML}</body></html>`);
+ w.document.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>شهادة إتمام المقرر</title><style>body{font-family:Tahoma,Arial;padding:40px;background:#fff;color:#17324d}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:8px double #0759a5;padding:60px;text-align:center;min-height:520px;display:flex;flex-direction:column;justify-content:center}.certificate h1{font-size:42px;color:#0759a5}.certificate h2{font-size:28px}.name{font-size:34px;font-weight:bold;margin:25px}.certno{font-family:monospace}.badge{display:inline-block;background:#0759a5;color:#fff;padding:8px 14px;border-radius:20px;align-self:center}button{display:none}@media print{body{padding:0}}</style></head><body>${el.outerHTML}</body></html>`);
  w.document.close();w.focus();setTimeout(()=>w.print(),300);
 }
 
