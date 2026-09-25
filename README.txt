@@ -1,20 +1,14 @@
-# V13 Authentication Pages
+V13 Final — فصل المصادقة عن المنصة
 
-Pages:
-- login.html — تسجيل الدخول
-- register.html — إنشاء حساب
-- forgot-password.html — إرسال رابط إعادة تعيين كلمة المرور
-- reset-password.html — تعيين كلمة مرور جديدة
-- index.html — تحويل تلقائي إلى تسجيل الدخول
+index.html = المنصة الرئيسية فقط
+login.html = تسجيل الدخول
+register.html = إنشاء الحساب
+forgot-password.html = إرسال رابط إعادة التعيين
+reset-password.html = تعيين كلمة مرور جديدة
 
-Supabase:
-- Auth Email/Password
-- emailRedirectTo للإنتاج
-- Password recovery عبر resetPasswordForEmail/updateUser
+بعد تسجيل الدخول يتم التحقق من جلسة Supabase ثم الانتقال إلى index.html.
+إذا تعذر قراءة profiles لا يتم طرد المستخدم؛ يتم استخدام بيانات Auth كخطة احتياطية مع role=student.
 
-قبل الاستخدام:
-1. Supabase Authentication > URL Configuration
-2. Site URL:
-   https://aalrehilli.github.io/ipv4-subnetting-trainer/
-3. Redirect URLs أضف:
-   https://aalrehilli.github.io/ipv4-subnetting-trainer/**
+Supabase URL Configuration:
+Site URL: https://aalrehilli.github.io/ipv4-subnetting-trainer/
+Redirect URLs: https://aalrehilli.github.io/ipv4-subnetting-trainer/**

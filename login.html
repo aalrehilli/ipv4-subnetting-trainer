@@ -54,7 +54,7 @@ h1{margin:0 0 8px;text-align:center;color:#075ca5}
 const SUPABASE_URL = 'https://cvakitsdwxkksxemdhxj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA';
 const SITE_URL = 'https://aalrehilli.github.io/ipv4-subnetting-trainer/';
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storageKey:"ipv4-subnetting-auth"}});
 
 function $(id){return document.getElementById(id)}
 function showMsg(id,text,type='info'){const el=$(id);el.className='msg show '+type;el.textContent=text}
@@ -67,7 +67,9 @@ document.getElementById('form').addEventListener('submit',async(e)=>{
  e.preventDefault(); clearMsg('msg'); $('submit').disabled=true; $('submit').textContent='جارٍ الدخول...';
  const {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
  if(error){showMsg('msg','❌ '+error.message,'error');$('submit').disabled=false;$('submit').textContent='تسجيل الدخول';return}
+ const {data:sessionData}=await db.auth.getSession();
+ if(!sessionData?.session){showMsg('msg','❌ تم التحقق من كلمة المرور ولكن لم يتم حفظ جلسة الدخول. حدّث الصفحة وحاول مرة أخرى.','error');$('submit').disabled=false;$('submit').textContent='تسجيل الدخول';return;}
  showMsg('msg','✅ تم تسجيل الدخول بنجاح. جارٍ فتح المنصة...','success');
- setTimeout(()=>window.location.href=SITE_URL,500);
+ window.location.replace(SITE_URL);
 });
 </script></body></html>
