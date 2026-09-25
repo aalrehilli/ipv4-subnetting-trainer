@@ -15,16 +15,16 @@
 <div id="app" class="hidden">
 <section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج.</p></div><div class="grid"><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p></div></div></section>
 <section id="practice" class="hidden"><div class="card"><h2>🎯 التمارين</h2><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select><button class="primary orange" onclick="startExercise()">ابدأ تمرينًا</button><div id="practiceArea"></div></div></section>
-<section id="tests" class="hidden"><div class="card"><h2>🏆 الاختبارات</h2><select id="testLevel"><option value="basic">الأساسيات</option><option value="medium">متوسط</option><option value="advanced">شامل</option></select><select id="testCount"><option>10</option><option>15</option><option>20</option></select><button class="primary green" onclick="startTest()">بدء الاختبار</button><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
+<section id="tests" class="hidden"><div class="card"><h2>🏆 الاختبارات</h2><select id="testLevel"><option value="basic">الأساسيات</option><option value="medium">متوسط</option><option value="advanced">شامل</option></select><select id="testCount"><option>10</option><option>15</option><option>20</option></select><button class="primary green" onclick="startTest()">بدء الاختبار</button><div id="publishedTests" class="question"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="dashboard" class="hidden"><div class="card"><h2>📊 لوحة المتدرب</h2><div id="studentDashboard"></div></div><div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div></section>
 <section id="trainer" class="hidden">
 <div class="card hero"><h2>👨‍🏫 لوحة المدرب</h2><p class="muted">إدارة المتدربين وبنك الأسئلة ومتابعة النتائج من مكان واحد.</p>
 <div id="trainerStats"></div></div>
-<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
+<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
 <div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div class="grid"><div><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div id="questionsTable"></div></div>
-</div></section>
+</div><div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>إنشاء اختبار جديد</h3><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار واختيار الأسئلة تلقائيًا</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
 <section id="account" class="hidden"><div class="card"><h2>👤 الحساب</h2><div id="accountInfo"></div></div></section>
 </div></div>
 <script>
@@ -105,12 +105,28 @@ async function signin(){
   }catch(e){setMsg("❌ حدث خطأ غير متوقع: "+(e?.message||e));}
 }
 async function logout(){await db.auth.signOut();location.reload()}
-function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="trainer")renderTrainer();if(id==="account")renderAccount()}
+function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="trainer")renderTrainer();if(id==="account")renderAccount();if(id==="tests")loadPublishedExams()}
 function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".")}
 function problem(level){let a=level==="easy"?[2,4,8]:level==="medium"?[3,5,6,7,8,10,12]:[5,6,7,9,10,11,12,13,14,15,16],need=a[Math.floor(Math.random()*a.length)],o=Math.floor(Math.random()*223)+1,b=Math.ceil(Math.log2(need)),p=24+b,block=2**(32-p);return{network:`192.168.${o}.0`,need,bits:b,prefix:p,mask:ip((0xffffffff<<(32-p))>>>0),block,hosts:block-2}}
 function startExercise(){exercise=problem($("level").value),q=exercise;$("practiceArea").innerHTML=`<div class="question"><h3>${q.network}/24 → ${q.need} شبكات</h3><label>Borrowed Bits</label><input id="eb"><label>New Prefix</label><input id="ep"><label>Subnet Mask</label><input id="em"><label>Magic Number</label><input id="eg"><label>Hosts/Subnet</label><input id="eh"><button class="primary" onclick="checkSteps()">تحقق</button><div id="sf"></div></div>`}
 async function checkSteps(){let q=exercise,a=[$("eb").value.trim(),$("ep").value.trim().replace("/",""),$("em").value.trim(),$("eg").value.trim(),$("eh").value.trim()],b=[String(q.bits),String(q.prefix),q.mask,String(q.block),String(q.hosts)],ok=a.every((v,i)=>v===b[i]);$("sf").innerHTML=ok?'<div class="good">✅ صحيح وتم حفظ النتيجة.</div>':'<div class="bad">❌ توجد إجابة غير صحيحة.</div>';if(ok)await db.from("exercise_attempts").insert({student_id:user.id,score:100,is_correct:true,borrowed_bits_answer:a[0],prefix_answer:a[1],subnet_mask_answer:a[2],magic_number_answer:a[3],hosts_answer:a[4]})}
 function tq(level){let q=problem(level==="advanced"?"hard":level==="medium"?"medium":"easy"),t=Math.floor(Math.random()*5);if(level==="basic")t=Math.floor(Math.random()*2);if(level==="medium")t=1+Math.floor(Math.random()*3);return t===0?[`${q.network}/24 إلى ${q.need}: Borrowed Bits؟`,String(q.bits)]:t===1?[`${q.network}/24 إلى ${q.need}: New Prefix؟`,String(q.prefix)]:t===2?[`${q.network}/24 إلى ${q.need}: Subnet Mask؟`,q.mask]:t===3?[`/${q.prefix}: Magic Number؟`,String(q.block)]:[`/${q.prefix}: Hosts/Subnet؟`,String(q.hosts)]}
+
+async function loadPublishedExams(){
+  const now=new Date().toISOString();
+  const r=await db.from('trainer_exams').select('*').eq('is_active',true).order('created_at',{ascending:false});
+  if(r.error){$('publishedTests').innerHTML='';return;}
+  const rows=(r.data||[]).filter(x=>(!x.group_name||x.group_name===profile?.group_name)&&(!x.starts_at||x.starts_at<=now)&&(!x.ends_at||x.ends_at>=now));
+  $('publishedTests').innerHTML=rows.length?'<h3>📋 الاختبارات المنشورة</h3>'+rows.map(x=>`<div class="stat"><span><b>${esc(x.title)}</b> — ${esc(x.topic)} — ${x.question_count} سؤال — ${x.duration_minutes} دقيقة</span><button class="primary green" onclick="startPublishedExam('${x.id}')">بدء الاختبار</button></div>`).join(''):'<div class="muted">لا توجد اختبارات منشورة متاحة لك حاليًا.</div>';
+}
+async function startPublishedExam(id){
+  const r=await db.from('trainer_exam_questions').select('question_order,trainer_questions(id,question_text,correct_answer)').eq('exam_id',id).order('question_order');
+  if(r.error){msg('score','❌ '+r.error.message);return;}
+  test=(r.data||[]).map(x=>[x.trainer_questions.question_text,x.trainer_questions.correct_answer]);
+  if(!test.length){msg('score','❌ لا توجد أسئلة مرتبطة بهذا الاختبار.');return;}
+  $('testArea').innerHTML=test.map((x,i)=>`<div class="question"><b>${i+1}. ${esc(x[0])}</b><input id="t${i}"></div>`).join('');$('submitTest').classList.remove('hidden');$('score').innerHTML='<div class="good">تم تحميل الاختبار. أجب عن جميع الأسئلة ثم اضغط تسليم الاختبار.</div>';
+}
+
 function startTest(){let l=$("testLevel").value,n=+$("testCount").value;test=Array.from({length:n},()=>tq(l));$("testArea").innerHTML=test.map((x,i)=>`<div class="question"><b>${i+1}. ${x[0]}</b><input id="t${i}"></div>`).join("");$("submitTest").classList.remove("hidden");$("score").innerHTML=""}
 async function gradeTest(){let s=0;test.forEach((x,i)=>{if($("t"+i).value.trim().replace("/","")===x[1].replace("/",""))s++});let pct=Math.round(s/test.length*100),lv=$("testLevel").value==="basic"?"easy":$("testLevel").value==="medium"?"medium":"hard",er=await db.from("exams").select("id").eq("difficulty",lv).eq("is_active",true).limit(1),exam=er.data?.[0]?.id||null,r=await db.from("attempts").insert({student_id:user.id,exam_id:exam,score:pct,total_questions:test.length,correct_answers:s,percentage:pct,submitted_at:new Date().toISOString()});if(r.error)return msg("score","❌ "+r.error.message);$("score").innerHTML=`<div class="good"><h3>النتيجة: ${s}/${test.length} — ${pct}%</h3><div class="progress"><div class="bar" style="width:${pct}%"></div></div></div>`}
 async function renderDashboard(){let a=(await db.from("attempts").select("*").eq("student_id",user.id).order("submitted_at",{ascending:false})).data||[],e=(await db.from("exercise_attempts").select("*").eq("student_id",user.id).order("created_at",{ascending:false})).data||[],all=[...a.map(x=>({t:"اختبار",d:x.submitted_at,s:x.percentage,z:`${x.correct_answers}/${x.total_questions}`})),...e.map(x=>({t:"تمرين",d:x.created_at,s:x.score,z:x.is_correct?"صحيح":"خطأ"}))],avg=all.length?Math.round(all.reduce((x,y)=>x+Number(y.s),0)/all.length):0;$("studentDashboard").innerHTML=`<div class="grid"><div class="card"><div class="muted">المحاولات</div><div class="kpi">${all.length}</div></div><div class="card"><div class="muted">المتوسط</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">الاختبارات</div><div class="kpi">${a.length}</div></div></div>`;$("attemptTable").innerHTML=all.length?`<table><tr><th>النوع</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${all.map(x=>`<tr><td>${x.t}</td><td>${new Date(x.d).toLocaleString("ar-SA")}</td><td>${x.s}%</td><td>${x.z}</td></tr>`).join("")}</table>`:"لا توجد محاولات."}
@@ -121,11 +137,12 @@ async function renderTrainer(){
 }
 function trainerTab(tab,btn){
   ["trainerOverview","trainerStudents","trainerQuestions"].forEach(id=>$(id)?.classList.add("hidden"));
-  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions"};
+  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams"};
   $(map[tab])?.classList.remove("hidden");
   if(btn){document.querySelectorAll("#trainer .card button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
   if(tab==="students")loadTrainerStudents();
   if(tab==="questions")loadTrainerQuestions();
+  if(tab==="exams")loadTrainerExams();
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 async function loadTrainerOverview(){
@@ -174,6 +191,33 @@ async function addTrainerQuestion(){
   $("qText").value="";$("qAnswer").value="";msg("questionMsg","✅ تمت إضافة السؤال بنجاح.",true);loadTrainerQuestions();
 }
 async function deleteTrainerQuestion(id){if(!confirm("حذف السؤال؟"))return;const r=await db.from("trainer_questions").delete().eq("id",id);if(r.error){alert("تعذر حذف السؤال: "+r.error.message);return;}loadTrainerQuestions();}
+
+
+async function createTrainerExam(){
+  if(!['trainer','admin'].includes(profile?.role))return;
+  const title=$('exTitle').value.trim(), description=$('exDesc').value.trim(), difficulty=$('exDifficulty').value, topic=$('exTopic').value, question_count=Math.max(1,Number($('exCount').value||10)), duration_minutes=Math.max(1,Number($('exDuration').value||30)), group_name=$('exGroup').value.trim()||null, starts_at=$('exStart').value?new Date($('exStart').value).toISOString():null, ends_at=$('exEnd').value?new Date($('exEnd').value).toISOString():null, is_active=$('exActive').checked;
+  if(!title){msg('examMsg','❌ أدخل اسم الاختبار.');return;}
+  msg('examMsg','⏳ جارٍ إنشاء الاختبار...',true);
+  const qr=await db.from('trainer_questions').select('id').eq('difficulty',difficulty).eq('topic',topic).limit(200);
+  if(qr.error){msg('examMsg','❌ '+qr.error.message);return;}
+  const pool=qr.data||[];
+  if(pool.length<question_count){msg('examMsg',`❌ لا يوجد عدد كافٍ من الأسئلة. المتاح: ${pool.length} والمطلوب: ${question_count}`);return;}
+  const shuffled=[...pool].sort(()=>Math.random()-0.5).slice(0,question_count);
+  const er=await db.from('trainer_exams').insert({title,description,difficulty,topic,question_count,duration_minutes,group_name,starts_at,ends_at,is_active,created_by:user.id}).select('id').single();
+  if(er.error){msg('examMsg','❌ تعذر إنشاء الاختبار: '+er.error.message);return;}
+  const items=shuffled.map((q,i)=>({exam_id:er.data.id,question_id:q.id,question_order:i+1}));
+  const ir=await db.from('trainer_exam_questions').insert(items);
+  if(ir.error){await db.from('trainer_exams').delete().eq('id',er.data.id);msg('examMsg','❌ تعذر ربط الأسئلة: '+ir.error.message);return;}
+  msg('examMsg','✅ تم إنشاء الاختبار وربط '+question_count+' سؤالًا.',true);loadTrainerExams();
+}
+async function loadTrainerExams(){
+  const r=await db.from('trainer_exams').select('*').order('created_at',{ascending:false});
+  if(r.error){$('examsTable').innerHTML='<div class="bad">❌ نفّذ SQL الخاص بـ V6 أولًا.<br>'+esc(r.error.message)+'</div>';return;}
+  const rows=r.data||[];
+  $('examsTable').innerHTML=rows.length?`<table><tr><th>الاختبار</th><th>الموضوع</th><th>الأسئلة</th><th>المدة</th><th>الشعبة</th><th>الحالة</th><th>الإجراء</th></tr>${rows.map(x=>`<tr><td>${esc(x.title)}</td><td>${esc(x.topic)}</td><td>${x.question_count}</td><td>${x.duration_minutes} دقيقة</td><td>${esc(x.group_name||'كل الشعب')}</td><td>${x.is_active?'🟢 مفعّل':'⚪ متوقف'}</td><td><button class="primary ${x.is_active?'red':'green'}" onclick="toggleTrainerExam('${x.id}',${!x.is_active})">${x.is_active?'إيقاف':'تفعيل'}</button> <button class="primary red" onclick="deleteTrainerExam('${x.id}')">حذف</button></td></tr>`).join('')}</table>`:'لا توجد اختبارات بعد.';
+}
+async function toggleTrainerExam(id,value){const r=await db.from('trainer_exams').update({is_active:value}).eq('id',id);if(r.error){alert('تعذر تغيير حالة الاختبار: '+r.error.message);return;}loadTrainerExams();}
+async function deleteTrainerExam(id){if(!confirm('حذف الاختبار؟'))return;const r=await db.from('trainer_exams').delete().eq('id',id);if(r.error){alert('تعذر حذف الاختبار: '+r.error.message);return;}loadTrainerExams();}
 
 function renderAccount(){$("accountInfo").innerHTML=profile?`<div class="stat"><b>الاسم</b><span>${profile.full_name}</span></div><div class="stat"><b>رقم المتدرب</b><span>${profile.student_id||"—"}</span></div><div class="stat"><b>الشعبة</b><span>${profile.group_name||"—"}</span></div><div class="stat"><b>الصلاحية</b><span>${profile.role}</span></div><div class="stat"><b>البريد</b><span>${user.email}</span></div>`:""}
 async function exportCSV(){let r=(await db.from("attempts").select("percentage,correct_answers,total_questions,submitted_at,profiles(full_name,student_id)")).data||[],rows=[["Student","Student ID","Type","Date","Score","Details"],...r.map(x=>[x.profiles?.full_name||"",x.profiles?.student_id||"","Exam",x.submitted_at,x.percentage,`${x.correct_answers}/${x.total_questions}`])],csv="\ufeff"+rows.map(x=>x.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ipv4_subnetting_results.csv";a.click()}
