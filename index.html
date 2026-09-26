@@ -1092,10 +1092,65 @@ const lesson2Detailed=`
 <ul><li>الإجابة: <b>255.255.255.224</b>.</li><li>عدد بتات المضيف: <b>5</b>.</li><li>عدد العناوين في كل شبكة: <b>32</b>.</li></ul>
 </div>`;
 
+const lesson3Media=`
+<div class="lesson-extra" style="margin-top:18px">
+  <div class="card" style="background:#f8fbff">
+    <h3>🧠 خريطة ذهنية</h3>
+    <p class="muted">ملخص بصري لدرس Borrowed Bits وعدد الشبكات مع أمثلة /24 إلى /27.</p>
+    <img src="assets/ipv4-lesson3-mindmap.png" alt="خريطة ذهنية لدرس Borrowed Bits وعدد الشبكات" style="width:100%;max-height:760px;object-fit:contain;border:1px solid #d6e3ef;border-radius:14px;background:#fff">
+  </div>
+  <div class="card">
+    <h3>🎥 فيديو شرح الدرس</h3>
+    <p>شرح عربي عملي لمفهوم Subnetting وتقسيم الشبكة إلى شبكات فرعية.</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px">
+      <iframe src="https://www.youtube.com/embed/j8Iczqn0-Bw" title="شرح Subnetting بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="muted" style="margin-top:10px">الفيديو يشرح أساسيات Subnetting وعدد الشبكات وأمثلة على /24 و/26 و/27.</p>
+  </div>
+</div>`;
+const lesson3Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul><li>فهم معنى <b>Borrowed Bits</b> ولماذا نستعير بتات من جزء المضيف.</li><li>حساب عدد الشبكات الفرعية باستخدام <b>2<sup>n</sup></b>.</li><li>حساب عدد عناوين المضيفين في كل شبكة باستخدام <b>2<sup>h</sup> - 2</b>.</li><li>تحديد الـ Prefix والقناع الجديد بعد الاستعارة.</li><li>استخدام الفكرة في تقسيم شبكة Class C إلى شبكات متساوية.</li></ul>
+<h3>1️⃣ ما المقصود بـ Borrowed Bits؟</h3>
+<p>عند تقسيم شبكة كبيرة إلى شبكات فرعية متساوية، نستعير عددًا من البتات من <b>جزء المضيف</b> ونضيفها إلى جزء الشبكة. عدد البتات التي نستعيرها نرمز له بالرمز <b>n</b>.</p>
+<div class="question"><b>مثال:</b> الشبكة 192.168.10.0/24، إذا استعرنا 3 بتات يصبح الـ Prefix الجديد /27.</div>
+<h3>2️⃣ كيف يؤثر عدد البتات المستعارة؟</h3>
+<p>كل بت مستعار يضاعف عدد الشبكات الفرعية، وفي المقابل يقل عدد بتات المضيف المتاحة داخل كل شبكة.</p>
+<table><tr><th>Borrowed Bits</th><th>عدد الشبكات</th><th>Host Bits</th><th>المضيفون القابلون للاستخدام</th></tr><tr><td>0</td><td>1</td><td>8</td><td>254</td></tr><tr><td>1</td><td>2</td><td>7</td><td>126</td></tr><tr><td>2</td><td>4</td><td>6</td><td>62</td></tr><tr><td>3</td><td>8</td><td>5</td><td>30</td></tr><tr><td>4</td><td>16</td><td>4</td><td>14</td></tr><tr><td>5</td><td>32</td><td>3</td><td>6</td></tr><tr><td>6</td><td>64</td><td>2</td><td>2</td></tr></table>
+<h3>3️⃣ حساب عدد الشبكات</h3>
+<div class="question"><b>عدد الشبكات = 2<sup>n</sup></b></div>
+<p>إذا استعرنا 3 بتات: <b>2<sup>3</sup> = 8 شبكات</b>. وإذا استعرنا 2 بت: <b>2<sup>2</sup> = 4 شبكات</b>.</p>
+<h3>4️⃣ حساب عدد المضيفين في كل شبكة</h3>
+<p>عدد بتات المضيف = <b>32 - Prefix</b>، وعدد العناوين القابلة للاستخدام غالبًا:</p>
+<div class="question"><b>عدد المضيفين = 2<sup>Host Bits</sup> - 2</b></div>
+<p>في /27: عدد بتات المضيف = 5، إذن <b>2<sup>5</sup> - 2 = 30</b> عنوانًا قابلًا للاستخدام.</p>
+<h3>5️⃣ تحديد الـ Prefix الجديد</h3>
+<div class="good"><b>/24 + 3 = /27</b> → القناع الجديد <b>255.255.255.224</b>.</div>
+<h3>6️⃣ مثال عملي كامل: 192.168.10.0/24 إلى 8 شبكات</h3>
+<ol><li>عدد الشبكات المطلوبة = <b>8</b>.</li><li>نحتاج إلى 3 بتات لأن <b>2<sup>3</sup> = 8</b>.</li><li>Borrowed Bits = <b>3</b>.</li><li>New Prefix = <b>/27</b>.</li><li>Subnet Mask = <b>255.255.255.224</b>.</li><li>عدد المضيفين في كل شبكة = <b>30</b>.</li></ol>
+<h3>7️⃣ الشبكات الناتجة</h3>
+<table><tr><th>الشبكة</th><th>Network</th><th>First Host</th><th>Last Host</th><th>Broadcast</th></tr>
+<tr><td>1</td><td>192.168.10.0</td><td>192.168.10.1</td><td>192.168.10.30</td><td>192.168.10.31</td></tr>
+<tr><td>2</td><td>192.168.10.32</td><td>192.168.10.33</td><td>192.168.10.62</td><td>192.168.10.63</td></tr>
+<tr><td>3</td><td>192.168.10.64</td><td>192.168.10.65</td><td>192.168.10.94</td><td>192.168.10.95</td></tr>
+<tr><td>4</td><td>192.168.10.96</td><td>192.168.10.97</td><td>192.168.10.126</td><td>192.168.10.127</td></tr>
+<tr><td>5</td><td>192.168.10.128</td><td>192.168.10.129</td><td>192.168.10.158</td><td>192.168.10.159</td></tr>
+<tr><td>6</td><td>192.168.10.160</td><td>192.168.10.161</td><td>192.168.10.190</td><td>192.168.10.191</td></tr>
+<tr><td>7</td><td>192.168.10.192</td><td>192.168.10.193</td><td>192.168.10.222</td><td>192.168.10.223</td></tr>
+<tr><td>8</td><td>192.168.10.224</td><td>192.168.10.225</td><td>192.168.10.254</td><td>192.168.10.255</td></tr>
+</table>
+<h3>🧠 قاعدة للحفظ</h3>
+<p><b>Borrowed Bits ↑ → عدد الشبكات ↑ → Host Bits ↓ → عدد المضيفين في كل شبكة ↓</b></p>
+<h3>📝 تطبيق سريع</h3>
+<p>لدينا <b>192.168.20.0/24</b> ونريد <b>4 شبكات متساوية</b>.</p>
+<ul><li>Borrowed Bits = <b>2</b>.</li><li>New Prefix = <b>/26</b>.</li><li>Subnet Mask = <b>255.255.255.192</b>.</li><li>عدد المضيفين القابلين للاستخدام في كل شبكة = <b>62</b>.</li></ul>
+</div>`;
+
 const courseFallback=[
  {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
- {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:25,content:'<p>عند تقسيم شبكة /24 إلى شبكات متساوية، نستعير بتات من جزء المضيف.</p><p>عدد الشبكات = <b>2<sup>n</sup></b> حيث n عدد البتات المستعارة.</p><div class="question"><b>مثال:</b> نريد 8 شبكات → نستعير 3 بتات → /27.</div>'},
+ {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:30,content:lesson3Detailed+lesson3Media},
  {id:'local-4',lesson_no:4,title:'Magic Number',duration:20,content:'<p>الـ Magic Number أو Block Size يساعدك على تحديد بداية كل Subnet بسرعة.</p><p>في /26 يكون القناع 255.255.255.192، وبالتالي حجم الكتلة = 256 - 192 = <b>64</b>.</p><p>الشبكات: 0، 64، 128، 192.</p>'},
  {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:25,content:'<p>لكل Subnet أربعة عناصر مهمة:</p><ol><li>Network Address: أول عنوان.</li><li>First Host: Network + 1.</li><li>Last Host: Broadcast - 1.</li><li>Broadcast: آخر عنوان في الـ Subnet.</li></ol><div class="question"><b>مثال:</b> 192.168.10.64/26 → Network = .64، First = .65، Last = .126، Broadcast = .127.</div>'},
  {id:'local-6',lesson_no:6,title:'FLSM — تقسيم الشبكة إلى أحجام متساوية',duration:30,content:'<p><b>FLSM</b> يعني أن جميع الشبكات الفرعية لها نفس حجم العناوين.</p><p>خطوات الحل:</p><ol><li>حدد عدد الشبكات المطلوبة.</li><li>احسب عدد البتات المستعارة.</li><li>حدد الـ Prefix الجديد.</li><li>احسب القناع والـ Magic Number.</li><li>اكتب Network وHosts وBroadcast لكل Subnet.</li></ol>'},
@@ -1129,6 +1184,9 @@ async function loadCourse(){
    }
    if(Number(x.lesson_no)===2 && !String(x.id).startsWith('local-')){
      lessonContent += lesson2Detailed + lesson2Media;
+   }
+   if(Number(x.lesson_no)===3 && !String(x.id).startsWith('local-')){
+     lessonContent += lesson3Detailed + lesson3Media;
    }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
