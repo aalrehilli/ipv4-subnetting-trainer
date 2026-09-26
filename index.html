@@ -1194,12 +1194,55 @@ const lesson3Detailed=`
 <ul><li>Borrowed Bits = <b>2</b>.</li><li>New Prefix = <b>/26</b>.</li><li>Subnet Mask = <b>255.255.255.192</b>.</li><li>عدد المضيفين القابلين للاستخدام في كل شبكة = <b>62</b>.</li></ul>
 </div>`;
 
+
+const lesson5Media=`
+<div class="lesson-extra" style="margin-top:18px">
+  <div class="card" style="background:#f8fbff">
+    <h3>🧠 خريطة ذهنية</h3>
+    <p class="muted">ملخص بصري لدرس Network وFirst Host وLast Host وBroadcast مع مثال /26.</p>
+    <img src="assets/ipv4-lesson5-mindmap.png" alt="خريطة ذهنية لدرس Network وFirst Host وLast Host وBroadcast" style="width:100%;max-height:760px;object-fit:contain;border:1px solid #d6e3ef;border-radius:14px;background:#fff">
+  </div>
+  <div class="card">
+    <h3>🎥 فيديو شرح الدرس</h3>
+    <p>شرح عربي عملي لحساب Network وFirst Host وLast Host وBroadcast.</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px">
+      <iframe src="https://www.youtube.com/embed/mGTrCk7WmI0" title="شرح Network First Host Last Host Broadcast بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="muted" style="margin-top:10px">الفيديو يشرح طريقة حساب Subnet وBroadcast وأول وآخر عنوان للمضيف.</p>
+  </div>
+</div>`;
+const lesson5Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul><li>التمييز بين <b>Network Address</b> و<b>First Host</b> و<b>Last Host</b> و<b>Broadcast</b>.</li><li>حساب العناوين الأربعة لأي Subnet باستخدام Prefix وMagic Number.</li><li>معرفة العناوين التي يمكن تخصيصها للأجهزة والعناوين المحجوزة.</li><li>حل مسائل Class C مثل <b>/25 و/26 و/27 و/28</b>.</li></ul>
+<h3>1️⃣ ما هي العناصر الأربعة؟</h3>
+<table><tr><th>العنصر</th><th>المعنى</th><th>الاستخدام</th></tr><tr><td>Network</td><td>أول عنوان في الشبكة</td><td>يمثل الشبكة ولا يُخصص لجهاز</td></tr><tr><td>First Host</td><td>Network + 1</td><td>أول عنوان قابل للاستخدام</td></tr><tr><td>Last Host</td><td>Broadcast - 1</td><td>آخر عنوان قابل للاستخدام</td></tr><tr><td>Broadcast</td><td>آخر عنوان في الشبكة</td><td>لإرسال البيانات إلى جميع الأجهزة داخل الـSubnet</td></tr></table>
+<h3>2️⃣ القواعد الأساسية</h3>
+<div class="question"><b>First Host = Network + 1</b><br><b>Last Host = Broadcast - 1</b><br><b>عدد المضيفين القابلين للاستخدام = 2<sup>Host Bits</sup> - 2</b></div>
+<h3>3️⃣ خطوات الحل</h3>
+<ol><li>حدد الـ <b>Prefix</b> أو Subnet Mask.</li><li>احسب <b>Magic Number / Block Size</b>.</li><li>حدد بداية الشبكة التي يقع فيها عنوان IP.</li><li>بداية المجال هي <b>Network</b>.</li><li>العنوان التالي للشبكة هو <b>First Host</b>.</li><li>آخر عنوان قبل Broadcast هو <b>Last Host</b>.</li><li>آخر عنوان في المجال هو <b>Broadcast</b>.</li></ol>
+<h3>4️⃣ مثال محلول: 192.168.10.64/26</h3>
+<p>القناع هو <b>255.255.255.192</b>، وبالتالي Magic Number = <b>256 - 192 = 64</b>. مجالات الشبكات هي 0–63، 64–127، 128–191، 192–255؛ لذلك العنوان 192.168.10.64 يبدأ شبكة مستقلة.</p>
+<table><tr><th>العنصر</th><th>العنوان</th></tr><tr><td>Network</td><td><b>192.168.10.64</b></td></tr><tr><td>First Host</td><td><b>192.168.10.65</b></td></tr><tr><td>Last Host</td><td><b>192.168.10.126</b></td></tr><tr><td>Broadcast</td><td><b>192.168.10.127</b></td></tr></table>
+<div class="good"><b>عدد العناوين في الكتلة = 64</b>، وعدد المضيفين القابلين للاستخدام = <b>62</b>.</div>
+<h3>5️⃣ مثال: 192.168.10.75/26</h3>
+<p>العنوان <b>.75</b> يقع داخل المجال <b>.64 إلى .127</b>، لذلك تكون النتيجة:</p>
+<table><tr><th>Network</th><th>First Host</th><th>Last Host</th><th>Broadcast</th></tr><tr><td>192.168.10.64</td><td>192.168.10.65</td><td>192.168.10.126</td><td>192.168.10.127</td></tr></table>
+<h3>6️⃣ أمثلة سريعة</h3>
+<table><tr><th>Prefix</th><th>Block Size</th><th>مثال مجال</th><th>Hosts Usable</th></tr><tr><td>/25</td><td>128</td><td>.0 – .127</td><td>126</td></tr><tr><td>/26</td><td>64</td><td>.64 – .127</td><td>62</td></tr><tr><td>/27</td><td>32</td><td>.32 – .63</td><td>30</td></tr><tr><td>/28</td><td>16</td><td>.48 – .63</td><td>14</td></tr><tr><td>/29</td><td>8</td><td>.56 – .63</td><td>6</td></tr><tr><td>/30</td><td>4</td><td>.60 – .63</td><td>2</td></tr></table>
+<h3>🧠 قاعدة للحفظ</h3>
+<p><b>Network → +1 = First Host → ... → -1 = Last Host → آخر عنوان = Broadcast</b></p>
+<h3>📝 تطبيق سريع</h3>
+<p>لديك <b>192.168.20.32/27</b>، احسب Network وFirst Host وLast Host وBroadcast.</p>
+<ul><li>Subnet Mask = <b>255.255.255.224</b>.</li><li>Magic Number = <b>32</b>.</li><li>Network = <b>192.168.20.32</b>.</li><li>First Host = <b>192.168.20.33</b>.</li><li>Last Host = <b>192.168.20.62</b>.</li><li>Broadcast = <b>192.168.20.63</b>.</li></ul>
+</div>`;
+
 const courseFallback=[
  {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
  {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:30,content:lesson3Detailed+lesson3Media},
  {id:'local-4',lesson_no:4,title:'Magic Number',duration:30,content:lesson4Detailed+lesson4Media},
- {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:25,content:'<p>لكل Subnet أربعة عناصر مهمة:</p><ol><li>Network Address: أول عنوان.</li><li>First Host: Network + 1.</li><li>Last Host: Broadcast - 1.</li><li>Broadcast: آخر عنوان في الـ Subnet.</li></ol><div class="question"><b>مثال:</b> 192.168.10.64/26 → Network = .64، First = .65، Last = .126، Broadcast = .127.</div>'},
+ {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:30,content:lesson5Detailed+lesson5Media},
  {id:'local-6',lesson_no:6,title:'FLSM — تقسيم الشبكة إلى أحجام متساوية',duration:30,content:'<p><b>FLSM</b> يعني أن جميع الشبكات الفرعية لها نفس حجم العناوين.</p><p>خطوات الحل:</p><ol><li>حدد عدد الشبكات المطلوبة.</li><li>احسب عدد البتات المستعارة.</li><li>حدد الـ Prefix الجديد.</li><li>احسب القناع والـ Magic Number.</li><li>اكتب Network وHosts وBroadcast لكل Subnet.</li></ol>'},
  {id:'local-7',lesson_no:7,title:'مختبر عملي: Class C FLSM',duration:35,content:'<p>طبّق على الشبكة <b>192.168.50.0/24</b> والمطلوب 4 شبكات متساوية.</p><ul><li>Borrowed Bits = 2</li><li>New Prefix = /26</li><li>Magic Number = 64</li><li>الشبكات تبدأ عند 0، 64، 128، 192.</li></ul><p>بعد إنهاء الدرس انتقل إلى <b>التمارين</b> ثم اختبر نفسك من صفحة <b>الاختبارات</b>.</p>'},
  {id:'local-8',lesson_no:8,title:'مراجعة واستعداد للاختبار',duration:25,content:'<p>قبل الاختبار تأكد أنك تستطيع حل هذه المهام دون آلة حاسبة:</p><ul><li>حساب Borrowed Bits.</li><li>تحويل Prefix إلى Subnet Mask.</li><li>حساب Magic Number.</li><li>تحديد Network Address.</li><li>تحديد First/Last Host.</li><li>تحديد Broadcast.</li><li>حساب عدد Hosts/Subnet.</li></ul><div class="good">🎯 هدف الإتقان: حل مسائل Class C + FLSM بدقة وسرعة.</div>'}
@@ -1237,6 +1280,9 @@ async function loadCourse(){
    }
    if(Number(x.lesson_no)===4 && !String(x.id).startsWith('local-')){
      lessonContent += lesson4Detailed + lesson4Media;
+   }
+   if(Number(x.lesson_no)===5 && !String(x.id).startsWith('local-')){
+     lessonContent += lesson5Detailed + lesson5Media;
    }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
