@@ -246,7 +246,7 @@ async function renderTrainer(){
 }
 function trainerTab(tab,btn){
   ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerAnalytics"].forEach(id=>$(id)?.classList.add("hidden"));
-  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams"};
+  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",analytics:"trainerAnalytics"};
   $(map[tab])?.classList.remove("hidden");
   if(btn){document.querySelectorAll("#trainer .card button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
   if(tab==="students")loadTrainerStudents();
@@ -526,6 +526,8 @@ async function loadTrainerAnalytics(){
   ]);
   if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة النتائج: ${esc(ar.error.message)}</div>`;return;}
   if(aa.error){area.innerHTML=`<div class="bad">❌ جدول تفاصيل الإجابات غير جاهز. نفّذ SQL الخاص بـ V8 أولًا.<br>${esc(aa.error.message)}</div>`;return;}
+  if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات: ${esc(er.error.message)}</div>`;return;}
+  if(pr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة بيانات المتدربين: ${esc(pr.error.message)}</div>`;return;}
   const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[], answers=aa.data||[];
   const pm=new Map(profiles.map(x=>[x.id,x]));
   const byExam=new Map();
