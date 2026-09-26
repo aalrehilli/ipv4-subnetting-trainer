@@ -17,7 +17,7 @@
 .preview-option{padding:10px;border:1px solid #d8e6f1;border-radius:8px;margin:7px 0}
 .preview-match{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:9px;border-bottom:1px solid #e6eef5}
 @media(max-width:800px){.qbank-tools{grid-template-columns:1fr 1fr}.preview-match{grid-template-columns:1fr}}
-</style></head><body>
+</style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V13 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
@@ -515,14 +515,21 @@ async function createTrainerExam(){
   if(ir.error){await db.from('trainer_exams').delete().eq('id',er.data.id);msg('examMsg','❌ تعذر ربط الأسئلة: '+ir.error.message);return;}
   msg('examMsg','✅ تم إنشاء الاختبار وربط '+question_count+' سؤالًا.',true);loadTrainerExams();
 }
+let analyticsCharts={};
+function destroyAnalyticsCharts(){
+  Object.values(analyticsCharts).forEach(c=>{try{c.destroy()}catch(e){}});
+  analyticsCharts={};
+}
+function chartCanvas(id,height=300){return `<div class="card" style="margin-top:18px"><canvas id="${id}" style="width:100%;max-height:${height}px"></canvas></div>`;}
 async function loadTrainerAnalytics(){
   const area=$("trainerAnalyticsArea");
+  destroyAnalyticsCharts();
   area.innerHTML='<div class="muted">⏳ جارٍ تحميل التحليلات...</div>';
   const [ar,er,pr,aa]=await Promise.all([
     db.from("attempts").select("id,student_id,exam_id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic,group_name)"),
     db.from("trainer_exams").select("id,title,topic,question_count,duration_minutes,group_name,is_active,created_at"),
     db.from("profiles").select("id,full_name,student_id,group_name"),
-    db.from("attempt_answers").select("attempt_id,question_id,question_order,selected_answer,correct_answer,is_correct,trainer_questions(question_text)")
+    db.from("attempt_answers").select("attempt_id,question_id,question_number,question_order,selected_answer,correct_answer,is_correct,trainer_questions(question_text)")
   ]);
   if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة النتائج: ${esc(ar.error.message)}</div>`;return;}
   if(aa.error){area.innerHTML=`<div class="bad">❌ جدول تفاصيل الإجابات غير جاهز. نفّذ SQL الخاص بـ V8 أولًا.<br>${esc(aa.error.message)}</div>`;return;}
@@ -531,18 +538,63 @@ async function loadTrainerAnalytics(){
   const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[], answers=aa.data||[];
   const pm=new Map(profiles.map(x=>[x.id,x]));
   const byExam=new Map();
-  attempts.forEach(a=>{if(!a.exam_id)return;const k=a.exam_id;const o=byExam.get(k)||{title:a.trainer_exams?.title||"اختبار",n:0,sum:0,pass:0};o.n++;o.sum+=Number(a.percentage||0);if(Number(a.percentage||0)>=60)o.pass++;byExam.set(k,o);});
+  attempts.forEach(a=>{
+    if(!a.exam_id)return;
+    const k=a.exam_id;
+    const o=byExam.get(k)||{title:a.trainer_exams?.title||"اختبار",n:0,sum:0,pass:0};
+    o.n++; o.sum+=Number(a.percentage||0); if(Number(a.percentage||0)>=60)o.pass++;
+    byExam.set(k,o);
+  });
   const cards=[...byExam.values()];
-  const total=attempts.length,avg=total?Math.round(attempts.reduce((s,a)=>s+Number(a.percentage||0),0)/total):0,pass=total?Math.round(attempts.filter(a=>Number(a.percentage||0)>=60).length/total*100):0;
+  const total=attempts.length;
+  const avg=total?Math.round(attempts.reduce((s,a)=>s+Number(a.percentage||0),0)/total):0;
+  const pass=total?Math.round(attempts.filter(a=>Number(a.percentage||0)>=60).length/total*100):0;
   let html=`<div class="grid"><div class="card"><div class="muted">المحاولات</div><div class="kpi">${total}</div></div><div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">نسبة النجاح</div><div class="kpi">${pass}%</div></div></div>`;
+  if(cards.length){
+    html+=`<h3>📊 الرسوم البيانية</h3>`;
+    html+=chartCanvas('attemptsByExamChart',280);
+    html+=chartCanvas('averageByExamChart',280);
+  }
   html+=cards.length?`<h3>ملخص الاختبارات</h3><table><tr><th>الاختبار</th><th>المحاولات</th><th>المتوسط</th><th>نسبة النجاح</th></tr>${cards.map(x=>`<tr><td>${esc(x.title)}</td><td>${x.n}</td><td>${Math.round(x.sum/x.n)}%</td><td>${Math.round(x.pass/x.n*100)}%</td></tr>`).join("")}</table>`:'<div class="muted">لا توجد محاولات اختبارات بعد.</div>';
   const qMap=new Map();
-  answers.forEach(a=>{const k=a.question_id;const o=qMap.get(k)||{text:a.trainer_questions?.question_text||"",n:0,wrong:0};o.n++;if(!a.is_correct)o.wrong++;qMap.set(k,o);});
+  answers.forEach(a=>{
+    const k=a.question_id; if(!k)return;
+    const o=qMap.get(k)||{text:a.trainer_questions?.question_text||"",n:0,wrong:0};
+    o.n++; if(!a.is_correct)o.wrong++; qMap.set(k,o);
+  });
   const qRows=[...qMap.values()].sort((a,b)=>b.wrong-a.wrong).slice(0,10);
-  if(qRows.length) html+=`<h3 style="margin-top:22px">أكثر الأسئلة أخطاءً</h3><table><tr><th>السؤال</th><th>عدد المحاولات</th><th>إجابات خاطئة</th><th>نسبة الخطأ</th></tr>${qRows.map(x=>`<tr><td style="text-align:right">${esc(x.text)}</td><td>${x.n}</td><td>${x.wrong}</td><td>${Math.round(x.wrong/x.n*100)}%</td></tr>`).join("")}</table>`;
+  if(qRows.length){
+    html+=`<h3 style="margin-top:22px">⚠️ أكثر الأسئلة أخطاءً</h3>`;
+    html+=chartCanvas('wrongQuestionsChart',320);
+    html+=`<table><tr><th>السؤال</th><th>عدد المحاولات</th><th>إجابات خاطئة</th><th>نسبة الخطأ</th></tr>${qRows.map(x=>`<tr><td style="text-align:right">${esc(x.text)}</td><td>${x.n}</td><td>${x.wrong}</td><td>${Math.round(x.wrong/x.n*100)}%</td></tr>`).join("")}</table>`;
+  }
   html+=`<h3 style="margin-top:22px">تفاصيل آخر المحاولات</h3>`;
   html+=attempts.length?`<table><tr><th>المتدرب</th><th>الاختبار</th><th>الدرجة</th><th>التاريخ</th></tr>${attempts.slice().sort((a,b)=>new Date(b.submitted_at)-new Date(a.submitted_at)).slice(0,50).map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"—")}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td></tr>`}).join("")}</table>`:'<div class="muted">لا توجد نتائج.</div>';
   area.innerHTML=html;
+
+  if(typeof Chart==='undefined'){
+    const note=document.createElement('div'); note.className='bad'; note.style.marginTop='12px';
+    note.textContent='⚠️ تعذر تحميل مكتبة الرسوم البيانية. تحقق من اتصال الإنترنت ثم حدّث الصفحة.';
+    area.prepend(note); return;
+  }
+  if(cards.length){
+    const labels=cards.map(x=>x.title);
+    analyticsCharts.attempts=new Chart($("attemptsByExamChart"),{
+      type:'bar',data:{labels,datasets:[{label:'عدد المحاولات',data:cards.map(x=>x.n)}]},
+      options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'عدد المحاولات لكل اختبار'}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+    });
+    analyticsCharts.average=new Chart($("averageByExamChart"),{
+      type:'bar',data:{labels,datasets:[{label:'متوسط الدرجة %',data:cards.map(x=>Math.round(x.sum/x.n))},{label:'نسبة النجاح %',data:cards.map(x=>Math.round(x.pass/x.n*100))}]},
+      options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'متوسط الدرجات ونسبة النجاح'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+    });
+  }
+  if(qRows.length){
+    const qlabels=qRows.map((x,i)=>`س${i+1}`);
+    analyticsCharts.wrong=new Chart($("wrongQuestionsChart"),{
+      type:'bar',data:{labels:qlabels,datasets:[{label:'نسبة الخطأ %',data:qRows.map(x=>Math.round(x.wrong/x.n*100))}]},
+      options:{indexAxis:'y',responsive:true,plugins:{legend:{display:true},title:{display:true,text:'نسبة الخطأ لأكثر 10 أسئلة صعوبة'}},scales:{x:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+    });
+  }
 }
 
 async function loadTrainerExams(){
