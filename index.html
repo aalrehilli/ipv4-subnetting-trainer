@@ -376,6 +376,13 @@ function previewTrainerQuestion(id){
   }
 }
 window.previewTrainerQuestion=previewTrainerQuestion;
+function cleanQuestionText(text){
+  let s=String(text||'');
+  // إزالة لاحقة "نسخة" التي أضافتها النسخ القديمة، بما فيها التكرار المتعدد.
+  s=s.replace(/(?:\s*(?:—|–|-)?\s*نسخة\s*)+$/u, "").trim();
+  return s;
+}
+
 function closeQuestionPreview(){
   const modal=document.getElementById("questionPreviewModal");
   if(modal) modal.classList.add("hidden");
@@ -389,7 +396,7 @@ document.addEventListener("click",function(e){
 });
 async function duplicateTrainerQuestion(id){
   const x=findTrainerQuestion(id); if(!x)return;
-  const payload={question_text:x.question_text||"",correct_answer:x.correct_answer||"",difficulty:x.difficulty||"easy",topic:x.topic||"FLSM",created_by:user.id,question_type:x.question_type||"short",options_json:x.options_json||null,matching_json:x.matching_json||null};
+  const payload={question_text:cleanQuestionText(x.question_text||""),correct_answer:x.correct_answer||"",difficulty:x.difficulty||"easy",topic:x.topic||"FLSM",created_by:user.id,question_type:x.question_type||"short",options_json:x.options_json||null,matching_json:x.matching_json||null};
   const r=await db.from("trainer_questions").insert(payload);
   if(r.error){alert("تعذر نسخ السؤال: "+r.error.message);return;}
   await loadTrainerQuestions();
