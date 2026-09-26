@@ -525,75 +525,83 @@ async function loadTrainerAnalytics(){
   const area=$("trainerAnalyticsArea");
   destroyAnalyticsCharts();
   area.innerHTML='<div class="muted">⏳ جارٍ تحميل التحليلات...</div>';
-  const [ar,er,pr,aa]=await Promise.all([
-    db.from("attempts").select("id,student_id,exam_id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic,group_name)"),
-    db.from("trainer_exams").select("id,title,topic,question_count,duration_minutes,group_name,is_active,created_at"),
-    db.from("profiles").select("id,full_name,student_id,group_name"),
-    db.from("attempt_answers").select("attempt_id,question_id,question_number,question_order,selected_answer,correct_answer,is_correct,trainer_questions(question_text)")
-  ]);
-  if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة النتائج: ${esc(ar.error.message)}</div>`;return;}
-  if(aa.error){area.innerHTML=`<div class="bad">❌ جدول تفاصيل الإجابات غير جاهز. نفّذ SQL الخاص بـ V8 أولًا.<br>${esc(aa.error.message)}</div>`;return;}
-  if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات: ${esc(er.error.message)}</div>`;return;}
-  if(pr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة بيانات المتدربين: ${esc(pr.error.message)}</div>`;return;}
-  const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[], answers=aa.data||[];
-  const pm=new Map(profiles.map(x=>[x.id,x]));
-  const byExam=new Map();
-  attempts.forEach(a=>{
-    if(!a.exam_id)return;
-    const k=a.exam_id;
-    const o=byExam.get(k)||{title:a.trainer_exams?.title||"اختبار",n:0,sum:0,pass:0};
-    o.n++; o.sum+=Number(a.percentage||0); if(Number(a.percentage||0)>=60)o.pass++;
-    byExam.set(k,o);
-  });
-  const cards=[...byExam.values()];
-  const total=attempts.length;
-  const avg=total?Math.round(attempts.reduce((s,a)=>s+Number(a.percentage||0),0)/total):0;
-  const pass=total?Math.round(attempts.filter(a=>Number(a.percentage||0)>=60).length/total*100):0;
-  let html=`<div class="grid"><div class="card"><div class="muted">المحاولات</div><div class="kpi">${total}</div></div><div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">نسبة النجاح</div><div class="kpi">${pass}%</div></div></div>`;
-  if(cards.length){
-    html+=`<h3>📊 الرسوم البيانية</h3>`;
-    html+=chartCanvas('attemptsByExamChart',280);
-    html+=chartCanvas('averageByExamChart',280);
-  }
-  html+=cards.length?`<h3>ملخص الاختبارات</h3><table><tr><th>الاختبار</th><th>المحاولات</th><th>المتوسط</th><th>نسبة النجاح</th></tr>${cards.map(x=>`<tr><td>${esc(x.title)}</td><td>${x.n}</td><td>${Math.round(x.sum/x.n)}%</td><td>${Math.round(x.pass/x.n*100)}%</td></tr>`).join("")}</table>`:'<div class="muted">لا توجد محاولات اختبارات بعد.</div>';
-  const qMap=new Map();
-  answers.forEach(a=>{
-    const k=a.question_id; if(!k)return;
-    const o=qMap.get(k)||{text:a.trainer_questions?.question_text||"",n:0,wrong:0};
-    o.n++; if(!a.is_correct)o.wrong++; qMap.set(k,o);
-  });
-  const qRows=[...qMap.values()].sort((a,b)=>b.wrong-a.wrong).slice(0,10);
-  if(qRows.length){
-    html+=`<h3 style="margin-top:22px">⚠️ أكثر الأسئلة أخطاءً</h3>`;
-    html+=chartCanvas('wrongQuestionsChart',320);
-    html+=`<table><tr><th>السؤال</th><th>عدد المحاولات</th><th>إجابات خاطئة</th><th>نسبة الخطأ</th></tr>${qRows.map(x=>`<tr><td style="text-align:right">${esc(x.text)}</td><td>${x.n}</td><td>${x.wrong}</td><td>${Math.round(x.wrong/x.n*100)}%</td></tr>`).join("")}</table>`;
-  }
-  html+=`<h3 style="margin-top:22px">تفاصيل آخر المحاولات</h3>`;
-  html+=attempts.length?`<table><tr><th>المتدرب</th><th>الاختبار</th><th>الدرجة</th><th>التاريخ</th></tr>${attempts.slice().sort((a,b)=>new Date(b.submitted_at)-new Date(a.submitted_at)).slice(0,50).map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"—")}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td></tr>`}).join("")}</table>`:'<div class="muted">لا توجد نتائج.</div>';
-  area.innerHTML=html;
+  try{
+    // تحميل البيانات الأساسية أولاً. لا نعتمد على attempt_answers حتى لا تتوقف التحليلات كلها بسبب اختلاف بنية الجدول.
+    const [ar,er,pr]=await Promise.all([
+      db.from("attempts").select("id,student_id,exam_id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic,group_name)"),
+      db.from("trainer_exams").select("id,title,topic,question_count,duration_minutes,group_name,is_active,created_at"),
+      db.from("profiles").select("id,full_name,student_id,group_name")
+    ]);
+    if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة النتائج:<br>${esc(ar.error.message)}</div>`;return;}
+    if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات:<br>${esc(er.error.message)}</div>`;return;}
+    if(pr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة بيانات المتدربين:<br>${esc(pr.error.message)}</div>`;return;}
 
-  if(typeof Chart==='undefined'){
-    const note=document.createElement('div'); note.className='bad'; note.style.marginTop='12px';
-    note.textContent='⚠️ تعذر تحميل مكتبة الرسوم البيانية. تحقق من اتصال الإنترنت ثم حدّث الصفحة.';
-    area.prepend(note); return;
-  }
-  if(cards.length){
-    const labels=cards.map(x=>x.title);
-    analyticsCharts.attempts=new Chart($("attemptsByExamChart"),{
-      type:'bar',data:{labels,datasets:[{label:'عدد المحاولات',data:cards.map(x=>x.n)}]},
-      options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'عدد المحاولات لكل اختبار'}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}
+    const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[];
+    const pm=new Map(profiles.map(x=>[x.id,x]));
+    const byExam=new Map();
+    attempts.forEach(a=>{
+      if(!a.exam_id)return;
+      const k=a.exam_id;
+      const o=byExam.get(k)||{title:a.trainer_exams?.title||"اختبار",n:0,sum:0,pass:0};
+      o.n++; o.sum+=Number(a.percentage||0); if(Number(a.percentage||0)>=60)o.pass++;
+      byExam.set(k,o);
     });
-    analyticsCharts.average=new Chart($("averageByExamChart"),{
-      type:'bar',data:{labels,datasets:[{label:'متوسط الدرجة %',data:cards.map(x=>Math.round(x.sum/x.n))},{label:'نسبة النجاح %',data:cards.map(x=>Math.round(x.pass/x.n*100))}]},
-      options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'متوسط الدرجات ونسبة النجاح'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+    const cards=[...byExam.values()];
+    const total=attempts.length;
+    const avg=total?Math.round(attempts.reduce((s,a)=>s+Number(a.percentage||0),0)/total):0;
+    const pass=total?Math.round(attempts.filter(a=>Number(a.percentage||0)>=60).length/total*100):0;
+    let html=`<div class="grid"><div class="card"><div class="muted">المحاولات</div><div class="kpi">${total}</div></div><div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">نسبة النجاح</div><div class="kpi">${pass}%</div></div><div class="card"><div class="muted">عدد الاختبارات</div><div class="kpi">${exams.length}</div></div></div>`;
+    if(cards.length){
+      html+=`<h3>📊 الرسوم البيانية</h3>`;
+      html+=chartCanvas('attemptsByExamChart',280);
+      html+=chartCanvas('averageByExamChart',280);
+    }
+    html+=cards.length?`<h3>ملخص الاختبارات</h3><table><tr><th>الاختبار</th><th>المحاولات</th><th>المتوسط</th><th>نسبة النجاح</th></tr>${cards.map(x=>`<tr><td>${esc(x.title)}</td><td>${x.n}</td><td>${Math.round(x.sum/x.n)}%</td><td>${Math.round(x.pass/x.n*100)}%</td></tr>`).join("")}</table>`:'<div class="muted">لا توجد محاولات اختبارات بعد.</div>';
+
+    html+=`<h3 style="margin-top:22px">⚠️ تحليل الأسئلة</h3><div id="questionAnalyticsBox"><div class="muted">جارٍ تحميل تفاصيل الإجابات...</div></div>`;
+    html+=`<h3 style="margin-top:22px">تفاصيل آخر المحاولات</h3>`;
+    html+=attempts.length?`<table><tr><th>المتدرب</th><th>الاختبار</th><th>الدرجة</th><th>التاريخ</th></tr>${attempts.slice().sort((a,b)=>new Date(b.submitted_at)-new Date(a.submitted_at)).slice(0,50).map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"—")}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td></tr>`}).join("")}</table>`:'<div class="muted">لا توجد نتائج.</div>';
+    area.innerHTML=html;
+
+    if(typeof Chart==='undefined'){
+      const note=document.createElement('div'); note.className='bad'; note.style.marginTop='12px';
+      note.textContent='⚠️ تعذر تحميل مكتبة الرسوم البيانية. حدّث الصفحة أو تحقق من اتصال الإنترنت.';
+      area.prepend(note);
+    } else if(cards.length){
+      const labels=cards.map(x=>x.title);
+      analyticsCharts.attempts=new Chart($("attemptsByExamChart"),{type:'bar',data:{labels,datasets:[{label:'عدد المحاولات',data:cards.map(x=>x.n)}]},options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'عدد المحاولات لكل اختبار'}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+      analyticsCharts.average=new Chart($("averageByExamChart"),{type:'bar',data:{labels,datasets:[{label:'متوسط الدرجة %',data:cards.map(x=>Math.round(x.sum/x.n))},{label:'نسبة النجاح %',data:cards.map(x=>Math.round(x.pass/x.n*100))}]},options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'متوسط الدرجات ونسبة النجاح'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}});
+    }
+
+    // تفاصيل الأسئلة اختيارية؛ إذا فشل جدول attempt_answers لن تتعطل بقية التحليلات.
+    const aa=await db.from("attempt_answers").select("attempt_id,question_id,selected_answer,correct_answer,is_correct");
+    const qBox=$("questionAnalyticsBox");
+    if(aa.error){
+      qBox.innerHTML='<div class="muted">ℹ️ تعذر تحميل تحليل الأسئلة التفصيلي، لكن تحليلات الاختبارات تعمل. السبب: '+esc(aa.error.message)+'</div>';
+      return;
+    }
+    const answers=aa.data||[];
+    const ids=[...new Set(answers.map(a=>a.question_id).filter(Boolean))];
+    let questionMap=new Map();
+    if(ids.length){
+      const qr=await db.from('trainer_questions').select('id,question_text').in('id',ids);
+      if(!qr.error) questionMap=new Map((qr.data||[]).map(q=>[q.id,q.question_text]));
+    }
+    const qMap=new Map();
+    answers.forEach(a=>{
+      const k=a.question_id; if(!k)return;
+      const o=qMap.get(k)||{text:questionMap.get(k)||'سؤال',n:0,wrong:0};
+      o.n++; if(!a.is_correct)o.wrong++; qMap.set(k,o);
     });
-  }
-  if(qRows.length){
-    const qlabels=qRows.map((x,i)=>`س${i+1}`);
-    analyticsCharts.wrong=new Chart($("wrongQuestionsChart"),{
-      type:'bar',data:{labels:qlabels,datasets:[{label:'نسبة الخطأ %',data:qRows.map(x=>Math.round(x.wrong/x.n*100))}]},
-      options:{indexAxis:'y',responsive:true,plugins:{legend:{display:true},title:{display:true,text:'نسبة الخطأ لأكثر 10 أسئلة صعوبة'}},scales:{x:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
-    });
+    const qRows=[...qMap.values()].sort((a,b)=>b.wrong-a.wrong).slice(0,10);
+    if(!qRows.length){qBox.innerHTML='<div class="muted">لا توجد تفاصيل إجابات كافية لتحليل الأسئلة.</div>';return;}
+    qBox.innerHTML=chartCanvas('wrongQuestionsChart',320)+`<table><tr><th>السؤال</th><th>عدد المحاولات</th><th>إجابات خاطئة</th><th>نسبة الخطأ</th></tr>${qRows.map(x=>`<tr><td style="text-align:right">${esc(x.text)}</td><td>${x.n}</td><td>${x.wrong}</td><td>${Math.round(x.wrong/x.n*100)}%</td></tr>`).join('')}</table>`;
+    if(typeof Chart!=='undefined'){
+      const qlabels=qRows.map((x,i)=>`س${i+1}`);
+      analyticsCharts.wrong=new Chart($("wrongQuestionsChart"),{type:'bar',data:{labels:qlabels,datasets:[{label:'نسبة الخطأ %',data:qRows.map(x=>Math.round(x.wrong/x.n*100))}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:true},title:{display:true,text:'نسبة الخطأ لأكثر 10 أسئلة'}},scales:{x:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}});
+    }
+  }catch(e){
+    area.innerHTML=`<div class="bad">❌ حدث خطأ غير متوقع في التحليلات:<br>${esc(e?.message||String(e))}</div>`;
   }
 }
 
