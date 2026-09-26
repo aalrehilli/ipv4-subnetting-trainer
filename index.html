@@ -1049,9 +1049,52 @@ const lesson1Detailed=`
 <ul><li>Subnet Mask = 255.255.255.0</li><li>Network = 192.168.10.0</li></ul>
 </div>`;
 
+
+const lesson2Media=`
+<div class="lesson-extra" style="margin-top:18px">
+  <div class="card" style="background:#f8fbff">
+    <h3>🧠 خريطة ذهنية</h3>
+    <p class="muted">ملخص بصري يربط بين Prefix وSubnet Mask ويعرض أمثلة عملية.</p>
+    <img src="assets/ipv4-lesson2-mindmap.png" alt="خريطة ذهنية لدرس Prefix وSubnet Mask" style="width:100%;max-height:700px;object-fit:contain;border:1px solid #d6e3ef;border-radius:14px;background:#fff">
+  </div>
+  <div class="card">
+    <h3>🎥 فيديو شرح الدرس</h3>
+    <p>شرح عربي يوضح IPv4 وSubnet Mask وPrefix مع أمثلة وتمارين.</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px">
+      <iframe src="https://www.youtube.com/embed/yBpvDCTXlEs" title="شرح IPv4 وSubnet Mask وPrefix بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="muted" style="margin-top:10px">الفيديو يتناول IPv4 وSubnet Mask، ثم يوضح فكرة تقسيم الشبكات والتمارين التطبيقية.</p>
+  </div>
+</div>`;
+const lesson2Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul><li>فهم معنى Prefix مثل <b>/24</b> و<b>/26</b>.</li><li>تحويل Prefix إلى Subnet Mask بطريقة سهلة.</li><li>معرفة عدد بتات الشبكة وعدد بتات المضيف.</li><li>فهم العلاقة بين Prefix وحجم الشبكة وعدد عناوين المضيفين.</li></ul>
+<h3>1️⃣ ما هو Prefix؟</h3>
+<p>الـ Prefix هو الرقم الذي يأتي بعد الشرطة المائلة، مثل <b>/24</b>. الرقم يحدد عدد البتات المخصصة لجزء الشبكة من عنوان IPv4.</p>
+<div class="question"><b>مثال:</b> /24 يعني أن أول 24 بت للشبكة، ويتبقى 8 بت للمضيف.</div>
+<h3>2️⃣ ما هو Subnet Mask؟</h3>
+<p>قناع الشبكة يوضح أي أجزاء عنوان IPv4 تخص الشبكة وأي أجزاء تخص الأجهزة. في القناع الثنائي تكون بتات الشبكة <b>1</b> وبتات المضيف <b>0</b>.</p>
+<div class="question"><b>/24 = 255.255.255.0</b></div>
+<h3>3️⃣ العلاقة بين Prefix وSubnet Mask</h3>
+<p>كل Prefix له Subnet Mask مقابل. كلما زادت قيمة Prefix زاد عدد بتات الشبكة وقل عدد بتات المضيف.</p>
+<table><tr><th>Prefix</th><th>Subnet Mask</th><th>Host Bits</th></tr><tr><td>/24</td><td>255.255.255.0</td><td>8</td></tr><tr><td>/25</td><td>255.255.255.128</td><td>7</td></tr><tr><td>/26</td><td>255.255.255.192</td><td>6</td></tr><tr><td>/27</td><td>255.255.255.224</td><td>5</td></tr><tr><td>/28</td><td>255.255.255.240</td><td>4</td></tr></table>
+<h3>4️⃣ كيف أحول Prefix إلى Mask؟</h3>
+<ol><li>اكتب عدد بتات الشبكة حسب Prefix.</li><li>اجعل بتات الشبكة 1 وبتات المضيف 0.</li><li>قسّم 32 بت إلى أربع مجموعات، كل مجموعة 8 بت.</li><li>حوّل كل مجموعة ثنائية إلى رقم عشري.</li></ol>
+<div class="good"><b>مثال:</b> /26 = 24 بت كاملة + بتّان إضافيان في الأوكتت الرابع → 255.255.255.192.</div>
+<h3>5️⃣ مثال محلول: 192.168.10.25/26</h3>
+<ol><li>Prefix = <b>/26</b>.</li><li>Subnet Mask = <b>255.255.255.192</b>.</li><li>عدد بتات المضيف = 32 - 26 = <b>6</b>.</li><li>حجم الكتلة = 256 - 192 = <b>64</b>.</li><li>بدايات الشبكات: 0، 64، 128، 192.</li><li>العنوان 25 يقع داخل الشبكة التي تبدأ بـ 0.</li></ol>
+<div class="question"><b>النتيجة:</b> Network = 192.168.10.0/26، وأول Host = 192.168.10.1، وآخر Host = 192.168.10.62، وBroadcast = 192.168.10.63.</div>
+<h3>🧠 قاعدة للحفظ</h3>
+<p><b>Prefix أكبر → Network Bits أكثر → Host Bits أقل → عدد الأجهزة أقل.</b></p>
+<h3>📝 تطبيق سريع</h3>
+<p>ما القناع المقابل لـ <b>/27</b>؟</p>
+<ul><li>الإجابة: <b>255.255.255.224</b>.</li><li>عدد بتات المضيف: <b>5</b>.</li><li>عدد العناوين في كل شبكة: <b>32</b>.</li></ul>
+</div>`;
+
 const courseFallback=[
  {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
- {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:20,content:'<p>الـ Prefix مثل <b>/24</b> يحدد عدد البتات المستخدمة للشبكة. في /24 توجد 24 بت للشبكة و8 بت للمضيف.</p><ul><li>/24 = 255.255.255.0</li><li>/25 = 255.255.255.128</li><li>/26 = 255.255.255.192</li><li>/27 = 255.255.255.224</li><li>/28 = 255.255.255.240</li></ul>'},
+ {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
  {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:25,content:'<p>عند تقسيم شبكة /24 إلى شبكات متساوية، نستعير بتات من جزء المضيف.</p><p>عدد الشبكات = <b>2<sup>n</sup></b> حيث n عدد البتات المستعارة.</p><div class="question"><b>مثال:</b> نريد 8 شبكات → نستعير 3 بتات → /27.</div>'},
  {id:'local-4',lesson_no:4,title:'Magic Number',duration:20,content:'<p>الـ Magic Number أو Block Size يساعدك على تحديد بداية كل Subnet بسرعة.</p><p>في /26 يكون القناع 255.255.255.192، وبالتالي حجم الكتلة = 256 - 192 = <b>64</b>.</p><p>الشبكات: 0، 64، 128، 192.</p>'},
  {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:25,content:'<p>لكل Subnet أربعة عناصر مهمة:</p><ol><li>Network Address: أول عنوان.</li><li>First Host: Network + 1.</li><li>Last Host: Broadcast - 1.</li><li>Broadcast: آخر عنوان في الـ Subnet.</li></ol><div class="question"><b>مثال:</b> 192.168.10.64/26 → Network = .64، First = .65، Last = .126، Broadcast = .127.</div>'},
@@ -1081,8 +1124,11 @@ async function loadCourse(){
    const practice=acts.find(a=>a.activity_type==='practice');
    const exam=acts.find(a=>a.activity_type==='exam' && a.exam_id);
    let lessonContent=x.content_html||x.content||'';
-   if(Number(x.lesson_no)===1){
+   if(Number(x.lesson_no)===1 && !String(x.id).startsWith('local-')){
      lessonContent += lesson1Detailed + lesson1Media;
+   }
+   if(Number(x.lesson_no)===2 && !String(x.id).startsWith('local-')){
+     lessonContent += lesson2Detailed + lesson2Media;
    }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
