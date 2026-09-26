@@ -17,8 +17,14 @@
 .preview-option{padding:10px;border:1px solid #d8e6f1;border-radius:8px;margin:7px 0}
 .preview-match{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:9px;border-bottom:1px solid #e6eef5}
 @media(max-width:800px){.qbank-tools{grid-template-columns:1fr 1fr}.preview-match{grid-template-columns:1fr}}
+
+.student-analytics-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.student-insight{border:1px solid #dbe6ef;border-radius:12px;padding:14px;background:#fbfdff}
+.student-insight h4{margin:0 0 8px;color:#075ca5}
+.progressbar{height:12px;background:#e8eef4;border-radius:999px;overflow:hidden;margin-top:8px}
+.progressbar>span{display:block;height:100%;background:#0b75c9;border-radius:999px}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V13 • Supabase</div></div>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V20 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
@@ -557,68 +563,154 @@ async function loadStudentAnalytics(studentId){
   }
   area.innerHTML='<div class="muted">⏳ جارٍ تحميل تحليل المتدرب...</div>';
   try{
-    const [ar,er,pr]=await Promise.all([
+    const [ar,pr,xa,lp]=await Promise.all([
       db.from("attempts").select("id,student_id,exam_id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic,group_name)").eq("student_id",studentId).order("submitted_at",{ascending:true}),
-      db.from("trainer_exams").select("id,title,topic"),
-      db.from("profiles").select("id,full_name,student_id,group_name,role").eq("id",studentId).maybeSingle()
+      db.from("profiles").select("id,full_name,student_id,group_name,role").eq("id",studentId).maybeSingle(),
+      db.from("exercise_attempts").select("id,student_id,score,is_correct,created_at").eq("student_id",studentId).order("created_at",{ascending:true}),
+      db.from("lesson_progress").select("lesson_id,completed,practice_completed").eq("user_id",studentId)
     ]);
     if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة نتائج المتدرب:<br>${esc(ar.error.message)}</div>`;return;}
-    if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات:<br>${esc(er.error.message)}</div>`;return;}
+
     const attempts=ar.data||[];
+    const exercises=xa.error?[]:(xa.data||[]);
+    const lessons=lp.error?[]:(lp.data||[]);
     const p=pr.data||trainerAnalyticsProfiles.find(x=>x.id===studentId)||{};
+
     const total=attempts.length;
     const avg=total?Math.round(attempts.reduce((s,a)=>s+Number(a.percentage||0),0)/total):0;
     const best=total?Math.max(...attempts.map(a=>Number(a.percentage||0))):0;
     const pass=total?Math.round(attempts.filter(a=>Number(a.percentage||0)>=60).length/total*100):0;
+
+    const exTotal=exercises.length;
+    const exAvg=exTotal?Math.round(exercises.reduce((s,x)=>s+Number(x.score||0),0)/exTotal):0;
+    const exCorrect=exTotal?Math.round(exercises.filter(x=>x.is_correct).length/exTotal*100):0;
+
+    const lessonDone=lessons.filter(x=>x.completed).length;
+    const lessonPractice=lessons.filter(x=>x.practice_completed).length;
+    const lessonTotal=lessons.length;
+    const courseProgress=lessonTotal?Math.round(((lessonDone+lessonPractice)/(lessonTotal*2))*100):0;
+
     const topics=new Map();
     attempts.forEach(a=>{
       const topic=a.trainer_exams?.topic||"غير مصنف";
-      const o=topics.get(topic)||{sum:0,n:0};
-      o.sum+=Number(a.percentage||0);o.n++;topics.set(topic,o);
+      const o=topics.get(topic)||{sum:0,n:0,pass:0};
+      o.sum+=Number(a.percentage||0);o.n++;
+      if(Number(a.percentage||0)>=60)o.pass++;
+      topics.set(topic,o);
     });
-    const topicRows=[...topics.entries()].map(([topic,o])=>({topic,avg:Math.round(o.sum/o.n),n:o.n})).sort((a,b)=>b.avg-a.avg);
+    const topicRows=[...topics.entries()].map(([topic,o])=>({
+      topic,avg:Math.round(o.sum/o.n),n:o.n,pass:Math.round(o.pass/o.n*100)
+    })).sort((a,b)=>b.avg-a.avg);
+
+    const strengths=topicRows.filter(x=>x.avg>=80).slice(0,3);
+    const review=topicRows.filter(x=>x.avg<60).sort((a,b)=>a.avg-b.avg).slice(0,3);
+
     let out=`<div class="card hero" style="margin-top:14px">
       <h3 style="margin:0 0 8px">👤 ${esc(p.full_name||"متدرب")}</h3>
       <div class="muted">رقم المتدرب: ${esc(p.student_id||"—")} &nbsp; | &nbsp; الشعبة: ${esc(p.group_name||"—")}</div>
+      <div class="student-analytics-actions">
+        <button class="primary" onclick="exportStudentAnalytics('${studentId}')">⬇️ تصدير تقرير المتدرب</button>
+      </div>
     </div>`;
+
     out+=`<div class="grid" style="margin-top:14px">
       <div class="card"><div class="muted">إجمالي المحاولات</div><div class="kpi">${total}</div></div>
       <div class="card"><div class="muted">متوسط الاختبارات</div><div class="kpi">${avg}%</div></div>
       <div class="card"><div class="muted">أفضل نتيجة</div><div class="kpi">${best}%</div></div>
       <div class="card"><div class="muted">نسبة النجاح</div><div class="kpi">${pass}%</div></div>
     </div>`;
+
+    out+=`<div class="grid" style="margin-top:14px">
+      <div class="student-insight">
+        <h4>📚 تقدم المقرر</h4>
+        <div><strong>${courseProgress}%</strong> من الأنشطة المسجلة</div>
+        <div class="progressbar"><span style="width:${courseProgress}%"></span></div>
+        <div class="muted" style="margin-top:8px">دروس مكتملة: ${lessonDone} — تمارين مكتملة: ${lessonPractice}</div>
+      </div>
+      <div class="student-insight">
+        <h4>🎯 التمارين العملية</h4>
+        <div>عدد المحاولات: <strong>${exTotal}</strong></div>
+        <div>متوسط الدرجة: <strong>${exAvg}%</strong></div>
+        <div>نسبة الإجابات الصحيحة: <strong>${exCorrect}%</strong></div>
+      </div>
+    </div>`;
+
     if(!total){
       area.innerHTML=out+`<div class="muted" style="margin-top:18px">لا توجد اختبارات مسجلة لهذا المتدرب حتى الآن.</div>`;
       return;
     }
-    out+=`<h3 style="margin-top:24px">📊 أداء المتدرب</h3>`;
+
+    out+=`<h3 style="margin-top:24px">📊 الرسوم البيانية</h3>`;
     out+=chartCanvasStudent('studentTrendChart',300);
     if(topicRows.length)out+=chartCanvasStudent('studentTopicChart',300);
+    if(exercises.length)out+=chartCanvasStudent('studentPracticeChart',260);
+
+    out+=`<div class="grid" style="margin-top:18px">
+      <div class="student-insight">
+        <h4>⭐ موضوعات ذات أداء مرتفع</h4>
+        ${strengths.length?strengths.map(x=>`<div>• ${esc(x.topic)} — ${x.avg}%</div>`).join(""):'<div class="muted">لا توجد بيانات كافية.</div>'}
+      </div>
+      <div class="student-insight">
+        <h4>⚠️ موضوعات تحتاج مراجعة</h4>
+        ${review.length?review.map(x=>`<div>• ${esc(x.topic)} — ${x.avg}%</div>`).join(""):'<div class="muted">لا توجد موضوعات أقل من 60% حاليًا.</div>'}
+      </div>
+    </div>`;
+
     out+=`<h3 style="margin-top:24px">📋 سجل الاختبارات</h3>
       <table><tr><th>#</th><th>الاختبار</th><th>الموضوع</th><th>الدرجة</th><th>النتيجة</th><th>التاريخ</th></tr>
       ${attempts.slice().reverse().map((a,i)=>`<tr><td>${i+1}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${esc(a.trainer_exams?.topic||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${Number(a.percentage||0)>=60?'🟢 ناجح':'🔴 يحتاج مراجعة'}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td></tr>`).join("")}</table>`;
     area.innerHTML=out;
+
     if(typeof Chart==='undefined'){
       area.insertAdjacentHTML('afterbegin','<div class="bad">⚠️ مكتبة الرسوم البيانية غير متاحة. البيانات والجداول ما زالت معروضة.</div>');
       return;
     }
+
     const trendLabels=attempts.map((a,i)=>`${i+1} — ${a.trainer_exams?.title||"اختبار"}`);
     studentAnalyticsCharts.trend=new Chart($("studentTrendChart"),{
       type:'line',
       data:{labels:trendLabels,datasets:[{label:'درجة الاختبار %',data:attempts.map(a=>Number(a.percentage||0)),tension:.25,fill:false}]},
-      options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'تطور أداء المتدرب عبر المحاولات'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+      options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'تطور أداء المتدرب عبر الاختبارات'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
     });
+
     if(topicRows.length){
       studentAnalyticsCharts.topic=new Chart($("studentTopicChart"),{
         type:'bar',
         data:{labels:topicRows.map(x=>x.topic),datasets:[{label:'متوسط الدرجة %',data:topicRows.map(x=>x.avg)}]},
-        options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'متوسط أداء المتدرب حسب الموضوع'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+        options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'متوسط الأداء حسب الموضوع'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+      });
+    }
+
+    if(exercises.length){
+      studentAnalyticsCharts.practice=new Chart($("studentPracticeChart"),{
+        type:'line',
+        data:{labels:exercises.map((x,i)=>`${i+1}`),datasets:[{label:'درجة التمرين %',data:exercises.map(x=>Number(x.score||0)),tension:.25,fill:false}]},
+        options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'تطور أداء التمارين العملية'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
       });
     }
   }catch(e){
     area.innerHTML=`<div class="bad">❌ حدث خطأ في تحليل المتدرب:<br>${esc(e?.message||String(e))}</div>`;
   }
 }
+
+async function exportStudentAnalytics(studentId){
+  if(!studentId)return;
+  const [ar,pr]=await Promise.all([
+    db.from("attempts").select("percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic)").eq("student_id",studentId).order("submitted_at",{ascending:true}),
+    db.from("profiles").select("full_name,student_id,group_name").eq("id",studentId).maybeSingle()
+  ]);
+  if(ar.error){alert("تعذر تصدير التقرير: "+ar.error.message);return;}
+  const p=pr.data||{};
+  const rows=[["اسم المتدرب","رقم المتدرب","الشعبة","الاختبار","الموضوع","الدرجة","الصحيح","الإجمالي","التاريخ"]];
+  (ar.data||[]).forEach(a=>rows.push([p.full_name||"",p.student_id||"",p.group_name||"",a.trainer_exams?.title||"",a.trainer_exams?.topic||"",a.percentage??"",a.correct_answers??"",a.total_questions??"",a.submitted_at||""]));
+  const csv="\ufeff"+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+  a.download=`student-report-${p.student_id||"student"}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 function populateAnalyticsStudents(){
   const sel=$("analyticsStudentSelect");
   if(!sel)return;
