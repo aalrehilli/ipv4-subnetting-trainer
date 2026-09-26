@@ -23,6 +23,13 @@
 .student-insight h4{margin:0 0 8px;color:#075ca5}
 .progressbar{height:12px;background:#e8eef4;border-radius:999px;overflow:hidden;margin-top:8px}
 .progressbar>span{display:block;height:100%;background:#0b75c9;border-radius:999px}
+
+@media print{
+  body{background:#fff!important}
+  body>*{display:none!important}
+  #printReport{display:block!important;position:static!important;width:auto!important;margin:0!important;padding:0!important}
+  .no-print{display:none!important}
+}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V20 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
@@ -609,7 +616,7 @@ async function loadStudentAnalytics(studentId){
       <h3 style="margin:0 0 8px">👤 ${esc(p.full_name||"متدرب")}</h3>
       <div class="muted">رقم المتدرب: ${esc(p.student_id||"—")} &nbsp; | &nbsp; الشعبة: ${esc(p.group_name||"—")}</div>
       <div class="student-analytics-actions">
-        <button class="primary" onclick="exportStudentAnalytics('${studentId}')">⬇️ تصدير تقرير المتدرب</button>
+        <button class="primary" onclick="exportStudentAnalytics('${studentId}')">⬇️ تصدير CSV</button><button class="primary purple" onclick="openStudentReport('${studentId}')">📄 تقرير المتدرب</button>
       </div>
     </div>`;
 
@@ -691,6 +698,41 @@ async function loadStudentAnalytics(studentId){
   }catch(e){
     area.innerHTML=`<div class="bad">❌ حدث خطأ في تحليل المتدرب:<br>${esc(e?.message||String(e))}</div>`;
   }
+}
+
+async function openStudentReport(studentId){
+  if(!studentId)return;
+  const w=window.open('','_blank','width=1100,height=850');
+  if(!w){alert('يرجى السماح بالنوافذ المنبثقة لعرض التقرير.');return;}
+  w.document.write('<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير المتدرب</title><style>body{font-family:Tahoma,Arial,sans-serif;background:#f5f8fb;color:#17324d;margin:0;padding:24px}.report{max-width:1050px;margin:auto;background:#fff;padding:34px;border:1px solid #d8e4ee;border-radius:16px}.head{border-bottom:3px solid #075ca5;padding-bottom:18px;margin-bottom:22px}.head h1{color:#075ca5;margin:0 0 8px}.meta{color:#607487}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.kpi{border:1px solid #dbe6ef;border-radius:12px;padding:15px;text-align:center}.kpi b{display:block;font-size:28px;color:#075ca5;margin-top:6px}.section{margin-top:25px}.section h2{color:#075ca5;border-bottom:1px solid #dbe6ef;padding-bottom:8px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #d8e3ec;padding:9px;text-align:right}th{background:#eef5fb}.bar{height:14px;background:#e8eef4;border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:#159447}.footer{margin-top:30px;color:#718294;font-size:12px;text-align:center}.actions{position:fixed;top:16px;left:16px;display:flex;gap:8px}.actions button{padding:10px 16px;border:0;border-radius:8px;cursor:pointer}.print{background:#075ca5;color:#fff}.close{background:#c62828;color:#fff}@media print{body{background:#fff;padding:0}.report{border:0;border-radius:0;padding:0}.actions{display:none}.grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}}</style></head><body><div class="actions"><button class="print" onclick="window.print()">🖨️ طباعة / حفظ PDF</button><button class="close" onclick="window.close()">✕ إغلاق</button></div><div id="printReport" class="report"><div>⏳ جارٍ إعداد التقرير...</div></div></body></html>');
+  w.document.close();
+  try{
+    const [ar,pr,xa,lp]=await Promise.all([
+      db.from('attempts').select('id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic)').eq('student_id',studentId).order('submitted_at',{ascending:true}),
+      db.from('profiles').select('full_name,student_id,group_name').eq('id',studentId).maybeSingle(),
+      db.from('exercise_attempts').select('score,is_correct,created_at').eq('student_id',studentId).order('created_at',{ascending:true}),
+      db.from('lesson_progress').select('completed,practice_completed').eq('user_id',studentId)
+    ]);
+    if(ar.error){w.document.getElementById('printReport').innerHTML='<div style="color:#b21f1f">تعذر قراءة النتائج: '+String(ar.error.message).replaceAll('<','&lt;')+'</div>';return;}
+    const a=ar.data||[], p=pr.data||{}, ex=xa.error?[]:(xa.data||[]), lessonRows=lp.error?[]:(lp.data||[]);
+    const avg=a.length?Math.round(a.reduce((s,x)=>s+Number(x.percentage||0),0)/a.length):0;
+    const best=a.length?Math.max(...a.map(x=>Number(x.percentage||0))):0;
+    const pass=a.length?Math.round(a.filter(x=>Number(x.percentage||0)>=60).length/a.length*100):0;
+    const exAvg=ex.length?Math.round(ex.reduce((s,x)=>s+Number(x.score||0),0)/ex.length):0;
+    const lessonDone=lessonRows.filter(x=>x.completed).length, practiceDone=lessonRows.filter(x=>x.practice_completed).length;
+    const progress=lessonRows.length?Math.round((lessonDone+practiceDone)/(lessonRows.length*2)*100):0;
+    const escR=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+    const topicMap={};a.forEach(x=>{const t=x.trainer_exams?.topic||'غير مصنف';(topicMap[t]??=[]).push(Number(x.percentage||0));});
+    const topics=Object.entries(topicMap).map(([t,vals])=>[t,Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)]).sort((x,y)=>y[1]-x[1]);
+    let html='<div class="head"><h1>📘 تقرير أداء المتدرب</h1><div class="meta">منصة IPv4 Subnetting — Class C + FLSM</div><div class="meta" style="margin-top:8px"><b>'+escR(p.full_name||'متدرب')+'</b> — رقم المتدرب: '+escR(p.student_id||'—')+' — الشعبة: '+escR(p.group_name||'—')+'</div></div>';
+    html+='<div class="grid"><div class="kpi">إجمالي الاختبارات<b>'+a.length+'</b></div><div class="kpi">متوسط الدرجات<b>'+avg+'%</b></div><div class="kpi">أفضل نتيجة<b>'+best+'%</b></div><div class="kpi">نسبة النجاح<b>'+pass+'%</b></div></div>';
+    html+='<div class="grid"><div class="kpi">تقدم المقرر<b>'+progress+'%</b></div><div class="kpi">التمارين<b>'+ex.length+'</b></div><div class="kpi">متوسط التمارين<b>'+exAvg+'%</b></div><div class="kpi">دروس مكتملة<b>'+lessonDone+'</b></div></div>';
+    html+='<div class="section"><h2>📚 تقدم المقرر</h2><div class="bar"><i style="width:'+progress+'%"></i></div><p>الدروس المكتملة: '+lessonDone+' — التمارين المكتملة: '+practiceDone+'</p></div>';
+    html+='<div class="section"><h2>📊 الأداء حسب الموضوع</h2><table><tr><th>الموضوع</th><th>متوسط الأداء</th><th>المستوى</th></tr>'+topics.map(x=>'<tr><td>'+escR(x[0])+'</td><td>'+x[1]+'%</td><td>'+ (x[1]>=80?'جيد جدًا':x[1]>=60?'مقبول':'يحتاج مراجعة') +'</td></tr>').join('')+'</table></div>';
+    html+='<div class="section"><h2>📝 سجل الاختبارات</h2><table><tr><th>#</th><th>الاختبار</th><th>الموضوع</th><th>الدرجة</th><th>الصحيح</th><th>التاريخ</th></tr>'+a.slice().reverse().map((x,i)=>'<tr><td>'+(i+1)+'</td><td>'+escR(x.trainer_exams?.title||'—')+'</td><td>'+escR(x.trainer_exams?.topic||'—')+'</td><td>'+Number(x.percentage||0)+'%</td><td>'+Number(x.correct_answers||0)+' / '+Number(x.total_questions||0)+'</td><td>'+ (x.submitted_at?new Date(x.submitted_at).toLocaleString('ar-SA'):'—') +'</td></tr>').join('')+'</table></div>';
+    html+='<div class="footer">تم إنشاء التقرير آليًا من بيانات المنصة — يمكنك اختيار "طباعة / حفظ PDF".</div>';
+    w.document.getElementById('printReport').innerHTML=html;
+  }catch(e){w.document.getElementById('printReport').innerHTML='<div style="color:#b21f1f">حدث خطأ: '+String(e?.message||e).replaceAll('<','&lt;')+'</div>';}
 }
 
 async function exportStudentAnalytics(studentId){
