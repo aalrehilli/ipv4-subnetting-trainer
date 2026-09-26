@@ -30,6 +30,8 @@
   #printReport{display:block!important;position:static!important;width:auto!important;margin:0!important;padding:0!important}
   .no-print{display:none!important}
 }
+
+.plan-list{display:grid;gap:10px}.plan-item{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid #dbe6ef;border-radius:10px;background:#f8fbfd}.plan-icon{font-size:24px;min-width:32px;text-align:center}.plan-item strong{color:#075ca5}.plan-item .muted{margin-top:4px;line-height:1.7}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V20 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
@@ -80,6 +82,7 @@
       <option value="">كل الشعب</option>
     </select>
     <button class="primary" onclick="renderCohortAnalytics($('analyticsGroupSelect')?.value||'')">🔄 تحديث</button>
+    <button class="primary green" onclick="exportCohortAnalytics($('analyticsGroupSelect')?.value||'')">⬇️ تصدير تقرير المجموعة</button>
   </div>
 </div>
 <div id="cohortAnalyticsArea"></div>
@@ -623,6 +626,16 @@ async function loadStudentAnalytics(studentId){
     const strengths=topicRows.filter(x=>x.avg>=80).slice(0,3);
     const review=topicRows.filter(x=>x.avg<60).sort((a,b)=>a.avg-b.avg).slice(0,3);
 
+    const plan=[];
+    if(!total) plan.push({icon:'🚀',title:'ابدأ بأول اختبار',text:'لم يتم تسجيل أي اختبار بعد. ابدأ باختبار تأسيسي لقياس مستوى المتدرب.'});
+    else if(avg<60) plan.push({icon:'⚠️',title:'مراجعة الأساسيات',text:'متوسط الاختبارات أقل من 60%. يُنصح بمراجعة دروس Prefix وSubnet Mask وMagic Number ثم إعادة التدريب.'});
+    else if(avg<80) plan.push({icon:'🎯',title:'رفع مستوى الإتقان',text:'الأداء متوسط. يُنصح بزيادة التمارين التطبيقية وإعادة الاختبارات التي كانت نتيجتها أقل من 60%.'});
+    else plan.push({icon:'⭐',title:'الحفاظ على المستوى',text:'الأداء مرتفع. يُنصح بالانتقال إلى مسائل أكثر تنوعًا والاستعداد لمستوى VLSM لاحقًا.'});
+    if(courseProgress<50) plan.push({icon:'📚',title:'إكمال المقرر',text:`نسبة إكمال أنشطة المقرر ${courseProgress}%. يُنصح باستكمال الدروس والتمارين بالترتيب.`});
+    if(review.length) plan.push({icon:'🔎',title:'موضوعات تحتاج مراجعة',text:review.map(x=>`${x.topic} (${x.avg}%)`).join('، ')});
+    if(exTotal===0) plan.push({icon:'🧪',title:'البدء بالتمارين العملية',text:'لا توجد محاولات تمارين مسجلة لهذا المتدرب حتى الآن.'});
+    const planHtml=plan.slice(0,5).map(x=>`<div class="plan-item"><div class="plan-icon">${x.icon}</div><div><strong>${esc(x.title)}</strong><div class="muted">${esc(x.text)}</div></div></div>`).join('');
+
     let out=`<div class="card hero" style="margin-top:14px">
       <h3 style="margin:0 0 8px">👤 ${esc(p.full_name||"متدرب")}</h3>
       <div class="muted">رقم المتدرب: ${esc(p.student_id||"—")} &nbsp; | &nbsp; الشعبة: ${esc(p.group_name||"—")}</div>
@@ -657,6 +670,11 @@ async function loadStudentAnalytics(studentId){
       area.innerHTML=out+`<div class="muted" style="margin-top:18px">لا توجد اختبارات مسجلة لهذا المتدرب حتى الآن.</div>`;
       return;
     }
+
+    out+=`<div class="card" style="margin-top:18px;border-right:5px solid #075ca5">
+      <h3 style="margin-top:0">🧭 خطة المتابعة المقترحة</h3>
+      <div class="plan-list">${planHtml}</div>
+    </div>`;
 
     out+=`<h3 style="margin-top:24px">📊 الرسوم البيانية</h3>`;
     out+=chartCanvasStudent('studentTrendChart',300);
@@ -845,6 +863,20 @@ function renderCohortAnalytics(groupFilter=""){
   </tr>`).join("");
   html+='</table></div>';
   area.innerHTML=html;
+}
+
+function exportCohortAnalytics(groupFilter=""){
+  const profiles=(trainerAnalyticsProfiles||[]).filter(p=>p.role==="student" && (!groupFilter || String(p.group_name||"—")===String(groupFilter)));
+  const attempts=trainerAnalyticsAttempts||[];
+  const rows=[['اسم المتدرب','رقم المتدرب','الشعبة','عدد المحاولات','المتوسط','أفضل نتيجة','نسبة النجاح','الحالة']];
+  profiles.forEach(p=>{
+    const a=attempts.filter(x=>x.student_id===p.id);
+    const n=a.length, avg=n?Math.round(a.reduce((s,x)=>s+Number(x.percentage||0),0)/n):0, best=n?Math.max(...a.map(x=>Number(x.percentage||0))):0, pass=n?Math.round(a.filter(x=>Number(x.percentage||0)>=60).length/n*100):0;
+    const status=!n?'لم يبدأ':avg>=80?'جيد جدًا':avg>=60?'يحتاج تطوير':'يحتاج متابعة';
+    rows.push([p.full_name||'',p.student_id||'',p.group_name||'',n,avg+'%',best+'%',pass+'%',status]);
+  });
+  const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='student-cohort-report.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),500);
 }
 
 async function loadTrainerAnalytics(){
