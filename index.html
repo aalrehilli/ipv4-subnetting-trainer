@@ -530,7 +530,10 @@ async function createTrainerExam(){
   if(ir.error){await db.from('trainer_exams').delete().eq('id',er.data.id);msg('examMsg','❌ تعذر ربط الأسئلة: '+ir.error.message);return;}
   msg('examMsg','✅ تم إنشاء الاختبار وربط '+question_count+' سؤالًا.',true);loadTrainerExams();
 }
-let analyticsCharts={};\nlet studentAnalyticsCharts={};\nlet trainerAnalyticsAttempts=[];\nlet trainerAnalyticsProfiles=[];
+let analyticsCharts={};
+let studentAnalyticsCharts={};
+let trainerAnalyticsAttempts=[];
+let trainerAnalyticsProfiles=[];
 function destroyAnalyticsCharts(){
   Object.values(analyticsCharts).forEach(c=>{try{c.destroy()}catch(e){}});
   analyticsCharts={};
@@ -639,7 +642,10 @@ async function loadTrainerAnalytics(){
     if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات:<br>${esc(er.error.message)}</div>`;return;}
     if(pr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة بيانات المتدربين:<br>${esc(pr.error.message)}</div>`;return;}
 
-    const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[];\n    trainerAnalyticsAttempts=attempts;\n    trainerAnalyticsProfiles=profiles;\n    populateAnalyticsStudents();
+    const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[];
+    trainerAnalyticsAttempts=attempts;
+    trainerAnalyticsProfiles=profiles;
+    populateAnalyticsStudents();
     const pm=new Map(profiles.map(x=>[x.id,x]));
     const byExam=new Map();
     attempts.forEach(a=>{
