@@ -1108,6 +1108,53 @@ const lesson3Media=`
     <p class="muted" style="margin-top:10px">الفيديو يشرح أساسيات Subnetting وعدد الشبكات وأمثلة على /24 و/26 و/27.</p>
   </div>
 </div>`;
+const lesson4Media=`
+<div class="lesson-extra" style="margin-top:18px">
+  <div class="card" style="background:#f8fbff">
+    <h3>🧠 خريطة ذهنية</h3>
+    <p class="muted">ملخص بصري لدرس Magic Number (الرقم السحري) مع طريقة الحساب وأمثلة عملية.</p>
+    <img src="assets/ipv4-lesson4-mindmap.png" alt="خريطة ذهنية لدرس Magic Number" style="width:100%;max-height:760px;object-fit:contain;border:1px solid #d6e3ef;border-radius:14px;background:#fff">
+  </div>
+  <div class="card">
+    <h3>🎥 فيديو شرح الدرس</h3>
+    <p>شرح عربي للتقسيم السريع باستخدام الرقم السحري Magic Number.</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px">
+      <iframe src="https://www.youtube.com/embed/Ke93NFMrNX0" title="شرح Magic Number بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="muted" style="margin-top:10px">الفيديو يشرح استخدام Magic Number لتحديد بدايات الشبكات بسرعة.</p>
+  </div>
+</div>`;
+const lesson4Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul><li>فهم معنى <b>Magic Number</b> أو <b>Block Size</b>.</li><li>حساب الرقم السحري من قيمة الأوكتت المتغير في قناع الشبكة.</li><li>استخدام الرقم السحري لتحديد بداية كل Subnet بسرعة.</li><li>تحديد Network وFirst Host وLast Host وBroadcast.</li><li>تطبيق الطريقة على شبكات Class C مثل /25 و/26 و/27.</li></ul>
+<h3>1️⃣ ما هو Magic Number؟</h3>
+<p>الرقم السحري هو <b>حجم الكتلة (Block Size)</b> الذي يحدد المسافة بين عناوين الشبكات الفرعية المتتالية في الأوكتت الذي تم تقسيمه.</p>
+<div class="question"><b>القاعدة الأساسية:</b> Magic Number = 256 − قيمة الأوكتت المتغير في Subnet Mask.</div>
+<h3>2️⃣ كيف نحسب الرقم السحري؟</h3>
+<ol><li>حدد الأوكتت الذي تغير في Subnet Mask.</li><li>خذ قيمة هذا الأوكتت.</li><li>اطرحها من 256.</li><li>الناتج هو <b>Magic Number / Block Size</b>.</li></ol>
+<div class="good"><b>مثال:</b> /26 → 255.255.255.192 → Magic Number = 256 − 192 = <b>64</b>.</div>
+<h3>3️⃣ أمثلة سريعة</h3>
+<table><tr><th>Prefix</th><th>Subnet Mask</th><th>Magic Number</th><th>بدايات الشبكات</th></tr><tr><td>/25</td><td>255.255.255.128</td><td>128</td><td>0، 128</td></tr><tr><td>/26</td><td>255.255.255.192</td><td>64</td><td>0، 64، 128، 192</td></tr><tr><td>/27</td><td>255.255.255.224</td><td>32</td><td>0، 32، 64، 96، 128، 160، 192، 224</td></tr><tr><td>/28</td><td>255.255.255.240</td><td>16</td><td>0، 16، 32، 48، ...، 240</td></tr><tr><td>/29</td><td>255.255.255.248</td><td>8</td><td>0، 8، 16، 24، ...، 248</td></tr><tr><td>/30</td><td>255.255.255.252</td><td>4</td><td>0، 4، 8، 12، ...، 252</td></tr></table>
+<h3>4️⃣ مثال محلول: 192.168.10.0/26</h3>
+<ol><li>Subnet Mask = <b>255.255.255.192</b>.</li><li>الأوكتت المتغير هو الرابع وقيمته <b>192</b>.</li><li>Magic Number = <b>256 − 192 = 64</b>.</li><li>بدايات الشبكات: <b>0، 64، 128، 192</b>.</li></ol>
+<div class="question"><b>الشبكة الأولى:</b> 192.168.10.0/26 → First Host = 192.168.10.1 → Last Host = 192.168.10.62 → Broadcast = 192.168.10.63.</div>
+<h3>5️⃣ مثال آخر: /27</h3>
+<p>قناع /27 هو <b>255.255.255.224</b>، لذلك:</p>
+<div class="good"><b>Magic Number = 256 − 224 = 32</b></div>
+<p>تبدأ الشبكات عند: <b>0، 32، 64، 96، 128، 160، 192، 224</b>.</p>
+<h3>6️⃣ طريقة تحديد الشبكة بسرعة</h3>
+<ol><li>احسب Magic Number.</li><li>اكتب بدايات الشبكات بزيادة الرقم السحري.</li><li>ابحث عن المجال الذي يقع فيه عنوان الـ IP.</li><li>بداية المجال هي Network Address.</li><li>آخر عنوان قبل بداية الشبكة التالية هو Broadcast.</li><li>العنوان التالي للشبكة هو First Host، والعنوان السابق للبث هو Last Host.</li></ol>
+<h3>7️⃣ مثال تطبيقي: 192.168.10.75/26</h3>
+<p>بما أن Magic Number = <b>64</b>، فبدايات الشبكات هي 0، 64، 128، 192. العنوان <b>75</b> يقع بين 64 و127، إذن:</p>
+<table><tr><th>العنصر</th><th>القيمة</th></tr><tr><td>Network</td><td>192.168.10.64</td></tr><tr><td>First Host</td><td>192.168.10.65</td></tr><tr><td>Last Host</td><td>192.168.10.126</td></tr><tr><td>Broadcast</td><td>192.168.10.127</td></tr></table>
+<h3>🧠 قاعدة للحفظ</h3>
+<p><b>256 − Mask Octet = Magic Number → زِد الرقم السحري لتحديد بدايات الشبكات.</b></p>
+<h3>📝 تطبيق سريع</h3>
+<p>لديك <b>192.168.20.0/27</b>، احسب Magic Number وحدد أول 4 شبكات.</p>
+<ul><li>Subnet Mask = <b>255.255.255.224</b>.</li><li>Magic Number = <b>32</b>.</li><li>أول أربع شبكات: <b>192.168.20.0، 192.168.20.32، 192.168.20.64، 192.168.20.96</b>.</li></ul>
+</div>`;
+
 const lesson3Detailed=`
 <div class="lesson-detail">
 <h3>🎯 أهداف الدرس</h3>
@@ -1151,7 +1198,7 @@ const courseFallback=[
  {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
  {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:30,content:lesson3Detailed+lesson3Media},
- {id:'local-4',lesson_no:4,title:'Magic Number',duration:20,content:'<p>الـ Magic Number أو Block Size يساعدك على تحديد بداية كل Subnet بسرعة.</p><p>في /26 يكون القناع 255.255.255.192، وبالتالي حجم الكتلة = 256 - 192 = <b>64</b>.</p><p>الشبكات: 0، 64، 128، 192.</p>'},
+ {id:'local-4',lesson_no:4,title:'Magic Number',duration:30,content:lesson4Detailed+lesson4Media},
  {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:25,content:'<p>لكل Subnet أربعة عناصر مهمة:</p><ol><li>Network Address: أول عنوان.</li><li>First Host: Network + 1.</li><li>Last Host: Broadcast - 1.</li><li>Broadcast: آخر عنوان في الـ Subnet.</li></ol><div class="question"><b>مثال:</b> 192.168.10.64/26 → Network = .64، First = .65، Last = .126، Broadcast = .127.</div>'},
  {id:'local-6',lesson_no:6,title:'FLSM — تقسيم الشبكة إلى أحجام متساوية',duration:30,content:'<p><b>FLSM</b> يعني أن جميع الشبكات الفرعية لها نفس حجم العناوين.</p><p>خطوات الحل:</p><ol><li>حدد عدد الشبكات المطلوبة.</li><li>احسب عدد البتات المستعارة.</li><li>حدد الـ Prefix الجديد.</li><li>احسب القناع والـ Magic Number.</li><li>اكتب Network وHosts وBroadcast لكل Subnet.</li></ol>'},
  {id:'local-7',lesson_no:7,title:'مختبر عملي: Class C FLSM',duration:35,content:'<p>طبّق على الشبكة <b>192.168.50.0/24</b> والمطلوب 4 شبكات متساوية.</p><ul><li>Borrowed Bits = 2</li><li>New Prefix = /26</li><li>Magic Number = 64</li><li>الشبكات تبدأ عند 0، 64، 128، 192.</li></ul><p>بعد إنهاء الدرس انتقل إلى <b>التمارين</b> ثم اختبر نفسك من صفحة <b>الاختبارات</b>.</p>'},
@@ -1187,6 +1234,9 @@ async function loadCourse(){
    }
    if(Number(x.lesson_no)===3 && !String(x.id).startsWith('local-')){
      lessonContent += lesson3Detailed + lesson3Media;
+   }
+   if(Number(x.lesson_no)===4 && !String(x.id).startsWith('local-')){
+     lessonContent += lesson4Detailed + lesson4Media;
    }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
