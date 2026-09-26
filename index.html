@@ -322,7 +322,7 @@ function renderQuestionBank(){
   `;
   $("questionsTable").innerHTML=rows.length?`<table><tr><th>#</th><th>السؤال</th><th>النوع</th><th>التصنيف</th><th>المستوى</th><th>الإجراء</th></tr>${rows.map((x,i)=>`<tr>
 <td>${i+1}</td><td style="text-align:right">${esc(x.question_text)}</td><td>${questionTypeLabel(x.question_type)}</td><td>${esc(x.topic||"")}</td><td>${esc(x.difficulty||"")}</td>
-<td><div class="qactions"><button class="primary" onclick="previewTrainerQuestion('${x.id}')" data-preview-id="${x.id}">👁️ معاينة</button><button class="light" onclick="duplicateTrainerQuestion('${x.id}')">📄 نسخ</button><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">🗑️ حذف</button></div></td>
+<td><div class="qactions"><button class="primary" onclick="previewTrainerQuestion('${x.id}')" data-preview-id="${x.id}">👁️ معاينة</button><button class="light" onclick="duplicateTrainerQuestion('${x.id}')">📄 تكرار</button><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">🗑️ حذف</button></div></td>
 </tr>`).join("")}</table>`:`<div class="muted">لا توجد أسئلة مطابقة للبحث أو الفلاتر.</div>`;
 }
 function findTrainerQuestion(id){return trainerQuestionRows.find(x=>x.id===id);}
@@ -389,7 +389,7 @@ document.addEventListener("click",function(e){
 });
 async function duplicateTrainerQuestion(id){
   const x=findTrainerQuestion(id); if(!x)return;
-  const payload={question_text:(x.question_text||"")+" — نسخة",correct_answer:x.correct_answer||"",difficulty:x.difficulty||"easy",topic:x.topic||"FLSM",created_by:user.id,question_type:x.question_type||"short",options_json:x.options_json||null,matching_json:x.matching_json||null};
+  const payload={question_text:x.question_text||"",correct_answer:x.correct_answer||"",difficulty:x.difficulty||"easy",topic:x.topic||"FLSM",created_by:user.id,question_type:x.question_type||"short",options_json:x.options_json||null,matching_json:x.matching_json||null};
   const r=await db.from("trainer_questions").insert(payload);
   if(r.error){alert("تعذر نسخ السؤال: "+r.error.message);return;}
   await loadTrainerQuestions();
