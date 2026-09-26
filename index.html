@@ -44,7 +44,22 @@
 </div>
 <div id="qStats" class="qstats"></div>
 <div id="questionsTable"></div></div>
-</div><div id="trainerAnalytics" class="hidden"><h3>📈 تحليلات الاختبارات</h3><div id="trainerAnalyticsArea"></div></div>
+</div><div id="trainerAnalytics" class="hidden">
+<h3>📈 تحليلات الاختبارات</h3>
+<div id="trainerAnalyticsArea"></div>
+<hr style="margin:28px 0;border:0;border-top:1px solid #dbe6ef">
+<h3>👤 التحليل التفصيلي للمتدرب</h3>
+<div class="question" style="margin-top:12px">
+<label for="analyticsStudentSelect">اختر المتدرب</label>
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+<select id="analyticsStudentSelect" style="flex:1;min-width:260px" onchange="loadStudentAnalytics(this.value)">
+<option value="">-- اختر متدربًا --</option>
+</select>
+<button class="primary" onclick="loadStudentAnalytics($('analyticsStudentSelect')?.value)">🔄 تحديث</button>
+</div>
+</div>
+<div id="studentAnalyticsArea"></div>
+</div>
 <div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>إنشاء اختبار جديد</h3><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار واختيار الأسئلة تلقائيًا</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
 <section id="certificate" class="hidden">
 <div class="card hero"><span class="badge">V12 • CERTIFICATE</span><h2>🏆 شهادة إتمام المقرر</h2><p>تحقق من استيفاء متطلبات إتمام مقرر IPv4 Subnetting ثم أصدر شهادة باسم المتدرب.</p><div id="certificateStatus"></div></div>
@@ -515,12 +530,100 @@ async function createTrainerExam(){
   if(ir.error){await db.from('trainer_exams').delete().eq('id',er.data.id);msg('examMsg','❌ تعذر ربط الأسئلة: '+ir.error.message);return;}
   msg('examMsg','✅ تم إنشاء الاختبار وربط '+question_count+' سؤالًا.',true);loadTrainerExams();
 }
-let analyticsCharts={};
+let analyticsCharts={};\nlet studentAnalyticsCharts={};\nlet trainerAnalyticsAttempts=[];\nlet trainerAnalyticsProfiles=[];
 function destroyAnalyticsCharts(){
   Object.values(analyticsCharts).forEach(c=>{try{c.destroy()}catch(e){}});
   analyticsCharts={};
 }
 function chartCanvas(id,height=300){return `<div class="card" style="margin-top:18px"><canvas id="${id}" style="width:100%;max-height:${height}px"></canvas></div>`;}
+
+function destroyStudentAnalyticsCharts(){
+  Object.values(studentAnalyticsCharts).forEach(c=>{try{c.destroy()}catch(e){}});
+  studentAnalyticsCharts={};
+}
+function chartCanvasStudent(id,height=300){
+  return `<div class="card" style="margin-top:18px"><canvas id="${id}" style="width:100%;max-height:${height}px"></canvas></div>`;
+}
+async function loadStudentAnalytics(studentId){
+  const area=$("studentAnalyticsArea");
+  destroyStudentAnalyticsCharts();
+  if(!area)return;
+  if(!studentId){
+    area.innerHTML='<div class="muted" style="margin-top:14px">📌 اختر متدربًا لعرض تحليله التفصيلي.</div>';
+    return;
+  }
+  area.innerHTML='<div class="muted">⏳ جارٍ تحميل تحليل المتدرب...</div>';
+  try{
+    const [ar,er,pr]=await Promise.all([
+      db.from("attempts").select("id,student_id,exam_id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic,group_name)").eq("student_id",studentId).order("submitted_at",{ascending:true}),
+      db.from("trainer_exams").select("id,title,topic"),
+      db.from("profiles").select("id,full_name,student_id,group_name,role").eq("id",studentId).maybeSingle()
+    ]);
+    if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة نتائج المتدرب:<br>${esc(ar.error.message)}</div>`;return;}
+    if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات:<br>${esc(er.error.message)}</div>`;return;}
+    const attempts=ar.data||[];
+    const p=pr.data||trainerAnalyticsProfiles.find(x=>x.id===studentId)||{};
+    const total=attempts.length;
+    const avg=total?Math.round(attempts.reduce((s,a)=>s+Number(a.percentage||0),0)/total):0;
+    const best=total?Math.max(...attempts.map(a=>Number(a.percentage||0))):0;
+    const pass=total?Math.round(attempts.filter(a=>Number(a.percentage||0)>=60).length/total*100):0;
+    const topics=new Map();
+    attempts.forEach(a=>{
+      const topic=a.trainer_exams?.topic||"غير مصنف";
+      const o=topics.get(topic)||{sum:0,n:0};
+      o.sum+=Number(a.percentage||0);o.n++;topics.set(topic,o);
+    });
+    const topicRows=[...topics.entries()].map(([topic,o])=>({topic,avg:Math.round(o.sum/o.n),n:o.n})).sort((a,b)=>b.avg-a.avg);
+    let out=`<div class="card hero" style="margin-top:14px">
+      <h3 style="margin:0 0 8px">👤 ${esc(p.full_name||"متدرب")}</h3>
+      <div class="muted">رقم المتدرب: ${esc(p.student_id||"—")} &nbsp; | &nbsp; الشعبة: ${esc(p.group_name||"—")}</div>
+    </div>`;
+    out+=`<div class="grid" style="margin-top:14px">
+      <div class="card"><div class="muted">إجمالي المحاولات</div><div class="kpi">${total}</div></div>
+      <div class="card"><div class="muted">متوسط الاختبارات</div><div class="kpi">${avg}%</div></div>
+      <div class="card"><div class="muted">أفضل نتيجة</div><div class="kpi">${best}%</div></div>
+      <div class="card"><div class="muted">نسبة النجاح</div><div class="kpi">${pass}%</div></div>
+    </div>`;
+    if(!total){
+      area.innerHTML=out+`<div class="muted" style="margin-top:18px">لا توجد اختبارات مسجلة لهذا المتدرب حتى الآن.</div>`;
+      return;
+    }
+    out+=`<h3 style="margin-top:24px">📊 أداء المتدرب</h3>`;
+    out+=chartCanvasStudent('studentTrendChart',300);
+    if(topicRows.length)out+=chartCanvasStudent('studentTopicChart',300);
+    out+=`<h3 style="margin-top:24px">📋 سجل الاختبارات</h3>
+      <table><tr><th>#</th><th>الاختبار</th><th>الموضوع</th><th>الدرجة</th><th>النتيجة</th><th>التاريخ</th></tr>
+      ${attempts.slice().reverse().map((a,i)=>`<tr><td>${i+1}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${esc(a.trainer_exams?.topic||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${Number(a.percentage||0)>=60?'🟢 ناجح':'🔴 يحتاج مراجعة'}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td></tr>`).join("")}</table>`;
+    area.innerHTML=out;
+    if(typeof Chart==='undefined'){
+      area.insertAdjacentHTML('afterbegin','<div class="bad">⚠️ مكتبة الرسوم البيانية غير متاحة. البيانات والجداول ما زالت معروضة.</div>');
+      return;
+    }
+    const trendLabels=attempts.map((a,i)=>`${i+1} — ${a.trainer_exams?.title||"اختبار"}`);
+    studentAnalyticsCharts.trend=new Chart($("studentTrendChart"),{
+      type:'line',
+      data:{labels:trendLabels,datasets:[{label:'درجة الاختبار %',data:attempts.map(a=>Number(a.percentage||0)),tension:.25,fill:false}]},
+      options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'تطور أداء المتدرب عبر المحاولات'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+    });
+    if(topicRows.length){
+      studentAnalyticsCharts.topic=new Chart($("studentTopicChart"),{
+        type:'bar',
+        data:{labels:topicRows.map(x=>x.topic),datasets:[{label:'متوسط الدرجة %',data:topicRows.map(x=>x.avg)}]},
+        options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'متوسط أداء المتدرب حسب الموضوع'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}
+      });
+    }
+  }catch(e){
+    area.innerHTML=`<div class="bad">❌ حدث خطأ في تحليل المتدرب:<br>${esc(e?.message||String(e))}</div>`;
+  }
+}
+function populateAnalyticsStudents(){
+  const sel=$("analyticsStudentSelect");
+  if(!sel)return;
+  const current=sel.value;
+  const students=(trainerAnalyticsProfiles||[]).filter(x=>x.role==="student").sort((a,b)=>String(a.full_name||"").localeCompare(String(b.full_name||""),"ar"));
+  sel.innerHTML='<option value="">-- اختر متدربًا --</option>'+students.map(s=>`<option value="${s.id}">${esc(s.full_name||"بدون اسم")} — ${esc(s.student_id||"بدون رقم")} — شعبة ${esc(s.group_name||"—")}</option>`).join("");
+  if(current && students.some(s=>s.id===current))sel.value=current;
+}
 async function loadTrainerAnalytics(){
   const area=$("trainerAnalyticsArea");
   destroyAnalyticsCharts();
@@ -536,7 +639,7 @@ async function loadTrainerAnalytics(){
     if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات:<br>${esc(er.error.message)}</div>`;return;}
     if(pr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة بيانات المتدربين:<br>${esc(pr.error.message)}</div>`;return;}
 
-    const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[];
+    const attempts=ar.data||[], exams=er.data||[], profiles=pr.data||[];\n    trainerAnalyticsAttempts=attempts;\n    trainerAnalyticsProfiles=profiles;\n    populateAnalyticsStudents();
     const pm=new Map(profiles.map(x=>[x.id,x]));
     const byExam=new Map();
     attempts.forEach(a=>{
