@@ -31,6 +31,7 @@
   .no-print{display:none!important}
 }
 
+.attempt-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.answer-row{border:1px solid #dbe6ef;border-radius:10px;padding:12px;margin:8px 0;background:#fbfdff}.answer-row.correct{border-right:5px solid #159447}.answer-row.wrong{border-right:5px solid #c62828}.answer-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:bold}.answer-value{margin-top:7px;line-height:1.7}.answer-label{color:#607587;font-size:13px}.answer-modal .modal-card{width:min(900px,100%)}
 .plan-list{display:grid;gap:10px}.plan-item{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid #dbe6ef;border-radius:10px;background:#f8fbfd}.plan-icon{font-size:24px;min-width:32px;text-align:center}.plan-item strong{color:#075ca5}.plan-item .muted{margin-top:4px;line-height:1.7}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V20 • Supabase</div></div>
@@ -693,8 +694,8 @@ async function loadStudentAnalytics(studentId){
     </div>`;
 
     out+=`<h3 style="margin-top:24px">📋 سجل الاختبارات</h3>
-      <table><tr><th>#</th><th>الاختبار</th><th>الموضوع</th><th>الدرجة</th><th>النتيجة</th><th>التاريخ</th></tr>
-      ${attempts.slice().reverse().map((a,i)=>`<tr><td>${i+1}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${esc(a.trainer_exams?.topic||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${Number(a.percentage||0)>=60?'🟢 ناجح':'🔴 يحتاج مراجعة'}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td></tr>`).join("")}</table>`;
+      <table><tr><th>#</th><th>الاختبار</th><th>الموضوع</th><th>الدرجة</th><th>النتيجة</th><th>التاريخ</th><th>الإجراء</th></tr>
+      ${attempts.slice().reverse().map((a,i)=>`<tr><td>${i+1}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${esc(a.trainer_exams?.topic||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${Number(a.percentage||0)>=60?'🟢 ناجح':'🔴 يحتاج مراجعة'}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td><td><button class="light" onclick="openStudentAttemptDetails('${a.id}','${studentId}')">🔍 تفاصيل الإجابات</button></td></tr>`).join("")}</table>`;
     area.innerHTML=out;
 
     if(typeof Chart==='undefined'){
@@ -728,6 +729,39 @@ async function loadStudentAnalytics(studentId){
     area.innerHTML=`<div class="bad">❌ حدث خطأ في تحليل المتدرب:<br>${esc(e?.message||String(e))}</div>`;
   }
 }
+
+async function openStudentAttemptDetails(attemptId,studentId){
+  let modal=document.getElementById("attemptDetailModal");
+  if(!modal){
+    modal=document.createElement("div");
+    modal.id="attemptDetailModal";
+    modal.className="modal answer-modal";
+    modal.innerHTML=`<div class="modal-card" onclick="event.stopPropagation()"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;color:#0759a5">🔍 تفاصيل إجابات المحاولة</h3><button type="button" class="primary red" id="closeAttemptDetail">إغلاق ✕</button></div><div id="attemptDetailBody" style="margin-top:15px"></div></div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener("click",e=>{if(e.target===modal)closeStudentAttemptDetails();});
+    document.getElementById("closeAttemptDetail").addEventListener("click",closeStudentAttemptDetails);
+  }
+  const body=document.getElementById("attemptDetailBody");
+  modal.classList.remove("hidden");
+  body.innerHTML='<div class="muted">⏳ جارٍ تحميل تفاصيل الإجابات...</div>';
+  try{
+    const ar=await db.from("attempt_answers").select("id,attempt_id,question_id,selected_answer,correct_answer,is_correct,created_at").eq("attempt_id",attemptId).order("created_at",{ascending:true});
+    if(ar.error){body.innerHTML=`<div class="bad">❌ تعذر قراءة إجابات المحاولة:<br>${esc(ar.error.message)}</div>`;return;}
+    const answers=ar.data||[];
+    const ids=[...new Set(answers.map(x=>x.question_id).filter(Boolean))];
+    let qmap=new Map();
+    if(ids.length){
+      const qr=await db.from("trainer_questions").select("id,question_text,question_type,topic,difficulty").in("id",ids);
+      if(!qr.error) qmap=new Map((qr.data||[]).map(q=>[q.id,q]));
+    }
+    const correct=answers.filter(x=>!!x.is_correct).length;
+    const percent=answers.length?Math.round(correct/answers.length*100):0;
+    body.innerHTML=`<div class="attempt-detail-grid"><div class="student-insight"><span class="answer-label">عدد الإجابات</span><div class="kpi">${answers.length}</div></div><div class="student-insight"><span class="answer-label">نسبة الإجابات الصحيحة</span><div class="kpi">${percent}%</div></div></div>`+
+      (answers.length?answers.map((a,i)=>{const q=qmap.get(a.question_id)||{}; const ok=!!a.is_correct; return `<div class="answer-row ${ok?'correct':'wrong'}"><div class="answer-head"><span>السؤال ${i+1}</span><span>${ok?'🟢 صحيح':'🔴 خطأ'}</span></div><div style="margin-top:8px"><strong>${esc(q.question_text||('معرّف السؤال: '+(a.question_id||'—')))}</strong></div><div class="answer-value"><span class="answer-label">إجابة المتدرب:</span> ${esc(a.selected_answer||'—')}</div><div class="answer-value"><span class="answer-label">الإجابة الصحيحة:</span> ${esc(a.correct_answer||'—')}</div><div class="muted">${esc(q.topic||'')} ${q.difficulty?'— '+esc(q.difficulty):''}</div></div>`}).join(''):'<div class="muted" style="margin-top:14px">لا توجد إجابات تفصيلية محفوظة لهذه المحاولة.</div>');
+  }catch(e){body.innerHTML=`<div class="bad">❌ حدث خطأ:<br>${esc(e?.message||String(e))}</div>`;}
+}
+function closeStudentAttemptDetails(){const m=document.getElementById("attemptDetailModal");if(m)m.classList.add("hidden");}
+document.addEventListener("keydown",e=>{if(e.key==='Escape')closeStudentAttemptDetails();});
 
 async function openStudentReport(studentId){
   if(!studentId)return;
