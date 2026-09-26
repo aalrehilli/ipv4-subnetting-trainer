@@ -3,8 +3,7 @@
 <title>IPv4 Subnetting Trainer — V13</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}
-<style>.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}
 .qbank-tools{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:12px 0}
 .qbank-tools input,.qbank-tools select{width:100%;padding:10px;border:1px solid #cbd9e5;border-radius:8px}
 .qstats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
@@ -54,6 +53,7 @@
 
 <section id="account" class="hidden"><div class="card"><h2>👤 الحساب</h2><div id="accountInfo"></div></div></section>
 </div></div>
+
 <script>
 let db=null,user=null,profile=null,exercise=null,test=[],trainerStudents=[],trainerQuestionRows=[],coursePracticeLessonId=null;
 let currentExamId=null,currentExamTitle='',testStartedAt=null,testDurationMinutes=0,timerHandle=null,testSubmitted=false;
@@ -322,32 +322,71 @@ function renderQuestionBank(){
   `;
   $("questionsTable").innerHTML=rows.length?`<table><tr><th>#</th><th>السؤال</th><th>النوع</th><th>التصنيف</th><th>المستوى</th><th>الإجراء</th></tr>${rows.map((x,i)=>`<tr>
 <td>${i+1}</td><td style="text-align:right">${esc(x.question_text)}</td><td>${questionTypeLabel(x.question_type)}</td><td>${esc(x.topic||"")}</td><td>${esc(x.difficulty||"")}</td>
-<td><div class="qactions"><button class="primary" onclick="previewTrainerQuestion('${x.id}')">👁️ معاينة</button><button class="light" onclick="duplicateTrainerQuestion('${x.id}')">📄 نسخ</button><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">🗑️ حذف</button></div></td>
+<td><div class="qactions"><button class="primary" onclick="previewTrainerQuestion('${x.id}')" data-preview-id="${x.id}">👁️ معاينة</button><button class="light" onclick="duplicateTrainerQuestion('${x.id}')">📄 نسخ</button><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">🗑️ حذف</button></div></td>
 </tr>`).join("")}</table>`:`<div class="muted">لا توجد أسئلة مطابقة للبحث أو الفلاتر.</div>`;
 }
 function findTrainerQuestion(id){return trainerQuestionRows.find(x=>x.id===id);}
 function parseJsonSafe(v, fallback=[]){try{return typeof v==="string"?JSON.parse(v||"[]"):(v||fallback)}catch(e){return fallback}}
 function previewTrainerQuestion(id){
-  const x=findTrainerQuestion(id); if(!x)return;
-  const type=x.question_type||"short", stem=esc(x.question_text||"");
-  let body=`<div class="question"><h3 style="margin-top:0">${stem}</h3><div class="muted">النوع: ${questionTypeLabel(type)} — ${esc(x.topic||"")} — ${esc(x.difficulty||"")}</div>`;
-  if(type==="mcq"){
-    const opts=parseJsonSafe(x.options_json,[]);
-    body+=opts.map(o=>`<div class="preview-option"><b>${esc(o.key)})</b> ${esc(o.text)}</div>`).join("");
-    body+=`<div class="good" style="margin-top:10px">الإجابة الصحيحة: ${esc(x.correct_answer)}</div>`;
-  }else if(type==="true_false"){
-    body+=`<div class="preview-option">✅ صح</div><div class="preview-option">❌ خطأ</div><div class="good">الإجابة الصحيحة: ${x.correct_answer==="true"?"صح":"خطأ"}</div>`;
-  }else if(type==="matching"){
-    const pairs=parseJsonSafe(x.matching_json,[]);
-    body+=`<div class="muted">شكل السؤال للمتدرب:</div>`+pairs.map(p=>`<div class="preview-match"><span>${esc(p.left)}</span><span>اختر المطابقة من القائمة</span></div>`).join("");
-    body+=`<div class="good" style="margin-top:12px">المطابقات الصحيحة:</div>`+pairs.map(p=>`<div class="preview-option"><b>${esc(p.left)}</b> ← ${esc(p.right)}</div>`).join("");
-  }else{
-    body+=`<div class="preview-option">✏️ حقل إدخال الإجابة</div><div class="good">الإجابة الصحيحة: ${esc(x.correct_answer||"")}</div>`;
+  try{
+    const x=findTrainerQuestion(id);
+    if(!x){ alert("لم يتم العثور على السؤال."); return; }
+    let modal=document.getElementById("questionPreviewModal");
+    if(!modal){
+      modal=document.createElement("div");
+      modal.id="questionPreviewModal";
+      modal.className="modal hidden";
+      modal.setAttribute("role","dialog");
+      modal.setAttribute("aria-modal","true");
+      modal.innerHTML=`<div class="modal-card" onclick="event.stopPropagation()">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <h3 style="margin:0;color:#0759a5">👁️ معاينة السؤال</h3>
+          <button type="button" class="primary red" id="closePreviewBtn">إغلاق ✕</button>
+        </div>
+        <div id="questionPreviewBody" style="margin-top:15px"></div>
+      </div>`;
+      document.body.appendChild(modal);
+      modal.addEventListener("click",e=>{if(e.target===modal)closeQuestionPreview();});
+      document.getElementById("closePreviewBtn").addEventListener("click",closeQuestionPreview);
+    }
+    const bodyEl=document.getElementById("questionPreviewBody");
+    if(!bodyEl){alert("تعذر إنشاء نافذة المعاينة.");return;}
+    const type=x.question_type||"short", stem=esc(x.question_text||"");
+    let body=`<div class="question"><h3 style="margin-top:0">${stem}</h3><div class="muted">النوع: ${questionTypeLabel(type)} — ${esc(x.topic||"")} — ${esc(x.difficulty||"")}</div>`;
+    if(type==="mcq"){
+      const opts=parseJsonSafe(x.options_json,[]);
+      body+=opts.map(o=>`<div class="preview-option"><b>${esc(o.key||"")})</b> ${esc(o.text||"")}</div>`).join("");
+      body+=`<div class="good" style="margin-top:10px">الإجابة الصحيحة: ${esc(x.correct_answer||"")}</div>`;
+    }else if(type==="true_false"){
+      body+=`<div class="preview-option">✅ صح</div><div class="preview-option">❌ خطأ</div><div class="good">الإجابة الصحيحة: ${x.correct_answer==="true"?"صح":"خطأ"}</div>`;
+    }else if(type==="matching"){
+      const pairs=parseJsonSafe(x.matching_json,[]);
+      body+=`<div class="muted">شكل السؤال للمتدرب:</div>`+pairs.map(p=>`<div class="preview-match"><span>${esc(p.left||"")}</span><span>اختر المطابقة من القائمة</span></div>`).join("");
+      body+=`<div class="good" style="margin-top:10px">عدد أزواج المطابقة: ${pairs.length}</div>`;
+    }else{
+      body+=`<div class="preview-option">✏️ حقل إدخال الإجابة</div><div class="good">الإجابة الصحيحة: ${esc(x.correct_answer||"")}</div>`;
+    }
+    body+=`</div>`;
+    bodyEl.innerHTML=body;
+    modal.classList.remove("hidden");
+    document.body.style.overflow="hidden";
+  }catch(e){
+    alert("حدث خطأ أثناء المعاينة: "+(e.message||e));
+    console.error(e);
   }
-  body+=`</div>`;
-  $("questionPreviewBody").innerHTML=body;$("questionPreviewModal").classList.remove("hidden");
 }
-function closeQuestionPreview(){$("questionPreviewModal").classList.add("hidden");}
+window.previewTrainerQuestion=previewTrainerQuestion;
+function closeQuestionPreview(){
+  const modal=document.getElementById("questionPreviewModal");
+  if(modal) modal.classList.add("hidden");
+  document.body.style.overflow="";
+}
+window.closeQuestionPreview=closeQuestionPreview;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeQuestionPreview();});
+document.addEventListener("click",function(e){
+  const b=e.target.closest && e.target.closest("[data-preview-id]");
+  if(b){e.preventDefault();previewTrainerQuestion(b.getAttribute("data-preview-id"));}
+});
 async function duplicateTrainerQuestion(id){
   const x=findTrainerQuestion(id); if(!x)return;
   const payload={question_text:(x.question_text||"")+" — نسخة",correct_answer:x.correct_answer||"",difficulty:x.difficulty||"easy",topic:x.topic||"FLSM",created_by:user.id,question_type:x.question_type||"short",options_json:x.options_json||null,matching_json:x.matching_json||null};
@@ -570,15 +609,7 @@ function renderCertificate(x){
 function printCertificate(){
  const el=$('certificatePrint'); if(!el)return;
  const w=window.open('','_blank','width=1000,height=750');
- w.document.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>شهادة إتمام المقرر</title><style>body{font-family:Tahoma,Arial;padding:40px;background:#fff;color:#17324d}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:8px double #0759a5;padding:60px;text-align:center;min-height:520px;display:flex;flex-direction:column;justify-content:center}.certificate h1{font-size:42px;color:#0759a5}.certificate h2{font-size:28px}.name{font-size:34px;font-weight:bold;margin:25px}.certno{font-family:monospace}.badge{display:inline-block;background:#0759a5;color:#fff;padding:8px 14px;border-radius:20px;align-self:center}button{display:none}@media print{body{padding:0}}</style></head><body>${el.outerHTML}<div id="questionPreviewModal" class="modal hidden" onclick="if(event.target===this)closeQuestionPreview()">
-<div class="modal-card">
-<div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-<h3 style="margin:0;color:#0759a5">👁️ معاينة السؤال</h3>
-<button type="button" class="primary red" onclick="closeQuestionPreview()">إغلاق</button>
-</div>
-<div id="questionPreviewBody" style="margin-top:15px"></div>
-</div></div>
-</body></html>`);
+ w.document.write(`<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>شهادة إتمام المقرر</title><style>body{font-family:Tahoma,Arial;padding:40px;background:#fff;color:#17324d}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:8px double #0759a5;padding:60px;text-align:center;min-height:520px;display:flex;flex-direction:column;justify-content:center}.certificate h1{font-size:42px;color:#0759a5}.certificate h2{font-size:28px}.name{font-size:34px;font-weight:bold;margin:25px}.certno{font-family:monospace}.badge{display:inline-block;background:#0759a5;color:#fff;padding:8px 14px;border-radius:20px;align-self:center}button{display:none}@media print{body{padding:0}}</style></head><body>${el.outerHTML}</body></html>`);
  w.document.close();w.focus();setTimeout(()=>w.print(),300);
 }
 
@@ -586,5 +617,5 @@ function renderAccount(){$("accountInfo").innerHTML=profile?`<div class="stat"><
 async function exportCSV(){let r=(await db.from("attempts").select("percentage,correct_answers,total_questions,submitted_at,profiles(full_name,student_id)")).data||[],rows=[["Student","Student ID","Type","Date","Score","Details"],...r.map(x=>[x.profiles?.full_name||"",x.profiles?.student_id||"","Exam",x.submitted_at,x.percentage,`${x.correct_answers}/${x.total_questions}`])],csv="\ufeff"+rows.map(x=>x.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ipv4_subnetting_results.csv";a.click()}
 window.addEventListener("error",e=>{console.error(e.error||e.message);if($("authMsg"))setMsg("❌ خطأ في الصفحة: "+(e.message||"خطأ JavaScript"));});
 window.addEventListener("unhandledrejection",e=>{console.error(e.reason);if($("authMsg"))setMsg("❌ خطأ في الاتصال: "+(e.reason?.message||e.reason||"خطأ غير معروف"));});
-window.addEventListener("DOMContentLoaded",boot);
+window.addEventListener("DOMContentLoaded",()=>{ console.log("V15 PreviewFix2 loaded"); boot(); });
 </script></body></html>
