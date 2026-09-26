@@ -72,6 +72,17 @@
 </div>
 </div>
 <div id="studentAnalyticsArea"></div>
+<hr style="margin:28px 0;border:0;border-top:1px solid #dbe6ef">
+<h3>📊 مقارنة الشعب ومتابعة المتدربين</h3>
+<div class="question" style="margin-top:12px">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <select id="analyticsGroupSelect" style="flex:1;min-width:220px" onchange="renderCohortAnalytics(this.value)">
+      <option value="">كل الشعب</option>
+    </select>
+    <button class="primary" onclick="renderCohortAnalytics($('analyticsGroupSelect')?.value||'')">🔄 تحديث</button>
+  </div>
+</div>
+<div id="cohortAnalyticsArea"></div>
 </div>
 <div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>إنشاء اختبار جديد</h3><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار واختيار الأسئلة تلقائيًا</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
 <section id="certificate" class="hidden">
@@ -761,6 +772,81 @@ function populateAnalyticsStudents(){
   sel.innerHTML='<option value="">-- اختر متدربًا --</option>'+students.map(s=>`<option value="${s.id}">${esc(s.full_name||"بدون اسم")} — ${esc(s.student_id||"بدون رقم")} — شعبة ${esc(s.group_name||"—")}</option>`).join("");
   if(current && students.some(s=>s.id===current))sel.value=current;
 }
+
+function populateAnalyticsGroups(){
+  const sel=$("analyticsGroupSelect");
+  if(!sel)return;
+  const groups=[...new Set((trainerAnalyticsProfiles||[]).filter(x=>x.role==="student").map(x=>String(x.group_name||"—")))].sort((a,b)=>a.localeCompare(b,"ar"));
+  const current=sel.value;
+  sel.innerHTML='<option value="">كل الشعب</option>'+groups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join("");
+  if(current && groups.includes(current))sel.value=current;
+}
+
+function renderCohortAnalytics(groupFilter=""){
+  const area=$("cohortAnalyticsArea");
+  if(!area)return;
+  const profiles=(trainerAnalyticsProfiles||[]).filter(p=>p.role==="student" && (!groupFilter || String(p.group_name||"—")===String(groupFilter)));
+  const attempts=trainerAnalyticsAttempts||[];
+  const pm=new Map(profiles.map(p=>[p.id,p]));
+  const stats=new Map();
+  profiles.forEach(p=>stats.set(p.id,{p,n:0,sum:0,best:0,pass:0}));
+  attempts.forEach(a=>{
+    if(!stats.has(a.student_id))return;
+    const x=stats.get(a.student_id);
+    const score=Number(a.percentage||0);
+    x.n++; x.sum+=score; x.best=Math.max(x.best,score); if(score>=60)x.pass++;
+  });
+  const rows=[...stats.values()].map(x=>({
+    ...x,
+    avg:x.n?Math.round(x.sum/x.n):0,
+    passRate:x.n?Math.round(x.pass/x.n*100):0
+  }));
+  const active=rows.filter(x=>x.n>0);
+  const avg=active.length?Math.round(active.reduce((s,x)=>s+x.avg,0)/active.length):0;
+  const pass=active.length?Math.round(active.filter(x=>x.avg>=60).length/active.length*100):0;
+  const noData=rows.filter(x=>!x.n).length;
+  const needs=active.filter(x=>x.avg<60).sort((a,b)=>a.avg-b.avg);
+  const groups=[...new Set(profiles.map(p=>String(p.group_name||"—")))].length;
+
+  let html=`<div class="grid" style="margin-top:14px">
+    <div class="card"><div class="muted">عدد المتدربين</div><div class="kpi">${rows.length}</div></div>
+    <div class="card"><div class="muted">متوسط المجموعة</div><div class="kpi">${avg}%</div></div>
+    <div class="card"><div class="muted">نسبة المتدربين بمتوسط ≥ 60%</div><div class="kpi">${pass}%</div></div>
+    <div class="card"><div class="muted">بدون محاولات</div><div class="kpi">${noData}</div></div>
+  </div>`;
+
+  if(!rows.length){
+    area.innerHTML=html+'<div class="muted" style="margin-top:14px">لا توجد بيانات متدربين مطابقة للفلتر.</div>';
+    return;
+  }
+
+  html+=`<div class="grid" style="margin-top:18px">
+    <div class="student-insight">
+      <h4>⚠️ متدربون يحتاجون متابعة</h4>
+      ${needs.length?needs.slice(0,8).map(x=>`<div style="margin:7px 0">• ${esc(x.p.full_name||"متدرب")} — ${x.avg}% (${x.n} محاولات)</div>`).join(""):'<div class="muted">لا يوجد متدربون بمتوسط أقل من 60%.</div>'}
+    </div>
+    <div class="student-insight">
+      <h4>📌 ملخص التصفية</h4>
+      <div>الشعب المشمولة: <strong>${groups}</strong></div>
+      <div>لديهم محاولات: <strong>${active.length}</strong></div>
+      <div>بدون محاولات: <strong>${noData}</strong></div>
+    </div>
+  </div>`;
+
+  html+='<h3 style="margin-top:22px">📋 مقارنة المتدربين</h3><div style="overflow:auto"><table><tr><th>المتدرب</th><th>الشعبة</th><th>المحاولات</th><th>المتوسط</th><th>أفضل نتيجة</th><th>نسبة النجاح</th><th>الحالة</th></tr>';
+  html+=rows.sort((a,b)=>b.avg-a.avg).map(x=>`<tr>
+    <td>${esc(x.p.full_name||"—")}</td>
+    <td>${esc(x.p.group_name||"—")}</td>
+    <td>${x.n}</td>
+    <td>${x.avg}%</td>
+    <td>${x.best}%</td>
+    <td>${x.passRate}%</td>
+    <td>${!x.n?'⚪ لم يبدأ':x.avg>=80?'🟢 جيد جدًا':x.avg>=60?'🟡 يحتاج تطوير':'🔴 يحتاج متابعة'}</td>
+  </tr>`).join("");
+  html+='</table></div>';
+  area.innerHTML=html;
+}
+
 async function loadTrainerAnalytics(){
   const area=$("trainerAnalyticsArea");
   destroyAnalyticsCharts();
@@ -780,6 +866,8 @@ async function loadTrainerAnalytics(){
     trainerAnalyticsAttempts=attempts;
     trainerAnalyticsProfiles=profiles;
     populateAnalyticsStudents();
+    populateAnalyticsGroups();
+    renderCohortAnalytics($("analyticsGroupSelect")?.value||"");
     const pm=new Map(profiles.map(x=>[x.id,x]));
     const byExam=new Map();
     attempts.forEach(a=>{
