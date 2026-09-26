@@ -33,6 +33,8 @@
 
 .attempt-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.answer-row{border:1px solid #dbe6ef;border-radius:10px;padding:12px;margin:8px 0;background:#fbfdff}.answer-row.correct{border-right:5px solid #159447}.answer-row.wrong{border-right:5px solid #c62828}.answer-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:bold}.answer-value{margin-top:7px;line-height:1.7}.answer-label{color:#607587;font-size:13px}.answer-modal .modal-card{width:min(900px,100%)}
 .plan-list{display:grid;gap:10px}.plan-item{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid #dbe6ef;border-radius:10px;background:#f8fbfd}.plan-icon{font-size:24px;min-width:32px;text-align:center}.plan-item strong{color:#075ca5}.plan-item .muted{margin-top:4px;line-height:1.7}
+
+.lesson-detail h3{color:#075ca5;margin:18px 0 8px}.lesson-detail p,.lesson-detail li{line-height:1.9}.lesson-extra h3{color:#075ca5}.lesson-extra .card{margin-top:14px}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V20 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
@@ -1012,8 +1014,43 @@ async function toggleTrainerExam(id,value){const r=await db.from('trainer_exams'
 async function deleteTrainerExam(id){if(!confirm('حذف الاختبار؟'))return;const r=await db.from('trainer_exams').delete().eq('id',id);if(r.error){alert('تعذر حذف الاختبار: '+r.error.message);return;}loadTrainerExams();}
 
 
+const lesson1Media=`
+<div class="lesson-extra" style="margin-top:18px">
+  <div class="card" style="background:#f8fbff">
+    <h3>🧠 خريطة ذهنية بخط اليد</h3>
+    <p class="muted">ملخص بصري للدرس يساعدك على تثبيت مفهوم IPv4 والقناع وعنوان الشبكة.</p>
+    <img src="assets/ipv4-lesson1-mindmap.png" alt="خريطة ذهنية بخط اليد لدرس مقدمة IPv4" style="width:100%;max-height:700px;object-fit:contain;border:1px solid #d6e3ef;border-radius:14px;background:#fff">
+  </div>
+  <div class="card">
+    <h3>🎥 فيديو شرح الدرس</h3>
+    <p>شرح عربي مبسط لـ IP Address وSubnet Mask ومفاهيم IPv4 الأساسية.</p>
+    <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:14px">
+      <iframe src="https://www.youtube.com/embed/Nnv36wG_iCI" title="شرح IPv4 و IP Address و Subnet Mask بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe>
+    </div>
+    <p class="muted" style="margin-top:10px">الفيديو يشرح عنوان IP وبنية IPv4 وSubnet Mask والفرق بين IPv4 وIPv6.</p>
+  </div>
+</div>`;
+const lesson1Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul><li>فهم معنى عنوان IPv4 ولماذا نستخدمه داخل الشبكة.</li><li>التعرف على الخانات الأربع وRange من 0 إلى 255.</li><li>فهم الفرق بين Network Address وHost Address.</li><li>فهم فكرة Subnet Mask وPrefix بصورة مبسطة.</li></ul>
+<h3>1️⃣ ما هو IPv4؟</h3>
+<p>IPv4 هو نظام عنونة يستخدم عنوانًا بطول <b>32 بت</b> لتحديد الأجهزة على الشبكة. يظهر العنوان عادةً في أربع خانات عشرية مفصولة بنقاط.</p>
+<div class="question"><b>مثال:</b> 192.168.10.25 يتكون من أربع خانات: 192، 168، 10، 25.</div>
+<h3>2️⃣ كيف نقرأ العنوان؟</h3>
+<p>كل خانة تسمى Octet وقيمتها من <b>0 إلى 255</b>. لذلك لا نكتب قيمة مثل 300 داخل خانة IPv4.</p>
+<h3>3️⃣ Network وHost</h3>
+<p>عنوان IPv4 يمكن تقسيمه منطقيًا إلى جزء يمثل <b>الشبكة</b> وجزء يمثل <b>الجهاز</b>. الذي يحدد مكان الفصل هو <b>Prefix / Subnet Mask</b>.</p>
+<h3>4️⃣ مثال كامل: 192.168.10.25/24</h3>
+<ol><li>Prefix هو <b>/24</b>.</li><li>القناع المقابل هو <b>255.255.255.0</b>.</li><li>أول 24 بت للشبكة، وآخر 8 بت للمضيف.</li><li>بالتالي عنوان الشبكة هو <b>192.168.10.0</b>.</li><li>عنوان الجهاز المثال هو <b>192.168.10.25</b>.</li></ol>
+<div class="good"><b>قاعدة سهلة:</b> في /24 تكون أول ثلاث خانات جزء الشبكة، والخانة الرابعة جزء المضيف.</div>
+<h3>📝 تطبيق سريع</h3>
+<p>إذا كان لدينا الجهاز <b>192.168.10.25/24</b>، فحدد عنوان الشبكة.</p>
+<ul><li>Subnet Mask = 255.255.255.0</li><li>Network = 192.168.10.0</li></ul>
+</div>`;
+
 const courseFallback=[
- {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:'<p><b>IPv4</b> هو نظام عنونة يستخدم عناوين بطول 32 بت، وتكتب عادةً بصيغة أربع خانات عشرية مفصولة بنقاط.</p><ul><li>مثال: 192.168.10.25</li><li>كل خانة من 0 إلى 255.</li><li>العنوان يتكون منطقيًا من جزء للشبكة وجزء للمضيف.</li></ul><div class="question"><b>تطبيق:</b> حدّد عنوان الشبكة الذي ينتمي إليه الجهاز 192.168.10.25 عندما يكون القناع /24.</div>'},
+ {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:20,content:'<p>الـ Prefix مثل <b>/24</b> يحدد عدد البتات المستخدمة للشبكة. في /24 توجد 24 بت للشبكة و8 بت للمضيف.</p><ul><li>/24 = 255.255.255.0</li><li>/25 = 255.255.255.128</li><li>/26 = 255.255.255.192</li><li>/27 = 255.255.255.224</li><li>/28 = 255.255.255.240</li></ul>'},
  {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:25,content:'<p>عند تقسيم شبكة /24 إلى شبكات متساوية، نستعير بتات من جزء المضيف.</p><p>عدد الشبكات = <b>2<sup>n</sup></b> حيث n عدد البتات المستعارة.</p><div class="question"><b>مثال:</b> نريد 8 شبكات → نستعير 3 بتات → /27.</div>'},
  {id:'local-4',lesson_no:4,title:'Magic Number',duration:20,content:'<p>الـ Magic Number أو Block Size يساعدك على تحديد بداية كل Subnet بسرعة.</p><p>في /26 يكون القناع 255.255.255.192، وبالتالي حجم الكتلة = 256 - 192 = <b>64</b>.</p><p>الشبكات: 0، 64، 128، 192.</p>'},
@@ -1043,12 +1080,16 @@ async function loadCourse(){
    const acts=amap.get(x.id)||[];
    const practice=acts.find(a=>a.activity_type==='practice');
    const exam=acts.find(a=>a.activity_type==='exam' && a.exam_id);
+   let lessonContent=x.content_html||x.content||'';
+   if(Number(x.lesson_no)===1){
+     lessonContent += lesson1Detailed + lesson1Media;
+   }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
        <div><span class="badge">الدرس ${x.lesson_no||i+1}</span> <b style="font-size:18px">${esc(x.title)}</b></div>
        <span class="muted">⏱️ ${x.duration_minutes||x.duration||20} دقيقة</span>
      </div>
-     <div style="margin-top:15px;line-height:1.9">${x.content_html||x.content||''}</div>
+     <div style="margin-top:15px;line-height:1.9">${lessonContent}</div>
      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #e5edf4">
        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
          <button class="primary ${d?'':'green'}" onclick="toggleLesson('${x.id}',${d?'false':'true'})">${d?'↩️ إعادة فتح الدرس':'✅ إكمال الدرس'}</button>
