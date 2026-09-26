@@ -322,7 +322,7 @@ function renderQuestionBank(){
   `;
   $("questionsTable").innerHTML=rows.length?`<table><tr><th>#</th><th>السؤال</th><th>النوع</th><th>التصنيف</th><th>المستوى</th><th>الإجراء</th></tr>${rows.map((x,i)=>`<tr>
 <td>${i+1}</td><td style="text-align:right">${esc(x.question_text)}</td><td>${questionTypeLabel(x.question_type)}</td><td>${esc(x.topic||"")}</td><td>${esc(x.difficulty||"")}</td>
-<td><div class="qactions"><button class="primary" onclick="previewTrainerQuestion('${x.id}')" data-preview-id="${x.id}">👁️ معاينة</button><button class="light" onclick="duplicateTrainerQuestion('${x.id}')">📄 تكرار</button><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">🗑️ حذف</button></div></td>
+<td><div class="qactions"><button class="primary" onclick="previewTrainerQuestion('${x.id}')" data-preview-id="${x.id}">👁️ معاينة</button><button class="light" onclick="editTrainerQuestion('${x.id}')">✏️ تعديل</button><button class="light" onclick="duplicateTrainerQuestion('${x.id}')">📄 تكرار</button><button class="primary red" onclick="deleteTrainerQuestion('${x.id}')">🗑️ حذف</button></div></td>
 </tr>`).join("")}</table>`:`<div class="muted">لا توجد أسئلة مطابقة للبحث أو الفلاتر.</div>`;
 }
 function findTrainerQuestion(id){return trainerQuestionRows.find(x=>x.id===id);}
@@ -394,6 +394,80 @@ document.addEventListener("click",function(e){
   const b=e.target.closest && e.target.closest("[data-preview-id]");
   if(b){e.preventDefault();previewTrainerQuestion(b.getAttribute("data-preview-id"));}
 });
+function editTrainerQuestion(id){
+  const x=findTrainerQuestion(id);
+  if(!x){alert('لم يتم العثور على السؤال.');return;}
+  let modal=document.getElementById('questionEditModal');
+  if(!modal){
+    modal=document.createElement('div'); modal.id='questionEditModal'; modal.className='modal hidden';
+    modal.innerHTML=`<div class="modal-card" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3 style="margin:0;color:#0759a5">✏️ تعديل السؤال</h3><button type="button" class="primary red" id="closeEditBtn">إغلاق ✕</button></div>
+      <div id="questionEditBody" style="margin-top:15px"></div>
+    </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',e=>{if(e.target===modal)closeQuestionEdit();});
+    document.getElementById('closeEditBtn').addEventListener('click',closeQuestionEdit);
+  }
+  const type=x.question_type||'short', opts=parseJsonSafe(x.options_json,[]), pairs=parseJsonSafe(x.matching_json,[]);
+  let body=`<input type="hidden" id="editQuestionId" value="${esc(x.id)}">
+    <label>نوع السؤال</label><select id="editQuestionType" onchange="renderEditQuestionFields()">
+    <option value="short">إجابة قصيرة</option><option value="mcq">اختيار من متعدد</option><option value="true_false">صح / خطأ</option><option value="matching">وصل بين العمودين</option></select>
+    <label>نص السؤال</label><textarea id="editQuestionText" style="width:100%;min-height:100px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea>
+    <div class="grid"><div><label>المستوى</label><select id="editDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="editTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div>
+    <div id="editQuestionFields"></div><div id="editQuestionMsg"></div>
+    <div class="actions"><button type="button" class="primary green" onclick="saveEditedTrainerQuestion()">💾 حفظ التعديلات</button><button type="button" class="light" onclick="closeQuestionEdit()">إلغاء</button></div>`;
+  document.getElementById('questionEditBody').innerHTML=body;
+  document.getElementById('editQuestionType').value=type;
+  document.getElementById('editQuestionText').value=cleanQuestionText(x.question_text||'');
+  document.getElementById('editDifficulty').value=x.difficulty||'easy';
+  document.getElementById('editTopic').value=x.topic||'FLSM';
+  renderEditQuestionFields();
+  if(type==='short') document.getElementById('editCorrectAnswer').value=x.correct_answer||'';
+  if(type==='true_false') document.getElementById('editTFAnswer').value=x.correct_answer==='false'?'false':'true';
+  if(type==='mcq'){
+    opts.forEach(o=>{const el=document.getElementById('editChoice_'+o.key);if(el)el.value=o.text||'';});
+    document.getElementById('editMCQAnswer').value=x.correct_answer||'A';
+  }
+  if(type==='matching'){
+    const rows=document.getElementById('editMatchRows'); rows.innerHTML='';
+    (pairs.length?pairs:[{left:'',right:''},{left:'',right:''}]).forEach((p,i)=>addEditMatchRow(p.left||'',p.right||''));
+  }
+  modal.classList.remove('hidden'); document.body.style.overflow='hidden';
+}
+function renderEditQuestionFields(){
+  const type=document.getElementById('editQuestionType')?.value, box=document.getElementById('editQuestionFields'); if(!box)return;
+  if(type==='short') box.innerHTML='<label>الإجابة الصحيحة</label><input id="editCorrectAnswer" placeholder="الإجابة الصحيحة">';
+  else if(type==='true_false') box.innerHTML='<label>الإجابة الصحيحة</label><select id="editTFAnswer"><option value="true">صح</option><option value="false">خطأ</option></select>';
+  else if(type==='mcq') box.innerHTML='<div class="builder-help">أدخل الخيارات الأربعة وحدد الإجابة الصحيحة.</div>'+['A','B','C','D'].map(k=>`<div class="choice-row"><b>${k}</b><input id="editChoice_${k}" placeholder="الخيار ${k}"></div>`).join('')+'<label>الإجابة الصحيحة</label><select id="editMCQAnswer"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>';
+  else box.innerHTML='<div class="builder-help">عدّل عناصر العمودين ثم احفظ.</div><div id="editMatchRows"></div><button type="button" class="primary mini-btn" onclick="addEditMatchRow()">➕ إضافة زوج</button>';
+}
+function addEditMatchRow(left='',right=''){
+  const box=document.getElementById('editMatchRows'); if(!box)return; const i=box.children.length;
+  box.insertAdjacentHTML('beforeend',`<div class="match-row"><input id="eml_${i}" placeholder="العمود الأول" value="${esc(left)}"><input id="emr_${i}" placeholder="العمود الثاني" value="${esc(right)}"><button type="button" class="primary red mini-btn" onclick="this.parentElement.remove()">حذف</button></div>`);
+}
+async function saveEditedTrainerQuestion(){
+  const id=document.getElementById('editQuestionId').value, type=document.getElementById('editQuestionType').value;
+  const question_text=cleanQuestionText(document.getElementById('editQuestionText').value.trim()), difficulty=document.getElementById('editDifficulty').value, topic=document.getElementById('editTopic').value;
+  if(!question_text)return msg('editQuestionMsg','❌ أدخل نص السؤال.');
+  let correct_answer='',options_json=null,matching_json=null;
+  if(type==='short'){correct_answer=document.getElementById('editCorrectAnswer').value.trim();if(!correct_answer)return msg('editQuestionMsg','❌ أدخل الإجابة الصحيحة.');}
+  if(type==='true_false')correct_answer=document.getElementById('editTFAnswer').value;
+  if(type==='mcq'){
+    options_json=['A','B','C','D'].map(k=>({key:k,text:document.getElementById('editChoice_'+k).value.trim()}));
+    if(options_json.some(o=>!o.text))return msg('editQuestionMsg','❌ أدخل الخيارات الأربعة.');
+    correct_answer=document.getElementById('editMCQAnswer').value;
+  }
+  if(type==='matching'){
+    const pairs=[]; document.querySelectorAll('#editMatchRows .match-row').forEach((row,i)=>{const l=row.querySelector(`#eml_${i}`)?.value.trim(),r=row.querySelector(`#emr_${i}`)?.value.trim();if(l&&r)pairs.push({left:l,right:r});});
+    if(pairs.length<2)return msg('editQuestionMsg','❌ أضف عنصرين على الأقل للمطابقة.');
+    matching_json=pairs; correct_answer=JSON.stringify(pairs.map((p,i)=>({left:i,right:i})));
+  }
+  const r=await db.from('trainer_questions').update({question_text,correct_answer,difficulty,topic,question_type:type,options_json,matching_json}).eq('id',id);
+  if(r.error){msg('editQuestionMsg','❌ تعذر حفظ التعديلات: '+r.error.message);return;}
+  closeQuestionEdit(); await loadTrainerQuestions(); msg('questionMsg','✅ تم تعديل السؤال بنجاح.',true);
+}
+function closeQuestionEdit(){const modal=document.getElementById('questionEditModal');if(modal)modal.classList.add('hidden');document.body.style.overflow='';}
+window.editTrainerQuestion=editTrainerQuestion; window.saveEditedTrainerQuestion=saveEditedTrainerQuestion; window.closeQuestionEdit=closeQuestionEdit;
 async function duplicateTrainerQuestion(id){
   const x=findTrainerQuestion(id); if(!x)return;
   const payload={question_text:cleanQuestionText(x.question_text||""),correct_answer:x.correct_answer||"",difficulty:x.difficulty||"easy",topic:x.topic||"FLSM",created_by:user.id,question_type:x.question_type||"short",options_json:x.options_json||null,matching_json:x.matching_json||null};
