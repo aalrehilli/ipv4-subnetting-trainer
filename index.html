@@ -757,7 +757,7 @@ function populateAnalyticsStudents(){
   const sel=$("analyticsStudentSelect");
   if(!sel)return;
   const current=sel.value;
-  const students=(trainerAnalyticsProfiles||[]).filter(x=>x.role==="student").sort((a,b)=>String(a.full_name||"").localeCompare(String(b.full_name||""),"ar"));
+  const students=(trainerAnalyticsProfiles||[]).filter(x=>!x.role || x.role==="student").sort((a,b)=>String(a.full_name||"").localeCompare(String(b.full_name||""),"ar"));
   sel.innerHTML='<option value="">-- اختر متدربًا --</option>'+students.map(s=>`<option value="${s.id}">${esc(s.full_name||"بدون اسم")} — ${esc(s.student_id||"بدون رقم")} — شعبة ${esc(s.group_name||"—")}</option>`).join("");
   if(current && students.some(s=>s.id===current))sel.value=current;
 }
@@ -770,7 +770,7 @@ async function loadTrainerAnalytics(){
     const [ar,er,pr]=await Promise.all([
       db.from("attempts").select("id,student_id,exam_id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic,group_name)"),
       db.from("trainer_exams").select("id,title,topic,question_count,duration_minutes,group_name,is_active,created_at"),
-      db.from("profiles").select("id,full_name,student_id,group_name")
+      db.from("profiles").select("id,full_name,student_id,group_name,role")
     ]);
     if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة النتائج:<br>${esc(ar.error.message)}</div>`;return;}
     if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الاختبارات:<br>${esc(er.error.message)}</div>`;return;}
