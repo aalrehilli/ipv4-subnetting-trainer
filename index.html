@@ -1237,13 +1237,71 @@ const lesson5Detailed=`
 <ul><li>Subnet Mask = <b>255.255.255.224</b>.</li><li>Magic Number = <b>32</b>.</li><li>Network = <b>192.168.20.32</b>.</li><li>First Host = <b>192.168.20.33</b>.</li><li>Last Host = <b>192.168.20.62</b>.</li><li>Broadcast = <b>192.168.20.63</b>.</li></ul>
 </div>`;
 
+
+const lesson6Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul>
+<li>فهم معنى <b>FLSM</b> (Fixed Length Subnet Mask) ولماذا نستخدمه.</li>
+<li>تقسيم شبكة واحدة إلى شبكات فرعية <b>متساوية الحجم</b>.</li>
+<li>حساب عدد البتات المستعارة، والـ Prefix الجديد، والقناع، وMagic Number.</li>
+<li>تحديد Network وFirst Host وLast Host وBroadcast لكل Subnet.</li>
+</ul>
+<h3>📚 ما هو FLSM؟</h3>
+<p><b>FLSM</b> يعني أن جميع الشبكات الفرعية الناتجة تستخدم <b>نفس Subnet Mask</b>، وبالتالي يكون لكل شبكة نفس عدد العناوين ونفس عدد المضيفين القابلين للاستخدام.</p>
+<p>مثال: إذا كانت لدينا <b>192.168.10.0/24</b> ونريد <b>4 شبكات متساوية</b>، نحتاج إلى استعارة بتّين لأن <b>2² = 4</b>، فيصبح الـ Prefix الجديد <b>/26</b>.</p>
+<h3>🧮 خطوات حل FLSM</h3>
+<ol>
+<li>حدد عدد الشبكات المطلوبة.</li>
+<li>احسب عدد البتات المستعارة: <b>2ⁿ ≥ عدد الشبكات المطلوبة</b>.</li>
+<li>أضف n إلى الـ Prefix الأصلي للحصول على الـ Prefix الجديد.</li>
+<li>حوّل الـ Prefix إلى Subnet Mask.</li>
+<li>احسب Magic Number = <b>256 − قيمة الأوكتت المتغير</b>.</li>
+<li>ابدأ عناوين الشبكات من 0 واقفز بمقدار Magic Number.</li>
+<li>لكل شبكة حدد Network ثم First Host ثم Last Host ثم Broadcast.</li>
+</ol>
+<h3>📊 مثال محلول 1: تقسيم /24 إلى 4 شبكات</h3>
+<p>الشبكة الأصلية: <b>192.168.10.0/24</b></p>
+<ul>
+<li>عدد الشبكات المطلوبة = <b>4</b>.</li>
+<li>Borrowed Bits = <b>2</b> لأن 2² = 4.</li>
+<li>Prefix الجديد = <b>/26</b>.</li>
+<li>Subnet Mask = <b>255.255.255.192</b>.</li>
+<li>Magic Number = <b>256 − 192 = 64</b>.</li>
+<li>عدد العناوين في كل شبكة = <b>64</b>، وعدد المضيفين القابلين للاستخدام = <b>62</b>.</li>
+</ul>
+<table><tr><th>Subnet</th><th>Network</th><th>First Host</th><th>Last Host</th><th>Broadcast</th></tr>
+<tr><td>1</td><td>192.168.10.0</td><td>192.168.10.1</td><td>192.168.10.62</td><td>192.168.10.63</td></tr>
+<tr><td>2</td><td>192.168.10.64</td><td>192.168.10.65</td><td>192.168.10.126</td><td>192.168.10.127</td></tr>
+<tr><td>3</td><td>192.168.10.128</td><td>192.168.10.129</td><td>192.168.10.190</td><td>192.168.10.191</td></tr>
+<tr><td>4</td><td>192.168.10.192</td><td>192.168.10.193</td><td>192.168.10.254</td><td>192.168.10.255</td></tr></table>
+<h3>📝 مثال محلول 2: تقسيم /24 إلى 8 شبكات</h3>
+<p>إذا كانت الشبكة <b>192.168.20.0/24</b> والمطلوب <b>8 شبكات متساوية</b>، نحتاج إلى <b>3 Borrowed Bits</b> لأن 2³ = 8، وبالتالي يصبح الـ Prefix <b>/27</b> والقناع <b>255.255.255.224</b> وMagic Number = <b>32</b>.</p>
+<p>تبدأ الشبكات عند: <b>.0، .32، .64، .96، .128، .160، .192، .224</b>، ولكل شبكة <b>32 عنوانًا</b> و<b>30 Host</b> قابلًا للاستخدام.</p>
+<h3>🧠 قاعدة للحفظ</h3>
+<div class="good"><b>عدد الشبكات → Borrowed Bits → Prefix الجديد → Mask → Magic Number → Network/Hosts/Broadcast</b></div>
+<h3>⚠️ FLSM أم VLSM؟</h3>
+<p>في <b>FLSM</b> جميع الشبكات لها نفس الحجم، بينما <b>VLSM</b> يسمح بأحجام مختلفة عندما تختلف احتياجات الأقسام أو الأجهزة.</p>
+<h3>🧪 تطبيق سريع</h3>
+<p>قسّم <b>192.168.30.0/24</b> إلى <b>4 شبكات متساوية</b>، ثم اكتب لكل شبكة: Network وFirst Host وLast Host وBroadcast.</p>
+</div>`;
+
+const lesson6Media=`
+<div class="lesson-extra">
+<h3>🧠 خريطة ذهنية</h3>
+<p>ملخص بصري للدرس يوضح FLSM والخطوات والقوانين والأمثلة.</p>
+<div class="card"><img src="assets/ipv4-lesson6-mindmap.png" alt="خريطة ذهنية للدرس 6 FLSM" style="width:100%;max-width:1200px;display:block;margin:auto;border-radius:14px;border:1px solid #d9e4ee"></div>
+<h3>🎥 فيديو شرح الدرس</h3>
+<div class="card" style="padding:10px"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px"><iframe src="https://www.youtube.com/embed/ZVxBD_-zSrM" title="شرح FLSM بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div><p style="margin:10px 0 0">فيديو عربي يشرح FLSM وSubnetting. citeturn1youtube12</p></div>
+</div>`;
+
 const courseFallback=[
  {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
  {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:30,content:lesson3Detailed+lesson3Media},
  {id:'local-4',lesson_no:4,title:'Magic Number',duration:30,content:lesson4Detailed+lesson4Media},
  {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:30,content:lesson5Detailed+lesson5Media},
- {id:'local-6',lesson_no:6,title:'FLSM — تقسيم الشبكة إلى أحجام متساوية',duration:30,content:'<p><b>FLSM</b> يعني أن جميع الشبكات الفرعية لها نفس حجم العناوين.</p><p>خطوات الحل:</p><ol><li>حدد عدد الشبكات المطلوبة.</li><li>احسب عدد البتات المستعارة.</li><li>حدد الـ Prefix الجديد.</li><li>احسب القناع والـ Magic Number.</li><li>اكتب Network وHosts وBroadcast لكل Subnet.</li></ol>'},
+ {id:'local-6',lesson_no:6,title:'FLSM — تقسيم الشبكة إلى أحجام متساوية',duration:30,content:lesson6Detailed+lesson6Media},
  {id:'local-7',lesson_no:7,title:'مختبر عملي: Class C FLSM',duration:35,content:'<p>طبّق على الشبكة <b>192.168.50.0/24</b> والمطلوب 4 شبكات متساوية.</p><ul><li>Borrowed Bits = 2</li><li>New Prefix = /26</li><li>Magic Number = 64</li><li>الشبكات تبدأ عند 0، 64، 128، 192.</li></ul><p>بعد إنهاء الدرس انتقل إلى <b>التمارين</b> ثم اختبر نفسك من صفحة <b>الاختبارات</b>.</p>'},
  {id:'local-8',lesson_no:8,title:'مراجعة واستعداد للاختبار',duration:25,content:'<p>قبل الاختبار تأكد أنك تستطيع حل هذه المهام دون آلة حاسبة:</p><ul><li>حساب Borrowed Bits.</li><li>تحويل Prefix إلى Subnet Mask.</li><li>حساب Magic Number.</li><li>تحديد Network Address.</li><li>تحديد First/Last Host.</li><li>تحديد Broadcast.</li><li>حساب عدد Hosts/Subnet.</li></ul><div class="good">🎯 هدف الإتقان: حل مسائل Class C + FLSM بدقة وسرعة.</div>'}
 ];
@@ -1283,6 +1341,9 @@ async function loadCourse(){
    }
    if(Number(x.lesson_no)===5 && !String(x.id).startsWith('local-')){
      lessonContent += lesson5Detailed + lesson5Media;
+   }
+   if(Number(x.lesson_no)===6 && !String(x.id).startsWith('local-')){
+     lessonContent += lesson6Detailed + lesson6Media;
    }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
