@@ -1295,6 +1295,50 @@ const lesson6Media=`
 <div class="card" style="padding:10px"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px"><iframe src="https://www.youtube.com/embed/ZVxBD_-zSrM" title="شرح FLSM بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div><p style="margin:10px 0 0">فيديو عربي يشرح FLSM وSubnetting. citeturn1youtube12</p></div>
 </div>`;
 
+
+const lesson7Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul>
+<li>تطبيق مفهوم <b>FLSM</b> عمليًا على شبكة Class C.</li>
+<li>تحويل المتطلبات إلى Borrowed Bits وPrefix وSubnet Mask.</li>
+<li>حساب Magic Number وتحديد بداية كل Subnet.</li>
+<li>كتابة Network وFirst Host وLast Host وBroadcast لكل شبكة.</li>
+</ul>
+<h3>📚 فكرة المختبر</h3>
+<p>لدينا الشبكة <b>192.168.50.0/24</b> والمطلوب تقسيمها إلى <b>4 شبكات متساوية</b>. في FLSM يجب أن تستخدم الشبكات الأربع نفس القناع ونفس حجم العناوين.</p>
+<h3>🧮 الحل خطوة بخطوة</h3>
+<ol>
+<li>عدد الشبكات المطلوبة = <b>4</b>.</li>
+<li>نبحث عن n بحيث <b>2ⁿ ≥ 4</b>، إذن <b>n = 2</b> Borrowed Bits.</li>
+<li>الـ Prefix الجديد = <b>/24 + 2 = /26</b>.</li>
+<li>Subnet Mask = <b>255.255.255.192</b>.</li>
+<li>Magic Number = <b>256 − 192 = 64</b>.</li>
+<li>نبدأ من 0 ونزيد كل مرة بمقدار <b>64</b>.</li>
+</ol>
+<h3>🔢 تمثيل البتات</h3>
+<p>في /24 لدينا 24 بت للشبكة و8 بت للمضيفين؛ نستعير بتّين، فيصبح /26: <b>26 بت للشبكة و6 بت للمضيفين</b>.</p>
+<h3>📊 النتيجة النهائية</h3>
+<table><tr><th>رقم</th><th>Network</th><th>First Host</th><th>Last Host</th><th>Broadcast</th></tr>
+<tr><td>1</td><td>192.168.50.0/26</td><td>192.168.50.1</td><td>192.168.50.62</td><td>192.168.50.63</td></tr>
+<tr><td>2</td><td>192.168.50.64/26</td><td>192.168.50.65</td><td>192.168.50.126</td><td>192.168.50.127</td></tr>
+<tr><td>3</td><td>192.168.50.128/26</td><td>192.168.50.129</td><td>192.168.50.190</td><td>192.168.50.191</td></tr>
+<tr><td>4</td><td>192.168.50.192/26</td><td>192.168.50.193</td><td>192.168.50.254</td><td>192.168.50.255</td></tr></table>
+<h3>💡 ماذا تعلمنا؟</h3>
+<p>كل Subnet تحتوي على <b>64 عنوانًا</b>، منها <b>62 عنوانًا قابلاً للاستخدام</b> للمضيفين في الاستخدام التقليدي؛ عنوان Network وBroadcast لا يُستخدمان للمضيفين. كما أن الشبكات الأربع لا تتداخل وتغطي كامل المجال من .0 إلى .255.</p>
+<h3>🧪 تطبيق سريع</h3>
+<p>طبّق نفس الخطوات على <b>192.168.100.0/24</b> وقسّمها إلى <b>4 شبكات متساوية</b>، ثم اكتب Network وFirst Host وLast Host وBroadcast لكل شبكة.</p>
+</div>`;
+
+const lesson7Media=`
+<div class="lesson-extra">
+<h3>🧠 خريطة ذهنية</h3>
+<p>ملخص بصري للمختبر يوضح بيانات الشبكة، خطوات الحل، والنتائج النهائية.</p>
+<div class="card"><img src="assets/ipv4-lesson7-mindmap.png" alt="خريطة ذهنية للدرس 7 Class C FLSM" style="width:100%;max-width:1200px;display:block;margin:auto;border-radius:14px;border:1px solid #d9e4ee"></div>
+<h3>🎥 فيديو شرح الدرس</h3>
+<div class="card" style="padding:10px"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px"><iframe src="https://www.youtube.com/embed/ZVxBD_-zSrM" title="شرح عملي FLSM بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div><p style="margin:10px 0 0">فيديو عربي يشرح FLSM وتقسيم الشبكات، ويُستخدم كشرح داعم للمختبر العملي.</p></div>
+</div>`;
+
 const courseFallback=[
  {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
@@ -1302,7 +1346,7 @@ const courseFallback=[
  {id:'local-4',lesson_no:4,title:'Magic Number',duration:30,content:lesson4Detailed+lesson4Media},
  {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:30,content:lesson5Detailed+lesson5Media},
  {id:'local-6',lesson_no:6,title:'FLSM — تقسيم الشبكة إلى أحجام متساوية',duration:30,content:lesson6Detailed+lesson6Media},
- {id:'local-7',lesson_no:7,title:'مختبر عملي: Class C FLSM',duration:35,content:'<p>طبّق على الشبكة <b>192.168.50.0/24</b> والمطلوب 4 شبكات متساوية.</p><ul><li>Borrowed Bits = 2</li><li>New Prefix = /26</li><li>Magic Number = 64</li><li>الشبكات تبدأ عند 0، 64، 128، 192.</li></ul><p>بعد إنهاء الدرس انتقل إلى <b>التمارين</b> ثم اختبر نفسك من صفحة <b>الاختبارات</b>.</p>'},
+ {id:'local-7',lesson_no:7,title:'مختبر عملي: Class C FLSM',duration:35,content:lesson7Detailed+lesson7Media},
  {id:'local-8',lesson_no:8,title:'مراجعة واستعداد للاختبار',duration:25,content:'<p>قبل الاختبار تأكد أنك تستطيع حل هذه المهام دون آلة حاسبة:</p><ul><li>حساب Borrowed Bits.</li><li>تحويل Prefix إلى Subnet Mask.</li><li>حساب Magic Number.</li><li>تحديد Network Address.</li><li>تحديد First/Last Host.</li><li>تحديد Broadcast.</li><li>حساب عدد Hosts/Subnet.</li></ul><div class="good">🎯 هدف الإتقان: حل مسائل Class C + FLSM بدقة وسرعة.</div>'}
 ];
 
@@ -1344,6 +1388,9 @@ async function loadCourse(){
    }
    if(Number(x.lesson_no)===6 && !String(x.id).startsWith('local-')){
      lessonContent += lesson6Detailed + lesson6Media;
+   }
+   if(Number(x.lesson_no)===7 && !String(x.id).startsWith('local-')){
+     lessonContent += lesson7Detailed + lesson7Media;
    }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
