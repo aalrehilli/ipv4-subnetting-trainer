@@ -42,8 +42,29 @@
 
 /* V36.3 — ترتيب واجهة المختبر */
 .practice-shell{padding:22px;overflow:hidden}.practice-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 20px;border:1px solid #dbe8f3;border-radius:15px;background:linear-gradient(135deg,#eef7ff,#fff);margin-bottom:18px}.practice-hero h2{margin:9px 0 5px}.practice-icon{font-size:48px;min-width:70px;text-align:center}.practice-stats{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin-bottom:14px}.practice-stats .stat{margin:0;min-height:72px;align-items:center}.practice-control{background:#f8fbff;border:1px solid #dbe7f0;border-radius:12px;padding:11px 13px}.practice-control label,.duration-control label{display:block;font-weight:bold;margin-bottom:5px;color:#23435e}.practice-control select,.duration-control select{margin:0}.practice-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.practice-menu button{min-height:48px}.competition-settings{display:grid;grid-template-columns:1.5fr .8fr auto;align-items:end;gap:14px;padding:16px;border:2px solid #f0c36a;border-radius:14px;background:linear-gradient(135deg,#fffaf0,#fff);margin-bottom:18px}.competition-settings h3{margin:0 0 5px}.duration-control select{min-width:170px}.competition-start{min-width:190px;min-height:46px}.practice-shell #practiceArea,.practice-shell #challengeArea,.practice-shell #competitionArea{margin-top:12px}@media(max-width:800px){.practice-stats{grid-template-columns:1fr 1fr}.practice-stats .practice-control{grid-column:1/-1}.competition-settings{grid-template-columns:1fr 1fr}.competition-start{grid-column:1/-1;width:100%}}@media(max-width:600px){.practice-hero{padding:15px}.practice-icon{display:none}.practice-stats,.practice-menu,.competition-settings{grid-template-columns:1fr}.competition-start{grid-column:auto}.practice-menu button{width:100%}}
+
+/* V37 — لوحة المتدرب الذكية */
+.smart-dashboard{display:grid;gap:16px}
+.smart-hero{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:stretch}
+.smart-welcome{background:linear-gradient(135deg,#eef7ff,#fff);border:1px solid #d6e6f3;border-radius:16px;padding:20px}
+.smart-welcome h2{margin:0 0 7px}
+.smart-welcome .next-action{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.smart-level{background:#fff;border:1px solid #dce8f2;border-radius:16px;padding:18px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.smart-level .emoji{font-size:42px}.smart-level .level-name{font-size:18px;font-weight:bold;color:#0759a5;margin-top:6px}
+.smart-progress{margin-top:12px}.smart-progress-row{display:flex;justify-content:space-between;gap:10px;font-weight:bold}
+.smart-progress-track{height:14px;background:#e5eef5;border-radius:999px;overflow:hidden;margin-top:8px}.smart-progress-track span{display:block;height:100%;background:linear-gradient(90deg,#0b75c9,#159447);border-radius:999px}
+.smart-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.smart-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px;text-align:center}.smart-kpi .num{font-size:25px;font-weight:bold;color:#0759a5}.smart-kpi .label{font-size:12px;color:#65788a;margin-top:4px}
+.smart-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}.smart-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}.smart-panel h3{margin:0 0 12px}
+.smart-list{display:grid;gap:9px}.smart-list-item{display:flex;align-items:flex-start;gap:10px;padding:11px;border-radius:10px;background:#f8fbfd;border:1px solid #e5edf3}.smart-list-item .icon{font-size:22px;min-width:28px;text-align:center}.smart-list-item strong{display:block;color:#0759a5}.smart-list-item small{display:block;color:#65788a;margin-top:3px;line-height:1.6}
+.smart-topic{margin:9px 0}.smart-topic-head{display:flex;justify-content:space-between;font-size:13px;font-weight:bold}.smart-topic-bar{height:9px;background:#e8eef4;border-radius:9px;overflow:hidden;margin-top:5px}.smart-topic-bar span{display:block;height:100%;background:#0b75c9;border-radius:9px}
+.smart-activity{display:grid;gap:8px}.smart-activity-row{display:grid;grid-template-columns:80px 1fr 70px;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #edf2f6}.smart-activity-row:last-child{border-bottom:0}.smart-activity-row .type{font-size:12px;font-weight:bold;color:#0759a5}.smart-activity-row .date{font-size:11px;color:#718294;text-align:left}.smart-empty{padding:18px;text-align:center;color:#718294;background:#f8fbfd;border-radius:10px}
+.smart-achievements{display:flex;flex-wrap:wrap;gap:7px}.smart-achievements .badge-achievement{margin:0}
+.smart-streak{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,#fff7e5,#fff);border:1px solid #f0d08a;border-radius:12px;padding:12px}.smart-streak .fire{font-size:30px}
+@media(max-width:900px){.smart-hero,.smart-columns{grid-template-columns:1fr}.smart-kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.smart-kpis{grid-template-columns:1fr 1fr}.smart-activity-row{grid-template-columns:65px 1fr}.smart-activity-row .date{grid-column:2;text-align:right}}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V36.3 • Supabase</div></div>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V37 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
@@ -57,11 +78,11 @@
 </div></section>
 <section id="tests" class="hidden"><div class="card"><h2>🏆 الاختبارات</h2><select id="testLevel"><option value="basic">الأساسيات</option><option value="medium">متوسط</option><option value="advanced">شامل</option></select><select id="testCount"><option>10</option><option>15</option><option>20</option></select><button class="primary green" onclick="startTest()">بدء الاختبار</button><div id="publishedTests" class="question"></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V11 • CLASS C + FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V37 • CLASS C + FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
-<div class="card hero"><h2>📊 لوحة المتدرب</h2><p>ملخص تقدمك في المقرر والتمارين والاختبارات.</p><div id="studentDashboard"></div></div>
+<div class="card hero"><h2>📊 لوحة المتدرب الذكية</h2><p>كل ما تحتاجه لمعرفة تقدمك، نقاط قوتك، وما الذي ينبغي أن تراجعه بعد ذلك.</p><div id="studentDashboard"></div></div>
 <div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div>
 <div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div>
 </section>
@@ -417,21 +438,68 @@ async function gradeTest(autoSubmit=false){
 }
 
 async function renderDashboard(){
-  const a=(await db.from('attempts').select('*,trainer_exams(title,topic)').eq('student_id',user.id).order('submitted_at',{ascending:false})).data||[];
-  const e=(await db.from('exercise_attempts').select('*').eq('student_id',user.id).order('created_at',{ascending:false})).data||[];
-  const lp=(await db.from('lesson_progress').select('lesson_id,completed,practice_completed,practice_score').eq('user_id',user.id)).data||[];
-  const lessons=(await db.from('course_lessons').select('id,lesson_no,title').eq('is_active',true).order('lesson_no')).data||[];
+  const [ar,er,lpr,lr,cr]=await Promise.all([
+    db.from('attempts').select('*,trainer_exams(title,topic)').eq('student_id',user.id).order('submitted_at',{ascending:false}),
+    db.from('exercise_attempts').select('*').eq('student_id',user.id).order('created_at',{ascending:false}),
+    db.from('lesson_progress').select('lesson_id,completed,practice_completed,practice_score').eq('user_id',user.id),
+    db.from('course_lessons').select('id,lesson_no,title').eq('is_active',true).order('lesson_no'),
+    db.from('competition_attempts').select('score,correct_rounds,total_rounds,duration_seconds,created_at').eq('student_id',user.id).order('created_at',{ascending:false}).limit(20)
+  ]);
+  const a=ar.data||[], e=er.data||[], lp=lpr.data||[], lessons=lr.data||[], competitions=cr.data||[];
   const completed=lp.filter(x=>x.completed).length, totalLessons=lessons.length, coursePct=totalLessons?Math.round(completed*100/totalLessons):0;
   const avg=a.length?Math.round(a.reduce((n,x)=>n+Number(x.percentage||0),0)/a.length):0;
+  const best=a.length?Math.max(...a.map(x=>Number(x.percentage||0))):0;
+  const practiceSuccess=e.filter(x=>x.is_correct).length;
+  const practiceRate=e.length?Math.round(practiceSuccess*100/e.length):0;
   const examPoints=a.reduce((n,x)=>n+Math.round(Number(x.percentage||0)/10),0), practicePoints=e.reduce((n,x)=>n+Number(x.score||0),0);
-  const points=examPoints+Math.round(practicePoints/10)+completed*20;
-  const badge=points>=500?'🥇 خبير IPv4':points>=250?'🥈 محترف Subnetting':points>=100?'🥉 بداية قوية':'🌱 متدرب جديد';
-  $('studentDashboard').innerHTML=`<div class="student-home-grid"><div class="student-kpi"><div class="num">${coursePct}%</div><div class="label">إنجاز المقرر</div></div><div class="student-kpi"><div class="num">${avg}%</div><div class="label">متوسط الاختبارات</div></div><div class="student-kpi"><div class="num">${a.length+e.length}</div><div class="label">إجمالي المحاولات</div></div><div class="student-kpi"><div class="num">${points}</div><div class="label">النقاط</div></div></div><div class="progress" style="margin-top:14px"><div class="bar" style="width:${coursePct}%"></div></div><div class="stat" style="margin-top:12px"><b>🏅 المستوى الحالي</b><span>${badge}</span></div>`;
-  $('studentAchievements').innerHTML=`<div class="badge-achievement">${badge}</div>${completed>=1?'<div class="badge-achievement">📚 أول درس مكتمل</div>':''}${e.some(x=>x.is_correct)?'<div class="badge-achievement">🎯 أول تمرين ناجح</div>':''}${a.some(x=>Number(x.percentage||0)>=80)?'<div class="badge-achievement">🏆 نتيجة اختبار 80%+</div>':''}`;
-  const all=[...a.map(x=>({t:'اختبار',title:x.trainer_exams?.title||'اختبار',d:x.submitted_at,s:Number(x.percentage||0),z:`${x.correct_answers||0}/${x.total_questions||0}`})),...e.map(x=>({t:'تمرين',title:'تمرين Subnetting',d:x.created_at,s:Number(x.score||0),z:x.is_correct?'صحيح':'خطأ'}))].sort((x,y)=>new Date(y.d)-new Date(x.d));
-  $('attemptTable').innerHTML=all.length?`<table><tr><th>النوع</th><th>العنوان</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${all.map(x=>`<tr><td>${x.t}</td><td>${esc(x.title)}</td><td>${new Date(x.d).toLocaleString('ar-SA')}</td><td>${x.s}%</td><td>${x.z}</td></tr>`).join('')}</table>`:'لا توجد محاولات حتى الآن. ابدأ بأول تمرين الآن 🎯';
+  const competitionPoints=competitions.reduce((n,x)=>n+Math.round(Number(x.score||0)/10),0);
+  const points=examPoints+Math.round(practicePoints/10)+competitionPoints+completed*20;
+  const level=points>=700?{emoji:'🏆',name:'خبير IPv4',next:1000}:points>=500?{emoji:'🥇',name:'متقدم في Subnetting',next:700}:points>=250?{emoji:'🥈',name:'محترف Subnetting',next:500}:points>=100?{emoji:'🥉',name:'بداية قوية',next:250}:{emoji:'🌱',name:'متدرب جديد',next:100};
+  const prevLevel=points>=700?700:points>=500?500:points>=250?250:points>=100?100:0;
+  const levelPct=level.next===Infinity?100:Math.min(100,Math.round((points-prevLevel)*100/Math.max(1,level.next-prevLevel)));
+  const nextLesson=lessons.find(l=>!lp.some(p=>p.lesson_id===l.id&&p.completed));
+  const completedPractice=lp.filter(x=>x.practice_completed).length;
+  const streakDates=new Set();
+  [...a.map(x=>x.submitted_at),...e.map(x=>x.created_at),...competitions.map(x=>x.created_at)].filter(Boolean).forEach(d=>streakDates.add(new Date(d).toISOString().slice(0,10)));
+  let streak=0; const cursor=new Date(); cursor.setHours(12,0,0,0);
+  while(streakDates.has(cursor.toISOString().slice(0,10))){streak++;cursor.setDate(cursor.getDate()-1);}
+  if(streak===0){const y=new Date();y.setDate(y.getDate()-1); if(streakDates.has(y.toISOString().slice(0,10))){streak=1; y.setDate(y.getDate()-1); while(streakDates.has(y.toISOString().slice(0,10))){streak++;y.setDate(y.getDate()-1);}}}
+
+  const topicMap={};
+  a.forEach(x=>{const t=x.trainer_exams?.topic||'اختبارات عامة'; if(!topicMap[t])topicMap[t]={sum:0,count:0}; topicMap[t].sum+=Number(x.percentage||0);topicMap[t].count++;});
+  const topics=Object.entries(topicMap).map(([name,v])=>({name,avg:Math.round(v.sum/v.count)})).sort((x,y)=>y.avg-x.avg);
+  const strengths=topics.filter(x=>x.avg>=80).slice(0,3), review=topics.filter(x=>x.avg<70).sort((x,y)=>x.avg-y.avg).slice(0,3);
+  if(!topics.length && e.length){
+    strengths.push({name:'التدريب العملي',avg:practiceRate});
+    if(practiceRate<70) review.push({name:'التدريب العملي',avg:practiceRate});
+  }
+  const all=[...a.map(x=>({t:'اختبار',title:x.trainer_exams?.title||'اختبار',d:x.submitted_at,s:Number(x.percentage||0),z:`${x.correct_answers||0}/${x.total_questions||0}`})),...e.map(x=>({t:'تمرين',title:'تمرين Subnetting',d:x.created_at,s:Number(x.score||0),z:x.is_correct?'صحيح':'خطأ'})),...competitions.map(x=>({t:'منافسة',title:'منافسة Subnetting',d:x.created_at,s:Number(x.score||0),z:`${x.correct_rounds||0}/${x.total_rounds||0}`}))].sort((x,y)=>new Date(y.d)-new Date(x.d));
+  const last=all[0];
+  const badges=[];
+  if(completed>=1)badges.push('📚 أول درس مكتمل');
+  if(completed===totalLessons&&totalLessons)badges.push('🎓 أكمل المقرر');
+  if(e.some(x=>x.is_correct))badges.push('🎯 أول تمرين ناجح');
+  if(a.some(x=>Number(x.percentage||0)>=80))badges.push('🏆 نتيجة اختبار 80%+');
+  if(competitions.some(x=>Number(x.score||0)>=800))badges.push('🏁 منافس 800+');
+  if(streak>=3)badges.push(`🔥 سلسلة ${streak} أيام`);
+  if(!badges.length)badges.push('🌱 أول إنجاز بانتظارك');
+
+  $('studentDashboard').innerHTML=`<div class="smart-dashboard">
+    <div class="smart-hero">
+      <div class="smart-welcome"><span class="badge">👋 أهلاً ${esc(profile?.full_name||'بك')}</span><h2>استمر، تقدمك ${coursePct}% في المقرر</h2><p class="muted">${nextLesson?`الخطوة المقترحة الآن: الدرس ${nextLesson.lesson_no} — ${esc(nextLesson.title)}`:'🎉 أكملت جميع دروس المقرر! انتقل للاختبارات والمنافسات.'}</p><div class="smart-progress"><div class="smart-progress-row"><span>تقدم المقرر</span><span>${coursePct}%</span></div><div class="smart-progress-track"><span style="width:${coursePct}%"></span></div></div><div class="next-action"><button class="primary" onclick="page('course')">📚 ${nextLesson?'متابعة المقرر':'مراجعة المقرر'}</button><button class="primary orange" onclick="page('practice')">🎯 تدرب الآن</button><button class="primary green" onclick="page('tests')">🏆 الاختبارات</button></div></div>
+      <div class="smart-level"><div class="emoji">${level.emoji}</div><div class="level-name">${level.name}</div><div class="muted">${points} نقطة</div><div class="smart-progress"><div class="smart-progress-row"><span>التقدم للمستوى التالي</span><span>${levelPct}%</span></div><div class="smart-progress-track"><span style="width:${levelPct}%"></span></div></div></div>
+    </div>
+    <div class="smart-kpis"><div class="smart-kpi"><div class="num">${coursePct}%</div><div class="label">إنجاز المقرر</div></div><div class="smart-kpi"><div class="num">${avg}%</div><div class="label">متوسط الاختبارات</div></div><div class="smart-kpi"><div class="num">${best}%</div><div class="label">أفضل اختبار</div></div><div class="smart-kpi"><div class="num">${practiceRate}%</div><div class="label">نجاح التمارين</div></div><div class="smart-kpi"><div class="num">${all.length}</div><div class="label">إجمالي النشاطات</div></div></div>
+    <div class="smart-columns"><div class="smart-panel"><h3>🧭 ماذا تفعل الآن؟</h3><div class="smart-list">${nextLesson?`<div class="smart-list-item"><div class="icon">📚</div><div><strong>أكمل الدرس ${nextLesson.lesson_no}</strong><small>${esc(nextLesson.title)} — ثم نفّذ تمرينه العملي.</small></div></div>`:''}${review.length?review.map(x=>`<div class="smart-list-item"><div class="icon">⚠️</div><div><strong>راجع ${esc(x.name)}</strong><small>متوسطك الحالي ${x.avg}%. نفّذ تمارين إضافية قبل الاختبار التالي.</small></div></div>`).join(''):`<div class="smart-list-item"><div class="icon">✅</div><div><strong>لا توجد نقاط مراجعة واضحة</strong><small>استمر على نفس المستوى وجرّب التحدي المتقدم.</small></div></div>`}<div class="smart-list-item"><div class="icon">🏁</div><div><strong>تحدَّ نفسك</strong><small>${competitions.length?`لديك ${competitions.length} منافسة محفوظة.`:'لم تبدأ منافسة بعد.'} جرّب منافسة 10 أسئلة مع الوقت الذي يناسبك.</small></div></div></div></div>
+      <div class="smart-panel"><h3>📈 مستواك حسب الموضوع</h3>${topics.length?topics.map(x=>`<div class="smart-topic"><div class="smart-topic-head"><span>${esc(x.name)}</span><span>${x.avg}%</span></div><div class="smart-topic-bar"><span style="width:${Math.min(100,x.avg)}%"></span></div></div>`).join(''):`<div class="smart-empty">ستظهر هنا تحليلات المواضيع بعد أول اختبار محفوظ.</div>`}</div></div>
+    <div class="smart-columns"><div class="smart-panel"><h3>🏅 إنجازاتي</h3><div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div></div><div class="smart-panel"><div class="smart-streak"><div><strong>🔥 سلسلة التدريب</strong><div class="muted">${streak?`تدربت ${streak} يوم${streak===1?'':'ًا'} متتاليًا.`:'ابدأ اليوم لبناء سلسلة تدريب.'}</div></div><div class="fire">🔥 ${streak}</div></div></div></div>
+    <div class="smart-panel"><h3>🕘 آخر نشاط</h3>${last?`<div class="smart-activity"><div class="smart-activity-row"><div class="type">${last.t}</div><div><strong>${esc(last.title)}</strong><div class="muted">النتيجة: ${last.s}${last.t==='منافسة'?' / 1000':last.t==='تمرين'?' / 100':'%' } — ${last.z}</div></div><div class="date">${new Date(last.d).toLocaleDateString('ar-SA')}</div></div></div>`:'<div class="smart-empty">لا يوجد نشاط حتى الآن. ابدأ بأول تمرين 🎯</div>'}</div>
+  </div>`;
+  $('studentAchievements').innerHTML=`<div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div>`;
+  $('attemptTable').innerHTML=all.length?`<table><tr><th>النوع</th><th>العنوان</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${all.slice(0,15).map(x=>`<tr><td>${x.t}</td><td>${esc(x.title)}</td><td>${new Date(x.d).toLocaleString('ar-SA')}</td><td>${x.t==='منافسة'?x.s+'/1000':x.t==='تمرين'?x.s+'/100':x.s+'%'}</td><td>${x.z}</td></tr>`).join('')}</table>`:'لا توجد محاولات حتى الآن. ابدأ بأول تمرين الآن 🎯';
   updatePracticeStats();
 }
+
 async function renderTrainer(){
   if(!["trainer","admin"].includes(profile?.role))return;
   trainerTab("overview");
