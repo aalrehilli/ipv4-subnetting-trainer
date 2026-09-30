@@ -37,6 +37,7 @@
 
 .lesson-detail h3{color:#075ca5;margin:18px 0 8px}.lesson-detail p,.lesson-detail li{line-height:1.9}.lesson-extra h3{color:#075ca5}.lesson-extra .card{margin-top:14px}
 
+.competition-card{border:2px solid #f0c36a;background:linear-gradient(135deg,#fffdf4,#fff)}.competition-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.timer-pill{display:inline-block;background:#b3261e;color:#fff;border-radius:20px;padding:7px 13px;font-weight:bold}.leaderboard{width:100%;border-collapse:collapse;margin-top:10px}.leaderboard th,.leaderboard td{border:1px solid #dce6ef;padding:9px;text-align:center}.leaderboard th{background:#f5f8fb}.rank-badge{font-weight:bold}
 .challenge-card{border:2px solid #d9c8ef;background:linear-gradient(135deg,#fff,#faf7ff)}.challenge-title{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.challenge-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.challenge-grid .question{margin:0}.score-pill{display:inline-block;background:#7048a8;color:#fff;border-radius:20px;padding:6px 11px;font-weight:bold}.table-scroll{overflow:auto}.subnet-table td,.subnet-table th{white-space:nowrap}@media(max-width:700px){.challenge-grid{grid-template-columns:1fr}}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V35 • Supabase</div></div>
@@ -44,7 +45,7 @@
 <div class="container">
 <div id="app" class="hidden">
 <section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div></section>
-<section id="practice" class="hidden"><div class="card"><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">حل المسألة خطوة بخطوة. النظام يوضح لك كل خطوة ويعطيك تلميحًا عند الحاجة.</p><div class="grid"><div><label>المستوى</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>عدد المحاولات</label><div id="practiceCount" class="stat"><b>محاولاتك</b><span>—</span></div></div><div><label>نقاط التمرين</label><div id="practicePoints" class="stat"><b>نقاطك</b><span>—</span></div></div></div><div class="practice-actions"><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div><div id="practiceArea"></div><div id="challengeArea"></div></div></section>
+<section id="practice" class="hidden"><div class="card"><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">حل المسألة خطوة بخطوة. النظام يوضح لك كل خطوة ويعطيك تلميحًا عند الحاجة.</p><div class="grid"><div><label>المستوى</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>عدد المحاولات</label><div id="practiceCount" class="stat"><b>محاولاتك</b><span>—</span></div></div><div><label>نقاط التمرين</label><div id="practicePoints" class="stat"><b>نقاطك</b><span>—</span></div></div></div><div class="practice-actions"><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button><button class="primary green" onclick="startCompetition()">🏁 منافسة 10 أسئلة</button></div><div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div></div></section>
 <section id="tests" class="hidden"><div class="card"><h2>🏆 الاختبارات</h2><select id="testLevel"><option value="basic">الأساسيات</option><option value="medium">متوسط</option><option value="advanced">شامل</option></select><select id="testCount"><option>10</option><option>15</option><option>20</option></select><button class="primary green" onclick="startTest()">بدء الاختبار</button><div id="publishedTests" class="question"></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="course" class="hidden">
 <div class="card hero"><span class="badge">V11 • CLASS C + FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
@@ -240,6 +241,65 @@ async function checkChallenge(){
 function renderChallengeTable(){if(!challenge)return;const c=challenge;let rows='';for(let i=0;i<c.need;i++){const n=i*c.block;rows+=`<tr><td>${i+1}</td><td>192.168.${c.o2}.${n}</td><td>192.168.${c.o2}.${n+1}</td><td>192.168.${c.o2}.${n+c.block-2}</td><td>192.168.${c.o2}.${n+c.block-1}</td></tr>`;}$('challengeTable').innerHTML=`<div class="table-scroll"><h4>📋 جدول الشبكات الناتجة</h4><table class="subnet-table"><tr><th>#</th><th>Network</th><th>First Host</th><th>Last Host</th><th>Broadcast</th></tr>${rows}</table></div>`;}
 async function updatePracticeStats(){if(!user)return;const r=await db.from('exercise_attempts').select('score,is_correct').eq('student_id',user.id);if(r.error)return;const rows=r.data||[];const count=rows.length,pts=rows.reduce((n,x)=>n+Number(x.score||0),0);if($('practiceCount'))$('practiceCount').innerHTML=`<b>محاولاتك</b><span>${count}</span>`;if($('practicePoints'))$('practicePoints').innerHTML=`<b>نقاطك</b><span>${pts}</span>`;}
 function tq(level){let q=problem(level==="advanced"?"hard":level==="medium"?"medium":"easy"),t=Math.floor(Math.random()*5);if(level==="basic")t=Math.floor(Math.random()*2);if(level==="medium")t=1+Math.floor(Math.random()*3);return t===0?[`${q.network}/24 إلى ${q.need}: Borrowed Bits؟`,String(q.bits)]:t===1?[`${q.network}/24 إلى ${q.need}: New Prefix؟`,String(q.prefix)]:t===2?[`${q.network}/24 إلى ${q.need}: Subnet Mask؟`,q.mask]:t===3?[`/${q.prefix}: Magic Number؟`,String(q.block)]:[`/${q.prefix}: Hosts/Subnet؟`,String(q.hosts)]}
+
+
+let competition=null;
+let competitionTimer=null;
+function competitionProblem(){
+  const needList=[2,4,8,16];
+  const need=needList[Math.floor(Math.random()*needList.length)];
+  const o2=Math.floor(Math.random()*220)+1;
+  const bits=Math.ceil(Math.log2(need)), prefix=24+bits, block=2**(32-prefix), mask=cidrMask(prefix), hosts=block-2;
+  const targetIndex=Math.floor(Math.random()*need), n=targetIndex*block;
+  return {base:`192.168.${o2}.0`,o2,need,bits,prefix,block,mask,hosts,targetIndex,targetNetwork:n,first:n+1,last:n+block-2,broadcast:n+block-1,target:`192.168.${o2}.${n}`};
+}
+function startCompetition(){
+  clearInterval(competitionTimer);
+  competition={round:1,total:10,score:0,correct:0,startedAt:Date.now(),secondsLeft:300,current:competitionProblem(),rounds:[]};
+  renderCompetition();
+  competitionTimer=setInterval(()=>{if(!competition)return;competition.secondsLeft--;updateCompetitionTimer();if(competition.secondsLeft<=0){clearInterval(competitionTimer);finishCompetition(true);}},1000);
+}
+function updateCompetitionTimer(){const el=$('competitionTimer');if(!el||!competition)return;const m=Math.floor(competition.secondsLeft/60),s=competition.secondsLeft%60;el.textContent=`⏱️ ${m}:${String(s).padStart(2,'0')}`;}
+function renderCompetition(){
+ const c=competition,p=c.current;
+ $('practiceArea').innerHTML='';$('challengeArea').innerHTML='';
+ $('competitionArea').innerHTML=`<div class="card competition-card"><div class="competition-head"><h3>🏁 منافسة Subnetting — السؤال ${c.round}/${c.total}</h3><span id="competitionTimer" class="timer-pill">⏱️ 5:00</span></div><p><b>النتيجة الحالية:</b> ${c.score} نقطة &nbsp; | &nbsp; <b>الإجابات الصحيحة:</b> ${c.correct}/${c.round-1}</p><p><b>الشبكة:</b> ${p.base}/24 — المطلوب ${p.need} شبكات متساوية — حلل الشبكة رقم ${p.targetIndex+1}.</p><div class="challenge-grid">
+ <div class="question"><b>1) Borrowed Bits</b><input id="mbits"></div><div class="question"><b>2) New Prefix</b><input id="mprefix"></div>
+ <div class="question"><b>3) Subnet Mask</b><input id="mmask"></div><div class="question"><b>4) Magic Number</b><input id="mblock"></div>
+ <div class="question"><b>5) Hosts/Subnet</b><input id="mhosts"></div><div class="question"><b>6) Network</b><input id="mnetwork"></div>
+ <div class="question"><b>7) First Host</b><input id="mfirst"></div><div class="question"><b>8) Last Host</b><input id="mlast"></div>
+ <div class="question"><b>9) Broadcast</b><input id="mbroadcast"></div><div class="question"><b>10) عدد الشبكات</b><input id="msubnets"></div></div>
+ <div class="practice-actions"><button class="primary green" onclick="submitCompetitionRound()">✅ تسليم السؤال</button><button class="primary" onclick="competitionHint()">💡 تلميح</button><button class="primary orange" onclick="quitCompetition()">خروج من المنافسة</button></div><div id="competitionFeedback"></div></div>`;
+ updateCompetitionTimer();
+}
+function competitionHint(){if(!competition)return;const p=competition.current;const hints=[`Borrowed Bits: أصغر n يحقق 2^n ≥ ${p.need}.`,`Prefix = 24 + Borrowed Bits = /${p.prefix}.`,`Magic Number = ${p.block}.`,`Network للشبكة ${p.targetIndex+1} يبدأ بعد ${p.targetIndex} كتل.`];$('competitionFeedback').innerHTML=`<div class="hint-box">💡 ${hints[Math.floor(Math.random()*hints.length)]}</div>`;}
+async function submitCompetitionRound(){
+ if(!competition)return;const p=competition.current;
+ const ids=['mbits','mprefix','mmask','mblock','mhosts','mnetwork','mfirst','mlast','mbroadcast','msubnets'];
+ const expected=[String(p.bits),String(p.prefix),p.mask,String(p.block),String(p.hosts),p.target,ip(p.first),ip(p.last),ip(p.broadcast),String(p.need)];
+ const got=ids.map(id=>normIp($(id)?.value));const ok=got.map((v,i)=>v===expected[i]);const correct=ok.filter(Boolean).length;const roundScore=correct*10;
+ competition.score+=roundScore;if(correct===10)competition.correct++;
+ competition.rounds.push({round:competition.round,correct,score:roundScore});
+ $('competitionFeedback').innerHTML=`<div class="${correct===10?'good':'bad'}">${correct===10?'🎉 إجابة كاملة! ':'نتيجتك في هذا السؤال: '}${correct}/10 — ${roundScore} نقطة.</div>`;
+ if(competition.round>=competition.total){setTimeout(()=>finishCompetition(false),700);return;}
+ setTimeout(()=>{competition.round++;competition.current=competitionProblem();renderCompetition();},700);
+}
+async function finishCompetition(timeout=false){
+ if(!competition)return;clearInterval(competitionTimer);competitionTimer=null;
+ const elapsed=Math.round((Date.now()-competition.startedAt)/1000);const final=competition;competition=null;
+ const name=profile?.full_name||user?.user_metadata?.full_name||user?.email?.split('@')[0]||'متدرب';
+ try{await db.from('competition_attempts').insert({student_id:user.id,display_name:name,score:final.score,correct_rounds:final.correct,total_rounds:final.total,duration_seconds:elapsed});}catch(e){console.warn('competition save',e)}
+ const pct=Math.round(final.score/10);let msg=timeout?'⏰ انتهى الوقت. ':'🏁 انتهت المنافسة. ';
+ $('competitionArea').innerHTML=`<div class="card competition-card"><h3>🏆 نتيجة المنافسة</h3><p>${msg}<b>${final.score}/100 نقطة</b></p><p>الإجابات الكاملة: <b>${final.correct}/${final.total}</b> — النسبة: <b>${pct}%</b></p><p>الوقت المستغرق: <b>${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}</b></p><div class="practice-actions"><button class="primary green" onclick="startCompetition()">🔄 منافسة جديدة</button><button class="primary" onclick="loadCompetitionLeaderboard()">🏅 عرض لوحة المتصدرين</button></div><div id="competitionLeaderboard"></div></div>`;
+ await updatePracticeStats();
+}
+function quitCompetition(){if(!competition)return;clearInterval(competitionTimer);competitionTimer=null;competition=null;$('competitionArea').innerHTML='';$('practiceArea').innerHTML='<div class="hint-box">تم الخروج من المنافسة.</div>';}
+async function loadCompetitionLeaderboard(){
+ const box=$('competitionLeaderboard');if(!box)return;box.innerHTML='<div class="muted">جارٍ تحميل لوحة المتصدرين...</div>';
+ const r=await db.from('competition_attempts').select('display_name,score,correct_rounds,total_rounds,duration_seconds,created_at').order('score',{ascending:false}).order('created_at',{ascending:false}).limit(20);
+ if(r.error){box.innerHTML='<div class="bad">تعذر تحميل لوحة المتصدرين. تأكد من تشغيل SQL الخاص بـ V36.</div>';return;}
+ const rows=r.data||[];box.innerHTML=rows.length?`<h4>🏅 أفضل 20 محاولة</h4><table class="leaderboard"><tr><th>#</th><th>المتدرب</th><th>النقاط</th><th>إجابات كاملة</th><th>الوقت</th></tr>${rows.map((x,i)=>`<tr><td class="rank-badge">${i+1}</td><td>${esc(x.display_name||'متدرب')}</td><td>${x.score}/100</td><td>${x.correct_rounds}/${x.total_rounds}</td><td>${Math.floor((x.duration_seconds||0)/60)}:${String((x.duration_seconds||0)%60).padStart(2,'0')}</td></tr>`).join('')}</table>`:'<div class="muted">لا توجد محاولات مسجلة حتى الآن.</div>';
+}
 
 async function loadPublishedExams(){
   const now=new Date().toISOString();
