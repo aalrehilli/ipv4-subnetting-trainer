@@ -1339,6 +1339,80 @@ const lesson7Media=`
 <div class="card" style="padding:10px"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px"><iframe src="https://www.youtube.com/embed/ZVxBD_-zSrM" title="شرح عملي FLSM بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div><p style="margin:10px 0 0">فيديو عربي يشرح FLSM وتقسيم الشبكات، ويُستخدم كشرح داعم للمختبر العملي.</p></div>
 </div>`;
 
+
+const lesson8Detailed=`
+<div class="lesson-detail">
+<h3>🎯 أهداف الدرس</h3>
+<ul>
+<li>مراجعة جميع خطوات حل مسائل IPv4 Subnetting قبل الاختبار.</li>
+<li>التمييز بين Prefix وSubnet Mask وMagic Number وBorrowed Bits.</li>
+<li>استخراج Network وFirst Host وLast Host وBroadcast بطريقة منظمة.</li>
+<li>حساب عدد الشبكات وعدد المضيفين القابلين للاستخدام في كل Subnet.</li>
+</ul>
+<h3>📚 خريطة حل أي سؤال Subnetting</h3>
+<ol>
+<li>حدد عدد الشبكات المطلوبة أو عدد المضيفين المطلوبين.</li>
+<li>احسب Borrowed Bits إذا كان المطلوب تقسيم الشبكة إلى Subnets.</li>
+<li>احسب عدد الشبكات: <b>2ⁿ</b>.</li>
+<li>أوجد الـ Prefix الجديد بإضافة البتات المستعارة إلى الـ Prefix الأصلي.</li>
+<li>حوّل الـ Prefix إلى <b>Subnet Mask</b>.</li>
+<li>احسب <b>Magic Number = 256 − قيمة الأوكتت المتغير</b>.</li>
+<li>حدد Network لكل Subnet باستخدام القفزة.</li>
+<li>احسب First Host = Network + 1.</li>
+<li>احسب Last Host = Broadcast − 1.</li>
+<li>حدد Broadcast وهو آخر عنوان في نطاق الـ Subnet.</li>
+</ol>
+<h3>🧮 أهم القوانين</h3>
+<table><tr><th>المفهوم</th><th>القانون</th></tr>
+<tr><td>عدد الشبكات</td><td><b>2ⁿ</b></td></tr>
+<tr><td>عدد المضيفين</td><td><b>2^(Host Bits) − 2</b></td></tr>
+<tr><td>First Host</td><td><b>Network + 1</b></td></tr>
+<tr><td>Last Host</td><td><b>Broadcast − 1</b></td></tr>
+<tr><td>Magic Number</td><td><b>256 − قيمة الأوكتت المتغير</b></td></tr></table>
+<h3>📊 جدول مراجعة سريع</h3>
+<table><tr><th>Prefix</th><th>Subnet Mask</th><th>Magic Number</th><th>Usable Hosts</th></tr>
+<tr><td>/25</td><td>255.255.255.128</td><td>128</td><td>126</td></tr>
+<tr><td>/26</td><td>255.255.255.192</td><td>64</td><td>62</td></tr>
+<tr><td>/27</td><td>255.255.255.224</td><td>32</td><td>30</td></tr>
+<tr><td>/28</td><td>255.255.255.240</td><td>16</td><td>14</td></tr>
+<tr><td>/29</td><td>255.255.255.248</td><td>8</td><td>6</td></tr>
+<tr><td>/30</td><td>255.255.255.252</td><td>4</td><td>2</td></tr></table>
+<h3>📝 مثال مراجعة كامل</h3>
+<p>لديك <b>192.168.10.0/24</b> والمطلوب تقسيمها إلى <b>4 شبكات متساوية</b>.</p>
+<ul>
+<li>Borrowed Bits = <b>2</b> لأن 2² = 4.</li>
+<li>Prefix الجديد = <b>/26</b>.</li>
+<li>Subnet Mask = <b>255.255.255.192</b>.</li>
+<li>Magic Number = <b>64</b>.</li>
+<li>الشبكات تبدأ من: <b>.0، .64، .128، .192</b>.</li>
+</ul>
+<table><tr><th>Network</th><th>First Host</th><th>Last Host</th><th>Broadcast</th></tr>
+<tr><td>192.168.10.0</td><td>192.168.10.1</td><td>192.168.10.62</td><td>192.168.10.63</td></tr>
+<tr><td>192.168.10.64</td><td>192.168.10.65</td><td>192.168.10.126</td><td>192.168.10.127</td></tr>
+<tr><td>192.168.10.128</td><td>192.168.10.129</td><td>192.168.10.190</td><td>192.168.10.191</td></tr>
+<tr><td>192.168.10.192</td><td>192.168.10.193</td><td>192.168.10.254</td><td>192.168.10.255</td></tr></table>
+<h3>⚠️ أخطاء شائعة في الاختبار</h3>
+<ul>
+<li>استخدام Network Address كعنوان جهاز.</li>
+<li>استخدام Broadcast كعنوان جهاز.</li>
+<li>نسيان طرح عنواني Network وBroadcast عند حساب الـ Usable Hosts.</li>
+<li>حساب Magic Number من الأوكتت الخطأ.</li>
+<li>البدء بقفزة غير صحيحة عند كتابة عناوين الشبكات.</li>
+</ul>
+<h3>🧪 اختبار ذاتي سريع</h3>
+<p>حل دون آلة حاسبة: <b>192.168.30.0/24</b> إلى <b>8 شبكات متساوية</b>، ثم اكتب Prefix وSubnet Mask وMagic Number وأول Network وآخر Broadcast.</p>
+<div class="good"><b>🎯 هدف المراجعة:</b> تستطيع حل المسألة من Prefix حتى Broadcast خطوة بخطوة وبنفس الترتيب.</div>
+</div>`;
+
+const lesson8Media=`
+<div class="lesson-extra">
+<h3>🧠 خريطة ذهنية</h3>
+<p>ملخص بصري يجمع أهم القوانين والخطوات والأمثلة المطلوبة للاختبار.</p>
+<div class="card"><img src="assets/ipv4-lesson8-mindmap.png" alt="خريطة ذهنية للدرس 8 مراجعة واستعداد للاختبار" style="width:100%;max-width:1200px;display:block;margin:auto;border-radius:14px;border:1px solid #d9e4ee"></div>
+<h3>🎥 فيديو مراجعة</h3>
+<div class="card" style="padding:10px"><div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px"><iframe src="https://www.youtube.com/embed/s8en1IxmJ3s" title="مراجعة IPv4 Subnetting وSubnet Mask بالعربي" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div><p style="margin:10px 0 0">فيديو عربي يراجع IPv4 وSubnet Mask وSubnetting مع أمثلة وتمارين. <a href="https://www.youtube.com/watch?v=s8en1IxmJ3s" target="_blank" rel="noopener">فتح الفيديو على YouTube</a></p></div>
+</div>`;
+
 const courseFallback=[
  {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
@@ -1347,7 +1421,7 @@ const courseFallback=[
  {id:'local-5',lesson_no:5,title:'Network و First Host و Last Host و Broadcast',duration:30,content:lesson5Detailed+lesson5Media},
  {id:'local-6',lesson_no:6,title:'FLSM — تقسيم الشبكة إلى أحجام متساوية',duration:30,content:lesson6Detailed+lesson6Media},
  {id:'local-7',lesson_no:7,title:'مختبر عملي: Class C FLSM',duration:35,content:lesson7Detailed+lesson7Media},
- {id:'local-8',lesson_no:8,title:'مراجعة واستعداد للاختبار',duration:25,content:'<p>قبل الاختبار تأكد أنك تستطيع حل هذه المهام دون آلة حاسبة:</p><ul><li>حساب Borrowed Bits.</li><li>تحويل Prefix إلى Subnet Mask.</li><li>حساب Magic Number.</li><li>تحديد Network Address.</li><li>تحديد First/Last Host.</li><li>تحديد Broadcast.</li><li>حساب عدد Hosts/Subnet.</li></ul><div class="good">🎯 هدف الإتقان: حل مسائل Class C + FLSM بدقة وسرعة.</div>'}
+ {id:'local-8',lesson_no:8,title:'مراجعة واستعداد للاختبار',duration:30,content:lesson8Detailed+lesson8Media}
 ];
 
 async function loadCourse(){
@@ -1391,6 +1465,9 @@ async function loadCourse(){
    }
    if(Number(x.lesson_no)===7 && !String(x.id).startsWith('local-')){
      lessonContent += lesson7Detailed + lesson7Media;
+   }
+   if(Number(x.lesson_no)===8 && !String(x.id).startsWith('local-')){
+     lessonContent += lesson8Detailed + lesson8Media;
    }
    return `<div class="card">
      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
