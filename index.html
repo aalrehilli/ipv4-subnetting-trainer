@@ -288,16 +288,16 @@ async function finishCompetition(timeout=false){
  if(!competition)return;clearInterval(competitionTimer);competitionTimer=null;
  const elapsed=Math.round((Date.now()-competition.startedAt)/1000);const final=competition;competition=null;
  const name=profile?.full_name||user?.user_metadata?.full_name||user?.email?.split('@')[0]||'متدرب';
- try{await db.from('competition_attempts').insert({student_id:user.id,display_name:name,score:final.score,correct_rounds:final.correct,total_rounds:final.total,duration_seconds:elapsed});}catch(e){console.warn('competition save',e)}
+ let saveError=null; try{const save=await db.from('competition_attempts').insert({student_id:user.id,display_name:name,score:final.score,correct_rounds:final.correct,total_rounds:final.total,duration_seconds:elapsed}); if(save.error) saveError=save.error;}catch(e){saveError=e; console.warn('competition save',e)}
  const pct=Math.round(final.score/10);let msg=timeout?'⏰ انتهى الوقت. ':'🏁 انتهت المنافسة. ';
- $('competitionArea').innerHTML=`<div class="card competition-card"><h3>🏆 نتيجة المنافسة</h3><p>${msg}<b>${final.score}/100 نقطة</b></p><p>الإجابات الكاملة: <b>${final.correct}/${final.total}</b> — النسبة: <b>${pct}%</b></p><p>الوقت المستغرق: <b>${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}</b></p><div class="practice-actions"><button class="primary green" onclick="startCompetition()">🔄 منافسة جديدة</button><button class="primary" onclick="loadCompetitionLeaderboard()">🏅 عرض لوحة المتصدرين</button></div><div id="competitionLeaderboard"></div></div>`;
+ $('competitionArea').innerHTML=`<div class="card competition-card"><h3>🏆 نتيجة المنافسة</h3><p>${msg}<b>${final.score}/100 نقطة</b></p><p>الإجابات الكاملة: <b>${final.correct}/${final.total}</b> — النسبة: <b>${pct}%</b></p><p>الوقت المستغرق: <b>${Math.floor(elapsed/60)}:${String(elapsed%60).padStart(2,'0')}</b></p><div class="practice-actions"><button class="primary green" onclick="startCompetition()">🔄 منافسة جديدة</button><button class="primary" onclick="loadCompetitionLeaderboard()">🏅 عرض لوحة المتصدرين</button></div>${saveError?`<div class="bad">⚠️ لم تُحفظ المحاولة في لوحة المتصدرين. شغّل SQL الخاص بالمنافسة في Supabase. التفاصيل: ${esc(saveError.message||saveError)}</div>`:''}<div id="competitionLeaderboard"></div></div>`;
  await updatePracticeStats();
 }
 function quitCompetition(){if(!competition)return;clearInterval(competitionTimer);competitionTimer=null;competition=null;$('competitionArea').innerHTML='';$('practiceArea').innerHTML='<div class="hint-box">تم الخروج من المنافسة.</div>';}
 async function loadCompetitionLeaderboard(){
  const box=$('competitionLeaderboard');if(!box)return;box.innerHTML='<div class="muted">جارٍ تحميل لوحة المتصدرين...</div>';
  const r=await db.from('competition_attempts').select('display_name,score,correct_rounds,total_rounds,duration_seconds,created_at').order('score',{ascending:false}).order('created_at',{ascending:false}).limit(20);
- if(r.error){box.innerHTML='<div class="bad">تعذر تحميل لوحة المتصدرين. تأكد من تشغيل SQL الخاص بـ V36.</div>';return;}
+ if(r.error){box.innerHTML=`<div class="bad">تعذر تحميل لوحة المتصدرين. شغّل SQL الخاص بـ V36.1 في Supabase.<br><small>${esc(r.error.message||'خطأ غير معروف')}</small></div>`;return;}
  const rows=r.data||[];box.innerHTML=rows.length?`<h4>🏅 أفضل 20 محاولة</h4><table class="leaderboard"><tr><th>#</th><th>المتدرب</th><th>النقاط</th><th>إجابات كاملة</th><th>الوقت</th></tr>${rows.map((x,i)=>`<tr><td class="rank-badge">${i+1}</td><td>${esc(x.display_name||'متدرب')}</td><td>${x.score}/100</td><td>${x.correct_rounds}/${x.total_rounds}</td><td>${Math.floor((x.duration_seconds||0)/60)}:${String((x.duration_seconds||0)%60).padStart(2,'0')}</td></tr>`).join('')}</table>`:'<div class="muted">لا توجد محاولات مسجلة حتى الآن.</div>';
 }
 
