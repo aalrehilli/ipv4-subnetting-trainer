@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V45</title>
+<title>IPv4 Subnetting Trainer — V46</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -95,7 +95,7 @@
 </section>
 <section id="dashboard" class="hidden">
 <div class="card hero"><h2>📊 لوحة المتدرب الذكية</h2><p>كل ما تحتاجه لمعرفة تقدمك، نقاط قوتك، وما الذي ينبغي أن تراجعه بعد ذلك.</p><div id="studentDashboard"></div></div>
-<div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div>
+<div class="card"><h2>🔔 إشعاراتك</h2><p class="muted">تنبيهات الاختبارات والنتائج المنشورة من المدرب.</p><div id="studentNotifications"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div><div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div>
 <div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div>
 </section>
 <section id="trainer" class="hidden">
@@ -499,7 +499,39 @@ async function gradeTest(autoSubmit=false){
   $('testTimer').innerHTML='<div class="good">✅ انتهى الاختبار.</div>';
 }
 
+
+async function loadStudentNotifications(){
+  const host=$("studentNotifications");
+  if(!host||!user?.id)return;
+  host.innerHTML='<div class="muted">⏳ جارٍ تحميل الإشعارات...</div>';
+  const r=await db.from("student_notifications").select("id,title,message,notification_type,reference_id,created_at,read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
+  if(r.error){
+    host.innerHTML='<div class="bad">تعذر تحميل الإشعارات. تأكد من تنفيذ ملف SQL الخاص بـ V46.</div>';
+    return;
+  }
+  const rows=r.data||[];
+  if(!rows.length){host.innerHTML='<div class="muted">لا توجد إشعارات جديدة حاليًا.</div>';return;}
+  const unread=rows.filter(x=>!x.read_at).length;
+  host.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="muted">لديك ${unread} إشعار غير مقروء</span><button class="primary" onclick="markAllStudentNotificationsRead()">✓ تحديد الكل كمقروء</button></div>
+    <div style="display:grid;gap:10px">${rows.map(n=>`<div class="card" style="padding:12px;border-right:4px solid ${n.read_at?'#cbd5e1':'#0b63b6'};background:${n.read_at?'#fff':'#f1f7ff'}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap"><b>${esc(n.title||"إشعار من المدرب")}</b>${n.read_at?'<span class="muted">مقروء</span>':'<span class="badge">جديد</span>'}</div><p style="margin:8px 0">${esc(n.message||"")}</p><div class="muted" style="font-size:12px">${n.created_at?new Date(n.created_at).toLocaleString("ar-SA"):""}</div>${!n.read_at?`<button class="primary" style="margin-top:8px" onclick="markStudentNotificationRead('${n.id}')">تحديد كمقروء</button>`:''}${n.notification_type==="exam_published"?` <button class="primary green" style="margin-top:8px" onclick="openTestsFromNotification('${n.id}')">عرض الاختبارات</button>`:''}</div>`).join("")}</div>`;
+}
+async function markStudentNotificationRead(id){
+  const r=await db.from("student_notifications").update({read_at:new Date().toISOString()}).eq("id",id).eq("user_id",user.id);
+  if(r.error){alert("تعذر تحديث الإشعار: "+r.error.message);return;}
+  await loadStudentNotifications();
+}
+async function markAllStudentNotificationsRead(){
+  const r=await db.from("student_notifications").update({read_at:new Date().toISOString()}).eq("user_id",user.id).is("read_at",null);
+  if(r.error){alert("تعذر تحديث الإشعارات: "+r.error.message);return;}
+  await loadStudentNotifications();
+}
+async function openTestsFromNotification(id){
+  await markStudentNotificationRead(id);
+  page("tests");
+}
+
 async function renderDashboard(){
+  loadStudentNotifications();
   const [ar,er,lpr,lr,cr]=await Promise.all([
     db.from('attempts').select('*,trainer_exams(title,topic)').eq('student_id',user.id).order('submitted_at',{ascending:false}),
     db.from('exercise_attempts').select('*').eq('student_id',user.id).order('created_at',{ascending:false}),
