@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V47</title>
+<title>IPv4 Subnetting Trainer — V47.1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -511,7 +511,7 @@ async function loadStudentNotifications(){
   // ينشئ تذكيرات انتهاء الاختبارات القريبة بشكل آمن ومكرر-المنع من قاعدة البيانات.
   const reminder=await db.rpc("create_upcoming_exam_reminders");
   if(reminder.error)console.warn("V47 reminders:",reminder.error.message);
-  const r=await db.from("student_notifications").select("id,title,message,notification_type,reference_id,created_at,read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
+  const r=await db.from("student_notifications").select("id,title,message,notification_type,reference_id,related_attempt_id,created_at,read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
   if(r.error){
     const err='<div class="bad">تعذر تحميل الإشعارات. تأكد من إعداد إشعارات V46.</div>';
     [dashboardHost,homeHost].filter(Boolean).forEach(h=>h.innerHTML=err);
@@ -524,7 +524,7 @@ async function loadStudentNotifications(){
     return;
   }
   const render=(items,compact)=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="muted">لديك ${unread} إشعار غير مقروء</span><button class="primary" onclick="markAllStudentNotificationsRead()">✓ تحديد الكل كمقروء</button></div>
-    <div style="display:grid;gap:10px">${items.map(n=>`<div class="card" style="padding:12px;border-right:4px solid ${n.read_at?'#cbd5e1':'#0b63b6'};background:${n.read_at?'#fff':'#f1f7ff'}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap"><b>${esc(n.title||"إشعار من المدرب")}</b>${n.read_at?'<span class="muted">مقروء</span>':'<span class="badge">جديد</span>'}</div><p style="margin:8px 0">${esc(n.message||"")}</p><div class="muted" style="font-size:12px">${n.created_at?new Date(n.created_at).toLocaleString("ar-SA"):""}</div>${!n.read_at?`<button class="primary" style="margin-top:8px" onclick="markStudentNotificationRead('${n.id}')">تحديد كمقروء</button>`:''}${n.notification_type==="exam_published"?` <button class="primary green" style="margin-top:8px" onclick="openTestsFromNotification('${n.id}')">عرض الاختبارات</button>`:''}</div>`).join("")}</div>${compact&&rows.length>5?`<div style="text-align:center;margin-top:12px"><button class="primary purple" onclick="page('dashboard')">عرض جميع الإشعارات (${rows.length})</button></div>`:''}`;
+    <div style="display:grid;gap:10px">${items.map(n=>`<div class="card" style="padding:12px;border-right:4px solid ${n.read_at?'#cbd5e1':'#0b63b6'};background:${n.read_at?'#fff':'#f1f7ff'}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap"><b>${esc(n.title||"إشعار من المدرب")}</b>${n.read_at?'<span class="muted">مقروء</span>':'<span class="badge">جديد</span>'}</div><p style="margin:8px 0">${esc(n.message||"")}</p><div class="muted" style="font-size:12px">${n.created_at?new Date(n.created_at).toLocaleString("ar-SA"):""}</div>${!n.read_at?`<button class="primary" style="margin-top:8px" onclick="markStudentNotificationRead('${n.id}')">تحديد كمقروء</button>`:''}${n.notification_type==="exam_published"?` <button class="primary green" style="margin-top:8px" onclick="openTestsFromNotification('${n.id}')">عرض الاختبارات</button>`:''}${n.notification_type==="exam_result_published"&&n.related_attempt_id?` <button class="primary green" style="margin-top:8px" onclick="openPublishedResultNotification('${n.id}',${Number(n.related_attempt_id)})">عرض النتيجة والتفاصيل</button>`:''}</div>`).join("")}</div>${compact&&rows.length>5?`<div style="text-align:center;margin-top:12px"><button class="primary purple" onclick="page('dashboard')">عرض جميع الإشعارات (${rows.length})</button></div>`:''}`;
   if(dashboardHost)dashboardHost.innerHTML=render(rows,false);
   if(homeHost)homeHost.innerHTML=render(rows.slice(0,5),true);
 }
@@ -537,6 +537,12 @@ async function markAllStudentNotificationsRead(){
   const r=await db.from("student_notifications").update({read_at:new Date().toISOString()}).eq("user_id",user.id).is("read_at",null);
   if(r.error){alert("تعذر تحديث الإشعارات: "+r.error.message);return;}
   await loadStudentNotifications();
+}
+async function openPublishedResultNotification(notificationId,attemptId){
+  const r=await db.from("student_notifications").update({read_at:new Date().toISOString()}).eq("id",notificationId).eq("user_id",user.id);
+  if(r.error){alert("تعذر تحديث حالة الإشعار: "+r.error.message);return;}
+  await loadStudentNotifications();
+  await openStudentAttemptDetails(attemptId,user.id);
 }
 async function openTestsFromNotification(id){
   await markStudentNotificationRead(id);
