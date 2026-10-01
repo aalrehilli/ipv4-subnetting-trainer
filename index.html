@@ -69,7 +69,11 @@
 .trainer-smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.trainer-smart-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:15px;text-align:center}.trainer-smart-kpi .num{font-size:28px;font-weight:bold;color:#0759a5}.trainer-smart-kpi .label{font-size:12px;color:#65788a;margin-top:4px}.trainer-smart-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}.trainer-smart-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}.trainer-smart-panel h3{margin-top:0}.follow-row{display:grid;grid-template-columns:1.4fr .7fr .7fr .7fr 1.1fr;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #edf2f6}.follow-row:last-child{border-bottom:0}.follow-status{padding:5px 9px;border-radius:16px;font-weight:bold;font-size:12px;display:inline-block}.follow-status.high{background:#ffe8e8;color:#a51f1f}.follow-status.medium{background:#fff4d8;color:#8a6200}.follow-status.good{background:#e7f7ed;color:#137b39}.follow-mini{font-size:12px;color:#65788a}.follow-action{display:flex;gap:5px;flex-wrap:wrap}.group-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.group-card{border:1px solid #dce8f2;border-radius:12px;padding:12px;background:#f9fcff}.group-card strong{color:#0759a5}.trainer-smart-empty{padding:20px;text-align:center;background:#f8fbfd;border-radius:10px;color:#65788a}.trainer-smart-note{padding:11px 13px;background:#eef7ff;border-right:4px solid #0759a5;border-radius:9px;line-height:1.8}
 @media(max-width:950px){.trainer-smart-grid{grid-template-columns:repeat(2,1fr)}.trainer-smart-columns{grid-template-columns:1fr}.follow-row{grid-template-columns:1.4fr .7fr .7fr .7fr 1fr}}
 @media(max-width:650px){.trainer-smart-grid{grid-template-columns:1fr 1fr}.follow-row{grid-template-columns:1fr 1fr}.follow-row>*:first-child{grid-column:1/-1}.follow-action{grid-column:1/-1}.group-card-grid{grid-template-columns:1fr}}
-</style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
+</style>
+<style>
+.v42-test-config{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}.v42-test-config .cfg{background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:12px}.v42-test-config label{font-weight:700;display:block;margin-bottom:6px}.v42-test-config input,.v42-test-config select{width:100%;box-sizing:border-box}.v42-test-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:10px;margin:12px 0}.v42-question-nav{display:flex;gap:6px;flex-wrap:wrap}.v42-qbtn{min-width:38px;border:1px solid #c8dbea;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}.v42-qbtn.answered{background:#e8f7ef;border-color:#9bd5b1}.v42-qbtn.flagged{box-shadow:inset 0 0 0 2px #f0a000}.v42-qbtn.current{background:#0b63b6;color:#fff;border-color:#0b63b6}.v42-qcard{scroll-margin-top:90px}.v42-qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.v42-qactions{display:flex;gap:6px;flex-wrap:wrap}.v42-qactions button{font-size:13px;padding:6px 9px}.v42-status{font-size:13px}.v42-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v42-summary .mini{background:#fff;border:1px solid #dbe9f4;border-radius:10px;padding:10px;text-align:center}.v42-summary b{display:block;font-size:20px;color:#0b63b6}@media(max-width:800px){.v42-test-config{grid-template-columns:1fr 1fr}.v42-summary{grid-template-columns:1fr 1fr}}@media(max-width:520px){.v42-test-config{grid-template-columns:1fr}.v42-summary{grid-template-columns:1fr}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V40 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
@@ -82,7 +86,7 @@
   <div class="competition-settings"><div><h3>🏁 منافسة Subnetting</h3><p class="muted">10 أسئلة — اختر الوقت المناسب لك قبل البدء.</p></div><div class="duration-control"><label for="competitionDuration">⏱️ وقت المنافسة</label><select id="competitionDuration"><option value="5">5 دقائق</option><option value="10">10 دقائق</option><option value="15" selected>15 دقيقة</option><option value="20">20 دقيقة</option><option value="30">30 دقيقة</option><option value="45">45 دقيقة</option><option value="60">60 دقيقة</option><option value="0">بدون وقت</option></select></div><button class="primary green competition-start" onclick="startCompetition()">🏁 ابدأ المنافسة</button></div>
   <div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
 </div></section>
-<section id="tests" class="hidden"><div class="card"><h2>🏆 الاختبارات</h2><select id="testLevel"><option value="basic">الأساسيات</option><option value="medium">متوسط</option><option value="advanced">شامل</option></select><select id="testCount"><option>10</option><option>15</option><option>20</option></select><button class="primary green" onclick="startTest()">بدء الاختبار</button><div id="publishedTests" class="question"></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
+<section id="tests" class="hidden"><div class="card"><h2>🏆 الاختبارات المتقدمة</h2><p class="muted">اختبار منظم مع مؤقت، تنقل بين الأسئلة، تعليم للمراجعة، وترتيب عشوائي.</p><div class="v42-test-config"><div class="cfg"><label>المستوى</label><select id="testLevel"><option value="basic">الأساسيات</option><option value="medium">متوسط</option><option value="advanced">شامل</option></select></div><div class="cfg"><label>عدد الأسئلة</label><select id="testCount"><option>10</option><option>15</option><option>20</option><option>25</option></select></div><div class="cfg"><label>المدة</label><select id="testDuration"><option value="10">10 دقائق</option><option value="15" selected>15 دقيقة</option><option value="20">20 دقيقة</option><option value="30">30 دقيقة</option><option value="45">45 دقيقة</option><option value="60">60 دقيقة</option><option value="0">بدون وقت</option></select></div><div class="cfg"><label>ترتيب الأسئلة</label><label style="font-weight:500"><input id="testRandomize" type="checkbox" checked style="width:auto"> عشوائي</label></div></div><button class="primary green" onclick="startTest()">🚀 بدء اختبار جديد</button><div id="publishedTests" class="question"></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="course" class="hidden">
 <div class="card hero"><span class="badge">V37 • CLASS C + FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
@@ -165,6 +169,7 @@
 <script>
 let db=null,user=null,profile=null,exercise=null,test=[],trainerStudents=[],trainerQuestionRows=[],coursePracticeLessonId=null;
 let currentExamId=null,currentExamTitle='',testStartedAt=null,testDurationMinutes=0,timerHandle=null,testSubmitted=false;
+let testFlags={},testCurrentIndex=0,testRandomize=true;
 const SUPABASE_URL="https://cvakitsdwxkksxemdhxj.supabase.co";
 const SUPABASE_KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA";
 const SITE_URL="https://aalrehilli.github.io/ipv4-subnetting-trainer/";
@@ -368,15 +373,22 @@ function renderMatchingQuestion(x,i){
   const rights=pairs.map((p,j)=>({id:j,text:p.right})).sort(()=>Math.random()-.5);
   return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(x[1])}</div><div class="muted">وصل كل عنصر من العمود الأول بما يناسبه من العمود الثاني:</div>${pairs.map((p,j)=>`<div class="matching-answer"><span><b>${esc(p.left)}</b></span><select id="m${i}_${j}"><option value="">اختر المطابقة</option>${rights.map(r=>`<option value="${r.id}">${esc(r.text)}</option>`).join('')}</select></div>`).join('')}</div>`;
 }
+function testNavHtml(){return `<div class="v42-test-toolbar"><div><b>🧭 التنقل</b><div class="muted">الأخضر = تمت الإجابة، 🟨 = للمراجعة</div></div><div class="v42-question-nav">${test.map((x,i)=>{const ans=selectedAnswer(i);return `<button type="button" class="v42-qbtn ${i===testCurrentIndex?'current ':''}${ans?'answered ':''}${testFlags[i]?'flagged':''}" onclick="goToTestQuestion(${i})">${i+1}</button>`}).join('')}</div></div>`}
+function refreshTestNavigator(){const nav=document.getElementById('v42TestNavigator');if(nav)nav.innerHTML=testNavHtml();updateTestSummary();}
+function updateTestSummary(){const el=document.getElementById('v42TestSummary');if(!el)return;const answered=test.filter((x,i)=>!!selectedAnswer(i)).length,flagged=Object.values(testFlags).filter(Boolean).length;el.innerHTML=`<div class="v42-summary"><div class="mini"><span>تمت الإجابة</span><b>${answered}/${test.length}</b></div><div class="mini"><span>للمراجعة</span><b>${flagged}</b></div><div class="mini"><span>المتبقي</span><b>${test.length-answered}</b></div></div>`;}
+function goToTestQuestion(i){testCurrentIndex=Math.max(0,Math.min(i,test.length-1));const el=document.getElementById('qcard'+testCurrentIndex);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});refreshTestNavigator();}
+function toggleTestFlag(i){testFlags[i]=!testFlags[i];refreshTestNavigator();const card=document.getElementById('qcard'+i);if(card)card.scrollIntoView({behavior:'smooth',block:'start'});}
 function renderTestQuestions(){
-  $('testArea').innerHTML=test.map((x,i)=>{
+  $('testArea').innerHTML=`<div id="v42TestNavigator">${testNavHtml()}</div><div id="v42TestSummary"></div>`+test.map((x,i)=>{
     const q=parseQuestion(x[1],x[3],x[4],x[5]);
-    if(q.type==='matching') return renderMatchingQuestion(x,i);
-    if(q.type==='true_false') return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><label class="optionLabel"><input type="radio" name="t${i}" value="true" style="width:auto"> ✅ صح</label><label class="optionLabel"><input type="radio" name="t${i}" value="false" style="width:auto"> ❌ خطأ</label></div>`;
-    if(q.type==='mcq' || q.options.length>=2){ const opts=[...q.options].sort(()=>Math.random()-.5); return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div>${opts.map(o=>`<label class="optionLabel" style="display:block;background:white;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer"><input type="radio" name="t${i}" value="${o.key}" style="width:auto;margin-left:7px"> <b>${o.key})</b> ${esc(o.text)}</label>`).join('')}</div>`;}
-    return `<div class="question" id="qcard${i}"><div style="font-weight:bold;margin-bottom:10px">${i+1}. ${esc(q.stem)}</div><input id="t${i}" placeholder="اكتب الإجابة المطلوبة"><div class="muted">اكتب الإجابة المطلوبة.</div></div>`;
+    const head=`<div class="v42-qhead"><div style="font-weight:bold">${i+1}. ${esc(q.stem)}</div><div class="v42-qactions"><button type="button" class="light" onclick="toggleTestFlag(${i})">${testFlags[i]?'🟨 إلغاء المراجعة':'🚩 للمراجعة'}</button><button type="button" class="light" onclick="goToTestQuestion(${i+1<test.length?i+1:0})">${i+1<test.length?'التالي ➡️':'الأول ⬅️'}</button></div></div>`;
+    if(q.type==='matching') return `<div class="question v42-qcard" id="qcard${i}">${head}<div class="muted">وصل كل عنصر من العمود الأول بما يناسبه من العمود الثاني:</div>${(()=>{let pairs=[];try{pairs=typeof x[4]==='string'?JSON.parse(x[4]||'[]'):(x[4]||[]);}catch(e){pairs=[];}const rights=pairs.map((p,j)=>({id:j,text:p.right})).sort(()=>Math.random()-.5);return pairs.map((p,j)=>`<div class="matching-answer"><span><b>${esc(p.left)}</b></span><select id="m${i}_${j}" onchange="refreshTestNavigator()"><option value="">اختر المطابقة</option>${rights.map(r=>`<option value="${r.id}">${esc(r.text)}</option>`).join('')}</select></div>`).join('')})()}</div>`;
+    if(q.type==='true_false') return `<div class="question v42-qcard" id="qcard${i}">${head}<label class="optionLabel"><input type="radio" name="t${i}" value="true" style="width:auto" onchange="refreshTestNavigator()"> ✅ صح</label><label class="optionLabel"><input type="radio" name="t${i}" value="false" style="width:auto" onchange="refreshTestNavigator()"> ❌ خطأ</label></div>`;
+    if(q.type==='mcq' || q.options.length>=2){ const opts=[...q.options].sort(()=>Math.random()-.5); return `<div class="question v42-qcard" id="qcard${i}">${head}${opts.map(o=>`<label class="optionLabel" style="display:block;background:white;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer"><input type="radio" name="t${i}" value="${o.key}" style="width:auto;margin-left:7px" onchange="refreshTestNavigator()"> <b>${o.key})</b> ${esc(o.text)}</label>`).join('')}</div>`;}
+    return `<div class="question v42-qcard" id="qcard${i}">${head}<input id="t${i}" placeholder="اكتب الإجابة المطلوبة" oninput="refreshTestNavigator()"><div class="muted">اكتب الإجابة المطلوبة.</div></div>`;
   }).join('');
   $('submitTest').classList.remove('hidden');
+  refreshTestNavigator();
 }
 function selectedAnswer(i){
   const x=test[i];
@@ -409,13 +421,14 @@ function startTimer(){
 }
 async function startPublishedExam(id){
   if(testSubmitted===false && test.length && !confirm('يوجد اختبار مفتوح. هل تريد بدء اختبار جديد؟')) return;
-  stopTimer(); test=[]; currentExamId=id; currentExamTitle=''; testSubmitted=false;
+  stopTimer(); test=[]; currentExamId=id; currentExamTitle=''; testSubmitted=false; testFlags={}; testCurrentIndex=0;
   const ex=await db.from('trainer_exams').select('*').eq('id',id).single();
   if(ex.error){msg('score','❌ '+ex.error.message);return;}
-  currentExamTitle=ex.data.title; testDurationMinutes=Number(ex.data.duration_minutes||30); testStartedAt=new Date();
+  currentExamTitle=ex.data.title; testDurationMinutes=Number(ex.data.duration_minutes||30); testStartedAt=new Date(); testRandomize=true;
   const r=await db.from('trainer_exam_questions').select('question_order,trainer_questions(id,question_text,correct_answer,question_type,options_json,matching_json)').eq('exam_id',id).order('question_order');
   if(r.error){msg('score','❌ '+r.error.message);return;}
   test=(r.data||[]).map(x=>[x.trainer_questions.id,x.trainer_questions.question_text,x.trainer_questions.correct_answer,x.trainer_questions.question_type||'short',x.trainer_questions.options_json||[],x.trainer_questions.matching_json||[]]);
+  if(testRandomize) test.sort(()=>Math.random()-.5);
   if(!test.length){msg('score','❌ لا توجد أسئلة مرتبطة بهذا الاختبار.');return;}
   $('testMeta').classList.remove('hidden');$('testMeta').innerHTML=`<div class="card" style="margin-bottom:10px"><h3 style="margin:0 0 5px">📝 ${esc(currentExamTitle)}</h3><div class="muted">${test.length} سؤال — ${testDurationMinutes} دقيقة</div></div>`;
   renderTestQuestions();
@@ -424,16 +437,16 @@ async function startPublishedExam(id){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function startTest(){
-  stopTimer(); currentExamId=null; currentExamTitle='اختبار تدريبي'; testSubmitted=false;
-  let l=$('testLevel').value,n=+$('testCount').value; test=Array.from({length:n},()=>tq(l)); testDurationMinutes=30;testStartedAt=new Date();
-  $('testMeta').classList.remove('hidden');$('testMeta').innerHTML=`<div class="card" style="margin-bottom:10px"><h3 style="margin:0">📝 اختبار تدريبي</h3><div class="muted">${n} سؤال — 30 دقيقة</div></div>`;
-  renderTestQuestions(); $('score').innerHTML=''; startTimer();
+  stopTimer(); currentExamId=null; currentExamTitle='اختبار تدريبي'; testSubmitted=false; testFlags={}; testCurrentIndex=0;
+  let l=$('testLevel').value,n=+$('testCount').value; test=Array.from({length:n},()=>tq(l)); testDurationMinutes=Number($('testDuration')?.value||15);testRandomize=!!$('testRandomize')?.checked; if(testRandomize)test.sort(()=>Math.random()-.5); testStartedAt=new Date();
+  $('testMeta').classList.remove('hidden');$('testMeta').innerHTML=`<div class="card" style="margin-bottom:10px"><h3 style="margin:0">📝 اختبار تدريبي</h3><div class="muted">${n} سؤال — ${testDurationMinutes?testDurationMinutes+' دقيقة':'بدون وقت'}</div></div>`;
+  renderTestQuestions(); $('score').innerHTML=''; if(testDurationMinutes>0)startTimer(); else $('testTimer').innerHTML='<div class="hint-box">♾️ الاختبار بدون وقت محدد.</div>';
 }
 async function gradeTest(autoSubmit=false){
   if(testSubmitted||!test.length)return;
   testSubmitted=true; stopTimer(); $('submitTest').classList.add('hidden');
   let s=0; test.forEach((x,i)=>{const ans=selectedAnswer(i);if(isAnswerCorrect(x,ans))s++;});
-  const pct=Math.round(s/test.length*100);
+  const pct=Math.round(s/test.length*100); const unanswered=test.filter((x,i)=>!selectedAnswer(i)).length;
   const started=testStartedAt?testStartedAt.toISOString():new Date().toISOString();
   const examId=currentExamId;
   const submittedAt=new Date().toISOString();
@@ -445,7 +458,7 @@ async function gradeTest(autoSubmit=false){
     const ar=await db.from('attempt_answers').insert(answerRows);
     if(ar.error){console.warn('attempt_answers:',ar.error.message);}
   }
-  $('score').innerHTML=`<div class="good"><h3>النتيجة: ${s}/${test.length} — ${pct}%</h3><p>${autoSubmit?'⏰ انتهى الوقت وتم تسليم الاختبار تلقائيًا.':'✅ تم تسليم الاختبار وحفظ النتيجة.'}</p><div class="progress"><div class="bar" style="width:${pct}%"></div></div></div>`;
+  $('score').innerHTML=`<div class="good"><h3>النتيجة: ${s}/${test.length} — ${pct}%</h3><p>${autoSubmit?'⏰ انتهى الوقت وتم تسليم الاختبار تلقائيًا.':'✅ تم تسليم الاختبار وحفظ النتيجة.'}</p><p>📌 تمت الإجابة عن ${test.length-unanswered} من ${test.length} سؤالًا — غير مجاب: ${unanswered} — أسئلة للمراجعة: ${Object.values(testFlags).filter(Boolean).length}</p><div class="progress"><div class="bar" style="width:${pct}%"></div></div></div>`;
   document.querySelectorAll('#testArea input,#testArea select').forEach(x=>x.disabled=true);
   $('testTimer').innerHTML='<div class="good">✅ انتهى الاختبار.</div>';
 }
