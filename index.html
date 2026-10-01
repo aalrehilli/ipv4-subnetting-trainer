@@ -576,7 +576,7 @@ async function callAdminAction(action,targetUserId,extra={}){
     if(!res.ok || data.error) throw new Error(data.error||data.message||("HTTP "+res.status));
     return {ok:true,data};
   }catch(e){
-    alert("تعذر تنفيذ العملية: "+(e.message||e));
+    alert("تعذر تنفيذ العملية:\n\n"+(e.message||e)+"\n\nإذا كانت الرسالة تتعلق بصلاحية المدير، أعد نشر Edge Function admin-user-action من V38.1.");
     return {ok:false};
   }
 }
