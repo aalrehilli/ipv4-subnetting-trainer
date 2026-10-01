@@ -1248,7 +1248,7 @@ async function loadTrainerSmartFollow(){
     ]);
     if(pr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة المتدربين:<br>${esc(pr.error.message)}</div>`;return;}
     if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة نتائج الاختبارات:<br>${esc(ar.error.message)}</div>`;return;}
-    if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة نتائج التمارين:<br>${esc(er.error.message)}</div>`;return;}
+    if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة نتائج التمارين:<br>${esc(er.error.message)}<br><span style="font-weight:400">نفّذ ملف V40.1_exercise_attempts_permissions.sql في Supabase ثم أعد المحاولة.</span></div>`;return;}
     if(lp.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة تقدم المقرر:<br>${esc(lp.error.message)}</div>`;return;}
     if(lr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الدروس:<br>${esc(lr.error.message)}</div>`;return;}
     const students=(pr.data||[]).filter(x=>x.role==='student');
