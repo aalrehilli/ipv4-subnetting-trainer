@@ -434,15 +434,20 @@ function startTimer(){
   tick(); timerHandle=setInterval(tick,1000);
 }
 async function startPublishedExam(id){
-  if(testSubmitted===false && test.length && !confirm('يوجد اختبار مفتوح. هل تريد بدء اختبار جديد؟')) return;
-  stopTimer(); test=[]; currentExamId=id; currentExamTitle=''; testSubmitted=false; testFlags={}; testCurrentIndex=0;
+  // افحص الحد أولاً قبل مسح أي اختبار مفتوح أو إزالة أسئلته من الشاشة.
   const ex=await db.from('trainer_exams').select('*').eq('id',id).single();
   if(ex.error){msg('score','❌ '+ex.error.message);return;}
   if(ex.data.max_attempts!=null){
     const used=await db.from('attempts').select('id',{count:'exact',head:true}).eq('exam_id',id).eq('student_id',user.id);
     if(used.error){msg('score','❌ تعذر التحقق من المحاولات: '+used.error.message);return;}
-    if((used.count||0)>=Number(ex.data.max_attempts)){msg('score',`❌ استنفدت الحد المسموح (${ex.data.max_attempts}) من المحاولات لهذا الاختبار.`);await loadPublishedExams();return;}
+    if((used.count||0)>=Number(ex.data.max_attempts)){
+      msg('score',`❌ استنفدت الحد المسموح (${ex.data.max_attempts}) من المحاولات لهذا الاختبار. تواصل مع المدرب لزيادة الحد.`);
+      await loadPublishedExams();
+      return;
+    }
   }
+  if(testSubmitted===false && test.length && !confirm('يوجد اختبار مفتوح. هل تريد بدء اختبار جديد؟')) return;
+  stopTimer(); test=[]; currentExamId=id; currentExamTitle=''; testSubmitted=false; testFlags={}; testCurrentIndex=0;
   currentExamTitle=ex.data.title; testDurationMinutes=Number(ex.data.duration_minutes||30); testStartedAt=new Date(); testRandomize=true;
   const r=await db.from('trainer_exam_questions').select('question_order,trainer_questions(id,question_text,correct_answer,question_type,options_json,matching_json)').eq('exam_id',id).order('question_order');
   if(r.error){msg('score','❌ '+r.error.message);return;}
@@ -452,6 +457,7 @@ async function startPublishedExam(id){
   $('testMeta').classList.remove('hidden');$('testMeta').innerHTML=`<div class="card" style="margin-bottom:10px"><h3 style="margin:0 0 5px">📝 ${esc(currentExamTitle)}</h3><div class="muted">${test.length} سؤال — ${testDurationMinutes} دقيقة</div></div>`;
   renderTestQuestions();
   $('score').innerHTML='<div class="good">تم تحميل الاختبار. اختر إجابة لكل سؤال ثم اضغط تسليم الاختبار.</div>';
+  $('submitTest').classList.remove('hidden');
   startTimer();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -471,7 +477,18 @@ async function gradeTest(autoSubmit=false){
   const submittedAt=new Date().toISOString();
   const payload={student_id:user.id,exam_id:examId,score:pct,total_questions:test.length,correct_answers:s,percentage:pct,started_at:started,submitted_at:submittedAt};
   const r=await db.from('attempts').insert(payload).select('id').single();
-  if(r.error){testSubmitted=false;return msg('score','❌ تعذر حفظ النتيجة: '+(String(r.error.message||'').includes('EXAM_ATTEMPT_LIMIT_REACHED')?'لقد استنفدت عدد المحاولات المسموح بها لهذا الاختبار.':r.error.message));}
+  if(r.error){
+    testSubmitted=false;
+    const saveErrText=[r.error.message,r.error.details,r.error.hint,r.error.code].filter(Boolean).join(' ');
+    if(/EXAM_ATTEMPT_LIMIT_REACHED/i.test(saveErrText)){
+      // لا تمسح الأسئلة ولا الإجابات عند رفض الحفظ؛ اتركها ظاهرة للمتدرب.
+      document.querySelectorAll('#testArea input,#testArea select').forEach(x=>x.disabled=false);
+      $('submitTest').classList.remove('hidden');
+      $('testTimer').innerHTML='<div class="hint-box">⏸️ تم إيقاف المؤقت. أسئلتك وإجاباتك ما زالت محفوظة على الشاشة.</div>';
+      return msg('score','❌ استنفدت عدد المحاولات المسموح بها لهذا الاختبار. أسئلتك وإجاباتك لم تُحذف. تواصل مع المدرب لزيادة الحد، ثم اضغط «تسليم الاختبار» مرة أخرى.');
+    }
+    return msg('score','❌ تعذر حفظ النتيجة: '+(r.error.message||r.error.details||'حدث خطأ غير معروف'));
+  }
   if(r.data?.id && examId){
     const answerRows=test.map((x,i)=>{const ans=selectedAnswer(i);return {attempt_id:r.data.id,question_id:x[0],question_order:i+1,selected_answer:ans||null,correct_answer:x[2],is_correct:isAnswerCorrect(x,ans)};});
     const ar=await db.from('attempt_answers').insert(answerRows);
