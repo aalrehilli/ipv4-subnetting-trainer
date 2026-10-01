@@ -613,12 +613,20 @@ async function changeRole(id,role){
   const name=target?.full_name||"هذا الحساب";
   const action=role==="trainer"?"تحويله إلى مدرب":"إعادته إلى متدرب";
   if(!confirm(`هل تريد ${action}؟\n\n${name}`))return;
-  const r=await db.rpc("set_profile_role",{target_user_id:id,new_role:role});
-  if(r.error){alert("تعذر تحديث الصلاحية: "+r.error.message);return;}
-  await loadTrainerStudents();
-  await loadAdminUsers();
-  await loadTrainerOverview();
-  alert("تم تحديث الصلاحية بنجاح.");
+  try{
+    const r=await db.rpc("set_profile_role",{target_user_id:id,new_role:role});
+    if(r.error){
+      const detail=[r.error.message,r.error.details,r.error.hint,r.error.code].filter(Boolean).join(" — ");
+      alert("تعذر تحديث الصلاحية: "+(detail||"خطأ غير معروف")+"\n\nإذا ظهر TypeError: Failed to fetch فنفّذ ملف SQL المرفق V44_1_fix_set_profile_role.sql ثم أعد تحميل الموقع.");
+      return;
+    }
+    await loadTrainerStudents();
+    await loadAdminUsers();
+    await loadTrainerOverview();
+    alert("تم تحديث الصلاحية بنجاح.");
+  }catch(e){
+    alert("تعذر الاتصال بدالة تحديث الصلاحية في Supabase.\n\nالتفاصيل: "+(e?.message||String(e))+"\n\nتحقق من اتصال Supabase ونفّذ ملف SQL المرفق لإنشاء الدالة set_profile_role.");
+  }
 }
 
 async function promoteStudent(id){await changeRole(id,"trainer")}
