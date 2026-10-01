@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V46.1</title>
+<title>IPv4 Subnetting Trainer — V47</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -508,6 +508,9 @@ async function loadStudentNotifications(){
   if(homeCard)homeCard.classList.toggle("hidden",!isStudent);
   if(!user?.id||(!dashboardHost&&!homeHost))return;
   [dashboardHost,homeHost].filter(Boolean).forEach(h=>h.innerHTML='<div class="muted">⏳ جارٍ تحميل الإشعارات...</div>');
+  // ينشئ تذكيرات انتهاء الاختبارات القريبة بشكل آمن ومكرر-المنع من قاعدة البيانات.
+  const reminder=await db.rpc("create_upcoming_exam_reminders");
+  if(reminder.error)console.warn("V47 reminders:",reminder.error.message);
   const r=await db.from("student_notifications").select("id,title,message,notification_type,reference_id,created_at,read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
   if(r.error){
     const err='<div class="bad">تعذر تحميل الإشعارات. تأكد من إعداد إشعارات V46.</div>';
@@ -1576,6 +1579,14 @@ async function editExamEndDate(id){
   await loadTrainerExams();
   alert("تم تحديث موعد نهاية الاختبار.");
 }
+async function announceAttemptResult(attemptId){
+  if(!["trainer","admin"].includes(profile?.role))return;
+  if(!confirm("إعلان نتيجة هذه المحاولة للمتدرب وإرسال إشعار له؟"))return;
+  const r=await db.rpc("announce_exam_attempt_result",{p_attempt_id:attemptId});
+  if(r.error){alert("تعذر إعلان النتيجة: "+r.error.message+" — تأكد من تنفيذ SQL الخاص بـ V47.");return;}
+  alert("تم إعلان النتيجة وإرسال الإشعار للمتدرب.");
+  if(window.V44ExamReportData?.exam?.id)loadTrainerExamAnalytics(window.V44ExamReportData.exam.id);
+}
 async function loadTrainerExamAnalytics(examId){
   if(!["trainer","admin"].includes(profile?.role))return;
   const panel=$("examAnalyticsBody");
@@ -1651,7 +1662,7 @@ async function loadTrainerExamAnalytics(examId){
       <h4 style="margin-top:22px">🧩 تحليل الأسئلة — الأكثر صعوبة أولاً</h4>
       ${questionRows.length?`<div style="overflow-x:auto"><table><tr><th>السؤال</th><th>عدد الإجابات</th><th>الصحيحة</th><th>الخاطئة</th><th>نسبة الخطأ</th></tr>${questionRows.map(x=>`<tr><td>${esc(x.q.question_text||"سؤال غير متاح")}</td><td>${x.total}</td><td>${x.correct}</td><td>${x.wrong}</td><td>${Math.round(x.wrong/x.total*100)}%</td></tr>`).join("")}</table></div>`:'<div class="muted">لا توجد إجابات تفصيلية محفوظة لتحليل الأسئلة.</div>'}
       <h4 style="margin-top:22px">📝 جميع محاولات الاختبار ومراجعة الإجابات</h4>
-      ${attempts.length?`<div style="overflow-x:auto"><table><tr><th>المتدرب</th><th>التاريخ</th><th>الدرجة</th><th>الصحيح</th><th>تفاصيل الإجابات</th></tr>${attempts.map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"متدرب")}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td><td>${Math.round(pct(a))}%</td><td>${Number(a.correct_answers||0)}/${Number(a.total_questions||0)}</td><td><button class="primary" onclick="openStudentAttemptDetails(${Number(a.id)},'${a.student_id}')">عرض الإجابات</button></td></tr>`}).join("")}</table></div>`:'<div class="muted">لا توجد محاولات بعد.</div>'}`;
+      ${attempts.length?`<div style="overflow-x:auto"><table><tr><th>المتدرب</th><th>التاريخ</th><th>الدرجة</th><th>الصحيح</th><th>تفاصيل الإجابات</th><th>إعلان النتيجة</th></tr>${attempts.map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"متدرب")}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td><td>${Math.round(pct(a))}%</td><td>${Number(a.correct_answers||0)}/${Number(a.total_questions||0)}</td><td><button class="primary" onclick="openStudentAttemptDetails(${Number(a.id)},'${a.student_id}')">عرض الإجابات</button></td><td><button class="primary green" onclick="announceAttemptResult(${Number(a.id)})">📣 إعلان النتيجة</button></td></tr>`}).join("")}</table></div>`:'<div class="muted">لا توجد محاولات بعد.</div>'}`;
   }catch(e){
     panel.innerHTML=`<div class="bad">❌ تعذر تحميل تحليلات الاختبار: ${esc(e?.message||String(e))}</div>`;
   }
