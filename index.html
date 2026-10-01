@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V44</title>
+<title>IPv4 Subnetting Trainer — V44.2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -1528,7 +1528,15 @@ async function loadTrainerExamAnalytics(examId){
       byStudent.set(a.student_id,old);
     });
     const ranking=[...byStudent.values()].sort((a,b)=>b.best-a.best||a.attempts-b.attempts);
-    panel.innerHTML=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><h3 style="margin:0">📊 ${esc(exr.data.title)}</h3><div class="muted">${esc(exr.data.topic||"")} — ${esc(exr.data.group_name||"كل الشعب")}</div></div><button class="primary" onclick="loadTrainerExamAnalytics('${examId}')">🔄 تحديث</button></div>
+    const groupStats=new Map();
+    attempts.forEach(a=>{
+      const p=pm.get(a.student_id)||{}, group=p.group_name||"غير محدد";
+      const g=groupStats.get(group)||{group,total:0,sum:0,passed:0,students:new Set()};
+      const score=pct(a);g.total++;g.sum+=score;if(score>=60)g.passed++;g.students.add(a.student_id);groupStats.set(group,g);
+    });
+    const groupRows=[...groupStats.values()].sort((a,b)=>a.group.localeCompare(b.group,"ar"));
+    window.V44ExamReportData={exam:exr.data,attempts,profiles:profiles.filter(p=>p.role==="student"),answers,questions:questionRows,ranking,groups:groupRows.map(g=>({group:g.group,total:g.total,avg:g.total?Math.round(g.sum/g.total):0,passRate:g.total?Math.round(g.passed/g.total*100):0,students:g.students.size})),pct:(a)=>pct(a)};
+    panel.innerHTML=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><h3 style="margin:0">📊 ${esc(exr.data.title)}</h3><div class="muted">${esc(exr.data.topic||"")} — ${esc(exr.data.group_name||"كل الشعب")}</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="primary green" onclick="exportV44ExamCSV()">📥 تصدير Excel (CSV)</button><button class="primary" onclick="printV44ExamReport()">🖨️ طباعة التقرير</button><button class="primary" onclick="loadTrainerExamAnalytics('${examId}')">🔄 تحديث</button></div></div>
       <div class="grid" style="margin-top:14px">
         <div class="card"><div class="muted">عدد المحاولات</div><div class="kpi">${attempts.length}</div></div>
         <div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div>
@@ -1539,13 +1547,47 @@ async function loadTrainerExamAnalytics(examId){
       </div>
       <h4>🏅 ترتيب المتدربين حسب أفضل نتيجة</h4>
       ${ranking.length?`<div style="overflow-x:auto"><table><tr><th>الترتيب</th><th>المتدرب</th><th>الرقم</th><th>الشعبة</th><th>أفضل درجة</th><th>عدد المحاولات</th><th>تفاصيل أفضل محاولة</th></tr>${ranking.map((x,i)=>{const p=pm.get(x.student_id)||{};return `<tr><td>${i+1}</td><td>${esc(p.full_name||"متدرب")}</td><td>${esc(p.student_id||"—")}</td><td>${esc(p.group_name||"—")}</td><td><b>${Math.round(x.best)}%</b></td><td>${x.attempts}</td><td><button class="primary" onclick="openStudentAttemptDetails(${Number(x.bestAttemptId)},'${x.student_id}')">🔍 مراجعة</button></td></tr>`}).join("")}</table></div>`:'<div class="muted">لا توجد نتائج لهذا الاختبار حتى الآن.</div>'}
-      <h4 style="margin-top:22px">🧩 تحليل الأسئلة</h4>
+      <h4 style="margin-top:22px">👥 مقارنة الشعب</h4>
+      ${groupRows.length?`<div style="overflow-x:auto"><table><tr><th>الشعبة</th><th>عدد المتدربين</th><th>عدد المحاولات</th><th>متوسط الدرجات</th><th>نسبة النجاح</th></tr>${groupRows.map(g=>`<tr><td>${esc(g.group)}</td><td>${g.students.size}</td><td>${g.total}</td><td>${Math.round(g.sum/g.total)}%</td><td>${Math.round(g.passed/g.total*100)}%</td></tr>`).join("")}</table></div>`:'<div class="muted">لا توجد بيانات شعب كافية للمقارنة.</div>'}
+      <h4 style="margin-top:22px">🧩 تحليل الأسئلة — الأكثر صعوبة أولاً</h4>
       ${questionRows.length?`<div style="overflow-x:auto"><table><tr><th>السؤال</th><th>عدد الإجابات</th><th>الصحيحة</th><th>الخاطئة</th><th>نسبة الخطأ</th></tr>${questionRows.map(x=>`<tr><td>${esc(x.q.question_text||"سؤال غير متاح")}</td><td>${x.total}</td><td>${x.correct}</td><td>${x.wrong}</td><td>${Math.round(x.wrong/x.total*100)}%</td></tr>`).join("")}</table></div>`:'<div class="muted">لا توجد إجابات تفصيلية محفوظة لتحليل الأسئلة.</div>'}
       <h4 style="margin-top:22px">📝 جميع محاولات الاختبار ومراجعة الإجابات</h4>
       ${attempts.length?`<div style="overflow-x:auto"><table><tr><th>المتدرب</th><th>التاريخ</th><th>الدرجة</th><th>الصحيح</th><th>تفاصيل الإجابات</th></tr>${attempts.map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"متدرب")}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td><td>${Math.round(pct(a))}%</td><td>${Number(a.correct_answers||0)}/${Number(a.total_questions||0)}</td><td><button class="primary" onclick="openStudentAttemptDetails(${Number(a.id)},'${a.student_id}')">عرض الإجابات</button></td></tr>`}).join("")}</table></div>`:'<div class="muted">لا توجد محاولات بعد.</div>'}`;
   }catch(e){
     panel.innerHTML=`<div class="bad">❌ تعذر تحميل تحليلات الاختبار: ${esc(e?.message||String(e))}</div>`;
   }
+}
+
+
+function exportV44ExamCSV(){
+  const d=window.V44ExamReportData;
+  if(!d){alert("افتح تحليل الاختبار أولاً.");return;}
+  const rows=[["تقرير الاختبار",d.exam.title],["الموضوع",d.exam.topic||""],[],["المتدرب","رقم المتدرب","الشعبة","تاريخ التسليم","الدرجة %","الإجابات الصحيحة","إجمالي الأسئلة"]];
+  const pm=new Map(d.profiles.map(p=>[p.id,p]));
+  d.attempts.forEach(a=>{const p=pm.get(a.student_id)||{};rows.push([p.full_name||"متدرب",p.student_id||"",p.group_name||"",a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"",Math.round(d.pct(a)),a.correct_answers??"",a.total_questions??""]);});
+  rows.push([],["مقارنة الشعب"],["الشعبة","عدد المتدربين","عدد المحاولات","متوسط الدرجات","نسبة النجاح"]);
+  d.groups.forEach(g=>rows.push([g.group,g.students,g.total,g.avg,g.passRate+"%"]));
+  rows.push([],["تحليل الأسئلة"],["السؤال","عدد الإجابات","الصحيحة","الخاطئة","نسبة الخطأ"]);
+  d.questions.forEach(q=>rows.push([q.q.question_text||"سؤال غير متاح",q.total,q.correct,q.wrong,Math.round(q.wrong/q.total*100)+"%"]));
+  const csv="\uFEFF"+rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="Exam_Report_"+String(d.exam.title||"IPv4").replace(/[^\w\u0600-\u06FF-]+/g,"_")+".csv";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+function printV44ExamReport(){
+  const d=window.V44ExamReportData;
+  if(!d){alert("افتح تحليل الاختبار أولاً.");return;}
+  const pm=new Map(d.profiles.map(p=>[p.id,p]));
+  const win=window.open("","_blank");
+  if(!win){alert("اسمح بالنوافذ المنبثقة لطباعة التقرير.");return;}
+  const attempts=d.attempts.map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"متدرب")}</td><td>${esc(p.student_id||"—")}</td><td>${esc(p.group_name||"—")}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td><td>${Math.round(d.pct(a))}%</td></tr>`;}).join("");
+  const groups=d.groups.map(g=>`<tr><td>${esc(g.group)}</td><td>${g.students}</td><td>${g.total}</td><td>${g.avg}%</td><td>${g.passRate}%</td></tr>`).join("");
+  const questions=d.questions.map(q=>`<tr><td>${esc(q.q.question_text||"سؤال غير متاح")}</td><td>${q.total}</td><td>${q.correct}</td><td>${q.wrong}</td><td>${Math.round(q.wrong/q.total*100)}%</td></tr>`).join("");
+  win.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${esc(d.exam.title)}</title><style>body{font-family:Arial,sans-serif;padding:24px;color:#172b4d}h1,h2{color:#075aa6}table{width:100%;border-collapse:collapse;margin:12px 0 24px}th,td{border:1px solid #ccd5df;padding:8px;text-align:right}th{background:#eaf2fa}@media print{button{display:none}}</style></head><body><h1>تقرير الاختبار: ${esc(d.exam.title)}</h1><p>الموضوع: ${esc(d.exam.topic||"—")} | الشعبة المستهدفة: ${esc(d.exam.group_name||"كل الشعب")}</p><h2>سجل المحاولات</h2><table><tr><th>المتدرب</th><th>الرقم</th><th>الشعبة</th><th>التاريخ</th><th>الدرجة</th></tr>${attempts}</table><h2>مقارنة الشعب</h2><table><tr><th>الشعبة</th><th>المتدربون</th><th>المحاولات</th><th>المتوسط</th><th>النجاح</th></tr>${groups}</table><h2>الأسئلة الأكثر صعوبة</h2><table><tr><th>السؤال</th><th>الإجابات</th><th>صحيحة</th><th>خاطئة</th><th>نسبة الخطأ</th></tr>${questions}</table><button onclick="window.print()">طباعة</button></body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),350);
 }
 
 async function updateExamMaxAttempts(id,value){
