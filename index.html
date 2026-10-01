@@ -1,6 +1,7 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V40</title>
+<title>IPv4 Subnetting Trainer — V41</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}.role-admin{background:#7b3fb3}.role-trainer{background:#0759a5}.role-student{background:#168a46}.admin-only{display:none}.role-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
@@ -141,6 +142,11 @@
 <section id="certificate" class="hidden">
 <div class="card hero"><span class="badge">V12 • CERTIFICATE</span><h2>🏆 شهادة إتمام المقرر</h2><p>تحقق من استيفاء متطلبات إتمام مقرر IPv4 Subnetting ثم أصدر شهادة باسم المتدرب.</p><div id="certificateStatus"></div></div>
 <div class="card" id="certificateCard"><div id="certificateDetails"></div></div>
+</section>
+
+<section id="verifyCertificate" class="hidden">
+<div class="card hero"><span class="badge">V41 • VERIFICATION</span><h2>🔳 التحقق من الشهادة</h2><p>أدخل رقم الشهادة للتحقق من صحة الشهادة الصادرة من منصة IPv4 Subnetting.</p></div>
+<div class="card"><div id="verifyCertificateResult"><div class="muted">جارٍ التحقق...</div></div></div>
 </section>
 
 <section id="account" class="hidden"><div class="card"><h2>👤 الحساب</h2><div id="accountInfo"></div></div></section>
@@ -1946,6 +1952,8 @@ async function issueCertificate(){
 
 function renderCertificate(x){
  const area=$('issuedCertificate'); if(!area)return;
+ const certNo=String(x.certificate_no||'');
+ const verifyUrl=SITE_URL+'?verify='+encodeURIComponent(certNo);
  area.innerHTML=`<div class="certificate" id="certificatePrint">
    <div class="badge">IPv4 SUBNETTING TRAINER</div>
    <h1>شهادة إتمام المقرر</h1>
@@ -1955,9 +1963,34 @@ function renderCertificate(x){
    <p>بنسبة إتقان <b>${Number(x.mastery||0)}%</b></p>
    <p>الاختبار النهائي: <b>${x.final_exam_percentage==null?'—':Number(x.final_exam_percentage)+'%'}</b></p>
    <p>تاريخ الإصدار: <b>${x.issued_at?new Date(x.issued_at).toLocaleDateString('ar-SA'):new Date().toLocaleDateString('ar-SA')}</b></p>
-   <p class="certno">رقم الشهادة: ${esc(x.certificate_no||'—')}</p>
-   <button class="primary purple" onclick="printCertificate()">🖨️ طباعة / حفظ PDF</button>
+   <p class="certno">رقم الشهادة: ${esc(certNo||'—')}</p>
+   <div style="display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;margin:16px 0">
+     <div id="certificateQr" style="background:#fff;padding:8px;border-radius:10px;border:1px solid #d8e6f1"></div>
+     <div style="max-width:360px;text-align:right"><b>🔳 تحقق من الشهادة</b><div class="muted" style="margin-top:6px">امسح رمز QR أو استخدم رابط التحقق.</div><div style="word-break:break-all;font-size:11px;margin-top:8px">${esc(verifyUrl)}</div></div>
+   </div>
+   <div class="practice-actions" style="justify-content:center"><button class="primary purple" onclick="printCertificate()">🖨️ طباعة / حفظ PDF</button><button class="primary" onclick="copyVerificationLink('${encodeURIComponent(verifyUrl)}')">🔗 نسخ رابط التحقق</button></div>
  </div>`;
+ if(window.QRCode && certNo){ new QRCode($('certificateQr'),{text:verifyUrl,width:120,height:120,colorDark:'#0759a5',colorLight:'#ffffff'}); }
+}
+
+function copyVerificationLink(encoded){
+ const url=decodeURIComponent(encoded||'');
+ navigator.clipboard?.writeText(url).then(()=>alert('✅ تم نسخ رابط التحقق.')).catch(()=>prompt('انسخ رابط التحقق:',url));
+}
+
+async function loadPublicCertificateVerification(certNo){
+ const box=$('verifyCertificateResult'); if(!box)return;
+ box.innerHTML='<div class="muted">🔎 جارٍ التحقق من رقم الشهادة...</div>';
+ if(!certNo){box.innerHTML='<div class="bad">❌ لم يتم تحديد رقم شهادة.</div>';return;}
+ if(!db && !initSupabase())return;
+ const r=await db.rpc('verify_course_certificate',{p_certificate_no:certNo});
+ if(r.error){box.innerHTML=`<div class="bad">❌ تعذر التحقق من الشهادة:<br>${esc(r.error.message)}</div>`;return;}
+ const x=r.data?.[0]||r.data;
+ if(!x){box.innerHTML='<div class="bad">❌ رقم الشهادة غير موجود أو غير صالح.</div>';return;}
+ const verifyUrl=SITE_URL+'?verify='+encodeURIComponent(certNo);
+ box.innerHTML=`<div class="good">✅ الشهادة صحيحة ومسجلة في منصة IPv4 Subnetting.</div>
+ <div class="certificate" style="margin-top:15px"><div class="badge">شهادة موثقة</div><h1>شهادة إتمام المقرر</h1><p>اسم المتدرب</p><div class="name">${esc(x.full_name||'—')}</div><p>الدورة: <b>IPv4 Subnetting — Class C + FLSM</b></p><div class="grid"><div class="stat"><b>رقم الشهادة</b><span class="certno">${esc(x.certificate_no)}</span></div><div class="stat"><b>تاريخ الإصدار</b><span>${x.issued_at?new Date(x.issued_at).toLocaleDateString('ar-SA'):'—'}</span></div><div class="stat"><b>نسبة الإتقان</b><span>${Number(x.mastery||0)}%</span></div></div><div style="display:flex;justify-content:center;margin:18px"><div id="verifyQr" style="background:#fff;padding:8px;border:1px solid #d8e6f1;border-radius:10px"></div></div><div class="muted">رابط التحقق: ${esc(verifyUrl)}</div></div>`;
+ if(window.QRCode)$('verifyQr')&&new QRCode($('verifyQr'),{text:verifyUrl,width:140,height:140,colorDark:'#0759a5',colorLight:'#ffffff'});
 }
 
 function printCertificate(){
@@ -1971,5 +2004,17 @@ function renderAccount(){$("accountInfo").innerHTML=profile?`<div class="stat"><
 async function exportCSV(){let r=(await db.from("attempts").select("percentage,correct_answers,total_questions,submitted_at,profiles(full_name,student_id)")).data||[],rows=[["Student","Student ID","Type","Date","Score","Details"],...r.map(x=>[x.profiles?.full_name||"",x.profiles?.student_id||"","Exam",x.submitted_at,x.percentage,`${x.correct_answers}/${x.total_questions}`])],csv="\ufeff"+rows.map(x=>x.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ipv4_subnetting_results.csv";a.click()}
 window.addEventListener("error",e=>{console.error(e.error||e.message);if($("authMsg"))setMsg("❌ خطأ في الصفحة: "+(e.message||"خطأ JavaScript"));});
 window.addEventListener("unhandledrejection",e=>{console.error(e.reason);if($("authMsg"))setMsg("❌ خطأ في الاتصال: "+(e.reason?.message||e.reason||"خطأ غير معروف"));});
-window.addEventListener("DOMContentLoaded",()=>{ console.log("V34 Student Dashboard + Interactive Practice loaded"); boot(); });
+window.addEventListener("DOMContentLoaded",async()=>{
+ console.log("V41 Certificate Verification loaded");
+ const params=new URLSearchParams(window.location.search);
+ const verifyNo=params.get("verify");
+ if(verifyNo){
+   if(!initSupabase())return;
+   document.querySelectorAll("body > *").forEach(el=>{ if(!el.id || !["verifyCertificate"].includes(el.id)) el.classList.add("hidden"); });
+   $("verifyCertificate")?.classList.remove("hidden");
+   await loadPublicCertificateVerification(verifyNo);
+   return;
+ }
+ boot();
+});
 </script></body></html>
