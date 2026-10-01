@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V43.1</title>
+<title>IPv4 Subnetting Trainer — V44</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -144,7 +144,7 @@
 </div>
 <div id="cohortAnalyticsArea"></div>
 </div>
-<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
+<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div><div id="examAnalyticsPanel" class="card" style="margin-top:18px"><h3>📊 تحليلات الاختبارات</h3><p class="muted">اختر «التحليل» بجانب أي اختبار لعرض النتائج، ترتيب المتدربين، ومراجعة الإجابات.</p><div id="examAnalyticsBody"></div></div></div></section>
 <section id="certificate" class="hidden">
 <div class="card hero"><span class="badge">V12 • CERTIFICATE</span><h2>🏆 شهادة إتمام المقرر</h2><p>تحقق من استيفاء متطلبات إتمام مقرر IPv4 Subnetting ثم أصدر شهادة باسم المتدرب.</p><div id="certificateStatus"></div></div>
 <div class="card" id="certificateCard"><div id="certificateDetails"></div></div>
@@ -1451,8 +1451,95 @@ async function loadTrainerExams(){
   const r=await db.from('trainer_exams').select('*').order('created_at',{ascending:false});
   if(r.error){$('examsTable').innerHTML='<div class="bad">❌ نفّذ SQL الخاص بـ V6 أولًا.<br>'+esc(r.error.message)+'</div>';return;}
   const rows=r.data||[];
-  $('examsTable').innerHTML=rows.length?`<table><tr><th>الاختبار</th><th>الموضوع</th><th>الأسئلة</th><th>المدة</th><th>المحاولات</th><th>الشعبة</th><th>الحالة</th><th>الإجراء</th></tr>${rows.map(x=>`<tr><td>${esc(x.title)}</td><td>${esc(x.topic)}</td><td>${x.question_count}</td><td>${x.duration_minutes} دقيقة</td><td><select aria-label="عدد المحاولات" onchange="updateExamMaxAttempts('${x.id}',this.value)">${[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5'],[10,'10'],['','غير محدود']].map(([v,l])=>`<option value="${v}" ${(x.max_attempts==null?'':String(x.max_attempts))===String(v)?'selected':''}>${l}</option>`).join('')}</select></td><td>${esc(x.group_name||'كل الشعب')}</td><td>${x.is_active?'🟢 مفعّل':'⚪ متوقف'}</td><td><button class="primary ${x.is_active?'red':'green'}" onclick="toggleTrainerExam('${x.id}',${!x.is_active})">${x.is_active?'إيقاف':'تفعيل'}</button> <button class="primary red" onclick="deleteTrainerExam('${x.id}')">حذف</button></td></tr>`).join('')}</table>`:'لا توجد اختبارات بعد.';
+  $('examsTable').innerHTML=rows.length?`<table><tr><th>الاختبار</th><th>الموضوع</th><th>الأسئلة</th><th>المدة</th><th>المحاولات</th><th>الشعبة</th><th>الحالة</th><th>الإجراء</th></tr>${rows.map(x=>`<tr><td>${esc(x.title)}</td><td>${esc(x.topic)}</td><td>${x.question_count}</td><td>${x.duration_minutes} دقيقة</td><td><select aria-label="عدد المحاولات" onchange="updateExamMaxAttempts('${x.id}',this.value)">${[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5'],[10,'10'],['','غير محدود']].map(([v,l])=>`<option value="${v}" ${(x.max_attempts==null?'':String(x.max_attempts))===String(v)?'selected':''}>${l}</option>`).join('')}</select></td><td>${esc(x.group_name||'كل الشعب')}</td><td>${x.is_active?'🟢 مفعّل':'⚪ متوقف'}</td><td><button class="primary" onclick="loadTrainerExamAnalytics('${x.id}')">📊 التحليل</button> <button class="primary" onclick="editExamEndDate('${x.id}')">🗓️ الموعد</button> <button class="primary ${x.is_active?'red':'green'}" onclick="toggleTrainerExam('${x.id}',${!x.is_active})">${x.is_active?'إيقاف':'تفعيل'}</button> <button class="primary red" onclick="deleteTrainerExam('${x.id}')">حذف</button></td></tr>`).join('')}</table>`:'لا توجد اختبارات بعد.';
 }
+
+async function editExamEndDate(id){
+  if(!["trainer","admin"].includes(profile?.role))return;
+  const current=prompt("أدخل موعد نهاية الاختبار بصيغة YYYY-MM-DDTHH:mm (اتركه فارغاً لإزالة الموعد):");
+  if(current===null)return;
+  let ends_at=null;
+  if(current.trim()){
+    const d=new Date(current);
+    if(Number.isNaN(d.getTime())){alert("صيغة التاريخ غير صحيحة. مثال: 2026-10-15T20:00");return;}
+    ends_at=d.toISOString();
+  }
+  const r=await db.from("trainer_exams").update({ends_at}).eq("id",id);
+  if(r.error){alert("تعذر تحديث موعد الاختبار: "+r.error.message);return;}
+  await loadTrainerExams();
+  alert("تم تحديث موعد نهاية الاختبار.");
+}
+async function loadTrainerExamAnalytics(examId){
+  if(!["trainer","admin"].includes(profile?.role))return;
+  const panel=$("examAnalyticsBody");
+  if(!panel)return;
+  panel.innerHTML='<div class="muted">⏳ جارٍ تحميل تحليلات الاختبار...</div>';
+  $("examAnalyticsPanel")?.scrollIntoView({behavior:"smooth",block:"start"});
+  try{
+    const [exr,ar,pr]=await Promise.all([
+      db.from("trainer_exams").select("id,title,topic,group_name,question_count").eq("id",examId).single(),
+      db.from("attempts").select("id,student_id,percentage,score,correct_answers,total_questions,submitted_at").eq("exam_id",examId).order("submitted_at",{ascending:false}),
+      db.from("profiles").select("id,full_name,student_id,group_name,role")
+    ]);
+    if(exr.error)throw exr.error;
+    if(ar.error)throw ar.error;
+    if(pr.error)throw pr.error;
+    const attempts=ar.data||[], profiles=pr.data||[];
+    const pm=new Map(profiles.map(p=>[p.id,p]));
+    const pct=a=>Number(a.percentage??a.score??(a.total_questions?100*Number(a.correct_answers||0)/Number(a.total_questions):0));
+    const scores=attempts.map(pct);
+    const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0;
+    const passed=scores.filter(x=>x>=60).length;
+    const unique=new Set(attempts.map(a=>a.student_id)).size;
+    const best=scores.length?Math.max(...scores):0, lowest=scores.length?Math.min(...scores):0;
+    const answersR=attempts.length?await db.from("attempt_answers").select("attempt_id,question_id,selected_answer,correct_answer,is_correct,question_order").in("attempt_id",attempts.map(a=>a.id)): {data:[],error:null};
+    if(answersR.error)throw answersR.error;
+    const answers=answersR.data||[];
+    const qids=[...new Set(answers.map(a=>a.question_id).filter(Boolean))];
+    let qmap=new Map();
+    if(qids.length){
+      const qr=await db.from("trainer_questions").select("id,question_text,topic,difficulty").in("id",qids);
+      if(qr.error)throw qr.error;
+      qmap=new Map((qr.data||[]).map(q=>[q.id,q]));
+    }
+    const qstats=new Map();
+    answers.forEach(a=>{
+      const k=a.question_id||"unknown";
+      const x=qstats.get(k)||{total:0,wrong:0,correct:0};
+      x.total++; if(a.is_correct)x.correct++;else x.wrong++;
+      qstats.set(k,x);
+    });
+    const questionRows=[...qstats.entries()].map(([id,x])=>({id,...x,q:qmap.get(id)||{}})).sort((a,b)=>(b.wrong/b.total)-(a.wrong/a.total));
+    const byStudent=new Map();
+    attempts.forEach(a=>{
+      const old=byStudent.get(a.student_id)||{student_id:a.student_id,best:-1,attempts:0,bestAttemptId:a.id,latest:a.submitted_at};
+      old.attempts++;
+      const score=pct(a);
+      if(score>old.best){old.best=score;old.bestAttemptId=a.id;}
+      if(!old.latest||new Date(a.submitted_at)>new Date(old.latest))old.latest=a.submitted_at;
+      byStudent.set(a.student_id,old);
+    });
+    const ranking=[...byStudent.values()].sort((a,b)=>b.best-a.best||a.attempts-b.attempts);
+    panel.innerHTML=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><h3 style="margin:0">📊 ${esc(exr.data.title)}</h3><div class="muted">${esc(exr.data.topic||"")} — ${esc(exr.data.group_name||"كل الشعب")}</div></div><button class="primary" onclick="loadTrainerExamAnalytics('${examId}')">🔄 تحديث</button></div>
+      <div class="grid" style="margin-top:14px">
+        <div class="card"><div class="muted">عدد المحاولات</div><div class="kpi">${attempts.length}</div></div>
+        <div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div>
+        <div class="card"><div class="muted">نسبة النجاح (60% فأعلى)</div><div class="kpi">${attempts.length?Math.round(passed/attempts.length*100):0}%</div></div>
+        <div class="card"><div class="muted">عدد المتدربين</div><div class="kpi">${unique}</div></div>
+        <div class="card"><div class="muted">أعلى درجة</div><div class="kpi">${best}%</div></div>
+        <div class="card"><div class="muted">أقل درجة</div><div class="kpi">${lowest}%</div></div>
+      </div>
+      <h4>🏅 ترتيب المتدربين حسب أفضل نتيجة</h4>
+      ${ranking.length?`<div style="overflow-x:auto"><table><tr><th>الترتيب</th><th>المتدرب</th><th>الرقم</th><th>الشعبة</th><th>أفضل درجة</th><th>عدد المحاولات</th><th>تفاصيل أفضل محاولة</th></tr>${ranking.map((x,i)=>{const p=pm.get(x.student_id)||{};return `<tr><td>${i+1}</td><td>${esc(p.full_name||"متدرب")}</td><td>${esc(p.student_id||"—")}</td><td>${esc(p.group_name||"—")}</td><td><b>${Math.round(x.best)}%</b></td><td>${x.attempts}</td><td><button class="primary" onclick="openStudentAttemptDetails(${Number(x.bestAttemptId)},'${x.student_id}')">🔍 مراجعة</button></td></tr>`}).join("")}</table></div>`:'<div class="muted">لا توجد نتائج لهذا الاختبار حتى الآن.</div>'}
+      <h4 style="margin-top:22px">🧩 تحليل الأسئلة</h4>
+      ${questionRows.length?`<div style="overflow-x:auto"><table><tr><th>السؤال</th><th>عدد الإجابات</th><th>الصحيحة</th><th>الخاطئة</th><th>نسبة الخطأ</th></tr>${questionRows.map(x=>`<tr><td>${esc(x.q.question_text||"سؤال غير متاح")}</td><td>${x.total}</td><td>${x.correct}</td><td>${x.wrong}</td><td>${Math.round(x.wrong/x.total*100)}%</td></tr>`).join("")}</table></div>`:'<div class="muted">لا توجد إجابات تفصيلية محفوظة لتحليل الأسئلة.</div>'}
+      <h4 style="margin-top:22px">📝 جميع محاولات الاختبار ومراجعة الإجابات</h4>
+      ${attempts.length?`<div style="overflow-x:auto"><table><tr><th>المتدرب</th><th>التاريخ</th><th>الدرجة</th><th>الصحيح</th><th>تفاصيل الإجابات</th></tr>${attempts.map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"متدرب")}</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td><td>${Math.round(pct(a))}%</td><td>${Number(a.correct_answers||0)}/${Number(a.total_questions||0)}</td><td><button class="primary" onclick="openStudentAttemptDetails(${Number(a.id)},'${a.student_id}')">عرض الإجابات</button></td></tr>`}).join("")}</table></div>`:'<div class="muted">لا توجد محاولات بعد.</div>'}`;
+  }catch(e){
+    panel.innerHTML=`<div class="bad">❌ تعذر تحميل تحليلات الاختبار: ${esc(e?.message||String(e))}</div>`;
+  }
+}
+
 async function updateExamMaxAttempts(id,value){
   if(!['trainer','admin'].includes(profile?.role))return;
   const max_attempts=value===''?null:Number(value);
