@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V36.3</title>
+<title>IPv4 Subnetting Trainer — V40</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}.role-admin{background:#7b3fb3}.role-trainer{background:#0759a5}.role-student{background:#168a46}.admin-only{display:none}.role-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
@@ -63,8 +63,13 @@
 .smart-streak{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,#fff7e5,#fff);border:1px solid #f0d08a;border-radius:12px;padding:12px}.smart-streak .fire{font-size:30px}
 @media(max-width:900px){.smart-hero,.smart-columns{grid-template-columns:1fr}.smart-kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.smart-kpis{grid-template-columns:1fr 1fr}.smart-activity-row{grid-template-columns:65px 1fr}.smart-activity-row .date{grid-column:2;text-align:right}}
-.smart-coach{margin-top:14px;padding:14px;border:1px solid #cfe1ef;border-radius:12px;background:linear-gradient(135deg,#f4fbff,#fff)}.smart-coach-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.smart-coach-title strong{color:#0759a5}.hint-level{display:inline-block;padding:4px 9px;border-radius:14px;background:#fff3cd;border:1px solid #e8ca6a;font-size:12px}.error-explain{font-size:12px;line-height:1.7;margin-top:5px}.coach-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}</style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V39 • Supabase</div></div>
+.smart-coach{margin-top:14px;padding:14px;border:1px solid #cfe1ef;border-radius:12px;background:linear-gradient(135deg,#f4fbff,#fff)}.smart-coach-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.smart-coach-title strong{color:#0759a5}.hint-level{display:inline-block;padding:4px 9px;border-radius:14px;background:#fff3cd;border:1px solid #e8ca6a;font-size:12px}.error-explain{font-size:12px;line-height:1.7;margin-top:5px}.coach-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+/* V40 — لوحة المدرب الذكية */
+.trainer-smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.trainer-smart-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:15px;text-align:center}.trainer-smart-kpi .num{font-size:28px;font-weight:bold;color:#0759a5}.trainer-smart-kpi .label{font-size:12px;color:#65788a;margin-top:4px}.trainer-smart-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}.trainer-smart-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}.trainer-smart-panel h3{margin-top:0}.follow-row{display:grid;grid-template-columns:1.4fr .7fr .7fr .7fr 1.1fr;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #edf2f6}.follow-row:last-child{border-bottom:0}.follow-status{padding:5px 9px;border-radius:16px;font-weight:bold;font-size:12px;display:inline-block}.follow-status.high{background:#ffe8e8;color:#a51f1f}.follow-status.medium{background:#fff4d8;color:#8a6200}.follow-status.good{background:#e7f7ed;color:#137b39}.follow-mini{font-size:12px;color:#65788a}.follow-action{display:flex;gap:5px;flex-wrap:wrap}.group-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.group-card{border:1px solid #dce8f2;border-radius:12px;padding:12px;background:#f9fcff}.group-card strong{color:#0759a5}.trainer-smart-empty{padding:20px;text-align:center;background:#f8fbfd;border-radius:10px;color:#65788a}.trainer-smart-note{padding:11px 13px;background:#eef7ff;border-right:4px solid #0759a5;border-radius:9px;line-height:1.8}
+@media(max-width:950px){.trainer-smart-grid{grid-template-columns:repeat(2,1fr)}.trainer-smart-columns{grid-template-columns:1fr}.follow-row{grid-template-columns:1.4fr .7fr .7fr .7fr 1fr}}
+@media(max-width:650px){.trainer-smart-grid{grid-template-columns:1fr 1fr}.follow-row{grid-template-columns:1fr 1fr}.follow-row>*:first-child{grid-column:1/-1}.follow-action{grid-column:1/-1}.group-card-grid{grid-template-columns:1fr}}
+</style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V40 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
@@ -89,7 +94,7 @@
 <section id="trainer" class="hidden">
 <div class="card hero"><h2>👨‍🏫 لوحة المدرب</h2><p class="muted">إدارة المتدربين وبنك الأسئلة ومتابعة النتائج من مكان واحد.</p>
 <div id="trainerStats"></div></div>
-<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
+<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary orange" onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
 <div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
@@ -100,7 +105,11 @@
 </div>
 <div id="qStats" class="qstats"></div>
 <div id="questionsTable"></div></div>
-</div><div id="trainerAnalytics" class="hidden">
+</div><div id="trainerSmartFollow" class="hidden">
+<h3>🎯 المتابعة الذكية للمتدربين</h3>
+<div id="trainerSmartFollowArea"><div class="muted">⏳ جارٍ تحميل المتابعة...</div></div>
+</div>
+<div id="trainerAnalytics" class="hidden">
 <h3>📈 تحليلات الاختبارات</h3>
 <div id="trainerAnalyticsArea"></div>
 <hr style="margin:28px 0;border:0;border-top:1px solid #dbe6ef">
@@ -504,14 +513,15 @@ async function renderTrainer(){
   await loadTrainerOverview();
 }
 function trainerTab(tab,btn){
-  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerAnalytics"].forEach(id=>$(id)?.classList.add("hidden"));
-  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",analytics:"trainerAnalytics"};
+  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerAnalytics","trainerSmartFollow"].forEach(id=>$(id)?.classList.add("hidden"));
+  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",analytics:"trainerAnalytics",smartFollow:"trainerSmartFollow"};
   $(map[tab])?.classList.remove("hidden");
   if(btn){document.querySelectorAll("#trainer .card button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
   if(tab==="students")loadTrainerStudents();
   if(tab==="questions")loadTrainerQuestions();
   if(tab==="exams")loadTrainerExams();
   if(tab==="analytics")loadTrainerAnalytics();
+  if(tab==="smartFollow")loadTrainerSmartFollow();
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
 async function loadTrainerOverview(){
@@ -1222,6 +1232,75 @@ function exportCohortAnalytics(groupFilter=""){
   });
   const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='student-cohort-report.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+
+async function loadTrainerSmartFollow(){
+  const area=$("trainerSmartFollowArea");
+  if(!area)return;
+  area.innerHTML='<div class="muted">⏳ جارٍ تحليل أداء المتدربين...</div>';
+  try{
+    const [pr,ar,er,lp,lr]=await Promise.all([
+      db.from('profiles').select('id,full_name,student_id,group_name,role,created_at'),
+      db.from('attempts').select('id,student_id,exam_id,percentage,submitted_at,trainer_exams(title,topic,group_name)'),
+      db.from('exercise_attempts').select('id,student_id,score,is_correct,created_at'),
+      db.from('lesson_progress').select('user_id,lesson_id,completed'),
+      db.from('course_lessons').select('id,lesson_no,title,is_active')
+    ]);
+    if(pr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة المتدربين:<br>${esc(pr.error.message)}</div>`;return;}
+    if(ar.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة نتائج الاختبارات:<br>${esc(ar.error.message)}</div>`;return;}
+    if(er.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة نتائج التمارين:<br>${esc(er.error.message)}</div>`;return;}
+    if(lp.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة تقدم المقرر:<br>${esc(lp.error.message)}</div>`;return;}
+    if(lr.error){area.innerHTML=`<div class="bad">❌ تعذر قراءة الدروس:<br>${esc(lr.error.message)}</div>`;return;}
+    const students=(pr.data||[]).filter(x=>x.role==='student');
+    const attempts=ar.data||[], exercises=er.data||[], progress=lp.data||[], lessons=(lr.data||[]).filter(x=>x.is_active!==false);
+    const now=Date.now(), sevenDays=7*86400000;
+    const rows=students.map(s=>{
+      const aa=attempts.filter(a=>a.student_id===s.id);
+      const ee=exercises.filter(a=>a.student_id===s.id);
+      const pp=progress.filter(p=>p.user_id===s.id&&p.completed).length;
+      const examAvg=aa.length?Math.round(aa.reduce((n,a)=>n+Number(a.percentage||0),0)/aa.length):0;
+      const practiceAvg=ee.length?Math.round(ee.reduce((n,a)=>n+Number(a.score||0),0)/ee.length):0;
+      const coursePct=lessons.length?Math.round(pp/lessons.length*100):0;
+      const dates=[...aa.map(a=>a.submitted_at),...ee.map(a=>a.created_at)].filter(Boolean).map(d=>new Date(d).getTime());
+      const last=dates.length?Math.max(...dates):0;
+      const daysAgo=last?Math.floor((now-last)/86400000):999;
+      const recent=daysAgo<=7;
+      let risk=0,reasons=[];
+      if(!aa.length && !ee.length){risk+=3;reasons.push('لم يبدأ التدريب');}
+      if(aa.length && examAvg<60){risk+=3;reasons.push('متوسط الاختبارات أقل من 60%');}
+      else if(aa.length && examAvg<75){risk+=2;reasons.push('يحتاج رفع متوسط الاختبارات');}
+      if(ee.length && practiceAvg<60){risk+=2;reasons.push('أداء التمارين منخفض');}
+      if(coursePct<50){risk+=2;reasons.push('تقدم المقرر أقل من 50%');}
+      else if(coursePct<80){risk+=1;reasons.push('يحتاج إكمال المقرر');}
+      if(!recent){risk+=2;reasons.push(daysAgo===999?'لا يوجد نشاط':'لا يوجد نشاط خلال 7 أيام');}
+      const status=risk>=5?'high':risk>=2?'medium':'good';
+      const statusText=status==='high'?'يحتاج متابعة عاجلة':status==='medium'?'يحتاج متابعة':'مستقر';
+      return {s,aa,ee,examAvg,practiceAvg,coursePct,last,daysAgo,risk,reasons,status,statusText};
+    }).sort((a,b)=>b.risk-a.risk || a.examAvg-b.examAvg);
+    const urgent=rows.filter(x=>x.status==='high').length, medium=rows.filter(x=>x.status==='medium').length, stable=rows.filter(x=>x.status==='good').length;
+    const activeRecent=rows.filter(x=>x.last && x.daysAgo<=7).length;
+    const avgCourse=rows.length?Math.round(rows.reduce((n,x)=>n+x.coursePct,0)/rows.length):0;
+    const avgExam=rows.filter(x=>x.aa.length).length?Math.round(rows.filter(x=>x.aa.length).reduce((n,x)=>n+x.examAvg,0)/rows.filter(x=>x.aa.length).length):0;
+    const groups=new Map();
+    rows.forEach(x=>{const g=x.s.group_name||'غير محدد';const o=groups.get(g)||{g,n:0,avg:0,pct:0,urgent:0};o.n++;o.avg+=x.examAvg;o.pct+=x.coursePct;if(x.status==='high')o.urgent++;groups.set(g,o);});
+    const groupRows=[...groups.values()].map(x=>({...x,avg:Math.round(x.avg/x.n),pct:Math.round(x.pct/x.n)})).sort((a,b)=>b.urgent-a.urgent||a.avg-b.avg);
+    let html=`<div class="trainer-smart-note">💡 يتم ترتيب المتدربين تلقائيًا حسب مؤشرات المتابعة: انخفاض الدرجات، ضعف التمارين، تأخر المقرر، أو انقطاع النشاط. هذا التقرير يساعد المدرب على تحديد من يحتاج متابعة أولًا.</div>`;
+    html+=`<div class="trainer-smart-grid"><div class="trainer-smart-kpi"><div class="num">${students.length}</div><div class="label">إجمالي المتدربين</div></div><div class="trainer-smart-kpi"><div class="num">${urgent}</div><div class="label">يحتاج متابعة عاجلة</div></div><div class="trainer-smart-kpi"><div class="num">${medium}</div><div class="label">يحتاج متابعة</div></div><div class="trainer-smart-kpi"><div class="num">${stable}</div><div class="label">مستقر</div></div><div class="trainer-smart-kpi"><div class="num">${avgCourse}%</div><div class="label">متوسط تقدم المقرر</div></div><div class="trainer-smart-kpi"><div class="num">${avgExam}%</div><div class="label">متوسط الاختبارات</div></div><div class="trainer-smart-kpi"><div class="num">${activeRecent}</div><div class="label">نشط خلال 7 أيام</div></div><div class="trainer-smart-kpi"><div class="num">${students.length?Math.round(activeRecent/students.length*100):0}%</div><div class="label">نسبة النشاط</div></div></div>`;
+    html+=`<div class="trainer-smart-columns"><div class="trainer-smart-panel"><h3>🚦 قائمة المتابعة</h3>`;
+    if(rows.length){
+      html+=`<div style="overflow:auto"><div style="min-width:760px"><div class="follow-row" style="font-weight:bold;background:#f4f8fc"><div>المتدرب</div><div>اختبارات</div><div>تمارين</div><div>المقرر</div><div>الحالة</div></div>`;
+      html+=rows.map(x=>`<div class="follow-row"><div><strong>${esc(x.s.full_name||'—')}</strong><div class="follow-mini">${esc(x.s.student_id||'—')} • شعبة ${esc(x.s.group_name||'—')}</div><div class="follow-mini">${x.reasons.slice(0,2).map(esc).join(' • ')||'لا توجد ملاحظات'}</div></div><div>${x.aa.length?x.examAvg+'%':'—'}</div><div>${x.ee.length?x.practiceAvg+'/100':'—'}</div><div>${x.coursePct}%</div><div><span class="follow-status ${x.status}">${x.statusText}</span><div class="follow-mini">${x.last?(x.daysAgo===0?'نشط اليوم':`آخر نشاط منذ ${x.daysAgo} يوم`):'لم يبدأ بعد'}</div><div class="follow-action"><button class="primary mini-btn" onclick="openTrainerStudentAnalytics('${x.s.id}')">📊 تحليل</button></div></div></div>`).join('');
+      html+=`</div></div>`;
+    } else html+=`<div class="trainer-smart-empty">لا يوجد متدربون حاليًا.</div>`;
+    html+=`</div><div class="trainer-smart-panel"><h3>👥 ملخص الشعب</h3>`;
+    html+=groupRows.length?`<div class="group-card-grid">${groupRows.map(x=>`<div class="group-card"><strong>الشعبة ${esc(x.g)}</strong><div class="follow-mini">${x.n} متدرب</div><div style="margin-top:7px">متوسط الاختبارات: <b>${x.avg}%</b></div><div>تقدم المقرر: <b>${x.pct}%</b></div><div>يحتاج متابعة عاجلة: <b>${x.urgent}</b></div></div>`).join('')}</div>`:'<div class="trainer-smart-empty">لا توجد بيانات شعب.</div>';
+    html+=`<div class="trainer-smart-note" style="margin-top:12px">🎯 اقتراح للمدرب: ابدأ بالمتدربين المصنفين «يحتاج متابعة عاجلة»، ثم راجع أكثر أسباب الضعف تكرارًا قبل الاختبارات القادمة.</div></div></div>`;
+    area.innerHTML=html;
+  }catch(e){area.innerHTML=`<div class="bad">❌ حدث خطأ غير متوقع:<br>${esc(e?.message||String(e))}</div>`;}
+}
+function openTrainerStudentAnalytics(id){
+  trainerTab('analytics');
+  setTimeout(()=>{const sel=$('analyticsStudentSelect');if(sel){sel.value=id;loadStudentAnalytics(id);}},50);
 }
 
 async function loadTrainerAnalytics(){
