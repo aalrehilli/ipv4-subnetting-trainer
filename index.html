@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V46</title>
+<title>IPv4 Subnetting Trainer — V46.1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -80,7 +80,7 @@
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
-<section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div></section>
+<section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
   <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
@@ -197,7 +197,7 @@ function showApp(){
   const adminNav=$("adminNav");
   if(trainerNav) trainerNav.classList.toggle("hidden", !canTrainer);
   if(adminNav) adminNav.classList.toggle("hidden", profile?.role!=="admin");
-  renderDashboard(); renderAccount();
+  renderDashboard(); renderAccount(); if(profile?.role==="student")loadStudentNotifications();
 }
 function msg(id,t,g=false){const el=$(id);if(el)el.innerHTML=`<div class="${g?'good':'bad'}">${t}</div>`;}
 async function boot(){
@@ -241,7 +241,7 @@ async function loadProfile(){
   profile=r.data;return r;
 }
 async function logout(){await db.auth.signOut();window.location.href='login.html';}
-function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="practice")updatePracticeStats();if(id==="trainer")renderTrainer();if(id==="account")renderAccount();if(id==="adminUsers")loadAdminUsers();if(id==="tests")loadPublishedExams();if(id==="course")loadCourse()}
+function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="home"&&profile?.role==="student")loadStudentNotifications();if(id==="practice")updatePracticeStats();if(id==="trainer")renderTrainer();if(id==="account")renderAccount();if(id==="adminUsers")loadAdminUsers();if(id==="tests")loadPublishedExams();if(id==="course")loadCourse()}
 function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".")}
 function problem(level){let a=level==="easy"?[2,4,8]:level==="medium"?[3,5,6,7,8,10,12]:[5,6,7,9,10,11,12,13,14,15,16],need=a[Math.floor(Math.random()*a.length)],o=Math.floor(Math.random()*223)+1,b=Math.ceil(Math.log2(need)),p=24+b,block=2**(32-p);return{network:`192.168.${o}.0`,need,bits:b,prefix:p,mask:ip((0xffffffff<<(32-p))>>>0),block,hosts:block-2}}
 
@@ -501,19 +501,29 @@ async function gradeTest(autoSubmit=false){
 
 
 async function loadStudentNotifications(){
-  const host=$("studentNotifications");
-  if(!host||!user?.id)return;
-  host.innerHTML='<div class="muted">⏳ جارٍ تحميل الإشعارات...</div>';
+  const dashboardHost=$("studentNotifications");
+  const homeHost=$("homeStudentNotifications");
+  const homeCard=$("homeNotificationsCard");
+  const isStudent=profile?.role==="student";
+  if(homeCard)homeCard.classList.toggle("hidden",!isStudent);
+  if(!user?.id||(!dashboardHost&&!homeHost))return;
+  [dashboardHost,homeHost].filter(Boolean).forEach(h=>h.innerHTML='<div class="muted">⏳ جارٍ تحميل الإشعارات...</div>');
   const r=await db.from("student_notifications").select("id,title,message,notification_type,reference_id,created_at,read_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
   if(r.error){
-    host.innerHTML='<div class="bad">تعذر تحميل الإشعارات. تأكد من تنفيذ ملف SQL الخاص بـ V46.</div>';
+    const err='<div class="bad">تعذر تحميل الإشعارات. تأكد من إعداد إشعارات V46.</div>';
+    [dashboardHost,homeHost].filter(Boolean).forEach(h=>h.innerHTML=err);
     return;
   }
   const rows=r.data||[];
-  if(!rows.length){host.innerHTML='<div class="muted">لا توجد إشعارات جديدة حاليًا.</div>';return;}
   const unread=rows.filter(x=>!x.read_at).length;
-  host.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="muted">لديك ${unread} إشعار غير مقروء</span><button class="primary" onclick="markAllStudentNotificationsRead()">✓ تحديد الكل كمقروء</button></div>
-    <div style="display:grid;gap:10px">${rows.map(n=>`<div class="card" style="padding:12px;border-right:4px solid ${n.read_at?'#cbd5e1':'#0b63b6'};background:${n.read_at?'#fff':'#f1f7ff'}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap"><b>${esc(n.title||"إشعار من المدرب")}</b>${n.read_at?'<span class="muted">مقروء</span>':'<span class="badge">جديد</span>'}</div><p style="margin:8px 0">${esc(n.message||"")}</p><div class="muted" style="font-size:12px">${n.created_at?new Date(n.created_at).toLocaleString("ar-SA"):""}</div>${!n.read_at?`<button class="primary" style="margin-top:8px" onclick="markStudentNotificationRead('${n.id}')">تحديد كمقروء</button>`:''}${n.notification_type==="exam_published"?` <button class="primary green" style="margin-top:8px" onclick="openTestsFromNotification('${n.id}')">عرض الاختبارات</button>`:''}</div>`).join("")}</div>`;
+  if(!rows.length){
+    [dashboardHost,homeHost].filter(Boolean).forEach(h=>h.innerHTML='<div class="muted">لا توجد إشعارات جديدة حاليًا.</div>');
+    return;
+  }
+  const render=(items,compact)=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="muted">لديك ${unread} إشعار غير مقروء</span><button class="primary" onclick="markAllStudentNotificationsRead()">✓ تحديد الكل كمقروء</button></div>
+    <div style="display:grid;gap:10px">${items.map(n=>`<div class="card" style="padding:12px;border-right:4px solid ${n.read_at?'#cbd5e1':'#0b63b6'};background:${n.read_at?'#fff':'#f1f7ff'}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap"><b>${esc(n.title||"إشعار من المدرب")}</b>${n.read_at?'<span class="muted">مقروء</span>':'<span class="badge">جديد</span>'}</div><p style="margin:8px 0">${esc(n.message||"")}</p><div class="muted" style="font-size:12px">${n.created_at?new Date(n.created_at).toLocaleString("ar-SA"):""}</div>${!n.read_at?`<button class="primary" style="margin-top:8px" onclick="markStudentNotificationRead('${n.id}')">تحديد كمقروء</button>`:''}${n.notification_type==="exam_published"?` <button class="primary green" style="margin-top:8px" onclick="openTestsFromNotification('${n.id}')">عرض الاختبارات</button>`:''}</div>`).join("")}</div>${compact&&rows.length>5?`<div style="text-align:center;margin-top:12px"><button class="primary purple" onclick="page('dashboard')">عرض جميع الإشعارات (${rows.length})</button></div>`:''}`;
+  if(dashboardHost)dashboardHost.innerHTML=render(rows,false);
+  if(homeHost)homeHost.innerHTML=render(rows.slice(0,5),true);
 }
 async function markStudentNotificationRead(id){
   const r=await db.from("student_notifications").update({read_at:new Date().toISOString()}).eq("id",id).eq("user_id",user.id);
