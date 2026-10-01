@@ -64,7 +64,7 @@
 @media(max-width:900px){.smart-hero,.smart-columns{grid-template-columns:1fr}.smart-kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.smart-kpis{grid-template-columns:1fr 1fr}.smart-activity-row{grid-template-columns:65px 1fr}.smart-activity-row .date{grid-column:2;text-align:right}}
 </style><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V37 • Supabase</div></div>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V38 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
@@ -136,7 +136,7 @@
 
 <section id="account" class="hidden"><div class="card"><h2>👤 الحساب</h2><div id="accountInfo"></div></div></section>
 <section id="adminUsers" class="hidden">
-<div class="card hero"><h2>👑 إدارة الحسابات والصلاحيات</h2><p class="muted">هذه الصفحة متاحة للمدير فقط. يمكنك تحويل الحسابات بين <b>متدرب</b> و<b>مدرب</b>. لا يمكن تغيير حساب المدير من هنا.</p></div>
+<div class="card hero"><h2>👑 إدارة الحسابات والصلاحيات</h2><p class="muted">هذه الصفحة متاحة للمدير فقط. يمكنك تحويل الحسابات بين <b>متدرب</b> و<b>مدرب</b>، وإعادة تعيين كلمة المرور، وحذف حساب المتدرب. حسابات المدير محمية.</p><div class="hint-box">🔐 عمليات كلمة المرور والحذف تتم عبر Supabase Edge Function بصلاحية المدير، ولا يتم وضع مفتاح Service Role داخل الموقع.</div></div>
 <div class="card">
   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
     <input id="adminUserSearch" placeholder="🔎 بحث بالاسم أو الرقم أو الشعبة أو الصلاحية" oninput="filterAdminUsers()" style="flex:1;min-width:240px">
@@ -561,6 +561,68 @@ async function changeRole(id,role){
 async function promoteStudent(id){await changeRole(id,"trainer")}
 async function demoteStudent(id){await changeRole(id,"student")}
 
+async function callAdminAction(action,targetUserId,extra={}){
+  if(!isAdmin()){alert("هذا الإجراء متاح للمدير فقط.");return {ok:false};}
+  const {data:{session}}=await db.auth.getSession();
+  const token=session?.access_token;
+  if(!token){alert("انتهت جلسة الدخول. سجّل الدخول من جديد.");return {ok:false};}
+  try{
+    const res=await fetch(SUPABASE_URL+"/functions/v1/admin-user-action",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+token,"apikey":SUPABASE_KEY},
+      body:JSON.stringify({action,target_user_id:targetUserId,...extra})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok || data.error) throw new Error(data.error||data.message||("HTTP "+res.status));
+    return {ok:true,data};
+  }catch(e){
+    alert("تعذر تنفيذ العملية: "+(e.message||e));
+    return {ok:false};
+  }
+}
+
+async function adminResetPassword(id){
+  if(!isAdmin() || id===user.id){alert("لا يمكن إعادة تعيين كلمة مرور حساب المدير الحالي من هنا.");return;}
+  const target=trainerStudents.find(x=>x.id===id);
+  const name=target?.full_name||"الحساب";
+  const password=prompt(`أدخل كلمة المرور الجديدة المؤقتة للحساب:
+${name}
+
+يجب أن تكون 6 أحرف/أرقام على الأقل.`);
+  if(password===null)return;
+  if(password.length<6){alert("كلمة المرور يجب أن تكون 6 أحرف/أرقام على الأقل.");return;}
+  const confirmPassword=prompt("أعد كتابة كلمة المرور للتأكيد:");
+  if(confirmPassword!==password){alert("كلمتا المرور غير متطابقتين.");return;}
+  if(!confirm(`تأكيد إعادة تعيين كلمة مرور:
+
+${name}`))return;
+  const r=await callAdminAction("reset_password",id,{password});
+  if(r.ok)alert("✅ تم تعيين كلمة المرور الجديدة بنجاح.\n\nيجب تسليم كلمة المرور المؤقتة للمتدرب بطريقة آمنة.");
+}
+
+async function adminDeleteUser(id){
+  if(!isAdmin() || id===user.id){alert("لا يمكن حذف حساب المدير الحالي.");return;}
+  const target=trainerStudents.find(x=>x.id===id);
+  if(!target){alert("لم يتم العثور على الحساب.");return;}
+  if(target.role!=="student"){alert("الحذف من لوحة المدير مخصص لحسابات المتدربين فقط.");return;}
+  const name=target.full_name||"المتدرب";
+  const ok=confirm(`⚠️ تحذير: سيتم حذف حساب المتدرب نهائيًا.
+
+الاسم: ${name}
+رقم المتدرب: ${target.student_id||"—"}
+
+قد يؤدي ذلك إلى حذف بياناته المرتبطة بالحساب حسب علاقات قاعدة البيانات.
+
+هل تريد المتابعة؟`);
+  if(!ok)return;
+  const verify=prompt(`للتأكيد اكتب كلمة: حذف
+
+${name}`);
+  if(verify!=="حذف"){alert("تم إلغاء الحذف.");return;}
+  const r=await callAdminAction("delete_user",id);
+  if(r.ok){alert("✅ تم حذف حساب المتدرب.");await loadAdminUsers();}
+}
+
 async function loadAdminUsers(){
   if(!isAdmin()){if($("adminUsersTable"))$("adminUsersTable").innerHTML='<div class="bad">❌ هذه الصفحة متاحة للمدير فقط.</div>';return;}
   const r=await db.from("profiles").select("id,full_name,student_id,group_name,role,created_at").order("created_at",{ascending:false});
@@ -574,8 +636,8 @@ function filterAdminUsers(){
   $("adminUsersTable").innerHTML=rows.length?`<table><tr><th>الاسم</th><th>رقم المتدرب</th><th>الشعبة</th><th>الصلاحية</th><th>تاريخ التسجيل</th><th>الإجراء</th></tr>${rows.map(x=>{
     const badge=`<span class="badge ${x.role==="admin"?"role-admin":x.role==="trainer"?"role-trainer":"role-student"}">${roleLabel(x.role)}</span>`;
     let action="—";
-    if(x.role==="student") action=`<div class="role-actions"><button class="primary purple mini-btn" onclick="changeRole('${x.id}','trainer')">👨‍🏫 تحويل لمدرب</button></div>`;
-    else if(x.role==="trainer") action=`<div class="role-actions"><button class="primary orange mini-btn" onclick="changeRole('${x.id}','student')">🎓 تحويل لمتدرب</button></div>`;
+    if(x.role==="student") action=`<div class="role-actions"><button class="primary purple mini-btn" onclick="changeRole('${x.id}','trainer')">👨‍🏫 تحويل لمدرب</button><button class="primary orange mini-btn" onclick="adminResetPassword('${x.id}')">🔑 إعادة كلمة المرور</button><button class="primary red mini-btn" onclick="adminDeleteUser('${x.id}')">🗑️ حذف</button></div>`;
+    else if(x.role==="trainer") action=`<div class="role-actions"><button class="primary orange mini-btn" onclick="changeRole('${x.id}','student')">🎓 تحويل لمتدرب</button><button class="primary orange mini-btn" onclick="adminResetPassword('${x.id}')">🔑 إعادة كلمة المرور</button></div>`;
     else action='<span class="muted">صلاحية مدير محمية</span>';
     return `<tr><td>${esc(x.full_name||"—")}</td><td>${esc(x.student_id||"—")}</td><td>${esc(x.group_name||"—")}</td><td>${badge}</td><td>${x.created_at?new Date(x.created_at).toLocaleDateString("ar-SA"):"—"}</td><td>${action}</td></tr>`;
   }).join("")}</table>`:"لا توجد حسابات مطابقة.";
