@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V41</title>
+<title>IPv4 Subnetting Trainer — V43.1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -144,7 +144,7 @@
 </div>
 <div id="cohortAnalyticsArea"></div>
 </div>
-<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
+<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div></div></section>
 <section id="certificate" class="hidden">
 <div class="card hero"><span class="badge">V12 • CERTIFICATE</span><h2>🏆 شهادة إتمام المقرر</h2><p>تحقق من استيفاء متطلبات إتمام مقرر IPv4 Subnetting ثم أصدر شهادة باسم المتدرب.</p><div id="certificateStatus"></div></div>
 <div class="card" id="certificateCard"><div id="certificateDetails"></div></div>
@@ -361,13 +361,18 @@ async function loadPublishedExams(){
   if(!box)return;
   box.innerHTML='<div class="muted">جارٍ تحميل الاختبارات المنشورة...</div>';
   const now=new Date().toISOString();
-  const r=await db.from('trainer_exams').select('id,title,description,topic,difficulty,question_count,duration_minutes,group_name,starts_at,ends_at,is_active,created_at').eq('is_active',true).order('created_at',{ascending:false});
+  const r=await db.from('trainer_exams').select('id,title,description,topic,difficulty,question_count,duration_minutes,max_attempts,group_name,starts_at,ends_at,is_active,created_at').eq('is_active',true).order('created_at',{ascending:false});
   if(r.error){box.innerHTML=`<div class="bad">❌ تعذر تحميل الاختبارات المنشورة.<br><small>${esc(r.error.message||'خطأ غير معروف')}</small></div>`;return;}
   const rows=(r.data||[]).filter(x=>(!x.group_name||x.group_name===profile?.group_name)&&(!x.starts_at||x.starts_at<=now)&&(!x.ends_at||x.ends_at>=now));
+  const attemptRows=rows.length?await db.from('attempts').select('exam_id').eq('student_id',user.id):{data:[],error:null};
+  if(attemptRows.error){box.innerHTML=`<div class="bad">تعذر قراءة عدد المحاولات: ${esc(attemptRows.error.message)}</div>`;return;}
+  const usedByExam={};(attemptRows.data||[]).forEach(a=>{usedByExam[a.exam_id]=(usedByExam[a.exam_id]||0)+1;});
   box.innerHTML=rows.length?rows.map(x=>{
     const diff={easy:'سهل',medium:'متوسط',hard:'متقدم'}[x.difficulty]||x.difficulty||'عام';
     const timing=x.ends_at?`متاح حتى ${new Date(x.ends_at).toLocaleString('ar-SA')}`:'متاح الآن';
-    return `<div class="published-exam-card"><div class="published-exam-top"><div><span class="exam-chip">🏆 اختبار منشور</span><h3>${esc(x.title)}</h3></div><span class="difficulty-chip">${esc(diff)}</span></div><p class="muted">${esc(x.description||'اختبار تدريبي من إعداد المدرب.')}</p><div class="published-exam-meta"><span>📝 ${x.question_count} سؤال</span><span>⏱️ ${x.duration_minutes?x.duration_minutes+' دقيقة':'بدون وقت'}</span><span>📚 ${esc(x.topic||'عام')}</span><span>👥 ${esc(x.group_name||'كل الشعب')}</span></div><div class="published-exam-foot"><span class="muted">${esc(timing)}</span><button class="primary green" onclick="startPublishedExam('${x.id}')">🚀 ابدأ الاختبار</button></div></div>`;
+    const used=usedByExam[x.id]||0, unlimited=x.max_attempts==null, remaining=unlimited?null:Math.max(0,Number(x.max_attempts)-used), exhausted=!unlimited&&remaining<=0;
+    const attemptsLabel=unlimited?`المحاولات: ${used} — غير محدود`:`المحاولات: ${used}/${x.max_attempts} — المتبقي: ${remaining}`;
+    return `<div class="published-exam-card"><div class="published-exam-top"><div><span class="exam-chip">🏆 اختبار منشور</span><h3>${esc(x.title)}</h3></div><span class="difficulty-chip">${esc(diff)}</span></div><p class="muted">${esc(x.description||'اختبار تدريبي من إعداد المدرب.')}</p><div class="published-exam-meta"><span>📝 ${x.question_count} سؤال</span><span>⏱️ ${x.duration_minutes?x.duration_minutes+' دقيقة':'بدون وقت'}</span><span>📚 ${esc(x.topic||'عام')}</span><span>👥 ${esc(x.group_name||'كل الشعب')}</span><span>🔁 ${attemptsLabel}</span></div><div class="published-exam-foot"><span class="muted">${esc(timing)}</span><button class="primary green" ${exhausted?'disabled title="استنفدت المحاولات"':''} onclick="startPublishedExam('${x.id}')">${exhausted?'اكتملت المحاولات':'🚀 ابدأ الاختبار'}</button></div></div>`;
   }).join(''):'<div class="empty-tests"><div class="empty-icon">📝</div><h3>لا توجد اختبارات منشورة لك حاليًا</h3><p class="muted">عندما ينشئ المدرب اختبارًا ويفعّله، سيظهر هنا تلقائيًا.</p></div>';
 }
 function parseQuestion(text,type='short',options=null,matching=null){
@@ -433,6 +438,11 @@ async function startPublishedExam(id){
   stopTimer(); test=[]; currentExamId=id; currentExamTitle=''; testSubmitted=false; testFlags={}; testCurrentIndex=0;
   const ex=await db.from('trainer_exams').select('*').eq('id',id).single();
   if(ex.error){msg('score','❌ '+ex.error.message);return;}
+  if(ex.data.max_attempts!=null){
+    const used=await db.from('attempts').select('id',{count:'exact',head:true}).eq('exam_id',id).eq('student_id',user.id);
+    if(used.error){msg('score','❌ تعذر التحقق من المحاولات: '+used.error.message);return;}
+    if((used.count||0)>=Number(ex.data.max_attempts)){msg('score',`❌ استنفدت الحد المسموح (${ex.data.max_attempts}) من المحاولات لهذا الاختبار.`);await loadPublishedExams();return;}
+  }
   currentExamTitle=ex.data.title; testDurationMinutes=Number(ex.data.duration_minutes||30); testStartedAt=new Date(); testRandomize=true;
   const r=await db.from('trainer_exam_questions').select('question_order,trainer_questions(id,question_text,correct_answer,question_type,options_json,matching_json)').eq('exam_id',id).order('question_order');
   if(r.error){msg('score','❌ '+r.error.message);return;}
@@ -461,7 +471,7 @@ async function gradeTest(autoSubmit=false){
   const submittedAt=new Date().toISOString();
   const payload={student_id:user.id,exam_id:examId,score:pct,total_questions:test.length,correct_answers:s,percentage:pct,started_at:started,submitted_at:submittedAt};
   const r=await db.from('attempts').insert(payload).select('id').single();
-  if(r.error){testSubmitted=false;return msg('score','❌ تعذر حفظ النتيجة: '+r.error.message);}
+  if(r.error){testSubmitted=false;return msg('score','❌ تعذر حفظ النتيجة: '+(String(r.error.message||'').includes('EXAM_ATTEMPT_LIMIT_REACHED')?'لقد استنفدت عدد المحاولات المسموح بها لهذا الاختبار.':r.error.message));}
   if(r.data?.id && examId){
     const answerRows=test.map((x,i)=>{const ans=selectedAnswer(i);return {attempt_id:r.data.id,question_id:x[0],question_order:i+1,selected_answer:ans||null,correct_answer:x[2],is_correct:isAnswerCorrect(x,ans)};});
     const ar=await db.from('attempt_answers').insert(answerRows);
@@ -892,7 +902,7 @@ async function deleteTrainerQuestion(id){if(!confirm("حذف السؤال؟"))re
 
 async function createTrainerExam(){
   if(!['trainer','admin'].includes(profile?.role))return;
-  const title=$('exTitle').value.trim(), description=$('exDesc').value.trim(), difficulty=$('exDifficulty').value, topic=$('exTopic').value, question_count=Math.max(1,Number($('exCount').value||10)), duration_minutes=Math.max(1,Number($('exDuration').value||30)), group_name=$('exGroup').value.trim()||null, starts_at=$('exStart').value?new Date($('exStart').value).toISOString():null, ends_at=$('exEnd').value?new Date($('exEnd').value).toISOString():null, is_active=$('exActive').checked;
+  const title=$('exTitle').value.trim(), description=$('exDesc').value.trim(), difficulty=$('exDifficulty').value, topic=$('exTopic').value, question_count=Math.max(1,Number($('exCount').value||10)), duration_minutes=Math.max(1,Number($('exDuration').value||30)), max_attempts=$('exMaxAttempts').value===''?null:Number($('exMaxAttempts').value), group_name=$('exGroup').value.trim()||null, starts_at=$('exStart').value?new Date($('exStart').value).toISOString():null, ends_at=$('exEnd').value?new Date($('exEnd').value).toISOString():null, is_active=$('exActive').checked;
   if(!title){msg('examMsg','❌ أدخل اسم الاختبار.');return;}
   msg('examMsg','⏳ جارٍ إنشاء الاختبار...',true);
   const qr=await db.from('trainer_questions').select('id').eq('difficulty',difficulty).eq('topic',topic).limit(200);
@@ -900,7 +910,7 @@ async function createTrainerExam(){
   const pool=qr.data||[];
   if(pool.length<question_count){msg('examMsg',`❌ لا يوجد عدد كافٍ من الأسئلة. المتاح: ${pool.length} والمطلوب: ${question_count}`);return;}
   const shuffled=[...pool].sort(()=>Math.random()-0.5).slice(0,question_count);
-  const er=await db.from('trainer_exams').insert({title,description,difficulty,topic,question_count,duration_minutes,group_name,starts_at,ends_at,is_active,created_by:user.id}).select('id').single();
+  const er=await db.from('trainer_exams').insert({title,description,difficulty,topic,question_count,duration_minutes,max_attempts,group_name,starts_at,ends_at,is_active,created_by:user.id}).select('id').single();
   if(er.error){msg('examMsg','❌ تعذر إنشاء الاختبار: '+er.error.message);return;}
   const items=shuffled.map((q,i)=>({exam_id:er.data.id,question_id:q.id,question_order:i+1}));
   const ir=await db.from('trainer_exam_questions').insert(items);
@@ -1424,7 +1434,14 @@ async function loadTrainerExams(){
   const r=await db.from('trainer_exams').select('*').order('created_at',{ascending:false});
   if(r.error){$('examsTable').innerHTML='<div class="bad">❌ نفّذ SQL الخاص بـ V6 أولًا.<br>'+esc(r.error.message)+'</div>';return;}
   const rows=r.data||[];
-  $('examsTable').innerHTML=rows.length?`<table><tr><th>الاختبار</th><th>الموضوع</th><th>الأسئلة</th><th>المدة</th><th>الشعبة</th><th>الحالة</th><th>الإجراء</th></tr>${rows.map(x=>`<tr><td>${esc(x.title)}</td><td>${esc(x.topic)}</td><td>${x.question_count}</td><td>${x.duration_minutes} دقيقة</td><td>${esc(x.group_name||'كل الشعب')}</td><td>${x.is_active?'🟢 مفعّل':'⚪ متوقف'}</td><td><button class="primary ${x.is_active?'red':'green'}" onclick="toggleTrainerExam('${x.id}',${!x.is_active})">${x.is_active?'إيقاف':'تفعيل'}</button> <button class="primary red" onclick="deleteTrainerExam('${x.id}')">حذف</button></td></tr>`).join('')}</table>`:'لا توجد اختبارات بعد.';
+  $('examsTable').innerHTML=rows.length?`<table><tr><th>الاختبار</th><th>الموضوع</th><th>الأسئلة</th><th>المدة</th><th>المحاولات</th><th>الشعبة</th><th>الحالة</th><th>الإجراء</th></tr>${rows.map(x=>`<tr><td>${esc(x.title)}</td><td>${esc(x.topic)}</td><td>${x.question_count}</td><td>${x.duration_minutes} دقيقة</td><td><select aria-label="عدد المحاولات" onchange="updateExamMaxAttempts('${x.id}',this.value)">${[[1,'1'],[2,'2'],[3,'3'],[4,'4'],[5,'5'],[10,'10'],['','غير محدود']].map(([v,l])=>`<option value="${v}" ${(x.max_attempts==null?'':String(x.max_attempts))===String(v)?'selected':''}>${l}</option>`).join('')}</select></td><td>${esc(x.group_name||'كل الشعب')}</td><td>${x.is_active?'🟢 مفعّل':'⚪ متوقف'}</td><td><button class="primary ${x.is_active?'red':'green'}" onclick="toggleTrainerExam('${x.id}',${!x.is_active})">${x.is_active?'إيقاف':'تفعيل'}</button> <button class="primary red" onclick="deleteTrainerExam('${x.id}')">حذف</button></td></tr>`).join('')}</table>`:'لا توجد اختبارات بعد.';
+}
+async function updateExamMaxAttempts(id,value){
+  if(!['trainer','admin'].includes(profile?.role))return;
+  const max_attempts=value===''?null:Number(value);
+  const r=await db.from('trainer_exams').update({max_attempts}).eq('id',id);
+  if(r.error){alert('تعذر تحديث عدد المحاولات: '+r.error.message);loadTrainerExams();return;}
+  loadTrainerExams();
 }
 async function toggleTrainerExam(id,value){const r=await db.from('trainer_exams').update({is_active:value}).eq('id',id);if(r.error){alert('تعذر تغيير حالة الاختبار: '+r.error.message);return;}loadTrainerExams();}
 async function deleteTrainerExam(id){if(!confirm('حذف الاختبار؟'))return;const r=await db.from('trainer_exams').delete().eq('id',id);if(r.error){alert('تعذر حذف الاختبار: '+r.error.message);return;}loadTrainerExams();}
