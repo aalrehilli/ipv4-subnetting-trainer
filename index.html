@@ -1057,33 +1057,52 @@ async function v66RenderTrainerLabs(){
   const area=$('v66TrainerLabsArea'),subArea=$('v66TrainerSubmissionsArea');
   if(!area||!subArea)return;
 
+  area.innerHTML='<div class="muted">⏳ جارٍ التحقق من مركز المختبرات...</div>';
+  subArea.innerHTML='';
+
+  // First make sure the authenticated DB connection itself is alive.
+  const health=await db.from('profiles').select('id').eq('id',user?.id).maybeSingle();
+  if(health.error){
+    area.innerHTML=`<div class="v66-setup-card">
+      <h4>⚠️ تعذر الاتصال بقاعدة البيانات</h4>
+      <div>الاتصال بالحساب أو Supabase غير متاح حاليًا.</div>
+      <div class="v66-setup-actions">
+        <button type="button" class="primary green" onclick="v66ForceRefresh()">🔄 إعادة تحميل الاتصال</button>
+      </div>
+      <small>${esc(health.error.message||'')}</small>
+    </div>`;
+    return;
+  }
+
   const lr=await db.from('packet_tracer_labs').select('*').order('lab_no');
 
   if(lr.error){
-    const missingTable=/packet_tracer_labs|schema cache|42P01|PGRST/i.test(String(lr.error.message||''));
+    const msg=String(lr.error.message||'');
+    const missingTable=/packet_tracer_labs|schema cache|42P01|PGRST/i.test(msg);
     if(missingTable){
       area.innerHTML=`<div class="v66-setup-card">
-        <h4>🔧 تهيئة مركز المختبرات مطلوبة مرة واحدة</h4>
-        <div>المختبرات جاهزة داخل النسخة، لكن قاعدة البيانات لم تُهيّأ بعد.</div>
+        <h4>🔧 قاعدة بيانات المختبرات لم تُحدّث في Supabase REST بعد</h4>
+        <div style="line-height:1.8">حتى بعد إنشاء الجداول في SQL Editor، قد يحتاج Supabase إلى إعادة تحميل <b>PostgREST schema cache</b>.</div>
         <ol class="v66-setup-steps">
           <li>افتح <b>Supabase → SQL Editor</b>.</li>
-          <li>افتح ملف <span class="v66-setup-code">MIGRATION_V66_PACKET_TRACER_LABS.sql</span>.</li>
-          <li>الصق محتواه في SQL Editor ثم اختر <b>Run</b> مرة واحدة.</li>
-          <li>ارجع إلى هذه الصفحة واضغط <b>تحديث الحالة</b>.</li>
+          <li>افتح ملف <span class="v66-setup-code">MIGRATION_V66_PACKET_TRACER_LABS.sql</span> المرفق مع هذه النسخة.</li>
+          <li>نفّذ الملف مرة أخرى بالكامل.</li>
+          <li>تأكد أن آخر سطر هو:
+            <div class="v66-setup-code" style="margin-top:5px">notify pgrst, 'reload schema';</div>
+          </li>
+          <li>ارجع واضغط <b>🔄 فحص الحالة</b>.</li>
         </ol>
         <div class="v66-setup-actions">
-          <a class="primary" href="./MIGRATION_V66_PACKET_TRACER_LABS.sql" download>📄 تحميل ملف التهيئة</a>
-          <button type="button" class="primary green" onclick="v66RenderTrainerLabs()">🔄 تحديث الحالة</button>
+          <a class="primary" href="./MIGRATION_V66_PACKET_TRACER_LABS.sql" download>📄 تحميل Migration V66.3</a>
+          <button type="button" class="primary green" onclick="v66RenderTrainerLabs()">🔄 فحص الحالة</button>
+          <button type="button" class="primary" onclick="v66ForceRefresh()">♻️ إعادة تحميل المنصة</button>
         </div>
+        <div class="muted" style="margin-top:9px">تفاصيل Supabase: ${esc(msg)}</div>
       </div>`;
-      subArea.innerHTML=`<div class="v66-setup-card">
-        <h4>📤 التسليمات</h4>
-        <div>بعد تهيئة قاعدة البيانات ستظهر هنا ملفات المتدربين، الدرجات، الملاحظات وحالة كل مختبر.</div>
-      </div>`;
+      subArea.innerHTML=`<div class="v66-setup-card"><h4>📤 التسليمات</h4><div>ستظهر التسليمات بعد ظهور جدول المختبرات في Supabase REST.</div></div>`;
       return;
     }
-    area.innerHTML=`<div class="bad">❌ تعذر تحميل مركز المختبرات حاليًا.<br><small>${esc(lr.error.message||'خطأ غير معروف')}</small></div>`;
-    subArea.innerHTML='';
+    area.innerHTML=`<div class="bad">❌ تعذر تحميل مركز المختبرات.<br><small>${esc(msg)}</small></div>`;
     return;
   }
 
@@ -1100,6 +1119,14 @@ async function v66RenderTrainerLabs(){
   const pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null};
   const pm=new Map((pr.data||[]).map(x=>[x.id,x]));
   subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>المختبر</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>Lab ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+}
+
+function v66ForceRefresh(){
+  try{
+    const u=new URL(window.location.href);
+    u.searchParams.set('v66_refresh',Date.now().toString());
+    window.location.replace(u.toString());
+  }catch(_e){window.location.reload();}
 }
 
 async function v66UploadStarter(labId){
