@@ -290,7 +290,15 @@
 @media(max-width:600px){.home-main-grid{grid-template-columns:1fr}}
 </style>
 <style>
-/* V60 — Final Comprehensive Exam */
+.v60-final-settings-card{border:2px solid #b9d7f0;background:linear-gradient(135deg,#fbfdff,#fff)}
+.v60-final-status-pill{background:#eef5fb;color:#0759a5;border:1px solid #c9ddec;border-radius:999px;padding:8px 12px;font-weight:900;white-space:nowrap}
+.v60-final-settings-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.v60-final-topic-box{border:1px solid #dce8f2;border-radius:12px;background:#fff;padding:12px}
+.v60-final-topic-box b{display:flex;justify-content:space-between;gap:8px}
+.v60-final-total{font-size:20px;font-weight:900;color:#0759a5}
+.v60-final-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:850px){.v60-final-settings-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.v60-final-settings-grid{grid-template-columns:1fr}}/* V60 — Final Comprehensive Exam */
 .v60-final-card{border:2px solid #b9d7f0;background:linear-gradient(135deg,#f7fbff,#fff)}
 .v60-final-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}
 .v60-final-badge{display:inline-block;background:#0759a5;color:#fff;border-radius:20px;padding:7px 12px;font-weight:900}
@@ -509,7 +517,17 @@ button[disabled],input[disabled],select[disabled]{opacity:.65;cursor:not-allowed
   <div class="practice-actions" style="margin-top:10px"><button class="primary" onclick="v53AddBlueprintRow()">➕ إضافة مجموعة</button><button class="primary orange" onclick="v53UsePreset('foundation')">📚 أساسيات IPv4</button><button class="primary purple" onclick="v53UsePreset('subnetting')">🧠 Subnetting متقدم</button><button class="primary green" onclick="v53CreateExamFromBlueprint()">🚀 إنشاء الاختبار</button></div>
   <div id="v53Summary" style="margin-top:12px"></div></div>
 </div>
-<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>Binary Conversion</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div><div id="examAnalyticsPanel" class="card" style="margin-top:18px"><h3>📊 تحليلات الاختبارات</h3><p class="muted">اختر «التحليل» بجانب أي اختبار لعرض النتائج، ترتيب المتدربين، ومراجعة الإجابات.</p><div id="examAnalyticsBody"></div></div></div></section>
+<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="card v60-final-settings-card">
+  <div class="v60-final-head">
+    <div>
+      <span class="v60-final-badge">🎓 V60 — الاختبار النهائي الشامل</span>
+      <h3 style="margin:10px 0 6px">إعداد وتفعيل الاختبار النهائي</h3>
+      <p class="muted" style="margin:0">من هنا يتم إنشاء النسخة المعتمدة للاختبار النهائي وتحديد التوزيع والمدة ونسبة النجاح والمحاولات والشعبة وموعد الإتاحة.</p>
+    </div>
+    <div id="v60FinalTrainerStatus" class="v60-final-status-pill">لم يتم الإعداد بعد</div>
+  </div>
+  <div id="v60FinalTrainerSettingsArea" style="margin-top:14px"><div class="muted">⏳ جارٍ تحميل إعدادات الاختبار النهائي...</div></div>
+</div><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>Binary Conversion</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div><div id="examAnalyticsPanel" class="card" style="margin-top:18px"><h3>📊 تحليلات الاختبارات</h3><p class="muted">اختر «التحليل» بجانب أي اختبار لعرض النتائج، ترتيب المتدربين، ومراجعة الإجابات.</p><div id="examAnalyticsBody"></div></div></div></section>
 <section id="certificate" class="hidden">
 <div class="card hero v61-cert-hero">
   <div class="v61-cert-head">
@@ -952,7 +970,7 @@ async function loadPublishedExams(){
   const now=new Date().toISOString();
   const r=await db.from('trainer_exams').select('id,title,description,topic,difficulty,question_count,duration_minutes,max_attempts,group_name,starts_at,ends_at,is_active,created_at').eq('is_active',true).order('created_at',{ascending:false});
   if(r.error){box.innerHTML=`<div class="bad">❌ تعذر تحميل الاختبارات المنشورة.<br><small>${esc(r.error.message||'خطأ غير معروف')}</small></div>`;return;}
-  const rows=(r.data||[]).filter(x=>(!x.group_name||x.group_name===profile?.group_name)&&(!x.starts_at||x.starts_at<=now)&&(!x.ends_at||x.ends_at>=now));
+  const rows=(r.data||[]).filter(x=>!v60IsFinalExam(x)&&(!x.group_name||x.group_name===profile?.group_name)&&(!x.starts_at||x.starts_at<=now)&&(!x.ends_at||x.ends_at>=now));
   const attemptRows=rows.length?await db.from('attempts').select('exam_id').eq('student_id',user.id):{data:[],error:null};
   if(attemptRows.error){box.innerHTML=`<div class="bad">تعذر قراءة عدد المحاولات: ${esc(attemptRows.error.message)}</div>`;return;}
   const usedByExam={};(attemptRows.data||[]).forEach(a=>{usedByExam[a.exam_id]=(usedByExam[a.exam_id]||0)+1;});
@@ -1630,7 +1648,7 @@ function trainerTab(tab,btn){
   if(btn){document.querySelectorAll(".trainer-dashboard-tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
   if(tab==="students")loadTrainerStudents();
   if(tab==="questions")loadTrainerQuestions();
-  if(tab==="exams")loadTrainerExams();
+  if(tab==="exams"){loadTrainerExams();v60LoadFinalTrainerSettings();}
   if(tab==="blueprint")v53InitBlueprint();
   if(tab==="analytics")loadTrainerAnalytics();
   if(tab==="reports")loadTrainerReports();
@@ -1982,6 +2000,110 @@ async function addTrainerQuestion(){
   $("qText").value="";$("qAnswer").value="";['A','B','C','D'].forEach(k=>{if($(`choice_${k}`))$(`choice_${k}`).value='';});$('matchRows').innerHTML='';setQuestionType('short');msg("questionMsg","✅ تمت إضافة السؤال بنجاح.",true);loadTrainerQuestions();
 }
 async function deleteTrainerQuestion(id){if(!confirm("حذف السؤال؟"))return;const r=await db.from("trainer_questions").delete().eq("id",id);if(r.error){alert("تعذر حذف السؤال: "+r.error.message);return;}loadTrainerQuestions();}
+
+
+/* ==================== V60.1 — Final Exam Setup & Execution Fix ==================== */
+let v60FinalTimerHandle=null;
+function v60IsFinalExam(exam){const title=String(exam?.title||''),desc=String(exam?.description||'');return title.includes('الاختبار النهائي الشامل')||desc.startsWith('FINAL_CONFIG:');}
+function v60ParseFinalConfig(exam){
+ const base={counts:{'Binary Conversion':6,'IPv4':6,'Subnetting':10,'FLSM':5,'VLSM':3},durationMinutes:Number(exam?.duration_minutes||45),passPercent:70,maxAttempts:exam?.max_attempts==null?1:Number(exam.max_attempts),group:exam?.group_name||'',startsAt:exam?.starts_at||'',endsAt:exam?.ends_at||'',isActive:Boolean(exam?.is_active)};
+ try{const s=String(exam?.description||'');if(s.startsWith('FINAL_CONFIG:')){const c=JSON.parse(s.slice('FINAL_CONFIG:'.length));if(c?.counts)base.counts={...base.counts,...c.counts};if(c?.passPercent!=null)base.passPercent=Number(c.passPercent);if(c?.durationMinutes!=null)base.durationMinutes=Number(c.durationMinutes);if(c?.maxAttempts!==undefined)base.maxAttempts=c.maxAttempts==null?null:Number(c.maxAttempts);}}catch(_e){}
+ return base;
+}
+function v60FinalCountId(t){return ({'Binary Conversion':'v60fcBinary','IPv4':'v60fcIPv4','Subnetting':'v60fcSubnetting','FLSM':'v60fcFLSM','VLSM':'v60fcVLSM'})[t];}
+function v60FinalUpdateTotal(){const total=['Binary Conversion','IPv4','Subnetting','FLSM','VLSM'].reduce((n,t)=>n+Number($(v60FinalCountId(t))?.value||0),0);if($('v60FinalTotal'))$('v60FinalTotal').textContent=String(total);if($('v60FinalTotalNote'))$('v60FinalTotalNote').textContent=total===30?'التوزيع الافتراضي مكتمل: 30 سؤالًا.':`المجموع الحالي ${total} سؤال.`;}
+function v60FinalSettingsHtml(cfg={},exam=null){
+ const c=cfg.counts||{'Binary Conversion':6,'IPv4':6,'Subnetting':10,'FLSM':5,'VLSM':3}, maxA=cfg.maxAttempts==null?'':String(cfg.maxAttempts),active=!!cfg.isActive;
+ const fmt=v=>{if(!v)return '';try{const d=new Date(v);if(Number.isNaN(d.getTime()))return '';const p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;}catch(_e){return '';}};
+ return `<div><div class="good" style="margin-bottom:12px"><b>من هنا يتم تفعيل الاختبار النهائي وإعداده.</b> عند الحفظ تُنشأ نسخة جديدة من بنك الأسئلة وتصبح هي النسخة المعتمدة للمتدربين.</div>
+ <div class="v60-final-settings-grid">
+  <div class="v60-final-topic-box"><b><span>🔢 Binary Conversion</span><span>أسئلة</span></b><input id="v60fcBinary" type="number" min="0" max="50" value="${c['Binary Conversion']??6}" oninput="v60FinalUpdateTotal()"></div>
+  <div class="v60-final-topic-box"><b><span>🌐 IPv4</span><span>أسئلة</span></b><input id="v60fcIPv4" type="number" min="0" max="50" value="${c['IPv4']??6}" oninput="v60FinalUpdateTotal()"></div>
+  <div class="v60-final-topic-box"><b><span>🧩 Subnetting</span><span>أسئلة</span></b><input id="v60fcSubnetting" type="number" min="0" max="50" value="${c['Subnetting']??10}" oninput="v60FinalUpdateTotal()"></div>
+  <div class="v60-final-topic-box"><b><span>📐 FLSM</span><span>أسئلة</span></b><input id="v60fcFLSM" type="number" min="0" max="50" value="${c['FLSM']??5}" oninput="v60FinalUpdateTotal()"></div>
+  <div class="v60-final-topic-box"><b><span>🧠 VLSM</span><span>أسئلة</span></b><input id="v60fcVLSM" type="number" min="0" max="50" value="${c['VLSM']??3}" oninput="v60FinalUpdateTotal()"></div>
+  <div class="v60-final-topic-box"><b><span>📊 إجمالي الأسئلة</span><span id="v60FinalTotal" class="v60-final-total">30</span></b><div id="v60FinalTotalNote" class="muted" style="margin-top:8px">التوزيع الافتراضي مكتمل: 30 سؤالًا.</div></div>
+ </div>
+ <div class="grid" style="margin-top:12px">
+  <div><label>⏱️ المدة بالدقائق</label><input id="v60fcDuration" type="number" min="5" max="240" value="${cfg.durationMinutes||45}"></div>
+  <div><label>✅ نسبة النجاح %</label><input id="v60fcPass" type="number" min="1" max="100" value="${cfg.passPercent||70}"></div>
+  <div><label>🔁 عدد المحاولات</label><select id="v60fcAttempts">${[[1,'محاولة واحدة'],[2,'محاولتان'],[3,'3 محاولات'],[4,'4 محاولات'],[5,'5 محاولات'],[10,'10 محاولات'],['','غير محدود']].map(([v,l])=>`<option value="${v}" ${String(maxA)===String(v)?'selected':''}>${l}</option>`).join('')}</select></div>
+  <div><label>👥 الشعبة</label><input id="v60fcGroup" value="${esc(cfg.group||'')}" placeholder="كل الشعب"></div>
+  <div><label>🗓️ تاريخ ووقت البداية</label><input id="v60fcStart" type="datetime-local" value="${fmt(cfg.startsAt)}"></div>
+  <div><label>🗓️ تاريخ ووقت النهاية</label><input id="v60fcEnd" type="datetime-local" value="${fmt(cfg.endsAt)}"></div>
+ </div>
+ <label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input id="v60fcActive" type="checkbox" style="width:auto" ${active?'checked':''}> <b>تفعيل الاختبار النهائي للمتدربين</b></label>
+ <div class="v60-final-actions"><button class="primary green" onclick="v60SaveFinalExamSettings()">💾 حفظ وإنشاء النسخة</button><button class="primary" onclick="v60LoadFinalTrainerSettings()">🔄 تحديث الحالة</button>${exam?.id?`<button class="primary orange" onclick="v60ToggleFinalExam('${exam.id}',${!active})">${active?'⏸️ إيقاف الاختبار الحالي':'▶️ تفعيل الاختبار الحالي'}</button>`:''}</div>
+ <div id="v60FinalTrainerMsg" style="margin-top:12px"></div>
+ ${exam?`<div class="stat" style="margin-top:12px"><b>النسخة الحالية</b><span>${esc(exam.title||'الاختبار النهائي الشامل')}</span></div><div class="stat"><b>الحالة</b><span>${active?'🟢 مفعّل':'⚪ غير مفعّل'}</span></div><div class="stat"><b>التحديث</b><span>${exam.created_at?new Date(exam.created_at).toLocaleString('ar-SA'):'—'}</span></div>`:''}</div>`;
+}
+async function v60LoadFinalTrainerSettings(){
+ const host=$('v60FinalTrainerSettingsArea');if(!host)return;host.innerHTML='<div class="muted">⏳ جارٍ قراءة إعدادات الاختبار النهائي...</div>';
+ const r=await db.from('trainer_exams').select('*').eq('topic','Subnetting').order('created_at',{ascending:false}).limit(50);
+ if(r.error){host.innerHTML=`<div class="bad">❌ تعذر قراءة إعدادات الاختبار النهائي: ${esc(r.error.message)}</div>`;return;}
+ const exam=(r.data||[]).find(v60IsFinalExam)||null;
+ const cfg=exam?v60ParseFinalConfig(exam):{counts:{'Binary Conversion':6,'IPv4':6,'Subnetting':10,'FLSM':5,'VLSM':3},durationMinutes:45,passPercent:70,maxAttempts:1,group:'',startsAt:'',endsAt:'',isActive:false};
+ host.innerHTML=v60FinalSettingsHtml(cfg,exam);v60FinalUpdateTotal();
+ const pill=$('v60FinalTrainerStatus');if(pill)pill.textContent=exam?(exam.is_active?'🟢 مفعّل للمتدربين':'⚪ غير مفعّل — يحتاج تفعيل'):'لم يتم الإعداد بعد';
+}
+async function v60SaveFinalExamSettings(){
+ if(!['trainer','admin'].includes(profile?.role))return;
+ const counts={'Binary Conversion':Math.max(0,Number($('v60fcBinary')?.value||0)),'IPv4':Math.max(0,Number($('v60fcIPv4')?.value||0)),'Subnetting':Math.max(0,Number($('v60fcSubnetting')?.value||0)),'FLSM':Math.max(0,Number($('v60fcFLSM')?.value||0)),'VLSM':Math.max(0,Number($('v60fcVLSM')?.value||0))};
+ const durationMinutes=Math.max(5,Number($('v60fcDuration')?.value||45)),passPercent=Math.min(100,Math.max(1,Number($('v60fcPass')?.value||70))),maxAttempts=$('v60fcAttempts')?.value===''?null:Number($('v60fcAttempts')?.value),group_name=$('v60fcGroup')?.value.trim()||null,starts_at=$('v60fcStart')?.value?new Date($('v60fcStart').value).toISOString():null,ends_at=$('v60fcEnd')?.value?new Date($('v60fcEnd').value).toISOString():null,is_active=!!$('v60fcActive')?.checked;
+ const total=Object.values(counts).reduce((a,b)=>a+b,0),msgBox=$('v60FinalTrainerMsg');if(total<1){if(msgBox)msgBox.innerHTML='<div class="bad">❌ يجب أن يحتوي الاختبار على سؤال واحد على الأقل.</div>';return;}if(msgBox)msgBox.innerHTML='<div class="muted">⏳ يتم تجهيز نسخة الاختبار النهائي من بنك الأسئلة...</div>';
+ const chosen=[];
+ for(const [topic,count] of Object.entries(counts)){if(!count)continue;const qr=await db.from('trainer_questions').select('id,topic,difficulty').eq('topic',topic).limit(500);if(qr.error){if(msgBox)msgBox.innerHTML=`<div class="bad">❌ تعذر قراءة بنك ${esc(topic)}: ${esc(qr.error.message)}</div>`;return;}const pool=qr.data||[];if(pool.length<count){if(msgBox)msgBox.innerHTML=`<div class="bad">❌ موضوع <b>${esc(topic)}</b> يحتوي ${pool.length} سؤالًا فقط، بينما الإعداد الحالي يحتاج ${count}.</div>`;return;}chosen.push(...[...pool].sort(()=>Math.random()-0.5).slice(0,count));}
+ const description='FINAL_CONFIG:'+JSON.stringify({counts,durationMinutes,passPercent,maxAttempts});
+ const oldR=await db.from('trainer_exams').select('id,title,description,topic,is_active').eq('topic','Subnetting').order('created_at',{ascending:false}).limit(50);
+ if(!oldR.error){const oldIds=(oldR.data||[]).filter(v60IsFinalExam).map(x=>x.id);if(oldIds.length)await db.from('trainer_exams').update({is_active:false}).in('id',oldIds);}
+ const er=await db.from('trainer_exams').insert({title:'الاختبار النهائي الشامل',description,difficulty:'hard',topic:'Subnetting',question_count:total,duration_minutes:durationMinutes,max_attempts:maxAttempts,group_name,starts_at,ends_at,is_active,created_by:user.id}).select('id').single();
+ if(er.error){if(msgBox)msgBox.innerHTML=`<div class="bad">❌ تعذر إنشاء الاختبار النهائي: ${esc(er.error.message)}</div>`;return;}
+ const ir=await db.from('trainer_exam_questions').insert(chosen.map((q,i)=>({exam_id:er.data.id,question_id:q.id,question_order:i+1})));
+ if(ir.error){await db.from('trainer_exams').delete().eq('id',er.data.id);if(msgBox)msgBox.innerHTML=`<div class="bad">❌ تعذر ربط أسئلة الاختبار النهائي: ${esc(ir.error.message)}</div>`;return;}
+ if(msgBox)msgBox.innerHTML=`<div class="good">✅ تم إنشاء نسخة جديدة وربط ${total} سؤالًا. ${is_active?'الاختبار مفعّل الآن للمتدربين.':'الاختبار محفوظ وغير مفعّل.'}</div>`;
+ await v60LoadFinalTrainerSettings();await loadTrainerExams();
+}
+async function v60ToggleFinalExam(id,value){
+ if(!['trainer','admin'].includes(profile?.role))return;const r=await db.from('trainer_exams').update({is_active:value}).eq('id',id);if(r.error){alert('تعذر تغيير حالة الاختبار النهائي: '+r.error.message);return;}await v60LoadFinalTrainerSettings();await loadTrainerExams();
+}
+async function renderV60FinalExamHome(){
+ const home=$('v60FinalHomeArea'),area=$('v60FinalExamArea'),status=$('v60FinalStatus');if(!home||!area)return;
+ if(v60FinalTimerHandle){clearInterval(v60FinalTimerHandle);v60FinalTimerHandle=null}area.innerHTML='';home.innerHTML='<div class="muted">⏳ جارٍ تحميل إعدادات الاختبار النهائي...</div>';
+ const r=await db.from('trainer_exams').select('*').eq('topic','Subnetting').order('created_at',{ascending:false}).limit(50);if(r.error){home.innerHTML=`<div class="bad">❌ تعذر تحميل الاختبار النهائي: ${esc(r.error.message)}</div>`;return;}
+ const exam=(r.data||[]).find(v60IsFinalExam);
+ if(!exam){if(status)status.textContent='غير مُعد';home.innerHTML=`<div class="bad"><b>⚠️ الاختبار النهائي غير مُعد بعد.</b><div class="muted" style="margin-top:6px">المدرب يجب أن يدخل إلى <b>لوحة المدرب → الاختبارات → إعداد الاختبار النهائي</b> ثم ينشئ النسخة ويضغط تفعيل.</div>${['trainer','admin'].includes(profile?.role)?'<div style="margin-top:10px"><button class="primary" onclick="page(\\\"trainer\\\");setTimeout(()=>trainerTab(\\\"exams\\\"),250)">⚙️ فتح إعدادات المدرب</button></div>':''}</div>`;return;}
+ const cfg=v60ParseFinalConfig(exam),now=new Date(),startOk=!exam.starts_at||new Date(exam.starts_at)<=now,endOk=!exam.ends_at||new Date(exam.ends_at)>=now,groupOk=!exam.group_name||exam.group_name===profile?.group_name;
+ const usedR=await db.from('attempts').select('id',{count:'exact',head:true}).eq('exam_id',exam.id).eq('student_id',user.id),used=Number(usedR.count||0),unlimited=exam.max_attempts==null,exhausted=!unlimited&&used>=Number(exam.max_attempts),available=!!exam.is_active&&startOk&&endOk&&groupOk&&!exhausted;
+ if(status)status.textContent=available?'متاح الآن':(exam.is_active?'غير متاح حاليًا':'غير مفعّل');
+ const startLabel=exhausted?'استنفدت المحاولات':(!exam.is_active?'غير مفعّل':(!groupOk?'غير مخصص لشعبتك':(!startOk?'لم يبدأ بعد':(!endOk?'انتهى الموعد':'🚀 ابدأ الاختبار النهائي'))));
+ home.innerHTML=`<div class="v60-final-kpis"><div class="v60-final-kpi"><div class="num">${exam.question_count}</div><div class="lbl">سؤال</div></div><div class="v60-final-kpi"><div class="num">${exam.duration_minutes}</div><div class="lbl">دقيقة</div></div><div class="v60-final-kpi"><div class="num">${cfg.passPercent}%</div><div class="lbl">حد النجاح</div></div><div class="v60-final-kpi"><div class="num">${unlimited?'∞':Math.max(0,Number(exam.max_attempts)-used)}</div><div class="lbl">محاولات متبقية</div></div></div>
+ <div class="v60-readiness"><div class="v60-readiness-box"><h3 style="margin-top:0">مكونات الاختبار</h3><div class="v60-breakdown">${Object.entries(cfg.counts).map(([t,n])=>`<div class="v60-topic-row"><div class="v60-topic-head"><span>${esc(t)}</span><span>${n} سؤال</span></div><div class="v60-topic-bar"><span style="width:${Math.min(100,Number(n)/Math.max(1,exam.question_count)*100)}%"></span></div></div>`).join('')}</div></div>
+ <div class="v60-readiness-box"><h3 style="margin-top:0">حالة الإتاحة</h3><div class="v60-status"><span class="v60-dot ${available?'green':'orange'}"></span>${esc(startLabel)}</div><div class="muted" style="margin-top:8px">الشعبة: ${esc(exam.group_name||'كل الشعب')}</div><div class="muted">البداية: ${exam.starts_at?new Date(exam.starts_at).toLocaleString('ar-SA'):'الآن'}</div><div class="muted">النهاية: ${exam.ends_at?new Date(exam.ends_at).toLocaleString('ar-SA'):'غير محددة'}</div><div style="margin-top:12px"><button class="primary green" ${available?'':'disabled'} onclick="startV60FinalExam('${exam.id}')">${esc(startLabel)}</button></div></div></div>`;
+}
+async function startV60FinalExam(examId){
+ const exR=await db.from('trainer_exams').select('*').eq('id',examId).single();if(exR.error){alert('تعذر فتح الاختبار النهائي: '+exR.error.message);return;}const ex=exR.data,cfg=v60ParseFinalConfig(ex),now=new Date();
+ if(!ex.is_active){alert('الاختبار النهائي غير مفعّل حاليًا.');return;}if(ex.group_name&&ex.group_name!==profile?.group_name){alert('الاختبار النهائي غير مخصص لشعبتك.');return;}if(ex.starts_at&&new Date(ex.starts_at)>now){alert('الاختبار النهائي لم يبدأ بعد.');return;}if(ex.ends_at&&new Date(ex.ends_at)<now){alert('انتهت مدة الإتاحة لهذا الاختبار النهائي.');return;}
+ if(ex.max_attempts!=null){const used=await db.from('attempts').select('id',{count:'exact',head:true}).eq('exam_id',examId).eq('student_id',user.id);if(used.error){alert('تعذر التحقق من عدد المحاولات: '+used.error.message);return;}if(Number(used.count||0)>=Number(ex.max_attempts)){alert('استنفدت الحد المسموح من المحاولات.');await renderV60FinalExamHome();return;}}
+ const qr=await db.from('trainer_exam_questions').select('question_order,trainer_questions(id,question_text,correct_answer,question_type,options_json,matching_json,topic,difficulty)').eq('exam_id',examId).order('question_order');if(qr.error){alert('تعذر تحميل أسئلة الاختبار النهائي: '+qr.error.message);return;}const qs=(qr.data||[]).map(x=>x.trainer_questions).filter(Boolean);if(!qs.length){alert('لا توجد أسئلة مرتبطة بالاختبار النهائي.');return;}
+ v60FinalMode=true;v60FinalState={examId,examTitle:ex.title,questions:qs,answers:{},flags:{},startedAt:new Date(),durationMinutes:Number(ex.duration_minutes||45),passPercent:Number(cfg.passPercent||70),submitted:false,attemptId:null};currentExamId=examId;currentExamTitle=ex.title;testStartedAt=v60FinalState.startedAt;testSubmitted=false;$('v60FinalHomeArea').innerHTML='';v60RenderFinalExam();v60StartFinalTimer();window.scrollTo({top:0,behavior:'smooth'});
+}
+function v60FinalSelectedAnswer(i){const q=v60FinalState.questions[i],type=q?.question_type||'short';if(type==='matching'){let pairs=[];try{pairs=typeof q.matching_json==='string'?JSON.parse(q.matching_json||'[]'):(q.matching_json||[]);}catch(_e){}const ans={};pairs.forEach((p,j)=>{const el=$(`v60m${i}_${j}`);if(el&&el.value!=='')ans[j]=Number(el.value);});return JSON.stringify(ans);}const r=document.querySelector(`input[name="v60t${i}"]:checked`);if(r)return r.value.trim();const inp=$(`v60t${i}`);return inp?inp.value.trim():'';}
+function v60FinalCorrect(q,ans){if((q?.question_type||'short')==='matching'){let p=[];try{p=typeof q.matching_json==='string'?JSON.parse(q.matching_json||'[]'):(q.matching_json||[]);}catch(_e){}let a={};try{a=JSON.parse(ans||'{}');}catch(_e){}return p.length>0&&p.every((_,j)=>Number(a[j])===j);}return String(ans||'').trim().toLowerCase()===String(q?.correct_answer||'').trim().toLowerCase();}
+function v60RenderFinalNav(){const answered=v60FinalState.questions.filter((q,i)=>!!v60FinalSelectedAnswer(i)).length,total=v60FinalState.questions.length,flags=Object.values(v60FinalState.flags||{}).filter(Boolean).length;const host=$('v60FinalNav');if(host)host.innerHTML=`<div class="v42-summary"><div class="mini"><span>تمت الإجابة</span><b>${answered}/${total}</b></div><div class="mini"><span>للمراجعة</span><b>${flags}</b></div><div class="mini"><span>المتبقي</span><b>${total-answered}</b></div></div>`;const bar=$('v60FinalProgressBar');if(bar)bar.style.width=`${total?Math.round(answered*100/total):0}%`;}
+function v60ToggleFinalFlag(i){v60FinalState.flags[i]=!v60FinalState.flags[i];v60RenderFinalNav();}
+function v60RenderFinalExam(){const host=$('v60FinalExamArea');if(!host)return;host.innerHTML=`<div class="v60-exam-toolbar"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><b>📝 ${esc(v60FinalState.examTitle||'الاختبار النهائي')}</b><span id="v60FinalTimer" class="badge">--:--</span></div><div class="v60-progress"><span id="v60FinalProgressBar" style="width:0%"></span></div><div id="v60FinalNav" style="margin-top:8px"></div></div><div>${v60FinalState.questions.map((q,i)=>{const type=q.question_type||'short',head=`<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap"><div style="font-weight:bold">${i+1}. ${esc(q.question_text||'سؤال')}</div><button type="button" class="light" onclick="v60ToggleFinalFlag(${i})">${v60FinalState.flags[i]?'🟨 إلغاء المراجعة':'🚩 للمراجعة'}</button></div>`;if(type==='matching'){let pairs=[];try{pairs=typeof q.matching_json==='string'?JSON.parse(q.matching_json||'[]'):(q.matching_json||[]);}catch(_e){}const rights=pairs.map((p,j)=>({id:j,text:p.right})).sort(()=>Math.random()-0.5);return `<div class="question" id="v60fq${i}">${head}<div class="muted">وصل كل عنصر من العمود الأول بما يناسبه من العمود الثاني:</div>${pairs.map((p,j)=>`<div class="matching-answer"><span><b>${esc(p.left)}</b></span><select id="v60m${i}_${j}" onchange="v60RenderFinalNav()"><option value="">اختر المطابقة</option>${rights.map(r=>`<option value="${r.id}">${esc(r.text)}</option>`).join('')}</select></div>`).join('')}</div>`;}if(type==='true_false')return `<div class="question" id="v60fq${i}">${head}<label class="optionLabel"><input type="radio" name="v60t${i}" value="true" style="width:auto" onchange="v60RenderFinalNav()"> ✅ صح</label><label class="optionLabel"><input type="radio" name="v60t${i}" value="false" style="width:auto" onchange="v60RenderFinalNav()"> ❌ خطأ</label></div>`;let opts=[];try{opts=typeof q.options_json==='string'?JSON.parse(q.options_json||'[]'):(q.options_json||[]);}catch(_e){}if(type==='mcq'||opts.length>=2)return `<div class="question" id="v60fq${i}">${head}${opts.map(o=>`<label class="optionLabel" style="display:block;background:white;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer"><input type="radio" name="v60t${i}" value="${esc(o.key||'')}" style="width:auto;margin-left:7px" onchange="v60RenderFinalNav()"> <b>${esc(o.key||'')}</b>) ${esc(o.text||'')}</label>`).join('')}</div>`;return `<div class="question" id="v60fq${i}">${head}<input id="v60t${i}" placeholder="اكتب الإجابة المطلوبة" oninput="v60RenderFinalNav()"><div class="muted">اكتب الإجابة المطلوبة.</div></div>`;}).join('')}</div><div class="v60-actions"><button class="primary green" onclick="v60GradeFinalExam(false)">✅ تسليم الاختبار النهائي</button></div>`;v60RenderFinalNav();}
+function v60StartFinalTimer(){if(v60FinalTimerHandle)clearInterval(v60FinalTimerHandle);const end=v60FinalState.startedAt.getTime()+v60FinalState.durationMinutes*60000;const tick=()=>{const remain=Math.max(0,end-Date.now()),sec=Math.floor(remain/1000),m=Math.floor(sec/60),s=sec%60,el=$('v60FinalTimer');if(el)el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;if(remain<=0){clearInterval(v60FinalTimerHandle);v60FinalTimerHandle=null;if(!v60FinalState.submitted)v60GradeFinalExam(true);}};tick();v60FinalTimerHandle=setInterval(tick,1000);}
+async function v60GradeFinalExam(autoSubmit=false){
+ if(!v60FinalMode||v60FinalState.submitted)return;if(v60FinalTimerHandle){clearInterval(v60FinalTimerHandle);v60FinalTimerHandle=null;}v60FinalState.submitted=true;
+ const qs=v60FinalState.questions,rows=[];let correct=0;qs.forEach((q,i)=>{const ans=v60FinalSelectedAnswer(i),ok=v60FinalCorrect(q,ans);if(ok)correct++;rows.push({question:q,answer:ans,correct:ok});});
+ const pct=qs.length?Math.round(correct/qs.length*100):0,submittedAt=new Date().toISOString(),payload={student_id:user.id,exam_id:v60FinalState.examId,score:pct,total_questions:qs.length,correct_answers:correct,percentage:pct,started_at:v60FinalState.startedAt?.toISOString()||submittedAt,submitted_at:submittedAt};
+ const save=await db.from('attempts').insert(payload).select('id').single(),saveErr=save.error,attemptId=save.data?.id||null;if(attemptId){const ar=await db.from('attempt_answers').insert(rows.map((x,i)=>({attempt_id:attemptId,question_id:x.question.id,question_order:i+1,selected_answer:x.answer||null,correct_answer:x.question.correct_answer,is_correct:x.correct})));if(ar.error)console.warn('V60 final attempt_answers:',ar.error.message);}
+ v60FinalState.attemptId=attemptId;currentExamId=null;testStartedAt=null;testSubmitted=true;
+ const byTopic={};rows.forEach(x=>{const t=x.question.topic||'غير مصنف';if(!byTopic[t])byTopic[t]={n:0,c:0};byTopic[t].n++;if(x.correct)byTopic[t].c++;});
+ const pass=pct>=Number(v60FinalState.passPercent||70),area=$('v60FinalExamArea');
+ if(area)area.innerHTML=`<div class="v60-result ${pass?'pass':'fail'}"><div class="v60-result-score">${pct}%</div><h3>${pass?'🎉 اجتزت الاختبار النهائي':'📌 تحتاج إلى مراجعة قبل الإكمال'}</h3><p>النتيجة: <b>${correct}/${qs.length}</b> — حد النجاح: <b>${v60FinalState.passPercent}%</b></p><p>${autoSubmit?'⏰ انتهى الوقت وتم التسليم تلقائيًا.':'✅ تم تسليم الاختبار.'}</p>${saveErr?`<div class="bad">⚠️ تعذر حفظ النتيجة مركزيًا: ${esc(saveErr.message||saveErr)}<br>يمكن إعادة المحاولة عند توفر الاتصال.</div>`:''}<div class="v60-breakdown">${Object.entries(byTopic).map(([t,v])=>`<div class="v60-topic-row"><div class="v60-topic-head"><span>${esc(t)}</span><span>${Math.round(v.c/v.n*100)}%</span></div><div class="v60-topic-bar"><span style="width:${Math.round(v.c/v.n*100)}%"></span></div><div class="muted" style="margin-top:5px">${v.c}/${v.n} صحيح</div></div>`).join('')}</div><div class="v60-actions"><button class="primary" onclick="renderV60FinalExamHome()">🔄 تحديث حالة الاختبار</button>${pass?'<button class="primary green" onclick="page(&quot;certificate&quot;)">🏆 الانتقال إلى الشهادة</button>':'<button class="primary purple" onclick="openHomeSmartReview(this)">🧠 ابدأ مراجعة ذكية</button>'}</div></div>`;
+ await renderDashboard();await renderV60FinalExamHome();if(pass)await loadCertificate();
+}
 
 async function createTrainerExam(){
   if(!['trainer','admin'].includes(profile?.role))return;
