@@ -2066,20 +2066,113 @@ async function v60SaveFinalExamSettings(){
 async function v60ToggleFinalExam(id,value){
  if(!['trainer','admin'].includes(profile?.role))return;const r=await db.from('trainer_exams').update({is_active:value}).eq('id',id);if(r.error){alert('تعذر تغيير حالة الاختبار النهائي: '+r.error.message);return;}await v60LoadFinalTrainerSettings();await loadTrainerExams();
 }
-async function renderV60FinalExamHome(){
- const home=$('v60FinalHomeArea'),area=$('v60FinalExamArea'),status=$('v60FinalStatus');if(!home||!area)return;
- if(v60FinalTimerHandle){clearInterval(v60FinalTimerHandle);v60FinalTimerHandle=null}area.innerHTML='';home.innerHTML='<div class="muted">⏳ جارٍ تحميل إعدادات الاختبار النهائي...</div>';
- const r=await db.from('trainer_exams').select('*').eq('topic','Subnetting').order('created_at',{ascending:false}).limit(50);if(r.error){home.innerHTML=`<div class="bad">❌ تعذر تحميل الاختبار النهائي: ${esc(r.error.message)}</div>`;return;}
- const exam=(r.data||[]).find(v60IsFinalExam);
- if(!exam){if(status)status.textContent='غير مُعد';home.innerHTML=`<div class="bad"><b>⚠️ الاختبار النهائي غير مُعد بعد.</b><div class="muted" style="margin-top:6px">المدرب يجب أن يدخل إلى <b>لوحة المدرب → الاختبارات → إعداد الاختبار النهائي</b> ثم ينشئ النسخة ويضغط تفعيل.</div>${['trainer','admin'].includes(profile?.role)?'<div style="margin-top:10px"><button class="primary" onclick="page(\\\"trainer\\\");setTimeout(()=>trainerTab(\\\"exams\\\"),250)">⚙️ فتح إعدادات المدرب</button></div>':''}</div>`;return;}
- const cfg=v60ParseFinalConfig(exam),now=new Date(),startOk=!exam.starts_at||new Date(exam.starts_at)<=now,endOk=!exam.ends_at||new Date(exam.ends_at)>=now,groupOk=!exam.group_name||exam.group_name===profile?.group_name;
- const usedR=await db.from('attempts').select('id',{count:'exact',head:true}).eq('exam_id',exam.id).eq('student_id',user.id),used=Number(usedR.count||0),unlimited=exam.max_attempts==null,exhausted=!unlimited&&used>=Number(exam.max_attempts),available=!!exam.is_active&&startOk&&endOk&&groupOk&&!exhausted;
- if(status)status.textContent=available?'متاح الآن':(exam.is_active?'غير متاح حاليًا':'غير مفعّل');
- const startLabel=exhausted?'استنفدت المحاولات':(!exam.is_active?'غير مفعّل':(!groupOk?'غير مخصص لشعبتك':(!startOk?'لم يبدأ بعد':(!endOk?'انتهى الموعد':'🚀 ابدأ الاختبار النهائي'))));
- home.innerHTML=`<div class="v60-final-kpis"><div class="v60-final-kpi"><div class="num">${exam.question_count}</div><div class="lbl">سؤال</div></div><div class="v60-final-kpi"><div class="num">${exam.duration_minutes}</div><div class="lbl">دقيقة</div></div><div class="v60-final-kpi"><div class="num">${cfg.passPercent}%</div><div class="lbl">حد النجاح</div></div><div class="v60-final-kpi"><div class="num">${unlimited?'∞':Math.max(0,Number(exam.max_attempts)-used)}</div><div class="lbl">محاولات متبقية</div></div></div>
- <div class="v60-readiness"><div class="v60-readiness-box"><h3 style="margin-top:0">مكونات الاختبار</h3><div class="v60-breakdown">${Object.entries(cfg.counts).map(([t,n])=>`<div class="v60-topic-row"><div class="v60-topic-head"><span>${esc(t)}</span><span>${n} سؤال</span></div><div class="v60-topic-bar"><span style="width:${Math.min(100,Number(n)/Math.max(1,exam.question_count)*100)}%"></span></div></div>`).join('')}</div></div>
- <div class="v60-readiness-box"><h3 style="margin-top:0">حالة الإتاحة</h3><div class="v60-status"><span class="v60-dot ${available?'green':'orange'}"></span>${esc(startLabel)}</div><div class="muted" style="margin-top:8px">الشعبة: ${esc(exam.group_name||'كل الشعب')}</div><div class="muted">البداية: ${exam.starts_at?new Date(exam.starts_at).toLocaleString('ar-SA'):'الآن'}</div><div class="muted">النهاية: ${exam.ends_at?new Date(exam.ends_at).toLocaleString('ar-SA'):'غير محددة'}</div><div style="margin-top:12px"><button class="primary green" ${available?'':'disabled'} onclick="startV60FinalExam('${exam.id}')">${esc(startLabel)}</button></div></div></div>`;
+
+function v60IsTrainerUser(){
+  return ['trainer','admin'].includes(profile?.role);
 }
+function v60OpenFinalSettings(){
+  if(!v60IsTrainerUser()) return;
+  page('trainer');
+  setTimeout(()=>trainerTab('exams'),300);
+}
+
+async function renderV60FinalExamHome(){
+ const home=$('v60FinalHomeArea'),area=$('v60FinalExamArea'),status=$('v60FinalStatus');
+ if(!home||!area)return;
+ if(v60FinalTimerHandle){clearInterval(v60FinalTimerHandle);v60FinalTimerHandle=null}
+ area.innerHTML='';
+ home.innerHTML='<div class="muted">⏳ جارٍ تحميل إعدادات الاختبار النهائي...</div>';
+
+ const r=await db.from('trainer_exams').select('*').eq('topic','Subnetting').order('created_at',{ascending:false}).limit(50);
+ if(r.error){
+   home.innerHTML=`<div class="bad">❌ تعذر تحميل الاختبار النهائي: ${esc(r.error.message)}</div>`;
+   return;
+ }
+
+ const exam=(r.data||[]).find(v60IsFinalExam);
+ const isTrainer=v60IsTrainerUser();
+
+ if(!exam){
+   if(status)status.textContent=isTrainer?'غير مُعد':'غير متاح';
+   if(isTrainer){
+     home.innerHTML=`<div class="bad">
+       <b>⚠️ الاختبار النهائي غير مُعد بعد.</b>
+       <div class="muted" style="margin-top:6px">يمكنك من هنا الانتقال مباشرة إلى إعداد الاختبار النهائي.</div>
+       <div style="margin-top:10px"><button type="button" class="primary" onclick="v60OpenFinalSettings()">⚙️ فتح إعدادات الاختبار النهائي</button></div>
+     </div>`;
+   }else{
+     home.innerHTML=`<div class="bad">
+       <b>⚠️ الاختبار النهائي غير متاح حاليًا.</b>
+       <div class="muted" style="margin-top:6px">سيظهر الاختبار هنا عند تفعيله من قبل المدرب.</div>
+     </div>`;
+   }
+   return;
+ }
+
+ const cfg=v60ParseFinalConfig(exam);
+ const now=new Date();
+ const startOk=!exam.starts_at||new Date(exam.starts_at)<=now;
+ const endOk=!exam.ends_at||new Date(exam.ends_at)>=now;
+ const groupOk=!exam.group_name||exam.group_name===profile?.group_name;
+
+ let used=0;
+ if(user?.id){
+   const usedR=await db.from('attempts').select('id',{count:'exact',head:true}).eq('exam_id',exam.id).eq('student_id',user.id);
+   used=Number(usedR.count||0);
+ }
+
+ const unlimited=exam.max_attempts==null;
+ const exhausted=!unlimited&&used>=Number(exam.max_attempts);
+ const available=!!exam.is_active&&startOk&&endOk&&groupOk&&!exhausted;
+
+ if(status)status.textContent=available?'متاح الآن':(exam.is_active?'غير متاح حاليًا':'غير مفعّل');
+
+ const startLabel=exhausted?'استنفدت المحاولات':
+   (!exam.is_active?'غير مفعّل':
+   (!groupOk?'غير مخصص لشعبتك':
+   (!startOk?'لم يبدأ بعد':
+   (!endOk?'انتهى الموعد':'🚀 ابدأ الاختبار النهائي'))));
+
+ const trainerTools=isTrainer
+   ? `<div class="v60-final-trainer-tools" style="margin-top:12px">
+        <button type="button" class="primary" onclick="v60OpenFinalSettings()">⚙️ فتح إعدادات الاختبار النهائي</button>
+      </div>`
+   : '';
+
+ const studentStatus = available
+   ? `<div class="v60-status"><span class="v60-dot green"></span>الاختبار متاح للبدء</div>`
+   : `<div class="v60-status"><span class="v60-dot orange"></span>${isTrainer?'حالة الاختبار للمدرب: '+esc(startLabel):'الاختبار النهائي غير متاح حاليًا.'}</div>`;
+
+ home.innerHTML=`<div class="v60-final-kpis">
+   <div class="v60-final-kpi"><div class="num">${exam.question_count}</div><div class="lbl">سؤال</div></div>
+   <div class="v60-final-kpi"><div class="num">${exam.duration_minutes}</div><div class="lbl">دقيقة</div></div>
+   <div class="v60-final-kpi"><div class="num">${cfg.passPercent}%</div><div class="lbl">حد النجاح</div></div>
+   <div class="v60-final-kpi"><div class="num">${unlimited?'∞':Math.max(0,Number(exam.max_attempts)-used)}</div><div class="lbl">محاولات متبقية</div></div>
+ </div>
+ <div class="v60-readiness">
+   <div class="v60-readiness-box">
+     <h3 style="margin-top:0">مكونات الاختبار</h3>
+     <div class="v60-breakdown">
+       ${Object.entries(cfg.counts).map(([t,n])=>`<div class="v60-topic-row">
+         <div class="v60-topic-head"><span>${esc(t)}</span><span>${n} سؤال</span></div>
+         <div class="v60-topic-bar"><span style="width:${Math.min(100,Number(n)/Math.max(1,exam.question_count)*100)}%"></span></div>
+       </div>`).join('')}
+     </div>
+   </div>
+   <div class="v60-readiness-box">
+     <h3 style="margin-top:0">حالة الإتاحة</h3>
+     ${studentStatus}
+     <div class="muted" style="margin-top:8px">الشعبة: ${esc(exam.group_name||'كل الشعب')}</div>
+     <div class="muted">البداية: ${exam.starts_at?new Date(exam.starts_at).toLocaleString('ar-SA'):'الآن'}</div>
+     <div class="muted">النهاية: ${exam.ends_at?new Date(exam.ends_at).toLocaleString('ar-SA'):'غير محددة'}</div>
+     <div style="margin-top:12px">
+       <button type="button" class="primary green" ${available?'':'disabled'} onclick="startV60FinalExam('${exam.id}')">🚀 ${available?'ابدأ الاختبار النهائي':'الاختبار غير متاح'}</button>
+     </div>
+     ${trainerTools}
+   </div>
+ </div>`;
+}
+
 async function startV60FinalExam(examId){
  const exR=await db.from('trainer_exams').select('*').eq('id',examId).single();if(exR.error){alert('تعذر فتح الاختبار النهائي: '+exR.error.message);return;}const ex=exR.data,cfg=v60ParseFinalConfig(ex),now=new Date();
  if(!ex.is_active){alert('الاختبار النهائي غير مفعّل حاليًا.');return;}if(ex.group_name&&ex.group_name!==profile?.group_name){alert('الاختبار النهائي غير مخصص لشعبتك.');return;}if(ex.starts_at&&new Date(ex.starts_at)>now){alert('الاختبار النهائي لم يبدأ بعد.');return;}if(ex.ends_at&&new Date(ex.ends_at)<now){alert('انتهت مدة الإتاحة لهذا الاختبار النهائي.');return;}
