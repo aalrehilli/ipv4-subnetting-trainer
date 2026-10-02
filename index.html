@@ -1,8 +1,11 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V58</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="description" content="IPv4 Subnetting Trainer — منصة تدريب تفاعلية في IPv4 وBinary وSubnetting وFLSM وVLSM">
+<meta name="theme-color" content="#0759a5">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>IPv4 Subnetting Trainer — V63 Release</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" onerror="window.__v63QrLoadError=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__v63SupabaseLoadError=true"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}.role-admin{background:#7b3fb3}.role-trainer{background:#0759a5}.role-student{background:#168a46}.admin-only{display:none}.role-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .v61-cert-head{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}.v61-readiness{min-width:170px;padding:14px 16px;border-radius:14px;background:#eef7ff;border:1px solid #cfe4f6;text-align:center;font-weight:800;color:#0759a5}.v61-req-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.v61-req{border:1px solid #dce8f2;border-radius:12px;padding:14px;background:#fff}.v61-req.ok{background:#ecfaf1;border-color:#bfe4ca}.v61-req.bad{background:#fff7f4;border-color:#f0c9bc}.v61-req .icon{font-size:24px}.v61-req .val{font-size:20px;font-weight:800;color:#0759a5;margin-top:6px}.v61-cert-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.v61-cert-note{padding:12px;border-radius:10px;background:#f7fbff;border:1px solid #dce8f2;margin-top:14px}.v61-cert-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.v61-req-grid{grid-template-columns:repeat(2,1fr)}.v61-cert-meta{grid-template-columns:1fr}}@media(max-width:520px){.v61-req-grid{grid-template-columns:1fr}}
@@ -306,13 +309,29 @@
 @media(max-width:650px){.v60-final-kpis{grid-template-columns:1fr 1fr}.v60-breakdown{grid-template-columns:1fr}}
 </style>
 
+
+<style id="v63-production-css">
+/* V63 — production hardening */
+.skip-link{position:fixed;right:12px;top:-60px;z-index:20000;background:#fff;color:#0759a5;border:2px solid #0759a5;border-radius:10px;padding:10px 14px;font-weight:900;text-decoration:none;transition:top .15s}.skip-link:focus{top:12px}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #f2b84b;outline-offset:2px}
+button[disabled],input[disabled],select[disabled]{opacity:.65;cursor:not-allowed}
+.v63-status{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:900;padding:7px 10px;border-radius:999px;background:#ffffff1f;color:#fff;border:1px solid #ffffff33}
+.v63-dot{width:9px;height:9px;border-radius:50%;background:#43c66d}.v63-dot.offline{background:#ffcc42}.v63-dot.error{background:#ff6d6d}
+.v63-release{margin-top:12px;padding:10px 12px;border-radius:10px;background:#f7fbff;border:1px solid #d8e6f1;color:#38566f;font-size:12px}
+.v63-toast-host{position:fixed;left:18px;bottom:18px;z-index:18000;display:grid;gap:8px;max-width:min(420px,calc(100vw - 36px))}.v63-toast{background:#17324d;color:#fff;padding:12px 14px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.2);font-size:13px;line-height:1.7}.v63-toast.good{background:#116b36}.v63-toast.warn{background:#8a5a00}.v63-toast.bad{background:#8d2f2f}
+.v63-offline-banner{display:none;position:sticky;top:0;z-index:1200;background:#fff3cd;color:#6b4a00;border-bottom:1px solid #e9ca78;padding:8px 12px;text-align:center;font-weight:800}.v63-offline-banner.show{display:block}
+@media(max-width:700px){.v63-status{font-size:11px;padding:6px 9px}.v63-release{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
 </head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V60 • Supabase</div></div>
-<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('finalExam',this)">🎓 الاختبار النهائي</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
-<div class="container">
+<a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
+<div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • VLSM • V63 Production Release</div></div>
+<div id="v63Status" class="v63-status hidden" aria-live="polite"><span id="v63StatusDot" class="v63-dot"></span><span id="v63StatusText">جاهز</span></div><nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('finalExam',this)">🎓 الاختبار النهائي</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
+<div class="container" id="mainContent" tabindex="-1">
 <div id="app" class="hidden">
 <section id="home">
-<div class="card hero"><span class="badge">CLASS C + FLSM + FINAL ASSESSMENT</span><h1>منصة تدريب IPv4 Subnetting</h1><p>ابدأ من تحديد مستواك، ثم راجع نقاط ضعفك، وبعدها انتقل إلى المقرر والتمارين والاختبارات.</p></div>
+<div class="card hero"><span class="badge">CLASS C + FLSM + VLSM + FINAL ASSESSMENT</span><h1>منصة تدريب IPv4 Subnetting</h1><p>ابدأ من تحديد مستواك، ثم راجع نقاط ضعفك، وبعدها انتقل إلى المقرر والتمارين والاختبارات.</p><div class="v63-release">🛡️ نسخة إنتاجية نهائية: تحسينات للاستقرار، الوصولية، استعادة الجلسة، حالة الاتصال، والرجوع الآمن إلى الرئيسية.</div></div>
 <div class="home-feature-grid">
   <div class="card home-feature placement-feature">
     <div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:10px 0 6px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div>
@@ -536,6 +555,37 @@ const SUPABASE_KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA";
 const SITE_URL="https://aalrehilli.github.io/ipv4-subnetting-trainer/";
 const $=x=>document.getElementById(x);
 function setMsg(t,g=false){const el=$("authMsg");if(el)el.innerHTML=`<div class="${g?'good':'bad'}">${t}</div>`;}
+function v63Toast(message, tone=''){
+  let host=$('v63ToastHost');
+  if(!host){host=document.createElement('div');host.id='v63ToastHost';host.className='v63-toast-host';document.body.appendChild(host);}
+  const item=document.createElement('div');item.className=`v63-toast ${tone}`;item.textContent=message;item.setAttribute('role','status');item.setAttribute('aria-live','polite');host.appendChild(item);
+  setTimeout(()=>{item.style.opacity='0';item.style.transform='translateY(6px)';item.style.transition='.18s ease';setTimeout(()=>item.remove(),220)},4200);
+}
+function v63SetNetworkStatus(){
+  const online=navigator.onLine!==false;
+  const banner=$('v63OfflineBanner'), dot=$('v63StatusDot'), text=$('v63StatusText'), chip=$('v63Status');
+  if(banner)banner.classList.toggle('show',!online);
+  if(dot)dot.className=`v63-dot ${online?'':'offline'}`;
+  if(text)text.textContent=online?'متصل':'غير متصل';
+  if(chip)chip.classList.remove('hidden');
+}
+function v63StorageAvailable(){
+  try{const k='ipv4_v63_storage_test';localStorage.setItem(k,'1');localStorage.removeItem(k);return true;}catch(_e){return false;}
+}
+function v63HardeningInit(){
+  v63SetNetworkStatus();
+  window.addEventListener('online',()=>{v63SetNetworkStatus();v63Toast('✅ عاد الاتصال بالإنترنت.','good');});
+  window.addEventListener('offline',()=>{v63SetNetworkStatus();v63Toast('⚠️ انقطع الاتصال. احفظ إجاباتك قبل متابعة العمليات التي تحتاج Supabase.','warn');});
+  if(!v63StorageAvailable())v63Toast('⚠️ التخزين المحلي غير متاح؛ بعض السجل المحلي وميزات الاستمرارية قد لا تعمل.','warn');
+  if(window.__v63QrLoadError)v63Toast('ℹ️ مكتبة QR لم تُحمّل. سيبقى رابط التحقق متاحًا بدون QR.','warn');
+  if(window.__v63SupabaseLoadError)v63Toast('❌ تعذر تحميل مكتبة الحسابات. أعد المحاولة بعد التأكد من الاتصال.','bad');
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')v63SetNetworkStatus();});
+}
+function v63GuardActiveExam(){
+  const active=Boolean(currentExamId&&testStartedAt&&!testSubmitted);
+  if(!active)return true;
+  return confirm('يوجد اختبار قيد التنفيذ. الانتقال من الصفحة قد يفقد حالة الاختبار الحالية. هل تريد المتابعة؟');
+}
 function initSupabase(){
   if(!window.supabase || typeof window.supabase.createClient!=="function"){
     setMsg("❌ تعذر تحميل مكتبة Supabase. حدّث الصفحة بـ Ctrl+F5 ثم جرّب مرة أخرى.");
@@ -557,6 +607,7 @@ function showApp(){
   if(trainerNav) trainerNav.classList.toggle("hidden", !canTrainer);
   if(adminNav) adminNav.classList.toggle("hidden", profile?.role!=="admin");
   renderDashboard(); renderAccount(); renderV52PlacementSummary(); if(profile?.role==="student")loadStudentNotifications();
+  resetHomeView();
 }
 function msg(id,t,g=false){const el=$(id);if(el)el.innerHTML=`<div class="${g?'good':'bad'}">${t}</div>`;}
 async function boot(){
@@ -604,6 +655,8 @@ function resetHomeView(){
   document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));
   const home=$("home"); if(home) home.classList.remove("hidden");
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  ['v50AdaptiveArea','v51VisualArea','practiceArea','challengeArea','competitionArea'].forEach(id=>{const el=$(id);if(el)el.innerHTML='';});
+  window.v58DashboardTab='overview';
   try{window.scrollTo({top:0,left:0,behavior:"instant"});}catch(_e){window.scrollTo(0,0);}
 }
 function openHomeSmartReview(button){
@@ -626,6 +679,7 @@ function studentDashboardTab(tab,btn){
 }
 
 function page(id,b){
+  if(id!=="tests" && id!=="finalExam" && (currentExamId&&testStartedAt&&!testSubmitted)){if(!v63GuardActiveExam())return;}
   if(id==="home"){resetHomeView();if(profile?.role==="student")loadStudentNotifications();return;}
   document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));
   const target=$(id); if(target) target.classList.remove("hidden");
@@ -3583,8 +3637,12 @@ function renderAccount(){$("accountInfo").innerHTML=profile?`<div class="stat"><
 async function exportCSV(){let r=(await db.from("attempts").select("percentage,correct_answers,total_questions,submitted_at,profiles(full_name,student_id)")).data||[],rows=[["Student","Student ID","Type","Date","Score","Details"],...r.map(x=>[x.profiles?.full_name||"",x.profiles?.student_id||"","Exam",x.submitted_at,x.percentage,`${x.correct_answers}/${x.total_questions}`])],csv="\ufeff"+rows.map(x=>x.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="ipv4_subnetting_results.csv";a.click()}
 window.addEventListener("error",e=>{console.error(e.error||e.message);if($("authMsg"))setMsg("❌ خطأ في الصفحة: "+(e.message||"خطأ JavaScript"));});
 window.addEventListener("unhandledrejection",e=>{console.error(e.reason);if($("authMsg"))setMsg("❌ خطأ في الاتصال: "+(e.reason?.message||e.reason||"خطأ غير معروف"));});
+window.addEventListener('beforeunload',e=>{
+  if(currentExamId&&testStartedAt&&!testSubmitted){e.preventDefault();e.returnValue='';}
+});
 window.addEventListener("DOMContentLoaded",async()=>{
- console.log("V52 Smart Placement loaded");
+ v63HardeningInit();
+ console.log("V63 Production Release loaded");
  const params=new URLSearchParams(window.location.search);
  const verifyNo=params.get("verify");
  if(verifyNo){
