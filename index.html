@@ -130,16 +130,45 @@
 @media(max-width:850px){.v51-visual-grid{grid-template-columns:1fr}.v51-toolbar{grid-template-columns:1fr 1fr}.v51-toolbar button{grid-column:1/-1}.v51-bitrow{grid-template-columns:repeat(16,1fr)}}
 @media(max-width:600px){.v51-toolbar{grid-template-columns:1fr}.v51-bitrow{grid-template-columns:repeat(8,1fr)}.v51-bits{grid-template-columns:1fr 1fr}.v51-info-grid{grid-template-columns:1fr}}
 
+
+/* V52 — اختبار تحديد المستوى الذكي */
+.v52-placement-card{border:2px solid #b7a3e8;background:linear-gradient(135deg,#fbf8ff,#fff)}
+.v52-placement-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.v52-placement-badge{display:inline-flex;align-items:center;gap:6px;background:#f1eaff;color:#6a3fa3;border:1px solid #d6c4f4;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v52-domains{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.v52-domain{border:1px solid #dfe4ec;border-radius:12px;padding:12px;background:#fff}
+.v52-domain .score{font-size:24px;font-weight:800;color:#6a3fa3}
+.v52-testbar{height:10px;background:#ece8f5;border-radius:999px;overflow:hidden;margin-top:7px}
+.v52-testbar span{display:block;height:100%;background:#7652b6;border-radius:999px}
+.v52-progress{height:10px;background:#e7edf3;border-radius:999px;overflow:hidden}
+.v52-progress span{display:block;height:100%;background:#7652b6}
+.v52-q{background:#fff;border:1px solid #dfe7ef;border-radius:14px;padding:16px;margin-top:14px}
+.v52-qhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.v52-qnum{display:inline-flex;align-items:center;gap:7px;background:#eef5fb;color:#0759a5;border:1px solid #ccdfef;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v52-choice{display:block;padding:11px 12px;border:1px solid #dbe5ee;border-radius:10px;background:#fbfdff;margin:8px 0;cursor:pointer}
+.v52-choice:hover{background:#f2f8fd;border-color:#a9c9e3}
+.v52-choice input{width:auto;margin:0 7px 0 0;vertical-align:middle}
+.v52-nav{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:16px}
+.v52-result-hero{background:linear-gradient(135deg,#f8f4ff,#fff);border:2px solid #c9b6eb;border-radius:18px;padding:18px}
+.v52-result-level{font-size:30px;font-weight:900;color:#6a3fa3;margin:6px 0}
+.v52-plan{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:14px}
+.v52-plan-box{border:1px solid #dde5ec;border-radius:13px;padding:14px;background:#fff}
+.v52-plan-box h4{margin:0 0 8px;color:#0759a5}
+.v52-plan ul{margin:8px 0 0;padding-right:20px;line-height:1.9}
+.v52-history{max-height:300px;overflow:auto}
+@media(max-width:900px){.v52-domains{grid-template-columns:1fr 1fr}.v52-plan{grid-template-columns:1fr}}
+@media(max-width:520px){.v52-domains{grid-template-columns:1fr}}
 </style>
 <style>
 .v42-test-config{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}.v42-test-config .cfg{background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:12px}.v42-test-config label{font-weight:700;display:block;margin-bottom:6px}.v42-test-config input,.v42-test-config select{width:100%;box-sizing:border-box}.v42-test-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:10px;margin:12px 0}.v42-question-nav{display:flex;gap:6px;flex-wrap:wrap}.v42-qbtn{min-width:38px;border:1px solid #c8dbea;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}.v42-qbtn.answered{background:#e8f7ef;border-color:#9bd5b1}.v42-qbtn.flagged{box-shadow:inset 0 0 0 2px #f0a000}.v42-qbtn.current{background:#0b63b6;color:#fff;border-color:#0b63b6}.v42-qcard{scroll-margin-top:90px}.v42-qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.v42-qactions{display:flex;gap:6px;flex-wrap:wrap}.v42-qactions button{font-size:13px;padding:6px 9px}.v42-status{font-size:13px}.v42-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v42-summary .mini{background:#fff;border:1px solid #dbe9f4;border-radius:10px;padding:10px;text-align:center}.v42-summary b{display:block;font-size:20px;color:#0b63b6}@media(max-width:800px){.v42-test-config{grid-template-columns:1fr 1fr}.v42-summary{grid-template-columns:1fr 1fr}}@media(max-width:520px){.v42-test-config{grid-template-columns:1fr}.v42-summary{grid-template-columns:1fr}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V51 • Supabase</div></div>
-<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V52 • Supabase</div></div>
+<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
-<section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج، ويشمل المسار الآن تدريب Decimal ↔ Binary قبل Subnetting.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
+<section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج، ويشمل المسار الآن تدريب Decimal ↔ Binary قبل Subnetting.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div><button class="primary purple" onclick="page('placement')">🚀 ابدأ التحديد</button></div></div>
+<div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
   <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
@@ -148,12 +177,13 @@
   <div id="v50AdaptiveArea"></div><div id="v51VisualArea"></div><div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
 </div></section>
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
+<section id="placement" class="hidden"><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اختبار تحديد المستوى الذكي</h2><p class="muted" style="margin:0">20 سؤالًا متوازنًا. لا يوجد نجاح أو رسوب؛ الهدف هو معرفة نقطة البداية الأنسب لك.</p></div><div id="v52PlacementStatus" class="v52-placement-badge">لم يبدأ بعد</div></div><div id="v52PlacementArea" style="margin-top:16px"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V51 • IPv4 + Binary + Visual Lab + Adaptive Training</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V52 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
-<div class="card hero"><h2>📊 لوحة المتدرب الذكية</h2><p>كل ما تحتاجه لمعرفة تقدمك، نقاط قوتك، وما الذي ينبغي أن تراجعه بعد ذلك.</p><div id="studentDashboard"></div></div>
+<div class="card hero"><h2>📊 لوحة المتدرب الذكية</h2><p>كل ما تحتاجه لمعرفة تقدمك، نقاط قوتك، وما الذي ينبغي أن تراجعه بعد ذلك.</p><div id="studentDashboard"></div><div id="v52PlacementSummary"></div></div>
 <div class="card"><h2>🔔 إشعاراتك</h2><p class="muted">تنبيهات الاختبارات والنتائج المنشورة من المدرب.</p><div id="studentNotifications"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div><div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div>
 <div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div>
 </section>
@@ -256,7 +286,7 @@ function showApp(){
   const adminNav=$("adminNav");
   if(trainerNav) trainerNav.classList.toggle("hidden", !canTrainer);
   if(adminNav) adminNav.classList.toggle("hidden", profile?.role!=="admin");
-  renderDashboard(); renderAccount(); if(profile?.role==="student")loadStudentNotifications();
+  renderDashboard(); renderAccount(); renderV52PlacementSummary(); if(profile?.role==="student")loadStudentNotifications();
 }
 function msg(id,t,g=false){const el=$(id);if(el)el.innerHTML=`<div class="${g?'good':'bad'}">${t}</div>`;}
 async function boot(){
@@ -300,7 +330,7 @@ async function loadProfile(){
   profile=r.data;return r;
 }
 async function logout(){await db.auth.signOut();window.location.href='login.html';}
-function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="home"&&profile?.role==="student")loadStudentNotifications();if(id==="practice")updatePracticeStats();if(id==="trainer")renderTrainer();if(id==="account")renderAccount();if(id==="adminUsers")loadAdminUsers();if(id==="tests")loadPublishedExams();if(id==="course")loadCourse()}
+function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="home"&&profile?.role==="student")loadStudentNotifications();if(id==="practice")updatePracticeStats();if(id==="trainer")renderTrainer();if(id==="account")renderAccount();if(id==="adminUsers")loadAdminUsers();if(id==="tests")loadPublishedExams();if(id==="course")loadCourse();if(id==="placement")renderV52PlacementHome();if(id==="dashboard")renderV52PlacementSummary()}
 function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".")}
 function problem(level){let a=level==="easy"?[2,4,8]:level==="medium"?[3,5,6,7,8,10,12]:[5,6,7,9,10,11,12,13,14,15,16],need=a[Math.floor(Math.random()*a.length)],o=Math.floor(Math.random()*223)+1,b=Math.ceil(Math.log2(need)),p=24+b,block=2**(32-p);return{network:`192.168.${o}.0`,need,bits:b,prefix:p,mask:ip((0xffffffff<<(32-p))>>>0),block,hosts:block-2}}
 
@@ -843,8 +873,20 @@ async function getV50WeaknessProfile(){
       if(stats[topic].total===0){stats[topic].total=1; stats[topic].correct=Number(a.percentage||0)>=70?1:0; stats[topic].wrong=Number(a.percentage||0)>=70?0:1;}
     });
     const rows=Object.values(stats).map(x=>{const acc=x.total?Math.round(x.correct*100/x.total):0;return {...x,accuracy:acc,difficulty:v50DifficultyFromAccuracy(acc)}}).sort((a,b)=>a.accuracy-b.accuracy);
-    const weak=rows[0]||null;
-    return {rows,weak,source:answers.length?'attempt_answers':'attempts'};
+    let weak=rows[0]||null;
+    // V52 fallback: use the latest placement assessment when the student has no saved exam-topic data yet.
+    if(!weak){
+      try{
+        const h=v52LoadHistory?.()||[], latest=h[0];
+        if(latest?.weakest?.d){
+          const topicMap={'Binary Conversion':'Binary Conversion','IPv4':'IPv4','Subnet Mask / CIDR':'Subnetting','Subnetting':'Subnetting'};
+          const topic=topicMap[latest.weakest.d]||latest.weakest.d;
+          const accuracy=Number(latest.weakest.accuracy||0);
+          weak={topic, total:1, wrong:accuracy<70?1:0, correct:accuracy>=70?1:0, accuracy, difficulty:v50DifficultyFromAccuracy(accuracy), fromPlacement:true};
+        }
+      }catch(_e){}
+    }
+    return {rows,weak,source:weak?.fromPlacement?'v52_placement':(answers.length?'attempt_answers':'attempts')};
   }catch(e){console.warn('V50 weakness profile',e);return {rows:[],weak:null,source:'error'};}
 }
 function v50RenderRecommendation(profile){
@@ -2628,6 +2670,121 @@ async function loadCertificate(){
  if(x.certificate_no) renderCertificate(x);
 }
 
+
+/* ==================== V52 — Smart Placement Assessment ==================== */
+const V52_STORAGE_KEY='ipv4_v52_placement_v1';
+const v52Questions=[
+  {id:'b1',domain:'Binary Conversion',type:'mcq',q:'ما القيمة العشرية للـ Binary التالي: 11000000؟',choices:['128','192','224','240'],answer:'192',explain:'128 + 64 = 192.'},
+  {id:'b2',domain:'Binary Conversion',type:'short',q:'حوّل 25 من Decimal إلى 8-bit Binary.',answer:'00011001',normalize:v=>String(v||'').replace(/\\s/g,''),explain:'16 + 8 + 1 = 25، لذلك 00011001.'},
+  {id:'b3',domain:'Binary Conversion',type:'mcq',q:'أي قيمة تساوي Binary 10101000؟',choices:['160','168','170','172'],answer:'168',explain:'128 + 32 + 8 = 168.'},
+  {id:'b4',domain:'Binary Conversion',type:'short',q:'حوّل 200 من Decimal إلى 8-bit Binary.',answer:'11001000',normalize:v=>String(v||'').replace(/\\s/g,''),explain:'128 + 64 + 8 = 200.'},
+  {id:'b5',domain:'Binary Conversion',type:'mcq',q:'ما قيمة الـ Bit رقم 1 من اليسار في Octet من 8 Bits؟',choices:['1','2','64','128'],answer:'128',explain:'أعلى وزن في الـ Octet هو 128.'},
+  {id:'i1',domain:'IPv4',type:'mcq',q:'كم عدد الـ Bits في عنوان IPv4؟',choices:['16','24','32','64'],answer:'32',explain:'IPv4 يستخدم عنوانًا بطول 32 Bit.'},
+  {id:'i2',domain:'IPv4',type:'mcq',q:'كم عدد الـ Octets في عنوان IPv4؟',choices:['2','4','6','8'],answer:'4',explain:'العنوان يتكون من أربعة Octets، كل واحد 8 Bits.'},
+  {id:'i3',domain:'IPv4',type:'short',q:'ما أكبر قيمة يمكن أن يحملها Octet واحد في IPv4؟',answer:'255',normalize:v=>String(v||'').trim(),explain:'Octet من 8 Bits تتراوح قيمته من 0 إلى 255.'},
+  {id:'i4',domain:'IPv4',type:'mcq',q:'هل يمكن معرفة Network Address من 192.168.1.10 بدون Prefix أو Subnet Mask؟',choices:['نعم دائمًا','لا','نعم إذا كان Class C','نعم إذا كان العنوان خاصًا'],answer:'لا',explain:'نحتاج Subnet Mask أو Prefix لتحديد حدود الشبكة.'},
+  {id:'i5',domain:'IPv4',type:'mcq',q:'أي عنوان مما يلي يحتوي على أربعة Octets صحيحة؟',choices:['192.168.1','192.168.1.10','300.1.1.1','10.10.10.999'],answer:'192.168.1.10',explain:'IPv4 يتكون من أربعة Octets وكل Octet بين 0 و255.'},
+  {id:'s1',domain:'Subnet Mask / CIDR',type:'mcq',q:'ما هو Subnet Mask المقابل لـ /24؟',choices:['255.255.0.0','255.255.255.0','255.255.255.128','255.255.255.192'],answer:'255.255.255.0',explain:'/24 يعني 24 Network Bits ثم Octet أخير كله Host Bits.'},
+  {id:'s2',domain:'Subnet Mask / CIDR',type:'mcq',q:'كم عدد Host Bits في /26؟',choices:['4','6','8','26'],answer:'6',explain:'32 - 26 = 6 Host Bits.'},
+  {id:'s3',domain:'Subnet Mask / CIDR',type:'short',q:'ما الـ Prefix المكافئ للـ Mask 255.255.255.192؟',answer:'/26',normalize:v=>String(v||'').trim().replace(/\s/g,''),explain:'192 في الـ Octet الأخير = 11000000، أي 2 Bits إضافية فوق /24.'},
+  {id:'s4',domain:'Subnet Mask / CIDR',type:'mcq',q:'أي Mask يستخدم /27؟',choices:['255.255.255.192','255.255.255.224','255.255.255.240','255.255.255.248'],answer:'255.255.255.224',explain:'/27 = 11100000 في الـ Octet الأخير = 224.'},
+  {id:'s5',domain:'Subnet Mask / CIDR',type:'mcq',q:'كم عدد Host Addresses النظري في /28 قبل استبعاد Network وBroadcast؟',choices:['8','16','30','32'],answer:'16',explain:'32 - 28 = 4 Host Bits، و2^4 = 16 عنوانًا.'},
+  {id:'n1',domain:'Subnetting',type:'mcq',q:'إذا كان لديك /26، فما Block Size في الـ Octet المتغير؟',choices:['32','64','128','192'],answer:'64',explain:'256 - 192 = 64.'},
+  {id:'n2',domain:'Subnetting',type:'mcq',q:'ما الـ Network Address للعنوان 192.168.1.70/26؟',choices:['192.168.1.0','192.168.1.64','192.168.1.70','192.168.1.128'],answer:'192.168.1.64',explain:'نطاقات /26 تبدأ 0،64،128،192. العنوان 70 يقع في نطاق 64.'},
+  {id:'n3',domain:'Subnetting',type:'mcq',q:'ما الـ Broadcast للعنوان 192.168.1.70/26؟',choices:['192.168.1.63','192.168.1.64','192.168.1.127','192.168.1.128'],answer:'192.168.1.127',explain:'نطاق الشبكة 64–127، لذلك Broadcast هو 127.'},
+  {id:'n4',domain:'Subnetting',type:'mcq',q:'كم عدد Usable Hosts في /27؟',choices:['14','30','32','62'],answer:'30',explain:'2^(32-27)-2 = 32-2 = 30.'},
+  {id:'n5',domain:'Subnetting',type:'short',q:'كم عدد Subnets الناتجة عند الانتقال من /24 إلى /27؟',answer:'8',normalize:v=>String(v||'').trim(),explain:'Borrowed Bits = 3، وعدد الشبكات = 2^3 = 8.'}
+];
+let v52State={questions:[],index:0,answers:{},startedAt:null,mode:'idle',result:null};
+function v52Shuffle(a){const x=[...a];for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;}
+function v52BuildQuestions(){
+  const domains=['Binary Conversion','IPv4','Subnet Mask / CIDR','Subnetting'];
+  const out=[];
+  domains.forEach(d=>out.push(...v52Shuffle(v52Questions.filter(q=>q.domain===d)).slice(0,5)));
+  return v52Shuffle(out);
+}
+function v52Esc(v){return esc(v);}
+function v52Normalize(q,v){return q.normalize?q.normalize(v):String(v??'').trim().toLowerCase();}
+function v52IsCorrect(q,v){return v52Normalize(q,v)===v52Normalize(q,q.answer);}
+function renderV52PlacementHome(){
+  const host=$('v52PlacementArea'); if(!host)return;
+  const saved=v52LoadHistory();
+  if(v52State.mode==='running'){v52RenderQuestion();return;}
+  if(v52State.result){v52RenderResult(v52State.result);return;}
+  host.innerHTML=`<div class="v52-placement-card card"><div class="v52-placement-head"><div><span class="v52-placement-badge">20 سؤالًا • 4 مهارات</span><h3 style="margin:8px 0 4px">اختبار تشخيصي بلا ضغط</h3><div class="muted">النتيجة ستحدد نقطة البداية المقترحة فقط، ويمكنك إعادة الاختبار لاحقًا.</div></div><button class="primary purple" onclick="startV52Placement()">🚀 ابدأ الاختبار</button></div>${saved.length?`<div class="question" style="margin-top:14px"><b>آخر محاولة:</b> ${saved[0].overall}% — ${esc(saved[0].levelLabel)} — ${new Date(saved[0].createdAt).toLocaleDateString('ar-SA')}<button class="primary" style="margin-right:8px" onclick="v52RenderHistory()">📜 السجل</button></div>`:''}</div>`;
+}
+function startV52Placement(){
+  v52State={questions:v52BuildQuestions(),index:0,answers:{},startedAt:Date.now(),mode:'running',result:null};
+  const s=$('v52PlacementStatus');if(s)s.textContent='قيد الاختبار';
+  v52RenderQuestion();
+}
+function v52RenderQuestion(){
+  const host=$('v52PlacementArea');if(!host)return;
+  const q=v52State.questions[v52State.index];if(!q)return;
+  const total=v52State.questions.length, n=v52State.index+1, saved=v52State.answers[q.id];
+  const domainCounts=v52State.questions.reduce((m,x)=>(m[x.domain]=(m[x.domain]||0)+1,m),{});
+  let input='';
+  if(q.type==='mcq'){
+    input=q.choices.map(c=>`<label class="v52-choice"><input type="radio" name="v52answer" value="${v52Esc(c)}" ${String(saved??'')===String(c)?'checked':''}> ${v52Esc(c)}</label>`).join('');
+  }else{
+    input=`<input id="v52Short" class="v51-ip-input" value="${v52Esc(saved??'')}" placeholder="اكتب الإجابة هنا" autocomplete="off">`;
+  }
+  host.innerHTML=`<div class="v52-q"><div class="v52-qhead"><div><span class="v52-qnum">السؤال ${n} من ${total}</span><h3 style="margin:10px 0">${v52Esc(q.q)}</h3><div class="muted">المهارة: ${v52Esc(q.domain)}</div></div><div style="min-width:220px;flex:1"><div class="v52-progress"><span style="width:${Math.round(n/total*100)}%"></span></div><div class="muted" style="margin-top:5px;text-align:left">${Math.round(n/total*100)}%</div></div></div><div style="margin-top:12px">${input}</div><div class="v52-nav"><button class="primary" onclick="v52SaveAndMove(-1)" ${n===1?'disabled':''}>⬅️ السابق</button><span class="muted" style="align-self:center">هذه نتيجة تشخيصية، لا يوجد نجاح أو رسوب.</span><button class="primary ${n===total?'green':''}" onclick="v52SaveAndMove(1)">${n===total?'🏁 إنهاء':'التالي ➡️'}</button></div></div>`;
+}
+function v52CurrentAnswer(){
+  const q=v52State.questions[v52State.index];
+  if(!q)return '';
+  if(q.type==='mcq')return document.querySelector('input[name="v52answer"]:checked')?.value||'';
+  return $('v52Short')?.value||'';
+}
+function v52SaveAndMove(dir){
+  const q=v52State.questions[v52State.index];
+  if(!q)return;
+  const value=v52CurrentAnswer();
+  if(dir>0 && !String(value).trim()){alert('اكتب إجابتك أولًا.');return;}
+  v52State.answers[q.id]=value;
+  const ni=v52State.index+dir;
+  if(ni<0){v52State.index=0;return v52RenderQuestion();}
+  if(ni>=v52State.questions.length){return finishV52Placement();}
+  v52State.index=ni;v52RenderQuestion();
+}
+function v52Level(overall){
+  if(overall<40)return {key:'foundation',label:'بداية من الأساسيات',lesson:1,desc:'ابدأ من Binary وIPv4 ثم انتقل تدريجيًا إلى Prefix وSubnet Mask.'};
+  if(overall<60)return {key:'basic',label:'أساسيات جيدة مع حاجة للتثبيت',lesson:2,desc:'ابدأ من Prefix وSubnet Mask مع مراجعة Binary قبل Subnetting.'};
+  if(overall<75)return {key:'intermediate',label:'مستوى متوسط',lesson:3,desc:'يمكنك البدء في Borrowed Bits ثم Magic Number مع تمارين موجهة.'};
+  if(overall<90)return {key:'advanced',label:'متقدم في الأساسيات',lesson:5,desc:'ابدأ من Network/Broadcast وFLSM ثم انتقل إلى الاختبارات.'};
+  return {key:'challenge',label:'جاهز لمسار متقدم',lesson:7,desc:'ابدأ بالمختبر العملي والتحديات ثم الاختبار النهائي.'};
+}
+function finishV52Placement(){
+  const scored=v52State.questions.map(q=>({q,correct:v52IsCorrect(q,v52State.answers[q.id]||'')}));
+  const domainStats={};scored.forEach(x=>{const d=x.q.domain;domainStats[d]??={correct:0,total:0};domainStats[d].total++;if(x.correct)domainStats[d].correct++;});
+  const total=scored.length, correct=scored.filter(x=>x.correct).length, overall=Math.round(correct*100/total), level=v52Level(overall);
+  const weakest=Object.entries(domainStats).map(([d,s])=>({d,accuracy:Math.round(s.correct*100/s.total)})).sort((a,b)=>a.accuracy-b.accuracy)[0];
+  const strongest=Object.entries(domainStats).map(([d,s])=>({d,accuracy:Math.round(s.correct*100/s.total)})).sort((a,b)=>b.accuracy-a.accuracy)[0];
+  const result={overall,correct,total,levelLabel:level.label,levelKey:level.key,recommendedLesson:level.lesson,desc:level.desc,weakest,strongest,domainStats,createdAt:new Date().toISOString()};
+  v52State.result=result;v52State.mode='result';v52SaveHistory(result);v52RenderResult(result);
+  const s=$('v52PlacementStatus');if(s)s.textContent='تمت المحاولة';
+}
+function v52RenderResult(r){
+  const host=$('v52PlacementArea');if(!host)return;
+  const names={'Binary Conversion':'Decimal ↔ Binary','IPv4':'أساسيات IPv4','Subnet Mask / CIDR':'Subnet Mask وCIDR','Subnetting':'Subnetting'};
+  const domains=Object.entries(r.domainStats).map(([d,s])=>`<div class="v52-domain"><div class="muted">${v52Esc(names[d]||d)}</div><div class="score">${Math.round(s.correct*100/s.total)}%</div><div class="v52-testbar"><span style="width:${Math.round(s.correct*100/s.total)}%"></span></div><div class="muted" style="margin-top:5px">${s.correct} / ${s.total}</div></div>`).join('');
+  host.innerHTML=`<div class="v52-result-hero"><div class="v52-placement-badge">✅ اكتمل الاختبار التشخيصي</div><div class="v52-result-level">${v52Esc(r.levelLabel)}</div><div style="font-size:19px;margin:4px 0 10px">نتيجتك العامة: <b>${r.overall}%</b> — ${r.correct}/${r.total}</div><p class="muted" style="font-size:15px">${v52Esc(r.desc)}</p><div class="v52-domains">${domains}</div><div class="v52-plan"><div class="v52-plan-box"><h4>📚 نقطة البداية المقترحة</h4><div style="font-size:20px;font-weight:800">الدرس ${r.recommendedLesson}</div><div class="muted">سيبدأ المسار من هنا مع الاحتفاظ بحقك في مراجعة الدروس السابقة.</div><div class="practice-actions"><button class="primary" onclick="v52GoToRecommendedLesson(${r.recommendedLesson})">📚 اذهب إلى الخطة</button><button class="primary orange" onclick="page('practice')">🎯 ابدأ تدريبًا</button></div></div><div class="v52-plan-box"><h4>🎯 أين تحتاج إلى التركيز؟</h4><div><b>الأضعف:</b> ${v52Esc(names[r.weakest?.d]||r.weakest?.d||'—')} — ${r.weakest?.accuracy??0}%</div><div style="margin-top:7px"><b>الأقوى:</b> ${v52Esc(names[r.strongest?.d]||r.strongest?.d||'—')} — ${r.strongest?.accuracy??0}%</div><div class="muted" style="margin-top:9px">سيستفيد V50 من هذه النتيجة لتحسين التدريب التكيفي في الجلسة التالية.</div></div></div><div class="practice-actions" style="margin-top:14px"><button class="primary purple" onclick="startV52Placement()">🔄 إعادة الاختبار</button><button class="primary" onclick="v52RenderHistory()">📜 سجل المحاولات</button></div></div>`;
+}
+function v52SaveHistory(r){try{const h=v52LoadHistory();h.unshift(r);localStorage.setItem(V52_STORAGE_KEY,JSON.stringify(h.slice(0,10)));}catch(e){console.warn('V52 history',e);}}
+function v52LoadHistory(){try{const h=JSON.parse(localStorage.getItem(V52_STORAGE_KEY)||'[]');return Array.isArray(h)?h:[];}catch(e){return [];}}
+function v52RenderHistory(){
+  const host=$('v52PlacementArea');if(!host)return;const h=v52LoadHistory();
+  host.innerHTML=`<div class="v52-placement-card card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><div><span class="v52-placement-badge">📜 سجل تحديد المستوى</span><h3 style="margin:8px 0 0">آخر محاولاتك</h3></div><button class="primary" onclick="renderV52PlacementHome()">⬅️ رجوع</button></div><div class="v52-history" style="margin-top:12px">${h.length?`<table><tr><th>التاريخ</th><th>النتيجة</th><th>المستوى</th><th>أضعف مهارة</th><th>الدرس المقترح</th></tr>${h.map(x=>`<tr><td>${new Date(x.createdAt).toLocaleString('ar-SA')}</td><td>${x.overall}%</td><td>${v52Esc(x.levelLabel)}</td><td>${v52Esc(x.weakest?.d||'—')}</td><td>${x.recommendedLesson}</td></tr>`).join('')}</table>`:'لا توجد محاولات سابقة.'}</div></div>`;
+}
+function v52GoToRecommendedLesson(n){
+  page('course');
+  setTimeout(()=>{const cards=[...document.querySelectorAll('#courseLessons .card')];const card=cards.find(el=>el.textContent.includes('الدرس '+n));if(card)card.scrollIntoView({behavior:'smooth',block:'start'});},250);
+}
+function renderV52PlacementSummary(){
+  const host=$('v52PlacementSummary');if(!host)return;const h=v52LoadHistory();if(!h.length){host.innerHTML=`<div class="v52-placement-card card" style="margin-top:14px"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52</span><h3 style="margin:8px 0 4px">لم تحدد نقطة بدايتك بعد</h3><div class="muted">خض اختبار تحديد المستوى مرة واحدة لتحصل على توصية بداية شخصية.</div></div><button class="primary purple" onclick="page('placement')">ابدأ الآن</button></div></div>`;return;}const r=h[0];host.innerHTML=`<div class="v52-placement-card card" style="margin-top:14px"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 آخر تحديد مستوى</span><h3 style="margin:8px 0 4px">${v52Esc(r.levelLabel)} — ${r.overall}%</h3><div class="muted">نقطة البداية المقترحة: الدرس ${r.recommendedLesson}. أضعف مهارة: ${v52Esc(r.weakest?.d||'—')} (${r.weakest?.accuracy??0}%).</div></div><div class="practice-actions"><button class="primary" onclick="page('placement')">عرض التفاصيل</button><button class="primary purple" onclick="startV52Placement()">إعادة الاختبار</button></div></div></div>`;
+}
+
 async function issueCertificate(){
  const r=await db.rpc('issue_course_certificate');
  if(r.error){alert('تعذر إصدار الشهادة: '+r.error.message);return;}
@@ -2691,7 +2848,7 @@ async function exportCSV(){let r=(await db.from("attempts").select("percentage,c
 window.addEventListener("error",e=>{console.error(e.error||e.message);if($("authMsg"))setMsg("❌ خطأ في الصفحة: "+(e.message||"خطأ JavaScript"));});
 window.addEventListener("unhandledrejection",e=>{console.error(e.reason);if($("authMsg"))setMsg("❌ خطأ في الاتصال: "+(e.reason?.message||e.reason||"خطأ غير معروف"));});
 window.addEventListener("DOMContentLoaded",async()=>{
- console.log("V41 Certificate Verification loaded");
+ console.log("V52 Smart Placement loaded");
  const params=new URLSearchParams(window.location.search);
  const verifyNo=params.get("verify");
  if(verifyNo){
