@@ -212,13 +212,35 @@
 .v56-review-shell{margin-top:14px;border-top:1px solid #e3ebf2;padding-top:14px}.v56-q{border:1px solid #d9e5ef;border-right:4px solid #0b63b6;border-radius:12px;padding:14px;background:#fff;margin:10px 0}.v56-q.wrong{border-right-color:#c62828;background:#fffafa}.v56-q.correct{border-right-color:#2e8b57;background:#f7fcf8}.v56-qhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.v56-qnum{font-weight:900;color:#17324d}.v56-option{display:block;background:#fff;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer}.v56-feedback{margin-top:10px;padding:10px;border-radius:9px;line-height:1.8}.v56-feedback.good{background:#eef9f1;border-right:4px solid #2e8b57}.v56-feedback.bad{background:#fff2f2;border-right:4px solid #c62828}.v56-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.v56-progress{height:9px;background:#e9f0f6;border-radius:999px;overflow:hidden;margin-top:8px}.v56-progress span{display:block;height:100%;background:#0b63b6}.v56-small{font-size:12px;color:#667788}.v56-ready{padding:12px;border-radius:10px;background:#eef7ff;border-right:4px solid #0b63b6;line-height:1.9}.v56-empty{padding:20px;text-align:center;border:1px dashed #cfdde7;border-radius:14px;color:#6a7b8b;background:#fbfdff}
 @media(max-width:800px){.v56-plan{grid-template-columns:1fr}.v56-kpis{grid-template-columns:repeat(2,minmax(120px,1fr))}}
 </style>
+
+<style>
+/* V57 — نظام الإنجازات والشارات */
+.v57-card{margin-top:16px;border:1px solid #e4d28b;border-radius:16px;background:linear-gradient(135deg,#fffdf4,#fff);padding:16px}
+.v57-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.v57-badge{display:inline-flex;align-items:center;gap:6px;background:#fff4c8;color:#7a5b00;border:1px solid #e4cf75;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v57-summary{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;margin:14px 0}
+.v57-stat{background:#fff;border:1px solid #e8dfbd;border-radius:12px;padding:13px;text-align:center}.v57-stat .num{font-size:24px;font-weight:900;color:#8a6900}.v57-stat .lbl{font-size:12px;color:#667788;margin-top:3px}
+.v57-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.v57-ach{position:relative;border:1px solid #dfe7ee;border-radius:14px;padding:14px;background:#fff;overflow:hidden}
+.v57-ach.unlocked{border-color:#e2c866;background:linear-gradient(135deg,#fffdf3,#fff)}
+.v57-ach.locked{opacity:.76;background:#fbfdff}
+.v57-ach-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.v57-icon{font-size:34px;line-height:1}.v57-lock{font-size:18px}.v57-title{font-weight:900;color:#17324d;margin-top:8px}.v57-desc{font-size:12px;color:#667788;line-height:1.7;margin-top:5px;min-height:42px}
+.v57-meta{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;font-size:12px;color:#6a7b8b}.v57-reward{background:#f7f4e6;border:1px solid #e9ddae;color:#765c00;border-radius:999px;padding:4px 8px;font-weight:800}
+.v57-progress{height:8px;background:#edf1f4;border-radius:999px;overflow:hidden;margin-top:10px}.v57-progress span{display:block;height:100%;background:linear-gradient(90deg,#d7a900,#8a6900);border-radius:999px}
+.v57-filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.v57-filters button{background:#f7fafc;color:#5a6c7d;border:1px solid #d7e2eb}.v57-filters button.active{background:#8a6900;color:#fff;border-color:#8a6900}
+.v57-spotlight{background:#fff;border:1px dashed #ddc76b;border-radius:12px;padding:12px;line-height:1.8;margin-top:12px}.v57-spotlight strong{color:#765c00}
+.v57-toast{position:fixed;left:20px;bottom:20px;z-index:9999;max-width:360px;background:#fffdf1;border:2px solid #d7a900;box-shadow:0 10px 28px rgba(23,50,77,.16);border-radius:14px;padding:14px 16px;direction:rtl}.v57-toast .title{font-weight:900;color:#765c00;margin-bottom:5px}.v57-toast .body{font-size:13px;color:#566879;line-height:1.7}
+@media(max-width:950px){.v57-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v57-summary{grid-template-columns:repeat(2,minmax(120px,1fr))}}
+@media(max-width:600px){.v57-grid{grid-template-columns:1fr}.v57-summary{grid-template-columns:1fr 1fr}.v57-stat .num{font-size:21px}}
+</style>
 </head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V56 • Supabase</div></div>
-<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V57 • Supabase</div></div>
+<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>$('v57AchievementsPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),140)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
 <section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج، ويشمل المسار الآن تدريب Decimal ↔ Binary قبل Subnetting.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div><button class="primary purple" onclick="page('placement')">🚀 ابدأ التحديد</button></div></div>
-</div><div class="card v56-card" id="homeV56ReviewCard"><div class="v56-head"><div><span class="v56-badge">🧠 V56 — المراجعة الذكية</span><h2 style="margin:9px 0 5px">راجع نقاط الضعف قبل الاختبار</h2><p class="muted" style="margin:0">جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div><button class="primary green" onclick="page('dashboard')">📊 افتح المراجعة الذكية</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
+</div><div class="card v56-card" id="homeV56ReviewCard"><div class="v56-head"><div><span class="v56-badge">🧠 V56 — المراجعة الذكية</span><h2 style="margin:9px 0 5px">راجع نقاط الضعف قبل الاختبار</h2><p class="muted" style="margin:0">جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div><button class="primary green" onclick="page('dashboard')">📊 افتح المراجعة الذكية</button></div></div><div class="card v57-card" id="homeV57AchievementsCard"><div class="v57-head"><div><span class="v57-badge">🏅 V57 — نظام الإنجازات والشارات</span><h2 style="margin:9px 0 5px">اجمع الإنجازات وابنِ مستوى إتقانك</h2><p class="muted" style="margin:0">شارات تلقائية تُفتح مع تقدمك في الدروس والتمارين والاختبارات والمراجعة الذكية، مع تتبع للسلاسل والمهارات المتقنة.</p></div><button class="primary orange" onclick="page('dashboard');setTimeout(()=>$('v57AchievementsPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),140)">🏅 عرض إنجازاتي</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
   <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
@@ -229,12 +251,12 @@
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="placement" class="hidden"><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اختبار تحديد المستوى الذكي</h2><p class="muted" style="margin:0">20 سؤالًا متوازنًا. لا يوجد نجاح أو رسوب؛ الهدف هو معرفة نقطة البداية الأنسب لك.</p></div><div id="v52PlacementStatus" class="v52-placement-badge">لم يبدأ بعد</div></div><div id="v52PlacementArea" style="margin-top:16px"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V55 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams + Analytics + Error Notebook</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V57 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams + Analytics + Error Notebook + Achievements</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
 <div class="card hero"><h2>📊 لوحة المتدرب الذكية</h2><p>كل ما تحتاجه لمعرفة تقدمك، نقاط قوتك، وما الذي ينبغي أن تراجعه بعد ذلك.</p><div id="studentDashboard"></div><div id="v52PlacementSummary"></div></div>
-<div class="card"><h2>🔔 إشعاراتك</h2><p class="muted">تنبيهات الاختبارات والنتائج المنشورة من المدرب.</p><div id="studentNotifications"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div><div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div><div class="card v55-card" id="v55NotebookCard"><div class="v55-head"><div><span class="v55-badge">📓 V55 — دفتر الأخطاء</span><h3>حوّل أخطاءك إلى خطة مراجعة</h3><p class="muted" style="margin:0">يجمع الأخطاء من الاختبارات المحفوظة، يوضح إجابتك والصحيح، ويتيح لك إعادة التدريب ومتابعة ما تمت مراجعته.</p></div><button class="primary orange" onclick="loadErrorNotebook(true)">🔄 تحديث الدفتر</button></div><div id="v55ErrorNotebook"><div class="muted" style="margin-top:14px">جارٍ تحميل دفتر الأخطاء...</div></div></div>
+<div class="card"><h2>🔔 إشعاراتك</h2><p class="muted">تنبيهات الاختبارات والنتائج المنشورة من المدرب.</p><div id="studentNotifications"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div><div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div><div class="card v57-card" id="v57AchievementsPanel"><div class="v57-head"><div><span class="v57-badge">🏅 V57 — مركز الإنجازات</span><h3 style="margin:8px 0 4px">أنجز، أتقن، وافتح شارات جديدة</h3><div class="muted">الإنجازات تُحتسب تلقائيًا من نشاطك الحالي، ولا تحتاج إلى إدخال يدوي.</div></div><button class="primary purple" onclick="renderV57AchievementsLastKnown()">🔄 تحديث الشارات</button></div><div id="v57AchievementsBody"><div class="muted" style="margin-top:12px">جارٍ بناء الإنجازات...</div></div></div><div class="card v55-card" id="v55NotebookCard"><div class="v55-head"><div><span class="v55-badge">📓 V55 — دفتر الأخطاء</span><h3>حوّل أخطاءك إلى خطة مراجعة</h3><p class="muted" style="margin:0">يجمع الأخطاء من الاختبارات المحفوظة، يوضح إجابتك والصحيح، ويتيح لك إعادة التدريب ومتابعة ما تمت مراجعته.</p></div><button class="primary orange" onclick="loadErrorNotebook(true)">🔄 تحديث الدفتر</button></div><div id="v55ErrorNotebook"><div class="muted" style="margin-top:14px">جارٍ تحميل دفتر الأخطاء...</div></div></div>
 <div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div>
 </section>
 <section id="trainer" class="hidden">
@@ -906,6 +928,7 @@ async function renderDashboard(){
   renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
   $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v56-card" id="v56SmartReviewCard"><div id="v56SmartReview"></div></div>');
   renderV56SmartReviewPanel({attempts:a,lessons,lp});
+  renderV57Achievements({completed,totalLessons,exerciseAttempts:e,attempts:a,competitions,streak,points});
   $('studentAchievements').innerHTML=`<div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div>`;
   $('attemptTable').innerHTML=all.length?`<table><tr><th>النوع</th><th>العنوان</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${all.slice(0,15).map(x=>`<tr><td>${x.t}</td><td>${esc(x.title)}</td><td>${new Date(x.d).toLocaleString('ar-SA')}</td><td>${x.t==='منافسة'?x.s+'/1000':x.t==='تمرين'?x.s+'/100':x.s+'%'}</td><td>${x.z}</td></tr>`).join('')}</table>`:'لا توجد محاولات حتى الآن. ابدأ بأول تمرين الآن 🎯';
 
@@ -1074,6 +1097,72 @@ async function renderTrainer(){
   if(!["trainer","admin"].includes(profile?.role))return;
   trainerTab("overview");
   await loadTrainerOverview();
+}
+
+
+/* ==================== V57 — نظام الإنجازات والشارات ==================== */
+const v57State={ctx:null,filter:'all',achievements:[]};
+function v57SeenKey(){return `ipv4_v57_seen_${user?.id||'guest'}`;}
+function v57GetSeen(){try{return new Set(JSON.parse(localStorage.getItem(v57SeenKey())||'[]'));}catch(_e){return new Set();}}
+function v57SaveSeen(set){try{localStorage.setItem(v57SeenKey(),JSON.stringify([...set]));}catch(_e){}}
+function v57LastReview(){try{return JSON.parse(localStorage.getItem(`ipv4_v56_review_last_${user?.id||'guest'}`)||'null');}catch(_e){return null;}}
+function v57TopicBest(attempts,topic){const vals=(attempts||[]).filter(x=>(x.trainer_exams?.topic||'')===topic).map(x=>Number(x.percentage||0));return vals.length?Math.max(...vals):0;}
+function v57BuildAchievements(ctx){
+  const {completed=0,totalLessons=0,exerciseAttempts=[],attempts=[],competitions=[],streak=0,points=0}=ctx||{};
+  const successfulExercises=(exerciseAttempts||[]).filter(x=>x.is_correct).length;
+  const binaryBest=v57TopicBest(attempts,'Binary Conversion');
+  const subnetBest=v57TopicBest(attempts,'Subnetting');
+  const lastReview=v57LastReview();
+  const catalog=[
+    {id:'first_lesson',icon:'📚',title:'بداية الرحلة',desc:'أكملت أول درس في المقرر.',reward:20,target:1,value:completed,unit:'درس'},
+    {id:'five_lessons',icon:'📖',title:'خطوات ثابتة',desc:'أكملت خمسة دروس أو أكثر.',reward:40,target:5,value:Math.min(completed,5),unit:'دروس'},
+    {id:'first_practice',icon:'🎯',title:'أول إصابة',desc:'حققت أول تمرين صحيح.',reward:20,target:1,value:successfulExercises,unit:'نجاح'},
+    {id:'practice_10',icon:'🧩',title:'عشر محاولات',desc:'أنجزت 10 تمارين على الأقل.',reward:50,target:10,value:Math.min((exerciseAttempts||[]).length,10),unit:'تمارين'},
+    {id:'first_exam',icon:'📝',title:'أول اختبار',desc:'قدمت أول اختبار محفوظ في حسابك.',reward:30,target:1,value:(attempts||[]).length,unit:'اختبار'},
+    {id:'exam_80',icon:'🏆',title:'نتيجة 80+',desc:'حققت 80% أو أكثر في اختبار واحد.',reward:60,target:1,value:(attempts||[]).some(x=>Number(x.percentage||0)>=80)?1:0,unit:'اختبار'},
+    {id:'exam_90',icon:'💎',title:'ممتاز 90+',desc:'حققت 90% أو أكثر في اختبار واحد.',reward:80,target:1,value:(attempts||[]).some(x=>Number(x.percentage||0)>=90)?1:0,unit:'اختبار'},
+    {id:'binary_master',icon:'🔢',title:'سيد التحويل',desc:'حققت 80% أو أكثر في اختبار مصنف Binary Conversion.',reward:70,target:80,value:binaryBest,unit:'%'},
+    {id:'subnet_master',icon:'🌐',title:'متقن Subnetting',desc:'حققت 80% أو أكثر في اختبار مصنف Subnetting.',reward:90,target:80,value:subnetBest,unit:'%'},
+    {id:'streak_3',icon:'🔥',title:'سلسلة 3 أيام',desc:'حافظت على نشاط تدريبي 3 أيام متتالية.',reward:40,target:3,value:Math.min(streak,3),unit:'أيام'},
+    {id:'streak_7',icon:'🚀',title:'سلسلة 7 أيام',desc:'حافظت على نشاط تدريبي 7 أيام متتالية.',reward:100,target:7,value:Math.min(streak,7),unit:'أيام'},
+    {id:'smart_reviewer',icon:'🧠',title:'مراجع ذكي',desc:'أكملت جلسة مراجعة ذكية بنسبة 80% أو أكثر.',reward:80,target:80,value:Number(lastReview?.score||0),unit:'%'},
+    {id:'competitor_800',icon:'🏁',title:'منافس 800+',desc:'سجلت 800 نقطة أو أكثر في منافسة Subnetting.',reward:70,target:800,value:Math.min(Math.max(0,...(competitions||[]).map(x=>Number(x.score||0))),800),unit:'نقطة'},
+    {id:'course_complete',icon:'🎓',title:'أكمل المقرر',desc:'أكملت جميع دروس المقرر النشطة.',reward:120,target:1,value:(totalLessons>0&&completed===totalLessons)?1:0,unit:'اكتمال'},
+    {id:'elite_1000',icon:'👑',title:'1000 نقطة',desc:'وصلت إلى ألف نقطة في نظام التقدم.',reward:150,target:1000,value:Math.min(Number(points||0),1000),unit:'نقطة'}
+  ];
+  return catalog.map(a=>{const pct=Math.min(100,Math.round((a.value/Math.max(1,a.target))*100));return {...a,unlocked:pct>=100,pct};});
+}
+function v57Toast(item){
+  const old=$('v57Toast'); if(old)old.remove();
+  const el=document.createElement('div');el.id='v57Toast';el.className='v57-toast';
+  el.innerHTML=`<div class="title">🏅 إنجاز جديد: ${esc(item.title)}</div><div class="body">${esc(item.desc)}<br><b>مكافأة الإنجاز: ${item.reward} نقطة</b></div>`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),6500);
+}
+function v57ExportBadges(){
+  const rows=[['الإنجاز','الحالة','التقدم','الهدف','المكافأة']];(v57State.achievements||[]).forEach(a=>rows.push([a.title,a.unlocked?'مفتوح':'مغلق',`${a.value} ${a.unit}`,`${a.target} ${a.unit}`,`${a.reward} نقطة`]));
+  const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`achievements-${profile?.student_id||'student'}.csv`;a.click();URL.revokeObjectURL(a.href);
+}
+function renderV57Achievements(ctx){
+  const host=$('v57AchievementsBody');if(!host)return;
+  v57State.ctx=ctx;v57State.achievements=v57BuildAchievements(ctx);
+  const seen=v57GetSeen();const newly=[];
+  v57State.achievements.filter(a=>a.unlocked).forEach(a=>{if(!seen.has(a.id)){newly.push(a);seen.add(a.id);}});
+  if(newly.length)v57SaveSeen(seen);
+  const unlocked=v57State.achievements.filter(a=>a.unlocked).length,total=v57State.achievements.length;
+  const reward=v57State.achievements.filter(a=>a.unlocked).reduce((n,a)=>n+a.reward,0);
+  const readyPct=Math.round(unlocked*100/Math.max(1,total));
+  const filter=v57State.filter;
+  const rows=v57State.achievements.filter(a=>filter==='unlocked'?a.unlocked:filter==='locked'?!a.unlocked:true);
+  host.innerHTML=`<div class="v57-summary"><div class="v57-stat"><div class="num">${unlocked}/${total}</div><div class="lbl">شارات مفتوحة</div></div><div class="v57-stat"><div class="num">${readyPct}%</div><div class="lbl">اكتمال الإنجازات</div></div><div class="v57-stat"><div class="num">${reward}</div><div class="lbl">نقاط المكافآت</div></div><div class="v57-stat"><div class="num">${ctx?.streak||0}</div><div class="lbl">سلسلة الأيام</div></div></div>
+  <div class="v57-spotlight"><strong>🎯 أقرب إنجاز:</strong> ${(() => { const next=v57State.achievements.filter(a=>!a.unlocked).sort((a,b)=>b.pct-a.pct)[0]; return next?`${esc(next.icon)} ${esc(next.title)} — ${Math.min(next.value,next.target)} / ${next.target} ${esc(next.unit)}`:'🎉 فتحت جميع الإنجازات الحالية!'; })()}</div>
+  <div class="v57-filters"><button class="${filter==='all'?'active':''}" onclick="v57State.filter='all';renderV57Achievements(v57State.ctx)">الكل</button><button class="${filter==='unlocked'?'active':''}" onclick="v57State.filter='unlocked';renderV57Achievements(v57State.ctx)">المفتوحة</button><button class="${filter==='locked'?'active':''}" onclick="v57State.filter='locked';renderV57Achievements(v57State.ctx)">المغلقة</button><button class="primary" onclick="v57ExportBadges()">⬇️ تصدير الشارات</button></div>
+  <div class="v57-grid">${rows.map(a=>`<div class="v57-ach ${a.unlocked?'unlocked':'locked'}"><div class="v57-ach-top"><div class="v57-icon">${a.icon}</div><div class="v57-lock">${a.unlocked?'🔓':'🔒'}</div></div><div class="v57-title">${esc(a.title)}</div><div class="v57-desc">${esc(a.desc)}</div><div class="v57-meta"><span>${a.unlocked?'تم الفتح':'قيد التقدم'} • ${Math.min(a.value,a.target)} / ${a.target} ${esc(a.unit)}</span><span class="v57-reward">+${a.reward}</span></div><div class="v57-progress"><span style="width:${a.pct}%"></span></div></div>`).join('')}</div>`;
+  newly.slice(0,2).forEach((x,i)=>setTimeout(()=>v57Toast(x),700+i*150));
+}
+function renderV57AchievementsLastKnown(){
+  if(v57State.ctx){renderV57Achievements(v57State.ctx);return;}
+  renderDashboard();
 }
 
 /* ==================== V56 — المراجعة الذكية ==================== */
