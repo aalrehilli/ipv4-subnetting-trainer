@@ -5,6 +5,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:#f4f8fc;color:#17324d}header{background:linear-gradient(135deg,#0759a5,#0b78d0);color:white;padding:17px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.logo{font-size:21px;font-weight:bold}.sub{font-size:12px}nav{display:flex;gap:5px;flex-wrap:wrap}nav button{border:0;background:#ffffff22;color:white;padding:9px 11px;border-radius:8px;font-weight:bold;cursor:pointer}nav button:hover,nav button.active{background:white;color:#0759a5}.container{max-width:1200px;margin:auto;padding:22px}.card{background:white;border:1px solid #dce8f2;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #17324d12}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.hero{background:linear-gradient(135deg,#eaf5ff,#fff)}h1,h2,h3{color:#0759a5}.badge{background:#0759a5;color:white;border-radius:20px;padding:7px 12px;display:inline-block;font-weight:bold}input,select{width:100%;padding:11px;border:1px solid #cbd9e5;border-radius:8px;margin:5px 0 12px;font-size:15px}button.primary{background:#0759a5;color:white;border:0;padding:11px 17px;border-radius:8px;font-weight:bold;cursor:pointer}.green{background:#168a46!important}.orange{background:#ed8916!important}.purple{background:#7048a8!important}.red{background:#bd3434!important}.hidden{display:none}.question{background:#f8fbff;border:1px solid #d8e6f1;border-radius:12px;padding:15px;margin:12px 0}.good{background:#e9f8ee;color:#137b39;padding:12px;border-radius:9px}.bad{background:#fff0f0;color:#b3261e;padding:12px;border-radius:9px}.stat{background:#f5f9fd;border-radius:9px;padding:12px;margin:7px 0;display:flex;justify-content:space-between}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #d9e4ed;padding:8px;text-align:center}th{background:#0759a5;color:white}.kpi{font-size:27px;font-weight:bold;color:#0759a5}.muted{color:#65788a;font-size:13px}.qtype-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.qtype-tabs button{background:#eef5fb;color:#0759a5;border:1px solid #cbd9e5}.qtype-tabs button.active{background:#0759a5;color:#fff}.choice-row,.match-row{display:grid;grid-template-columns:70px 1fr;gap:8px;align-items:center;margin:7px 0}.match-row{grid-template-columns:1fr 1fr}.builder-help{font-size:12px;color:#65788a;margin:4px 0 10px}.mini-btn{padding:7px 10px!important;font-size:13px!important}.matching-answer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin:8px 0;padding:9px;border:1px solid #d8e6f1;border-radius:9px;background:#fff}.certificate{border:3px double #0759a5;padding:34px;text-align:center;background:linear-gradient(135deg,#fff,#f5fbff);border-radius:14px}.certificate h1{font-size:34px;margin:10px 0}.certificate .name{font-size:30px;font-weight:bold;margin:18px}.certno{font-family:monospace;letter-spacing:1px}.progress{height:10px;background:#e3edf5;border-radius:10px;overflow:hidden}.bar{height:100%;background:#159447}@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid{grid-template-columns:1fr}}.optionLabel{transition:.15s}.optionLabel:has(input:checked){border-color:#0759a5!important;background:#eaf5ff!important;box-shadow:0 0 0 2px #0759a520}.resultTitle{font-size:18px;font-weight:bold}.role-admin{background:#7b3fb3}.role-trainer{background:#0759a5}.role-student{background:#168a46}.admin-only{display:none}.role-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.v61-cert-head{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}.v61-readiness{min-width:170px;padding:14px 16px;border-radius:14px;background:#eef7ff;border:1px solid #cfe4f6;text-align:center;font-weight:800;color:#0759a5}.v61-req-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.v61-req{border:1px solid #dce8f2;border-radius:12px;padding:14px;background:#fff}.v61-req.ok{background:#ecfaf1;border-color:#bfe4ca}.v61-req.bad{background:#fff7f4;border-color:#f0c9bc}.v61-req .icon{font-size:24px}.v61-req .val{font-size:20px;font-weight:800;color:#0759a5;margin-top:6px}.v61-cert-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.v61-cert-note{padding:12px;border-radius:10px;background:#f7fbff;border:1px solid #dce8f2;margin-top:14px}.v61-cert-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.v61-req-grid{grid-template-columns:repeat(2,1fr)}.v61-cert-meta{grid-template-columns:1fr}}@media(max-width:520px){.v61-req-grid{grid-template-columns:1fr}}
+
 .student-home-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:15px}.student-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px;text-align:center}.student-kpi .num{font-size:28px;font-weight:bold;color:#0759a5}.student-kpi .label{font-size:12px;color:#65788a}.level-card{border:1px solid #dce8f2;border-radius:12px;padding:14px;background:#fbfdff}.step-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.step-result{padding:9px;border-radius:8px;margin-top:6px;font-size:13px}.badge-achievement{display:inline-flex;align-items:center;gap:6px;background:#fff8dc;border:1px solid #ecd27b;border-radius:20px;padding:7px 11px;margin:4px;font-weight:bold}.hint-box{background:#eef7ff;border-right:4px solid #0759a5;padding:12px;border-radius:9px;margin:10px 0}.practice-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@media(max-width:800px){.student-home-grid{grid-template-columns:1fr 1fr}.step-grid{grid-template-columns:1fr}}@media(max-width:500px){.student-home-grid{grid-template-columns:1fr}}
 .qbank-tools{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:12px 0}
 .qbank-tools input,.qbank-tools select{width:100%;padding:10px;border:1px solid #cbd9e5;border-radius:8px}
@@ -490,8 +492,19 @@
 </div>
 <div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>Binary Conversion</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div><div id="examAnalyticsPanel" class="card" style="margin-top:18px"><h3>📊 تحليلات الاختبارات</h3><p class="muted">اختر «التحليل» بجانب أي اختبار لعرض النتائج، ترتيب المتدربين، ومراجعة الإجابات.</p><div id="examAnalyticsBody"></div></div></div></section>
 <section id="certificate" class="hidden">
-<div class="card hero"><span class="badge">V12 • CERTIFICATE</span><h2>🏆 شهادة إتمام المقرر</h2><p>تحقق من استيفاء متطلبات إتمام مقرر IPv4 Subnetting ثم أصدر شهادة باسم المتدرب.</p><div id="certificateStatus"></div></div>
-<div class="card" id="certificateCard"><div id="certificateDetails"></div></div>
+<div class="card hero v61-cert-hero">
+  <div class="v61-cert-head">
+    <div><span class="badge">V61 • SMART CERTIFICATE</span><h2>📜 الشهادة الذكية</h2>
+      <p>الشهادة لا تُصدر إلا بعد التحقق من إكمال المقرر واجتياز المتطلبات النهائية. ستظهر لك حالة كل شرط ونسبة الجاهزية قبل الإصدار.</p>
+    </div>
+    <div id="v61CertReadiness" class="v61-readiness">—</div>
+  </div>
+  <div id="certificateStatus" style="margin-top:14px"></div>
+</div>
+<div class="card" id="certificateCard">
+  <div id="certificateDetails"></div>
+  <div id="issuedCertificate" style="margin-top:18px"></div>
+</div>
 </section>
 
 <section id="verifyCertificate" class="hidden">
@@ -628,6 +641,7 @@ function page(id,b){
   if(id==="course")loadCourse();
   if(id==="placement")renderV52PlacementHome();
   if(id==="dashboard")renderV52PlacementSummary();
+  if(id==="certificate")loadCertificate();
 }
 function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".")}
 function problem(level){let a=level==="easy"?[2,4,8]:level==="medium"?[3,5,6,7,8,10,12]:[5,6,7,9,10,11,12,13,14,15,16],need=a[Math.floor(Math.random()*a.length)],o=Math.floor(Math.random()*223)+1,b=Math.ceil(Math.log2(need)),p=24+b,block=2**(32-p);return{network:`192.168.${o}.0`,need,bits:b,prefix:p,mask:ip((0xffffffff<<(32-p))>>>0),block,hosts:block-2}}
@@ -3209,27 +3223,49 @@ async function toggleLesson(id,completed){
  await loadCourse();
 }
 
+function v61Pct(n,d){return d?Math.max(0,Math.min(100,Math.round(Number(n||0)*100/Number(d)))):0;}
+function v61ReqCard(icon,title,value,ok,sub){return `<div class="v61-req ${ok?'ok':'bad'}"><div class="icon">${icon}</div><b>${esc(title)}</b><div class="val">${esc(String(value))}</div><div class="muted" style="margin-top:4px">${esc(sub||'')}</div></div>`;}
+function v61RenderEligibility(x){
+  const completed=Number(x.completed_lessons||0), total=Number(x.total_lessons||0), practices=Number(x.completed_practices||0), finalScore=x.final_exam_percentage==null?null:Number(x.final_exam_percentage), mastery=Number(x.mastery||0);
+  const lessonOk=total>0 && completed>=total, practiceOk=total>0 && practices>=total, finalOk=finalScore!=null && finalScore>=70, masteryOk=mastery>=70;
+  const checks=[lessonOk,practiceOk,finalOk,masteryOk], ready=checks.filter(Boolean).length, readiness=Math.round(ready*100/checks.length);
+  const readyBox=$('v61CertReadiness'); if(readyBox){readyBox.innerHTML=`<div style="font-size:13px;margin-bottom:4px">جاهزية الشهادة</div><div style="font-size:30px">${readiness}%</div><div class="muted">${ready}/${checks.length} متطلبات</div>`; readyBox.style.background=readiness===100?'#ecfaf1':'#eef7ff';}
+  const status=$('certificateStatus');
+  if(status) status.innerHTML=readiness===100
+    ? `<div class="good"><b>🎉 أنت مستحق للشهادة.</b><div class="muted" style="margin-top:5px">تم استيفاء جميع المتطلبات ويمكنك إصدار شهادتك الرسمية.</div></div>`
+    : `<div class="bad"><b>📌 لم تكتمل شروط الشهادة بعد.</b><div class="muted" style="margin-top:5px">أكمل الشروط المتبقية ثم أعد فتح صفحة الشهادة لتحديث الحالة.</div></div>`;
+  const details=$('certificateDetails'); if(details){
+    const finalText=finalScore==null?'غير متوفر':finalScore+'%';
+    details.innerHTML=`<div class="v61-req-grid">${v61ReqCard('📚','إكمال الدروس',`${completed}/${total}`,lessonOk,total?`مطلوب ${total} درس`:'لم يتم تحديد عدد الدروس')}${v61ReqCard('🧪','إكمال التمارين',`${practices}/${total}`,practiceOk,total?`مطلوب ${total} نشاط تدريبي`:'لم يتم تحديد عدد الأنشطة')}${v61ReqCard('🎓','الاختبار النهائي',finalText,finalOk,'النجاح من 70% فأعلى')}${v61ReqCard('⭐','نسبة الإتقان',mastery+'%',masteryOk,'الحد الأدنى 70%')}</div>
+    <div class="v61-cert-meta"><div class="stat"><b>الاسم</b><span>${esc(profile?.full_name||'المتدرب')}</span></div><div class="stat"><b>رقم المتدرب</b><span>${esc(profile?.student_id||'—')}</span></div><div class="stat"><b>الشعبة</b><span>${esc(profile?.group_name||'—')}</span></div></div>
+    <div class="v61-cert-note">💡 <b>كيف تعمل الشهادة الذكية؟</b><br><span class="muted">تتحقق المنصة من متطلبات الإكمال والاختبار النهائي والإتقان قبل السماح بالإصدار، ثم تمنح الشهادة رقمًا فريدًا ورابط تحقق وQR.</span></div>
+    <div class="v61-cert-actions">${readiness===100?'<button class="primary green" onclick="issueCertificate()">🏆 إصدار الشهادة الرسمية</button>':'<button class="primary" onclick="page(\'dashboard\');setTimeout(()=>studentDashboardTab(\'progress\'),250)">📈 راجع تقدمك</button><button class="primary purple" onclick="openHomeSmartReview(this)">🧠 ابدأ مراجعة ذكية</button>'}${x.certificate_no?'<span class="badge">✅ تم إصدار الشهادة</span>':''}</div>`;
+  }
+  return readiness;
+}
+async function v61CertificateFallback(){
+  try{
+    const [lr,pr,ar]=await Promise.all([
+      db.from('course_lessons').select('id').eq('is_active',true),
+      db.from('lesson_progress').select('lesson_id,completed,practice_completed').eq('user_id',user.id),
+      db.from('attempts').select('percentage,submitted_at,trainer_exams(title,topic)').eq('student_id',user.id).order('submitted_at',{ascending:false}).limit(100)
+    ]);
+    const total=(lr.data||[]).length, rows=pr.data||[], completed=rows.filter(x=>x.completed).length, practices=rows.filter(x=>x.practice_completed).length;
+    const finalAttempt=(ar.data||[]).find(a=>String(a.trainer_exams?.title||'').includes('النهائي')||String(a.trainer_exams?.title||'').toLowerCase().includes('final'));
+    const mastery=Number((ar.data||[]).reduce((m,a)=>Math.max(m,Number(a.percentage||0)),0));
+    const final_exam_percentage=finalAttempt?.percentage==null?null:Number(finalAttempt.percentage);
+    const eligible=total>0&&completed>=total&&practices>=total&&final_exam_percentage!=null&&final_exam_percentage>=70&&mastery>=70;
+    return {eligible,completed_lessons:completed,total_lessons:total,completed_practices:practices,final_exam_percentage,mastery,certificate_no:null};
+  }catch(e){return {eligible:false,completed_lessons:0,total_lessons:0,completed_practices:0,final_exam_percentage:null,mastery:0,certificate_no:null,error:e};}
+}
 async function loadCertificate(){
- const status=$('certificateStatus'), details=$('certificateDetails');
- if(!status||!details)return;
- status.innerHTML='<div class="muted">جارٍ التحقق من متطلبات الشهادة...</div>';
- details.innerHTML='';
- const r=await db.rpc('get_certificate_status');
- if(r.error){status.innerHTML='<div class="bad">❌ تعذر التحقق من الشهادة: '+esc(r.error.message)+'</div>';return;}
- const x=r.data?.[0]||r.data||{};
- const eligible=!!x.eligible;
- status.innerHTML=eligible
-   ? '<div class="good">✅ جميع متطلبات الشهادة مستوفاة.</div>'
-   : '<div class="bad">📌 لم تكتمل متطلبات الشهادة بعد.</div>';
- details.innerHTML=`<div class="grid">
-   <div class="stat"><b>الدروس</b><span>${x.completed_lessons||0} / ${x.total_lessons||0}</span></div>
-   <div class="stat"><b>التمارين</b><span>${x.completed_practices||0} / ${x.total_lessons||0}</span></div>
-   <div class="stat"><b>الاختبار النهائي</b><span>${x.final_exam_percentage==null?'—':Number(x.final_exam_percentage)+'%'}</span></div>
- </div>
- <div class="stat"><b>نسبة الإتقان</b><span>${Number(x.mastery||0)}%</span></div>
- ${eligible?'<button class="primary green" onclick="issueCertificate()">🏆 إصدار الشهادة</button>':''}
- <div id="issuedCertificate" style="margin-top:15px"></div>`;
- if(x.certificate_no) renderCertificate(x);
+  const status=$('certificateStatus'), details=$('certificateDetails'); if(!status||!details)return;
+  status.innerHTML='<div class="muted">⏳ جارٍ التحقق من متطلبات الشهادة...</div>'; details.innerHTML='';
+  let x=null;
+  try{const r=await db.rpc('get_certificate_status'); if(!r.error) x=r.data?.[0]||r.data||null; else console.warn('get_certificate_status:',r.error.message);}catch(e){console.warn('certificate rpc',e);}
+  if(!x){x=await v61CertificateFallback();}
+  v61RenderEligibility(x);
+  if(x.certificate_no) renderCertificate(x);
 }
 
 
@@ -3482,11 +3518,15 @@ function renderV52PlacementSummary(){
 }
 
 async function issueCertificate(){
- const r=await db.rpc('issue_course_certificate');
- if(r.error){alert('تعذر إصدار الشهادة: '+r.error.message);return;}
- const x=r.data?.[0]||r.data;
- if(!x){alert('تعذر إصدار الشهادة.');return;}
- renderCertificate(x);
+  const confirmIssue=confirm('هل تريد إصدار شهادة الإتمام الرسمية الآن؟');
+  if(!confirmIssue)return;
+  const r=await db.rpc('issue_course_certificate');
+  if(r.error){alert('تعذر إصدار الشهادة: '+r.error.message);return;}
+  const x=r.data?.[0]||r.data;
+  if(!x){alert('تعذر إصدار الشهادة.');return;}
+  renderCertificate(x);
+  const status=$('certificateStatus'); if(status) status.innerHTML='<div class="good">✅ تم إصدار الشهادة بنجاح. يمكنك طباعتها أو حفظها PDF أو مشاركة رابط التحقق.</div>';
+  loadCertificate();
 }
 
 function renderCertificate(x){
