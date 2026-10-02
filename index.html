@@ -93,6 +93,31 @@
 .v50-session{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
 @media(max-width:700px){.v50-reco-grid{grid-template-columns:1fr}}
 
+
+/* V59 — لوحة المدرب المتقدمة والتقارير */
+.trainer-dashboard-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:8px;background:#f5f9fd;border:1px solid #dce8f2;border-radius:14px;position:sticky;top:8px;z-index:5}
+.trainer-dashboard-tabs button{border:1px solid #cbd9e5;background:#fff;color:#2b5578;border-radius:10px;padding:10px 13px;font-weight:800;cursor:pointer;transition:.15s}
+.trainer-dashboard-tabs button:hover{background:#edf6ff;color:#0759a5}
+.trainer-dashboard-tabs button.active{background:#0759a5;color:#fff;border-color:#0759a5;box-shadow:0 3px 10px #0759a522}
+.trainer-report-filters{display:grid;grid-template-columns:1.2fr 1.2fr .9fr .9fr;gap:10px;align-items:end}
+.trainer-report-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.trainer-report-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px;text-align:center}
+.trainer-report-kpi .num{font-size:27px;font-weight:800;color:#0759a5}
+.trainer-report-kpi .lbl{font-size:12px;color:#65788a;margin-top:4px}
+.trainer-report-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.trainer-report-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}
+.trainer-report-panel h3{margin-top:0}
+.trainer-report-note{padding:11px 13px;background:#eef7ff;border-right:4px solid #0759a5;border-radius:9px;line-height:1.8;color:#41617c}
+.trainer-report-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.trainer-report-table-wrap{overflow:auto}
+.trainer-report-badge{display:inline-block;padding:4px 8px;border-radius:14px;font-size:12px;font-weight:700}
+.trainer-report-badge.good{background:#e7f7ed;color:#137b39}
+.trainer-report-badge.mid{background:#fff4d8;color:#8a6200}
+.trainer-report-badge.low{background:#ffe8e8;color:#a51f1f}
+.trainer-report-empty{padding:24px;text-align:center;background:#f8fbfd;border-radius:10px;color:#65788a}
+@media(max-width:950px){.trainer-report-filters{grid-template-columns:1fr 1fr}.trainer-report-kpis{grid-template-columns:repeat(2,1fr)}.trainer-report-columns{grid-template-columns:1fr}}
+@media(max-width:650px){.trainer-dashboard-tabs{position:static}.trainer-dashboard-tabs button{flex:1;min-width:125px}.trainer-report-filters{grid-template-columns:1fr}.trainer-report-kpis{grid-template-columns:1fr 1fr}}
+
 /* V40 — لوحة المدرب الذكية */
 .trainer-smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.trainer-smart-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:15px;text-align:center}.trainer-smart-kpi .num{font-size:28px;font-weight:bold;color:#0759a5}.trainer-smart-kpi .label{font-size:12px;color:#65788a;margin-top:4px}.trainer-smart-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}.trainer-smart-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}.trainer-smart-panel h3{margin-top:0}.follow-row{display:grid;grid-template-columns:1.4fr .7fr .7fr .7fr 1.1fr;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #edf2f6}.follow-row:last-child{border-bottom:0}.follow-status{padding:5px 9px;border-radius:16px;font-weight:bold;font-size:12px;display:inline-block}.follow-status.high{background:#ffe8e8;color:#a51f1f}.follow-status.medium{background:#fff4d8;color:#8a6200}.follow-status.good{background:#e7f7ed;color:#137b39}.follow-mini{font-size:12px;color:#65788a}.follow-action{display:flex;gap:5px;flex-wrap:wrap}.group-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.group-card{border:1px solid #dce8f2;border-radius:12px;padding:12px;background:#f9fcff}.group-card strong{color:#0759a5}.trainer-smart-empty{padding:20px;text-align:center;background:#f8fbfd;border-radius:10px;color:#65788a}.trainer-smart-note{padding:11px 13px;background:#eef7ff;border-right:4px solid #0759a5;border-radius:9px;line-height:1.8}
 @media(max-width:950px){.trainer-smart-grid{grid-template-columns:repeat(2,1fr)}.trainer-smart-columns{grid-template-columns:1fr}.follow-row{grid-template-columns:1.4fr .7fr .7fr .7fr 1fr}}
@@ -347,7 +372,7 @@
 <section id="trainer" class="hidden">
 <div class="card hero"><h2>👨‍🏫 لوحة المدرب</h2><p class="muted">إدارة المتدربين وبنك الأسئلة ومتابعة النتائج من مكان واحد.</p>
 <div id="trainerStats"></div></div>
-<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('blueprint',this)">🧩 V53 بناء اختبار ذكي</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary orange" onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
+<div class="card"><div class="trainer-dashboard-tabs" role="tablist" aria-label="أقسام لوحة المدرب"><button class="active" onclick="trainerTab('overview',this)">📊 النتائج</button><button onclick="trainerTab('students',this)">👥 المتدربون</button><button onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button onclick="trainerTab('exams',this)">📋 الاختبارات</button><button onclick="trainerTab('blueprint',this)">🧩 بناء اختبار</button><button onclick="trainerTab('analytics',this)">📈 التحليلات</button><button onclick="trainerTab('reports',this)">📑 التقارير</button><button onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button class="green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
 <div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="Binary Conversion">Binary Conversion</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
@@ -358,7 +383,25 @@
 </div>
 <div id="qStats" class="qstats"></div>
 <div id="questionsTable"></div></div>
-</div><div id="trainerSmartFollow" class="hidden">
+</div><div id="trainerReports" class="hidden">
+<h3>📑 مركز التقارير</h3>
+<div class="trainer-report-note">التقارير تجمع نتائج الاختبارات والتمارين والمتدربين حسب الفترة والشعبة. يمكنك مراجعة المؤشرات سريعًا أو طباعة التقرير أو تصديره إلى CSV.</div>
+<div class="question" style="margin-top:14px">
+  <div class="trainer-report-filters">
+    <div><label>من تاريخ</label><input id="reportFrom" type="date"></div>
+    <div><label>إلى تاريخ</label><input id="reportTo" type="date"></div>
+    <div><label>الشعبة</label><select id="reportGroup"><option value="">كل الشعب</option></select></div>
+    <div><label>نوع النشاط</label><select id="reportActivity"><option value="all">الكل</option><option value="exam">اختبارات</option><option value="practice">تمارين</option></select></div>
+  </div>
+  <div class="trainer-report-actions">
+    <button class="primary" onclick="loadTrainerReports()">🔄 تحديث التقرير</button>
+    <button class="primary green" onclick="exportTrainerReportCSV()">⬇️ تصدير التقرير</button>
+    <button class="primary purple" onclick="printTrainerReport()">🖨️ طباعة</button>
+  </div>
+</div>
+<div id="trainerReportsArea"><div class="muted">اضغط «تحديث التقرير» لعرض التقارير.</div></div>
+</div>
+<div id="trainerSmartFollow" class="hidden">
 <h3>🎯 المتابعة الذكية للمتدربين</h3>
 <div id="trainerSmartFollowArea"><div class="muted">⏳ جارٍ تحميل المتابعة...</div></div>
 </div>
@@ -1410,16 +1453,81 @@ function v55ExportErrors(){const rows=[['الموضوع','السؤال','إجا�
 function renderErrorNotebook(){const host=$('v55ErrorNotebook');if(!host)return;const reviewed=v55GetReviewed();let rows=[...v55State.rows];if(v55State.topic)rows=rows.filter(x=>x.topic===v55State.topic);if(v55State.reviewedOnly)rows=rows.filter(x=>reviewed.has(String(x.questionId)));rows.sort((a,b)=>v55State.sort==='count'?b.wrong-a.wrong:new Date(b.lastWrong)-new Date(a.lastWrong));const all=v55State.rows.length,reviewedCount=v55State.rows.filter(x=>reviewed.has(String(x.questionId))).length;const topics=[...new Set(v55State.rows.map(x=>x.topic).filter(Boolean))].sort((a,b)=>v55TopicLabel(a).localeCompare(v55TopicLabel(b),'ar'));const topicOptions='<option value="">كل المواضيع</option>'+topics.map(t=>`<option value="${esc(t)}" ${v55State.topic===t?'selected':''}>${esc(v55TopicLabel(t))}</option>`).join('');if(!all){host.innerHTML=`<div class="v55-kpis"><div class="v55-kpi"><div class="num">0</div><div class="lbl">أخطاء محفوظة</div></div><div class="v55-kpi"><div class="num">0</div><div class="lbl">أسئلة مختلفة</div></div><div class="v55-kpi"><div class="num">0</div><div class="lbl">تمت مراجعتها</div></div><div class="v55-kpi"><div class="num">—</div><div class="lbl">أهم نقطة مراجعة</div></div></div><div class="v55-empty">🎉 لم يظهر لديك أي خطأ محفوظ من إجابات الاختبارات بعد.<br><span class="v55-filter-note">عند تسليم الاختبارات، سيظهر كل سؤال خاطئ هنا تلقائيًا.</span></div>`;return;}const totalWrong=v55State.rows.reduce((n,x)=>n+x.wrong,0);const topicCounts={};v55State.rows.forEach(x=>topicCounts[x.topic]=(topicCounts[x.topic]||0)+x.wrong);const topTopic=Object.entries(topicCounts).sort((a,b)=>b[1]-a[1])[0];const groups={};rows.forEach(x=>(groups[x.topic||'Other']??=[]).push(x));host.innerHTML=`<div class="v55-kpis"><div class="v55-kpi"><div class="num">${totalWrong}</div><div class="lbl">إجمالي مرات الخطأ</div></div><div class="v55-kpi"><div class="num">${all}</div><div class="lbl">أسئلة مختلفة</div></div><div class="v55-kpi"><div class="num">${reviewedCount}</div><div class="lbl">تمت مراجعتها</div></div><div class="v55-kpi"><div class="num" style="font-size:16px;line-height:1.5">${esc(topTopic?v55TopicLabel(topTopic[0]):'—')}</div><div class="lbl">أكثر موضوع يحتاج مراجعة</div></div></div><div class="v55-toolbar"><label>الموضوع</label><select onchange="v55State.topic=this.value;renderErrorNotebook()">${topicOptions}</select><label>العرض</label><select onchange="v55State.reviewedOnly=this.value==='reviewed';renderErrorNotebook()"><option value="all" ${!v55State.reviewedOnly?'selected':''}>كل الأخطاء</option><option value="reviewed" ${v55State.reviewedOnly?'selected':''}>تمت مراجعتها</option></select><label>الترتيب</label><select onchange="v55State.sort=this.value;renderErrorNotebook()"><option value="recent" ${v55State.sort==='recent'?'selected':''}>الأحدث</option><option value="count" ${v55State.sort==='count'?'selected':''}>الأكثر تكرارًا</option></select><button class="primary" onclick="v55ExportErrors()">⬇️ تصدير CSV</button><button class="primary" onclick="v55ClearReviewMarks()">🧹 مسح علامات المراجعة</button></div>${Object.entries(groups).map(([topic,items])=>`<div class="v55-topic">📌 ${esc(v55TopicLabel(topic))} <span class="v55-filter-note">(${items.length} أسئلة)</span></div><div class="v55-error-grid">${items.map(x=>{const isRev=reviewed.has(String(x.questionId));return `<div class="v55-error ${isRev?'reviewed':''}"><div class="v55-error-head"><span class="badge">${esc(v55TopicLabel(x.topic))}</span><span class="v55-filter-note">${x.wrong} أخطاء</span></div><div class="v55-q" style="margin-top:8px">${esc(x.question)}</div><div class="v55-answer"><div><b>إجابتك:</b> ${esc(x.selected||'—')}</div><div><b>الصحيح:</b> ${esc(x.correct||'—')}</div></div><div class="v55-meta">آخر خطأ: ${new Date(x.lastWrong).toLocaleString('ar-SA')} • مستوى ${esc(x.difficulty==='easy'?'سهل':x.difficulty==='medium'?'متوسط':x.difficulty==='hard'?'متقدم':'—')}</div><div class="v55-actions"><button class="primary orange" onclick="v55PracticeTopic('${String(x.topic||'').replaceAll("'","\\'")}')">🎯 تدرب على ${esc(v55TopicLabel(x.topic))}</button><button class="primary ${isRev?'green':'purple'}" onclick="v55ToggleReviewed('${String(x.questionId).replaceAll("'","\\'")}')">${isRev?'↩️ أعد للمراجعة':'✅ تمت المراجعة'}</button></div></div>`}).join('')}</div>`).join('')}<div class="v55-filter-note" style="margin-top:12px">ملاحظة: الدفتر يعتمد على إجابات الاختبارات المحفوظة في المنصة. علامة “تمت المراجعة” محلية على هذا الجهاز ولا تحذف سجل الخطأ.</div>`;}
 async function loadErrorNotebook(force=false){const host=$('v55ErrorNotebook');if(!host||!user)return;if(force)host.innerHTML='<div class="muted">⏳ جارٍ تحديث دفتر الأخطاء...</div>';try{const ar=await db.from('attempts').select('id,submitted_at,trainer_exams(title,topic)').eq('student_id',user.id).order('submitted_at',{ascending:false}).limit(100);if(ar.error)throw ar.error;const attempts=ar.data||[],ids=attempts.map(a=>a.id).filter(Boolean);if(!ids.length){v55State.rows=[];renderErrorNotebook();return;}const ansR=await db.from('attempt_answers').select('attempt_id,question_id,selected_answer,correct_answer,is_correct,created_at').in('attempt_id',ids).eq('is_correct',false).order('created_at',{ascending:false});if(ansR.error)throw ansR.error;const answers=ansR.data||[],qids=[...new Set(answers.map(a=>a.question_id).filter(Boolean))];const qR=qids.length?await db.from('trainer_questions').select('id,question_text,topic,difficulty,question_type,correct_answer').in('id',qids):{data:[],error:null};if(qR.error)throw qR.error;const qMap=new Map((qR.data||[]).map(q=>[q.id,q]));const grouped=new Map();answers.forEach(a=>{const q=qMap.get(a.question_id)||{},key=String(a.question_id||`${a.attempt_id}:${a.created_at}`),prev=grouped.get(key)||{questionId:a.question_id,question:q.question_text||'سؤال غير متاح',topic:q.topic||'غير مصنف',difficulty:q.difficulty||'',wrong:0,selected:a.selected_answer||'',correct:a.correct_answer||q.correct_answer||'',lastWrong:a.created_at||new Date().toISOString()};prev.wrong++;if(!prev.selected&&a.selected_answer)prev.selected=a.selected_answer;if(!prev.correct&&a.correct_answer)prev.correct=a.correct_answer;if(new Date(a.created_at)>new Date(prev.lastWrong))prev.lastWrong=a.created_at;grouped.set(key,prev);});v55State.rows=[...grouped.values()];renderErrorNotebook();}catch(e){host.innerHTML=`<div class="bad">❌ تعذر تحميل دفتر الأخطاء: ${esc(e?.message||String(e))}<br><small>تأكد من أن إجابات الاختبارات محفوظة في جدول attempt_answers.</small></div>`;}}
 
+
+let v59ReportCache={attempts:[],practice:[],profiles:[]};
+function v59DateValue(v){return v?new Date(v+'T23:59:59'):null}
+function v59WithinRange(dt,from,to){const d=new Date(dt);if(Number.isNaN(d.getTime()))return false;if(from&&d<from)return false;if(to&&d>to)return false;return true}
+function v59ScoreBadge(score){const n=Number(score||0);const cls=n>=80?'good':n>=60?'mid':'low';const label=n>=80?'جيد':n>=60?'يحتاج تعزيز':'منخفض';return `<span class="trainer-report-badge ${cls}">${label} ${Math.round(n)}%</span>`}
+function v59DistinctGroups(profiles){return [...new Set((profiles||[]).map(x=>x.group_name).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'ar'))}
+async function loadTrainerReports(){
+  const area=$("trainerReportsArea"); if(!area||!db)return;
+  const today=new Date(); const week=new Date(today); week.setDate(week.getDate()-30);
+  if($("reportTo")&&!$("reportTo").value) $("reportTo").value=today.toISOString().slice(0,10);
+  if($("reportFrom")&&!$("reportFrom").value) $("reportFrom").value=week.toISOString().slice(0,10);
+  area.innerHTML='<div class="muted">⏳ جارٍ إعداد التقارير...</div>';
+  try{
+    const [ar,er,pr]=await Promise.all([
+      db.from('attempts').select('id,student_id,exam_id,percentage,correct_answers,total_questions,submitted_at,trainer_exams(title,topic,group_name)'),
+      db.from('exercise_attempts').select('id,student_id,score,is_correct,created_at'),
+      db.from('profiles').select('id,full_name,student_id,group_name,role,created_at')
+    ]);
+    if(ar.error)throw ar.error; if(er.error)throw er.error; if(pr.error)throw pr.error;
+    const attempts=ar.data||[], practice=er.data||[], profiles=(pr.data||[]).filter(x=>x.role==='student');
+    v59ReportCache={attempts,practice,profiles};
+    const groupSel=$("reportGroup");
+    if(groupSel){const cur=groupSel.value;groupSel.innerHTML='<option value="">كل الشعب</option>'+v59DistinctGroups(profiles).map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');if(cur)v(groupSel,cur)}
+    function v(el,val){const opt=[...el.options].find(o=>o.value===val);if(opt)el.value=val}
+    const from=v59DateValue($("reportFrom")?.value), to=v59DateValue($("reportTo")?.value), group=$("reportGroup")?.value||'', activity=$("reportActivity")?.value||'all';
+    const pm=new Map(profiles.map(x=>[x.id,x]));
+    const A=attempts.filter(a=>v59WithinRange(a.submitted_at,from,to)&&(!group||a.trainer_exams?.group_name===group||pm.get(a.student_id)?.group_name===group));
+    const E=practice.filter(e=>v59WithinRange(e.created_at,from,to)&&(!group||pm.get(e.student_id)?.group_name===group));
+    const totalStudents=group?profiles.filter(p=>p.group_name===group).length:profiles.length;
+    const examAvg=A.length?Math.round(A.reduce((s,a)=>s+Number(a.percentage||0),0)/A.length):0;
+    const passRate=A.length?Math.round(A.filter(a=>Number(a.percentage||0)>=60).length/A.length*100):0;
+    const practiceRate=E.length?Math.round(E.filter(e=>e.is_correct).length/E.length*100):0;
+    const activeStudents=new Set([...A.map(a=>a.student_id),...E.map(e=>e.student_id)].filter(Boolean)).size;
+    const rowsByStudent=new Map();
+    profiles.filter(p=>!group||p.group_name===group).forEach(p=>rowsByStudent.set(p.id,{p,examCount:0,examSum:0,best:0,practiceCount:0,practiceCorrect:0,last:null}));
+    A.forEach(a=>{const o=rowsByStudent.get(a.student_id);if(!o)return;o.examCount++;o.examSum+=Number(a.percentage||0);o.best=Math.max(o.best,Number(a.percentage||0));o.last=!o.last||new Date(a.submitted_at)>new Date(o.last)?a.submitted_at:o.last;});
+    E.forEach(e=>{const o=rowsByStudent.get(e.student_id);if(!o)return;o.practiceCount++;if(e.is_correct)o.practiceCorrect++;o.last=!o.last||new Date(e.created_at)>new Date(o.last)?e.created_at:o.last;});
+    const studentRows=[...rowsByStudent.values()].map(o=>({...o,examAvg:o.examCount?Math.round(o.examSum/o.examCount):0,practiceRate:o.practiceCount?Math.round(o.practiceCorrect/o.practiceCount*100):0})).sort((a,b)=>a.examAvg-b.examAvg||a.practiceRate-b.practiceRate);
+    const topicMap=new Map();A.forEach(a=>{const t=a.trainer_exams?.topic||'غير مصنف';const o=topicMap.get(t)||{topic:t,n:0,sum:0,pass:0};o.n++;o.sum+=Number(a.percentage||0);if(Number(a.percentage||0)>=60)o.pass++;topicMap.set(t,o)});
+    const topicRows=[...topicMap.values()].map(o=>({...o,avg:Math.round(o.sum/o.n),passRate:Math.round(o.pass/o.n*100)})).sort((a,b)=>a.avg-b.avg);
+    const examMap=new Map();A.forEach(a=>{const id=a.exam_id||a.trainer_exams?.title||'unknown';const o=examMap.get(id)||{title:a.trainer_exams?.title||'اختبار',n:0,sum:0,pass:0};o.n++;o.sum+=Number(a.percentage||0);if(Number(a.percentage||0)>=60)o.pass++;examMap.set(id,o)});
+    const examRows=[...examMap.values()].map(o=>({...o,avg:Math.round(o.sum/o.n),passRate:Math.round(o.pass/o.n*100)})).sort((a,b)=>a.avg-b.avg);
+    const status=n=>n>=80?'جيد':n>=60?'متوسط':'يحتاج متابعة';
+    let html=`<div class="trainer-report-kpis"><div class="trainer-report-kpi"><div class="num">${totalStudents}</div><div class="lbl">المتدربون ضمن التقرير</div></div><div class="trainer-report-kpi"><div class="num">${A.length}</div><div class="lbl">محاولات الاختبارات</div></div><div class="trainer-report-kpi"><div class="num">${examAvg}%</div><div class="lbl">متوسط الاختبارات</div></div><div class="trainer-report-kpi"><div class="num">${passRate}%</div><div class="lbl">نسبة النجاح</div></div></div>`;
+    if(activity!=='exam') html+=`<div class="trainer-report-kpis"><div class="trainer-report-kpi"><div class="num">${E.length}</div><div class="lbl">محاولات التمارين</div></div><div class="trainer-report-kpi"><div class="num">${practiceRate}%</div><div class="lbl">دقة التمارين</div></div><div class="trainer-report-kpi"><div class="num">${activeStudents}</div><div class="lbl">نشطون ضمن الفترة</div></div><div class="trainer-report-kpi"><div class="num">${totalStudents?Math.round(activeStudents/totalStudents*100):0}%</div><div class="lbl">نسبة النشاط</div></div></div>`;
+    html+=`<div class="trainer-report-columns"><div class="trainer-report-panel"><h3>👥 تقرير المتدربين</h3><div class="trainer-report-table-wrap">${studentRows.length?`<table><tr><th>المتدرب</th><th>الشعبة</th><th>اختبارات</th><th>متوسط</th><th>أفضل</th><th>تمارين</th><th>آخر نشاط</th></tr>${studentRows.map(o=>`<tr><td style="text-align:right"><b>${esc(o.p.full_name||'—')}</b><div class="muted">${esc(o.p.student_id||'—')}</div></td><td>${esc(o.p.group_name||'—')}</td><td>${o.examCount}</td><td>${v59ScoreBadge(o.examAvg)}</td><td>${o.examCount?o.best+'%':'—'}</td><td>${o.practiceCount?o.practiceRate+'%':'—'}</td><td>${o.last?new Date(o.last).toLocaleDateString('ar-SA'):'لم يبدأ'}</td></tr>`).join('')}</table>`:'<div class="trainer-report-empty">لا توجد بيانات متوافقة مع الفلاتر الحالية.</div>'}</div></div>`;
+    html+=`<div class="trainer-report-panel"><h3>📚 تقرير حسب الموضوع</h3><div class="trainer-report-table-wrap">${topicRows.length?`<table><tr><th>الموضوع</th><th>المحاولات</th><th>المتوسط</th><th>النجاح</th></tr>${topicRows.map(o=>`<tr><td>${esc(o.topic)}</td><td>${o.n}</td><td>${v59ScoreBadge(o.avg)}</td><td>${o.passRate}%</td></tr>`).join('')}</table>`:'<div class="trainer-report-empty">لا توجد نتائج اختبارات للفترة المحددة.</div>'}</div></div></div>`;
+    html+=`<div class="trainer-report-panel" style="margin-top:16px"><h3>📝 تقرير الاختبارات</h3><div class="trainer-report-table-wrap">${examRows.length?`<table><tr><th>الاختبار</th><th>المحاولات</th><th>المتوسط</th><th>النجاح</th></tr>${examRows.map(o=>`<tr><td style="text-align:right">${esc(o.title)}</td><td>${o.n}</td><td>${v59ScoreBadge(o.avg)}</td><td>${o.passRate}%</td></tr>`).join('')}</table>`:'<div class="trainer-report-empty">لا توجد نتائج اختبارات للفترة المحددة.</div>'}</div></div>`;
+    const weakest=studentRows.filter(x=>x.examCount>0).slice(0,5);
+    html+=`<div class="trainer-report-panel" style="margin-top:16px"><h3>⚠️ يحتاجون متابعة أولًا</h3><div class="trainer-report-table-wrap">${weakest.length?`<table><tr><th>المتدرب</th><th>متوسط الاختبارات</th><th>دقة التمارين</th><th>الحالة</th></tr>${weakest.map(o=>`<tr><td style="text-align:right">${esc(o.p.full_name||'—')}</td><td>${o.examAvg}%</td><td>${o.practiceCount?o.practiceRate+'%':'—'}</td><td>${status(o.examAvg)}</td></tr>`).join('')}</table>`:'<div class="trainer-report-empty">لا يوجد متدربون يحتاجون متابعة وفق البيانات المتاحة.</div>'}</div></div>`;
+    area.innerHTML=html;
+  }catch(e){area.innerHTML=`<div class="bad">❌ تعذر بناء التقرير.<br>${esc(e?.message||String(e))}</div>`}
+}
+function v59ReportRows(){
+  const {attempts,practice,profiles}=v59ReportCache; const pm=new Map(profiles.map(x=>[x.id,x]));
+  const from=v59DateValue($("reportFrom")?.value),to=v59DateValue($("reportTo")?.value),group=$("reportGroup")?.value||'',activity=$("reportActivity")?.value||'all';
+  const out=[['الاسم','رقم المتدرب','الشعبة','النوع','العنوان','الموضوع','التاريخ','الدرجة','الحالة']];
+  if(activity!=='practice') attempts.filter(a=>v59WithinRange(a.submitted_at,from,to)&&(!group||a.trainer_exams?.group_name===group||pm.get(a.student_id)?.group_name===group)).forEach(a=>{const p=pm.get(a.student_id)||{};out.push([p.full_name||'',p.student_id||'',p.group_name||'', 'اختبار',a.trainer_exams?.title||'',a.trainer_exams?.topic||'',a.submitted_at||'',a.percentage??'',Number(a.percentage||0)>=60?'ناجح':'يحتاج تعزيز'])});
+  if(activity!=='exam') practice.filter(e=>v59WithinRange(e.created_at,from,to)&&(!group||pm.get(e.student_id)?.group_name===group)).forEach(e=>{const p=pm.get(e.student_id)||{};out.push([p.full_name||'',p.student_id||'',p.group_name||'', 'تمرين','تمرين Subnetting','Subnetting',e.created_at||'',e.score??'',e.is_correct?'صحيح':'خطأ'])});
+  return out;
+}
+function exportTrainerReportCSV(){const rows=v59ReportRows();const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='ipv4_trainer_report.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function printTrainerReport(){const area=$("trainerReportsArea");if(!area)return;const w=window.open('','_blank','width=1200,height=900');if(!w)return;w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير IPv4 Subnetting</title><style>body{font-family:Tahoma,Arial;padding:24px;color:#17324d}h1,h2,h3{color:#0759a5}.card{border:1px solid #dce8f2;border-radius:12px;padding:14px;margin:10px 0}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{border:1px solid #cfdbe5;padding:7px;text-align:center}th{background:#0759a5;color:#fff}.muted{color:#65788a;font-size:12px}.trainer-report-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.trainer-report-kpi{border:1px solid #dce8f2;border-radius:10px;padding:10px;text-align:center}.trainer-report-kpi .num{font-size:24px;font-weight:bold;color:#0759a5}.trainer-report-kpi .lbl{font-size:12px;color:#65788a}.trainer-report-columns{display:grid;grid-template-columns:1fr 1fr;gap:12px}.trainer-report-panel{border:1px solid #dce8f2;border-radius:10px;padding:12px;margin-top:10px}@media print{body{padding:8px}.trainer-report-actions{display:none}}</style></head><body><h1>📑 تقرير منصة IPv4 Subnetting</h1><div class="muted">تاريخ التقرير: ${new Date().toLocaleString('ar-SA')}</div>${area.innerHTML}<script>window.onload=()=>window.print();<\/script></body></html>`);w.document.close()}
+
 function trainerTab(tab,btn){
-  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerBlueprint","trainerAnalytics","trainerSmartFollow"].forEach(id=>$(id)?.classList.add("hidden"));
-  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",blueprint:"trainerBlueprint",analytics:"trainerAnalytics",smartFollow:"trainerSmartFollow"};
+  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerBlueprint","trainerAnalytics","trainerReports","trainerSmartFollow"].forEach(id=>$(id)?.classList.add("hidden"));
+  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",blueprint:"trainerBlueprint",analytics:"trainerAnalytics",reports:"trainerReports",smartFollow:"trainerSmartFollow"};
   $(map[tab])?.classList.remove("hidden");
-  if(btn){document.querySelectorAll("#trainer .card button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
+  if(btn){document.querySelectorAll(".trainer-dashboard-tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
   if(tab==="students")loadTrainerStudents();
   if(tab==="questions")loadTrainerQuestions();
   if(tab==="exams")loadTrainerExams();
   if(tab==="blueprint")v53InitBlueprint();
   if(tab==="analytics")loadTrainerAnalytics();
+  if(tab==="reports")loadTrainerReports();
   if(tab==="smartFollow")loadTrainerSmartFollow();
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
