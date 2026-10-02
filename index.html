@@ -414,11 +414,44 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 @media(prefers-reduced-motion:reduce){.v64-home *{scroll-behavior:auto}}
 </style>
 
+
+<style id="v65-header-css">
+.v65-header{
+  background:linear-gradient(135deg,#062b58 0%,#0759a5 58%,#0b78d0 100%);
+  color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;
+  gap:14px;flex-wrap:wrap;box-shadow:0 6px 24px rgba(6,43,88,.16);position:sticky;top:0;z-index:1000
+}
+.v65-brand{min-width:210px}.v65-logo{font-size:20px;font-weight:900;letter-spacing:.1px}.v65-sub{font-size:11px;color:#cae6fb;margin-top:2px}
+.v65-nav{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-inline-start:auto}
+.v65-nav button{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.09);color:#fff;
+  padding:9px 12px;border-radius:10px;font-weight:800;cursor:pointer;transition:.18s}
+.v65-nav button:hover,.v65-nav button.active{background:#fff;color:#0759a5;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.v65-nav .v65-logout{background:linear-gradient(135deg,#ee3945,#c51e31);border-color:transparent}
+.v65-nav .v65-logout:hover{color:#fff;background:linear-gradient(135deg,#f34d59,#d62236)}
+@media(max-width:760px){
+ .v65-header{padding:10px 12px}.v65-brand{flex:1}.v65-logo{font-size:17px}.v65-sub{font-size:10px}
+ .v65-nav{width:100%;justify-content:flex-start}.v65-nav button{padding:8px 10px;font-size:12px}
+}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • VLSM • V63 Production Release</div></div>
-<div id="v63Status" class="v63-status hidden" aria-live="polite"><span id="v63StatusDot" class="v63-dot"></span><span id="v63StatusText">جاهز</span></div><nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('finalExam',this)">🎓 الاختبار النهائي</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
+<header class="v65-header">
+  <div class="v65-brand">
+    <div class="v65-logo">🌐 IPv4 Subnetting Trainer</div>
+    <div class="v65-sub">IPv4 • Binary • FLSM • VLSM • V64</div>
+  </div>
+  <div id="v63Status" class="v63-status hidden" aria-live="polite"><span id="v63StatusDot" class="v63-dot"></span><span id="v63StatusText">جاهز</span></div>
+  <nav id="nav" class="hidden v65-nav">
+    <button class="active" onclick="page('home',this)">🏠 الرئيسية</button>
+    <button onclick="page('dashboard',this)">📊 لوحة المتدرب</button>
+    <button id="trainerNav" class="hidden" onclick="page('trainer',this)">👨‍🏫 لوحة المدرب</button>
+    <button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button>
+    <button onclick="page('account',this)">👤 الحساب</button>
+    <button class="v65-logout" onclick="logout()">🚪 خروج</button>
+  </nav>
+</header>
 <div class="container" id="mainContent" tabindex="-1">
 <div id="app" class="hidden">
 <section id="home" class="v64-home">
