@@ -463,6 +463,11 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 @media(max-width:650px){.v66-lab-grid{grid-template-columns:1fr}.v66-lab-kpis{grid-template-columns:1fr 1fr}.v66-trainer-lab{grid-template-columns:1fr}}
 </style>
 
+
+<style id="v66_1-ui-fix">
+.v66-student-note{margin-top:10px;background:#eef8ff;border:1px solid #cfe7f6;color:#2a5d82;border-radius:10px;padding:10px 12px;font-size:13px}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1008,7 +1013,7 @@ async function v66GetLabs(){
 async function v66RenderLabSummary(labs, submissions){
  const host=$('v66LabsSummary');if(!host)return;
  const total=labs.length,done=(submissions.data||[]).filter(s=>s.status==='reviewed').length,pending=(submissions.data||[]).filter(s=>s.status!=='reviewed').length,scoreRows=(submissions.data||[]).filter(s=>s.score!=null),avg=scoreRows.length?Math.round(scoreRows.reduce((n,s)=>n+Number(s.score||0),0)/scoreRows.length):0;
- host.innerHTML=`<div class="v66-lab-kpis"><div class="v66-kpi"><b>${total}</b><span>إجمالي المختبرات</span></div><div class="v66-kpi"><b>${done}</b><span>مكتملة</span></div><div class="v66-kpi"><b>${pending}</b><span>قيد المراجعة</span></div><div class="v66-kpi"><b>${avg}%</b><span>متوسط الدرجات</span></div></div>${submissions.error?'<div class="bad">ℹ️ طبّق Migration V66 لتفعيل التسليم والحفظ المركزي. يمكنك استعراض الخطة الآن.</div>':''}`;
+ host.innerHTML=`<div class="v66-lab-kpis"><div class="v66-kpi"><b>${total}</b><span>إجمالي المختبرات</span></div><div class="v66-kpi"><b>${done}</b><span>مكتملة</span></div><div class="v66-kpi"><b>${pending}</b><span>قيد المراجعة</span></div><div class="v66-kpi"><b>${avg}%</b><span>متوسط الدرجات</span></div></div>${submissions.error?'<div class="v66-student-note">ℹ️ يمكنك استعراض المختبرات الآن. رفع ملفات Packet Tracer والتسليم الإلكتروني سيظهر عند تفعيل خدمة المختبرات.</div>':''}`;
 }
 async function v66RenderLabs(){
  const host=$('v66LabsGrid');if(!host)return;const r=await v66GetLabs();
