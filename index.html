@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V51</title>
+<title>IPv4 Subnetting Trainer — V58</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -65,6 +65,20 @@
 @media(max-width:900px){.smart-hero,.smart-columns{grid-template-columns:1fr}.smart-kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.smart-kpis{grid-template-columns:1fr 1fr}.smart-activity-row{grid-template-columns:65px 1fr}.smart-activity-row .date{grid-column:2;text-align:right}}
 .smart-coach{margin-top:14px;padding:14px;border:1px solid #cfe1ef;border-radius:12px;background:linear-gradient(135deg,#f4fbff,#fff)}.smart-coach-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.smart-coach-title strong{color:#0759a5}.hint-level{display:inline-block;padding:4px 9px;border-radius:14px;background:#fff3cd;border:1px solid #e8ca6a;font-size:12px}.error-explain{font-size:12px;line-height:1.7;margin-top:5px}.coach-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+
+
+/* V58 — تبويبات لوحة المتدرب الذكية */
+.student-dashboard-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 16px;padding:8px;background:#f5f9fd;border:1px solid #dce8f2;border-radius:14px;position:sticky;top:8px;z-index:4}
+.student-dashboard-tabs button{border:1px solid #cbd9e5;background:#fff;color:#2b5578;border-radius:10px;padding:10px 13px;font-weight:800;cursor:pointer;transition:.15s}
+.student-dashboard-tabs button:hover{background:#edf6ff;color:#0759a5}
+.student-dashboard-tabs button.active{background:#0759a5;color:#fff;border-color:#0759a5;box-shadow:0 3px 10px #0759a522}
+.student-dashboard-tab-panel{display:none;animation:studentTabIn .18s ease}
+.student-dashboard-tab-panel.active{display:block}
+.student-dashboard-tab-panel>.card:last-child{margin-bottom:0}
+.student-dashboard-subtabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.student-dashboard-note{padding:11px 13px;background:#eef7ff;border-right:4px solid #0759a5;border-radius:10px;color:#41617c;line-height:1.8;margin-bottom:12px}
+@keyframes studentTabIn{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(max-width:700px){.student-dashboard-tabs{position:static}.student-dashboard-tabs button{flex:1;min-width:120px}.student-dashboard-tab-panel{min-height:0}}
 
 /* V50 — التدريب التكيفي */
 .v50-adaptive-card{border:2px solid #8ec8ab;background:linear-gradient(135deg,#f4fff8,#fff)}
@@ -246,7 +260,7 @@
 @media(max-width:600px){.home-main-grid{grid-template-columns:1fr}}
 </style></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V57 • Supabase</div></div>
-<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>$('v57AchievementsPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),140)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
+<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
 <section id="home">
@@ -283,9 +297,52 @@
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
-<div class="card hero"><h2>📊 لوحة المتدرب الذكية</h2><p>كل ما تحتاجه لمعرفة تقدمك، نقاط قوتك، وما الذي ينبغي أن تراجعه بعد ذلك.</p><div id="studentDashboard"></div><div id="v52PlacementSummary"></div></div>
-<div class="card"><h2>🔔 إشعاراتك</h2><p class="muted">تنبيهات الاختبارات والنتائج المنشورة من المدرب.</p><div id="studentNotifications"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div><div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div><div class="card v57-card" id="v57AchievementsPanel"><div class="v57-head"><div><span class="v57-badge">🏅 V57 — مركز الإنجازات</span><h3 style="margin:8px 0 4px">أنجز، أتقن، وافتح شارات جديدة</h3><div class="muted">الإنجازات تُحتسب تلقائيًا من نشاطك الحالي، ولا تحتاج إلى إدخال يدوي.</div></div><button class="primary purple" onclick="renderV57AchievementsLastKnown()">🔄 تحديث الشارات</button></div><div id="v57AchievementsBody"><div class="muted" style="margin-top:12px">جارٍ بناء الإنجازات...</div></div></div><div class="card v55-card" id="v55NotebookCard"><div class="v55-head"><div><span class="v55-badge">📓 V55 — دفتر الأخطاء</span><h3>حوّل أخطاءك إلى خطة مراجعة</h3><p class="muted" style="margin:0">يجمع الأخطاء من الاختبارات المحفوظة، يوضح إجابتك والصحيح، ويتيح لك إعادة التدريب ومتابعة ما تمت مراجعته.</p></div><button class="primary orange" onclick="loadErrorNotebook(true)">🔄 تحديث الدفتر</button></div><div id="v55ErrorNotebook"><div class="muted" style="margin-top:14px">جارٍ تحميل دفتر الأخطاء...</div></div></div>
-<div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div>
+<div class="card hero">
+  <h2>📊 لوحة المتدرب الذكية</h2>
+  <p>رتّب معلوماتك حسب حاجتك: اطلع على ملخصك، راجع تقدمك، عالج أخطاءك، وتابع إنجازاتك من تبويبات واضحة بدل صفحة طويلة.</p>
+  <div class="student-dashboard-tabs" role="tablist" aria-label="أقسام لوحة المتدرب">
+    <button id="sdTab-overview" class="active" role="tab" aria-selected="true" onclick="studentDashboardTab('overview',this)">🏠 ملخصي</button>
+    <button id="sdTab-progress" role="tab" aria-selected="false" onclick="studentDashboardTab('progress',this)">📈 التقدم والتحليلات</button>
+    <button id="sdTab-review" role="tab" aria-selected="false" onclick="studentDashboardTab('review',this)">🧠 المراجعة الذكية</button>
+    <button id="sdTab-errors" role="tab" aria-selected="false" onclick="studentDashboardTab('errors',this)">📓 دفتر الأخطاء</button>
+    <button id="sdTab-achievements" role="tab" aria-selected="false" onclick="studentDashboardTab('achievements',this)">🏅 الإنجازات</button>
+    <button id="sdTab-notifications" role="tab" aria-selected="false" onclick="studentDashboardTab('notifications',this)">🔔 الإشعارات</button>
+    <button id="sdTab-history" role="tab" aria-selected="false" onclick="studentDashboardTab('history',this)">📜 السجل</button>
+  </div>
+
+  <div id="sdPanel-overview" class="student-dashboard-tab-panel active">
+    <div id="studentDashboard"></div>
+    <div id="v52PlacementSummary"></div>
+  </div>
+
+  <div id="sdPanel-progress" class="student-dashboard-tab-panel">
+    <div class="student-dashboard-note">📈 هنا ترى مستوى الإتقان، اتجاه الأداء، والتحليلات التفصيلية التي تساعدك على معرفة ما أتقنته وما يحتاج إلى مزيد من التدريب.</div>
+    <div id="studentDashboardProgress"><div id="v49MasteryPanel"></div><div id="v49ErrorPanel"></div><div id="v54StudentAnalytics"></div></div>
+  </div>
+
+  <div id="sdPanel-review" class="student-dashboard-tab-panel">
+    <div class="student-dashboard-note">🧠 جلسة مراجعة قصيرة مبنية على نقاط ضعفك، وتختار أسئلة جديدة من المهارة نفسها حتى تتأكد من فهمها.</div>
+    <div class="v56-card" id="v56SmartReviewCard"><div id="v56SmartReview"></div></div>
+  </div>
+
+  <div id="sdPanel-errors" class="student-dashboard-tab-panel">
+    <div class="student-dashboard-note">📓 راجع الأسئلة التي أخطأت فيها، وشاهد إجابتك والإجابة الصحيحة، ثم انتقل مباشرة إلى تدريب تكيفي على الموضوع نفسه.</div>
+    <div class="card v55-card" id="v55NotebookCard"><div class="v55-head"><div><span class="v55-badge">📓 V55 — دفتر الأخطاء</span><h3>حوّل أخطاءك إلى خطة مراجعة</h3><p class="muted" style="margin:0">يجمع الأخطاء من الاختبارات المحفوظة، يوضح إجابتك والصحيح، ويتيح لك إعادة التدريب ومتابعة ما تمت مراجعته.</p></div><button class="primary orange" onclick="loadErrorNotebook(true)">🔄 تحديث الدفتر</button></div><div id="v55ErrorNotebook"><div class="muted" style="margin-top:14px">جارٍ تحميل دفتر الأخطاء...</div></div></div>
+  </div>
+
+  <div id="sdPanel-achievements" class="student-dashboard-tab-panel">
+    <div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div>
+    <div class="card v57-card" id="v57AchievementsPanel"><div class="v57-head"><div><span class="v57-badge">🏅 V57 — مركز الإنجازات</span><h3 style="margin:8px 0 4px">أنجز، أتقن، وافتح شارات جديدة</h3><div class="muted">الإنجازات تُحتسب تلقائيًا من نشاطك الحالي، ولا تحتاج إلى إدخال يدوي.</div></div><button class="primary purple" onclick="renderV57AchievementsLastKnown()">🔄 تحديث الشارات</button></div><div id="v57AchievementsBody"><div class="muted" style="margin-top:12px">جارٍ بناء الإنجازات...</div></div></div>
+  </div>
+
+  <div id="sdPanel-notifications" class="student-dashboard-tab-panel">
+    <div class="card"><h2>🔔 إشعاراتك</h2><p class="muted">تنبيهات الاختبارات والنتائج المنشورة من المدرب.</p><div id="studentNotifications"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div>
+  </div>
+
+  <div id="sdPanel-history" class="student-dashboard-tab-panel">
+    <div class="card"><h2>📜 سجل المحاولات</h2><div id="attemptTable"></div></div>
+  </div>
+</div>
 </section>
 <section id="trainer" class="hidden">
 <div class="card hero"><h2>👨‍🏫 لوحة المدرب</h2><p class="muted">إدارة المتدربين وبنك الأسئلة ومتابعة النتائج من مكان واحد.</p>
@@ -459,10 +516,22 @@ function resetHomeView(){
 function openHomeSmartReview(button){
   page("dashboard",button);
   setTimeout(()=>{
-    const panel=$("v56SmartReview");
+    studentDashboardTab("review");
+    const panel=$("v56SmartReviewCard");
     if(panel) panel.scrollIntoView({behavior:"smooth",block:"start"});
   },350);
 }
+function studentDashboardTab(tab,btn){
+  const tabs=["overview","progress","review","errors","achievements","notifications","history"];
+  if(!tabs.includes(tab))tab="overview";
+  window.v58DashboardTab=tab;
+  tabs.forEach(t=>{
+    $("sdPanel-"+t)?.classList.toggle("active",t===tab);
+    const b=$("sdTab-"+t);
+    if(b){b.classList.toggle("active",t===tab);b.setAttribute("aria-selected",t===tab?"true":"false");}
+  });
+}
+
 function page(id,b){
   if(id==="home"){resetHomeView();if(profile?.role==="student")loadStudentNotifications();return;}
   document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));
@@ -979,10 +1048,7 @@ async function renderDashboard(){
     <div class="smart-columns"><div class="smart-panel"><h3>🏅 إنجازاتي</h3><div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div></div><div class="smart-panel"><div class="smart-streak"><div><strong>🔥 سلسلة التدريب</strong><div class="muted">${streak?`تدربت ${streak} يوم${streak===1?'':'ًا'} متتاليًا.`:'ابدأ اليوم لبناء سلسلة تدريب.'}</div></div><div class="fire">🔥 ${streak}</div></div></div></div>
     <div class="smart-panel"><h3>🕘 آخر نشاط</h3>${last?`<div class="smart-activity"><div class="smart-activity-row"><div class="type">${last.t}</div><div><strong>${esc(last.title)}</strong><div class="muted">النتيجة: ${last.s}${last.t==='منافسة'?' / 1000':last.t==='تمرين'?' / 100':'%' } — ${last.z}</div></div><div class="date">${new Date(last.d).toLocaleDateString('ar-SA')}</div></div></div>`:'<div class="smart-empty">لا يوجد نشاط حتى الآن. ابدأ بأول تمرين 🎯</div>'}</div>
   </div>`;
-  $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v49-shell"><div id="v49MasteryPanel"></div><div id="v49ErrorPanel"></div></div>');
-  $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v54-shell"><div id="v54StudentAnalytics"></div></div>');
   renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
-  $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v56-card" id="v56SmartReviewCard"><div id="v56SmartReview"></div></div>');
   renderV56SmartReviewPanel({attempts:a,lessons,lp});
   renderV57Achievements({completed,totalLessons,exerciseAttempts:e,attempts:a,competitions,streak,points});
   $('studentAchievements').innerHTML=`<div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div>`;
@@ -991,6 +1057,7 @@ async function renderDashboard(){
   updatePracticeStats();
   await renderV49MasteryAndErrors({lessons,lp,attempts:a});
   await loadErrorNotebook();
+  studentDashboardTab(window.v58DashboardTab || "overview");
 }
 
 
