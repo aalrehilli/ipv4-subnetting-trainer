@@ -331,6 +331,89 @@ button[disabled],input[disabled],select[disabled]{opacity:.65;cursor:not-allowed
 @media(max-width:700px){.v63-status{font-size:11px;padding:6px 9px}.v63-release{font-size:11px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
+
+<style id="v64-home-css">
+:root{
+  --v64-blue:#0a64bd; --v64-blue2:#0b8fe3; --v64-dark:#062b58;
+  --v64-bg:#f3f8fd; --v64-text:#17324d; --v64-muted:#63768a;
+  --v64-card:#ffffff; --v64-border:#d9e8f5;
+}
+body{background:var(--v64-bg);color:var(--v64-text)}
+.v64-home{padding-bottom:28px}
+.v64-hero{
+  position:relative;overflow:hidden;border-radius:24px;margin-bottom:18px;
+  min-height:390px;padding:0!important;border:0!important;
+  background:linear-gradient(135deg,#062b58 0%,#073b78 55%,#075fae 100%)!important;
+  color:#fff;box-shadow:0 16px 40px rgba(6,43,88,.20)
+}
+.v64-hero::before,.v64-hero::after{content:"";position:absolute;border-radius:50%;filter:blur(2px);opacity:.35;pointer-events:none}
+.v64-hero::before{width:360px;height:360px;left:-140px;top:-170px;background:#39b8ff}
+.v64-hero::after{width:300px;height:300px;right:-120px;bottom:-160px;background:#204fff}
+.v64-hero-grid{
+  position:relative;z-index:2;display:grid;grid-template-columns:1.03fr .97fr;
+  min-height:390px;align-items:center
+}
+.v64-hero-copy{padding:42px 42px 42px 30px}
+.v64-hero-kicker{display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.09);border-radius:999px;padding:8px 13px;font-weight:800;font-size:13px}
+.v64-hero h1{color:#fff;font-size:clamp(32px,4vw,56px);line-height:1.1;margin:18px 0 10px}
+.v64-gradient-text{background:linear-gradient(90deg,#ffffff,#65d4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.v64-hero-sub{font-size:18px;line-height:1.9;max-width:680px;color:#dbeeff;margin:0}
+.v64-hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.v64-hero-btn{padding:13px 20px;border-radius:11px;border:1px solid rgba(255,255,255,.28);font-weight:900;cursor:pointer}
+.v64-hero-btn.primary{background:linear-gradient(135deg,#1f8dff,#0a64bd);color:#fff}
+.v64-hero-btn.secondary{background:rgba(255,255,255,.08);color:#fff}
+.v64-hero-mini{display:flex;gap:22px;flex-wrap:wrap;margin-top:26px}
+.v64-mini-stat{display:flex;align-items:center;gap:8px;color:#fff}
+.v64-mini-stat .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.12);font-size:18px}
+.v64-illustration{position:relative;height:100%;min-height:390px;display:grid;place-items:center;padding:22px}
+.v64-network{
+  width:min(560px,95%);height:auto;filter:drop-shadow(0 20px 30px rgba(0,0,0,.18))
+}
+.v64-pill-stack{position:absolute;inset:30px 25px 30px 25px;pointer-events:none}
+.v64-pill{position:absolute;background:rgba(7,31,65,.72);border:1px solid rgba(94,201,255,.32);color:#eaf8ff;
+  padding:9px 12px;border-radius:10px;font-weight:900;backdrop-filter:blur(5px);font-size:13px}
+.v64-pill.p1{right:11%;top:12%}.v64-pill.p2{left:4%;top:26%}.v64-pill.p3{right:3%;bottom:28%}.v64-pill.p4{left:16%;bottom:11%}
+.v64-section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:20px 0 12px}
+.v64-section-title h2{margin:0;color:#0a5fae;font-size:26px}.v64-section-title p{margin:0;color:var(--v64-muted)}
+.v64-start-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.v64-start-card{position:relative;overflow:hidden;border-radius:18px!important;padding:22px!important;margin:0!important;border:1px solid var(--v64-border)!important}
+.v64-start-card::after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-28px;top:-28px;opacity:.11;background:currentColor}
+.v64-start-card.placement{color:#7048a8;background:linear-gradient(135deg,#fbf8ff,#fff)!important;border:2px solid #d7c8ee!important}
+.v64-start-card.review{color:#0b63b6;background:linear-gradient(135deg,#f5fbff,#fff)!important;border:2px solid #c7def1!important}
+.v64-start-card h3{margin:9px 0 6px;color:currentColor;font-size:23px}
+.v64-start-card p{color:var(--v64-muted);margin:0;line-height:1.8}
+.v64-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.v64-card-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:rgba(255,255,255,.8);border:1px solid rgba(11,99,182,.1)}
+.v64-path-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.v64-path-card{margin:0!important;min-height:160px;display:flex;flex-direction:column;justify-content:space-between;border-radius:16px!important}
+.v64-path-card h3{margin:8px 0 4px;font-size:19px}.v64-path-card p{margin:0;color:var(--v64-muted);line-height:1.65;font-size:13px}
+.v64-path-tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}
+.v64-path-card.course{background:linear-gradient(135deg,#f7fbff,#fff)!important}
+.v64-path-card.practice{background:linear-gradient(135deg,#fffaf1,#fff)!important}
+.v64-path-card.tests{background:linear-gradient(135deg,#f3fff8,#fff)!important}
+.v64-path-card.final{background:linear-gradient(135deg,#f7f4ff,#fff)!important}
+.v64-path-card.cert{background:linear-gradient(135deg,#fff8f1,#fff)!important}
+.v64-bottom-grid{display:grid;grid-template-columns:1.25fr .9fr .9fr;gap:14px;margin-top:14px}
+.v64-panel{margin:0!important;border-radius:18px!important}
+.v64-progress-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0 5px}
+.v64-progress-track{height:9px;border-radius:999px;background:#e8f0f7;overflow:hidden}
+.v64-progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#0abf7b,#0b8fe3)}
+.v64-quick-list{display:grid;gap:8px}
+.v64-quick{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid #e3edf5;border-radius:10px;background:#fbfdff}
+.v64-quick b{color:#0a5fae}.v64-muted{color:var(--v64-muted);font-size:13px}
+.v64-safe-note{margin-top:14px;border-radius:12px;padding:10px 12px;background:#edf7ff;border:1px solid #d3e8f8;color:#245d86;font-size:12px}
+@media(max-width:1100px){
+  .v64-hero-grid{grid-template-columns:1fr}.v64-illustration{min-height:300px;order:-1}.v64-hero-copy{padding:25px 26px 34px}.v64-path-grid{grid-template-columns:repeat(3,1fr)}.v64-bottom-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .v64-start-grid,.v64-path-grid,.v64-bottom-grid{grid-template-columns:1fr}
+  .v64-hero{min-height:auto}.v64-illustration{min-height:250px}.v64-hero-copy{padding:20px}
+  .v64-hero h1{font-size:34px}.v64-hero-sub{font-size:15px}.v64-pill{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.v64-home *{scroll-behavior:auto}}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -338,25 +421,148 @@ button[disabled],input[disabled],select[disabled]{opacity:.65;cursor:not-allowed
 <div id="v63Status" class="v63-status hidden" aria-live="polite"><span id="v63StatusDot" class="v63-dot"></span><span id="v63StatusText">جاهز</span></div><nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('finalExam',this)">🎓 الاختبار النهائي</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container" id="mainContent" tabindex="-1">
 <div id="app" class="hidden">
-<section id="home">
-<div class="card hero"><span class="badge">CLASS C + FLSM + VLSM + FINAL ASSESSMENT</span><h1>منصة تدريب IPv4 Subnetting</h1><p>ابدأ من تحديد مستواك، ثم راجع نقاط ضعفك، وبعدها انتقل إلى المقرر والتمارين والاختبارات.</p><div class="v63-release">🛡️ نسخة إنتاجية نهائية: تحسينات للاستقرار، الوصولية، استعادة الجلسة، حالة الاتصال، والرجوع الآمن إلى الرئيسية.</div></div>
-<div class="home-feature-grid">
-  <div class="card home-feature placement-feature">
-    <div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:10px 0 6px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div>
-    <button class="primary purple" onclick="page('placement',this)">🚀 ابدأ تحديد المستوى</button>
-  </div>
-  <div class="card home-feature review-feature">
-    <div><span class="v56-badge">🧠 V56 — المراجعة الذكية</span><h2 style="margin:10px 0 6px">راجع نقاط الضعف قبل الاختبار</h2><p class="muted" style="margin:0">جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div>
-    <button class="primary green" onclick="openHomeSmartReview(this)">🧠 ابدأ المراجعة الذكية</button>
-  </div>
-</div>
-<div class="home-main-grid">
-  <div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div>
-  <div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts، مع تدريب Binary ومختبر IPv4 بصري.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div>
-  <div class="card"><h2>🏆 الاختبارات</h2><p>اختبارات منشورة، نتائج محفوظة، واختبارات ذكية مبنية على مستوى المتدرب.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card v60-final-card"><h2>🎓 الاختبار النهائي الشامل</h2><p>اختبار ختامي يغطي Binary وIPv4 وSubnetting وFLSM وVLSM ويقيس جاهزيتك لإكمال المقرر.</p><button class="primary" onclick="page('finalExam',this);renderV60FinalExamHome()">🚀 ابدأ الاختبار النهائي</button></div>
-</div>
-<div class="card home-tracking-link" style="margin-top:16px"><div style="display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap"><div><span class="v54-badge">📊 المتابعة</span><h2 style="margin:9px 0 5px">تابع تقدمك من لوحة المتدرب</h2><p class="muted" style="margin:0">النتائج، مستوى الإتقان، التحليلات، الإنجازات ودفتر الأخطاء في مكان واحد.</p></div><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div>
+<section id="home" class="v64-home">
+  <div class="v64-hero">
+    <div class="v64-hero-grid">
+      <div class="v64-hero-copy">
+        <span class="v64-hero-kicker">🌐 IPv4 • Binary • Subnetting • FLSM • VLSM</span>
+        <h1>منصة تدريب <span class="v64-gradient-text">IPv4 المتكاملة</span></h1>
+        <p class="v64-hero-sub">
+          رحلة تدريبية من الأساسيات إلى المهارات المتقدمة في IPv4 وSubnetting،
+          مع تمارين تفاعلية، اختبارات ذكية، مراجعة شخصية، وتحليل واضح لتقدمك.
+        </p>
+        <div class="v64-hero-actions">
+          <button type="button" class="v64-hero-btn primary" onclick="page('placement',this)">🚀 ابدأ رحلتك الآن</button>
+          <button type="button" class="v64-hero-btn secondary" onclick="openHomeSmartReview(this)">▶️ ابدأ جولة سريعة</button>
+        </div>
+        <div class="v64-mini-stat">
+          <div class="ic">🧭</div><div><b>مسار واضح</b><div style="font-size:12px;color:#c9e8fb">تحديد المستوى ← تعلم ← تدريب ← اختبار ← شهادة</div></div>
+        </div>
+      </div>
 
+      <div class="v64-illustration" aria-hidden="true">
+        <svg class="v64-network" viewBox="0 0 600 380" role="img">
+          <defs>
+            <radialGradient id="v64g" cx="50%" cy="45%">
+              <stop offset="0%" stop-color="#58d5ff"/>
+              <stop offset="55%" stop-color="#0b85df"/>
+              <stop offset="100%" stop-color="#0759a5"/>
+            </radialGradient>
+            <linearGradient id="v64l" x1="0" x2="1">
+              <stop offset="0%" stop-color="#55d8ff"/>
+              <stop offset="100%" stop-color="#6d80ff"/>
+            </linearGradient>
+          </defs>
+          <g stroke="url(#v64l)" stroke-width="2" opacity=".55">
+            <path d="M95 260 L185 205 L292 252 L408 190 L505 245" fill="none"/>
+            <path d="M185 205 L218 102 L315 72 L408 190 L432 105" fill="none"/>
+            <path d="M95 260 L120 150 L218 102" fill="none"/>
+            <path d="M292 252 L315 72 L505 245" fill="none"/>
+          </g>
+          <g fill="#0b8fe3" opacity=".55">
+            <circle cx="95" cy="260" r="5"/><circle cx="185" cy="205" r="5"/><circle cx="292" cy="252" r="5"/>
+            <circle cx="408" cy="190" r="5"/><circle cx="505" cy="245" r="5"/><circle cx="218" cy="102" r="5"/><circle cx="315" cy="72" r="5"/><circle cx="432" cy="105" r="5"/><circle cx="120" cy="150" r="5"/>
+          </g>
+          <circle cx="315" cy="175" r="92" fill="url(#v64g)" opacity=".98"/>
+          <circle cx="315" cy="175" r="92" fill="none" stroke="#7be4ff" stroke-width="2"/>
+          <path d="M250 175h130M315 83c-20 24-30 54-30 92s10 68 30 92M315 83c20 24 30 54 30 92s-10 68-30 92M255 135c35 18 85 18 120 0M255 215c35-18 85-18 120 0" fill="none" stroke="#c7f5ff" stroke-opacity=".4" stroke-width="2"/>
+          <text x="315" y="184" fill="#fff" font-size="43" font-weight="800" text-anchor="middle">IPv4</text>
+          <g>
+            <rect x="80" y="210" width="72" height="52" rx="8" fill="#0d4c8e" stroke="#5bd4ff" opacity=".92"/>
+            <rect x="176" y="287" width="86" height="54" rx="8" fill="#0d4c8e" stroke="#5bd4ff" opacity=".92"/>
+            <rect x="405" y="237" width="74" height="54" rx="8" fill="#0d4c8e" stroke="#5bd4ff" opacity=".92"/>
+            <rect x="438" y="92" width="88" height="54" rx="8" fill="#0d4c8e" stroke="#5bd4ff" opacity=".92"/>
+          </g>
+          <g fill="#bfeeff" font-size="15" font-weight="700">
+            <text x="116" y="238" text-anchor="middle">Host</text>
+            <text x="219" y="318" text-anchor="middle">Network</text>
+            <text x="442" y="269" text-anchor="middle">FLSM</text>
+            <text x="482" y="124" text-anchor="middle">Binary</text>
+          </g>
+        </svg>
+        <div class="v64-pill-stack">
+          <div class="v64-pill p1">📘 IPv4 Basics</div>
+          <div class="v64-pill p2">🔢 Binary</div>
+          <div class="v64-pill p3">🧩 Subnetting</div>
+          <div class="v64-pill p4">📊 VLSM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="v64-section-title">
+    <div><h2>ابدأ من هنا</h2><p>اختر نقطة البداية المناسبة لك أو انتقل مباشرة إلى المراجعة.</p></div>
+  </div>
+
+  <div class="v64-start-grid">
+    <div class="card v64-start-card placement">
+      <div class="v64-card-top"><div><span class="v52-placement-badge">🎯 اختبار تحديد المستوى</span><h3>اعرف نقطة البداية المناسبة لك</h3><p>اختبار تشخيصي يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting ثم يقترح لك بداية مناسبة.</p></div><div class="v64-card-icon">🎯</div></div>
+      <div style="margin-top:16px"><button class="primary purple" onclick="page('placement',this)">ابدأ تحديد المستوى</button></div>
+    </div>
+    <div class="card v64-start-card review">
+      <div class="v64-card-top"><div><span class="v56-badge">🧠 المراجعة الذكية</span><h3>راجع نقاط الضعف قبل الاختبار</h3><p>جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div><div class="v64-card-icon">🧠</div></div>
+      <div style="margin-top:16px"><button class="primary green" onclick="openHomeSmartReview(this)">ابدأ المراجعة الذكية</button></div>
+    </div>
+  </div>
+
+  <div class="v64-section-title">
+    <div><h2>رحلتك التعليمية</h2><p>مسار متدرج من الفهم إلى التطبيق ثم التقييم.</p></div>
+  </div>
+
+  <div class="v64-path-grid">
+    <div class="card v64-path-card course">
+      <div><span class="v64-path-tag" style="background:#e8f3ff;color:#0a63b6">📚 تعلم</span><h3>المقرر التدريبي</h3><p>دروس مرتبة من أساسيات IPv4 إلى FLSM وVLSM مع متابعة التقدم.</p></div>
+      <button class="primary" onclick="page('course',this)">ابدأ التعلم</button>
+    </div>
+    <div class="card v64-path-card practice">
+      <div><span class="v64-path-tag" style="background:#fff1df;color:#c26b00">🎯 تطبيق</span><h3>التمارين التفاعلية</h3><p>Binary، Prefix، Mask، Magic Number، Hosts ومختبر IPv4 البصري.</p></div>
+      <button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button>
+    </div>
+    <div class="card v64-path-card tests">
+      <div><span class="v64-path-tag" style="background:#e7f8ef;color:#168a46">🏆 تقييم</span><h3>الاختبارات</h3><p>اختبارات منشورة ونتائج محفوظة وتحليل للأداء والأخطاء.</p></div>
+      <button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button>
+    </div>
+    <div class="card v64-path-card final">
+      <div><span class="v64-path-tag" style="background:#efe8ff;color:#7048a8">🎓 المرحلة النهائية</span><h3>الاختبار النهائي</h3><p>تقييم شامل لـ Binary وIPv4 وSubnetting وFLSM وVLSM قبل الإكمال.</p></div>
+      <button class="primary purple" onclick="page('finalExam',this);renderV60FinalExamHome()">ابدأ الاختبار النهائي</button>
+    </div>
+    <div class="card v64-path-card cert">
+      <div><span class="v64-path-tag" style="background:#fff0df;color:#c56b00">📜 إنجاز</span><h3>الشهادة الذكية</h3><p>اعرض جاهزيتك ومتطلبات الشهادة بعد استيفاء شروط الإكمال والنجاح.</p></div>
+      <button class="primary orange" onclick="page('certificate',this);loadCertificate()">عرض الشهادة</button>
+    </div>
+  </div>
+
+  <div class="v64-bottom-grid">
+    <div class="card v64-panel">
+      <div class="v64-section-title" style="margin-top:0"><div><h2>مسار التعلم</h2><p>رحلتك تتدرج بهذا الشكل.</p></div><button class="light" onclick="page('dashboard',this)">عرض المتابعة</button></div>
+      <div class="v64-quick-list">
+        <div class="v64-quick"><span>✅ 1 — معرفة مستواك</span><b>تحديد المستوى</b></div>
+        <div class="v64-quick"><span>2 — بناء الأساس</span><b>المقرر</b></div>
+        <div class="v64-quick"><span>3 — التدريب والتطبيق</span><b>التمارين</b></div>
+        <div class="v64-quick"><span>4 — القياس</span><b>الاختبارات</b></div>
+        <div class="v64-quick"><span>5 — الإكمال</span><b>النهائي والشهادة</b></div>
+      </div>
+    </div>
+
+    <div class="card v64-panel">
+      <div class="v64-section-title" style="margin-top:0"><div><h2>مراجعتك اليومية</h2><p>استخدم بياناتك بدل التدريب العشوائي.</p></div></div>
+      <div class="v64-quick-list">
+        <div class="v64-quick"><span>🧠 المراجعة الذكية</span><button class="primary green" onclick="openHomeSmartReview(this)">ابدأ</button></div>
+        <div class="v64-quick"><span>📓 دفتر الأخطاء</span><button class="primary orange" onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('errors'),250)">راجع</button></div>
+        <div class="v64-quick"><span>🏅 الإنجازات</span><button class="primary purple" onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">عرض</button></div>
+      </div>
+    </div>
+
+    <div class="card v64-panel">
+      <div class="v64-section-title" style="margin-top:0"><div><h2>لوحة المتابعة</h2><p>كل تقدمك في مكان واحد.</p></div></div>
+      <div class="v64-quick-list">
+        <div class="v64-quick"><span>📈 التقدم والتحليلات</span><b>متاح</b></div>
+        <div class="v64-quick"><span>📓 دفتر الأخطاء</span><b>متاح</b></div>
+        <div class="v64-quick"><span>🔔 الإشعارات والسجل</span><b>متاح</b></div>
+        <div class="v64-safe-note">💡 لا تُفتح أي صفحة فرعية تلقائيًا عند العودة للرئيسية؛ اختر القسم الذي تريد الدخول إليه.</div>
+      </div>
+    </div>
+  </div>
 </section>
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
