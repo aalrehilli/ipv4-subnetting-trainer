@@ -174,8 +174,27 @@
 <style>
 .v42-test-config{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}.v42-test-config .cfg{background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:12px}.v42-test-config label{font-weight:700;display:block;margin-bottom:6px}.v42-test-config input,.v42-test-config select{width:100%;box-sizing:border-box}.v42-test-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:10px;margin:12px 0}.v42-question-nav{display:flex;gap:6px;flex-wrap:wrap}.v42-qbtn{min-width:38px;border:1px solid #c8dbea;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}.v42-qbtn.answered{background:#e8f7ef;border-color:#9bd5b1}.v42-qbtn.flagged{box-shadow:inset 0 0 0 2px #f0a000}.v42-qbtn.current{background:#0b63b6;color:#fff;border-color:#0b63b6}.v42-qcard{scroll-margin-top:90px}.v42-qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.v42-qactions{display:flex;gap:6px;flex-wrap:wrap}.v42-qactions button{font-size:13px;padding:6px 9px}.v42-status{font-size:13px}.v42-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v42-summary .mini{background:#fff;border:1px solid #dbe9f4;border-radius:10px;padding:10px;text-align:center}.v42-summary b{display:block;font-size:20px;color:#0b63b6}@media(max-width:800px){.v42-test-config{grid-template-columns:1fr 1fr}.v42-summary{grid-template-columns:1fr 1fr}}@media(max-width:520px){.v42-test-config{grid-template-columns:1fr}.v42-summary{grid-template-columns:1fr}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V53 • Supabase</div></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+/* V54 — مركز التحليلات الذكي */
+.v54-shell{margin-top:18px}
+.v54-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.v54-badge{display:inline-flex;align-items:center;gap:6px;background:#eaf7ef;color:#1f7a45;border:1px solid #b9e0c5;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v54-kpis{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:10px}
+.v54-kpi{background:#fff;border:1px solid #dbe6ef;border-radius:13px;padding:14px;text-align:center;box-shadow:0 4px 14px rgba(25,55,80,.05)}
+.v54-kpi .num{font-size:28px;font-weight:900;color:#0b63b6}.v54-kpi .label{font-size:12px;color:#607487;margin-top:4px}
+.v54-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.v54-panel{background:#fff;border:1px solid #dbe6ef;border-radius:14px;padding:15px}
+.v54-panel h4{margin:0 0 10px;color:#17324d}
+.v54-insight{background:#eef7ff;border-right:4px solid #0b63b6;padding:12px;border-radius:9px;line-height:1.9;margin-top:12px}
+.v54-group-table{overflow:auto}.v54-group-table table{min-width:680px}
+.v54-risk{background:#fff7ef;border-right:4px solid #ed8916;padding:12px;border-radius:9px}
+.v54-good{background:#eef9f1;border-right:4px solid #28a745;padding:12px;border-radius:9px}
+.v54-empty{padding:20px;text-align:center;border:1px dashed #cfdde7;border-radius:14px;background:#fbfdff;color:#6a7b8b}
+@media(max-width:1000px){.v54-kpis{grid-template-columns:repeat(3,minmax(120px,1fr));}.v54-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.v54-kpis{grid-template-columns:1fr 1fr}.v54-kpi .num{font-size:23px}}
+
+</head><body>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V54 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
@@ -191,7 +210,7 @@
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="placement" class="hidden"><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اختبار تحديد المستوى الذكي</h2><p class="muted" style="margin:0">20 سؤالًا متوازنًا. لا يوجد نجاح أو رسوب؛ الهدف هو معرفة نقطة البداية الأنسب لك.</p></div><div id="v52PlacementStatus" class="v52-placement-badge">لم يبدأ بعد</div></div><div id="v52PlacementArea" style="margin-top:16px"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V53 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V54 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams + Analytics</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
@@ -864,6 +883,8 @@ async function renderDashboard(){
     <div class="smart-panel"><h3>🕘 آخر نشاط</h3>${last?`<div class="smart-activity"><div class="smart-activity-row"><div class="type">${last.t}</div><div><strong>${esc(last.title)}</strong><div class="muted">النتيجة: ${last.s}${last.t==='منافسة'?' / 1000':last.t==='تمرين'?' / 100':'%' } — ${last.z}</div></div><div class="date">${new Date(last.d).toLocaleDateString('ar-SA')}</div></div></div>`:'<div class="smart-empty">لا يوجد نشاط حتى الآن. ابدأ بأول تمرين 🎯</div>'}</div>
   </div>`;
   $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v49-shell"><div id="v49MasteryPanel"></div><div id="v49ErrorPanel"></div></div>');
+  $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v54-shell"><div id="v54StudentAnalytics"></div></div>');
+  renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
   $('studentAchievements').innerHTML=`<div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div>`;
   $('attemptTable').innerHTML=all.length?`<table><tr><th>النوع</th><th>العنوان</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${all.slice(0,15).map(x=>`<tr><td>${x.t}</td><td>${esc(x.title)}</td><td>${new Date(x.d).toLocaleString('ar-SA')}</td><td>${x.t==='منافسة'?x.s+'/1000':x.t==='تمرين'?x.s+'/100':x.s+'%'}</td><td>${x.z}</td></tr>`).join('')}</table>`:'لا توجد محاولات حتى الآن. ابدأ بأول تمرين الآن 🎯';
 
@@ -1932,6 +1953,8 @@ async function loadTrainerAnalytics(){
     html+=`<h3 style="margin-top:22px">تفاصيل آخر المحاولات</h3>`;
     html+=attempts.length?`<table><tr><th>المتدرب</th><th>الاختبار</th><th>الدرجة</th><th>التاريخ</th></tr>${attempts.slice().sort((a,b)=>new Date(b.submitted_at)-new Date(a.submitted_at)).slice(0,50).map(a=>{const p=pm.get(a.student_id)||{};return `<tr><td>${esc(p.full_name||"—")}</td><td>${esc(a.trainer_exams?.title||"—")}</td><td>${Number(a.percentage||0)}%</td><td>${a.submitted_at?new Date(a.submitted_at).toLocaleString("ar-SA"):"—"}</td></tr>`}).join("")}</table>`:'<div class="muted">لا توجد نتائج.</div>';
     area.innerHTML=html;
+    const v54Host=document.createElement('div'); v54Host.id='v54TrainerAnalyticsArea'; area.prepend(v54Host);
+    renderV54TrainerCenter({attempts,exams,profiles});
 
     if(typeof Chart==='undefined'){
       const note=document.createElement('div'); note.className='bad'; note.style.marginTop='12px';
@@ -2703,6 +2726,79 @@ async function loadCertificate(){
  if(x.certificate_no) renderCertificate(x);
 }
 
+
+
+/* ==================== V54 — Smart Analytics Center ==================== */
+let v54StudentCharts={};
+let v54TrainerCharts={};
+function v54DestroyCharts(bucket){Object.values(bucket).forEach(c=>{try{c.destroy()}catch(e){}});}
+function v54DayKey(d){return new Date(d).toISOString().slice(0,10)}
+function v54LastNDays(n=7){const a=[]; const d=new Date(); d.setHours(12,0,0,0); for(let i=n-1;i>=0;i--){const x=new Date(d);x.setDate(d.getDate()-i);a.push(x.toISOString().slice(0,10));} return a;}
+function v54DateLabel(k){return new Date(k+'T12:00:00').toLocaleDateString('ar-SA',{weekday:'short',day:'numeric'})}
+function v54Metric(v,suffix=''){return Number.isFinite(Number(v))?`${Math.round(Number(v))}${suffix}`:'—'}
+async function renderV54StudentAnalytics({attempts=[],exercises=[],lessons=[],lp=[],competitions=[]}={}){
+  const host=$('v54StudentAnalytics'); if(!host)return;
+  v54DestroyCharts(v54StudentCharts); v54StudentCharts={};
+  const allActivities=[...attempts.map(x=>({d:x.submitted_at,score:Number(x.percentage||0),kind:'اختبار'})),...exercises.map(x=>({d:x.created_at,score:Number(x.score||0),kind:'تمرين'})),...competitions.map(x=>({d:x.created_at,score:Math.round(Number(x.score||0)/10),kind:'منافسة'}))].filter(x=>x.d);
+  const days=v54LastNDays(7), dayCount=days.map(k=>allActivities.filter(a=>v54DayKey(a.d)===k).length);
+  const avg=attempts.length?Math.round(attempts.reduce((n,x)=>n+Number(x.percentage||0),0)/attempts.length):0;
+  const exRate=exercises.length?Math.round(exercises.filter(x=>x.is_correct).length/exercises.length*100):0;
+  const coursePct=lessons.length?Math.round(lp.filter(x=>x.completed).length*100/lessons.length):0;
+  const active7=new Set(allActivities.filter(a=>(Date.now()-new Date(a.d).getTime())<=7*86400000).map(a=>v54DayKey(a.d))).size;
+  const recent=attempts.slice(0,5).map(x=>Number(x.percentage||0));
+  const prior=attempts.slice(5,10).map(x=>Number(x.percentage||0));
+  const recentAvg=recent.length?Math.round(recent.reduce((n,x)=>n+x,0)/recent.length):null;
+  const priorAvg=prior.length?Math.round(prior.reduce((n,x)=>n+x,0)/prior.length):null;
+  const delta=recentAvg!=null&&priorAvg!=null?recentAvg-priorAvg:null;
+  const topic={};
+  attempts.forEach(x=>{const t=x.trainer_exams?.topic||'اختبارات عامة'; if(!topic[t])topic[t]={sum:0,n:0}; topic[t].sum+=Number(x.percentage||0);topic[t].n++;});
+  const topicRows=Object.entries(topic).map(([name,v])=>({name,avg:Math.round(v.sum/v.n),n:v.n})).sort((a,b)=>a.avg-b.avg);
+  host.innerHTML=`<div class="v54-panel"><div class="v54-head"><div><span class="v54-badge">📊 V54 — مركز التحليلات الذكي</span><h3 style="margin:8px 0 3px">صورة أوضح لتقدمك</h3><div class="muted">يعرض المركز الاتجاهات والنشاط ومؤشرات المهارات من البيانات المحفوظة في حسابك.</div></div><button class="primary" onclick="renderDashboard()">🔄 تحديث</button></div>
+  <div class="v54-kpis"><div class="v54-kpi"><div class="num">${coursePct}%</div><div class="label">إكمال المقرر</div></div><div class="v54-kpi"><div class="num">${attempts.length}</div><div class="label">اختبارات</div></div><div class="v54-kpi"><div class="num">${avg||0}%</div><div class="label">متوسط الاختبارات</div></div><div class="v54-kpi"><div class="num">${exRate||0}%</div><div class="label">نجاح التمارين</div></div><div class="v54-kpi"><div class="num">${active7}</div><div class="label">أيام نشطة خلال 7 أيام</div></div></div>
+  <div class="v54-grid"><div class="v54-panel"><h4>📅 نشاط آخر 7 أيام</h4>${chartCanvasStudent('v54StudentActivityChart',270)}</div><div class="v54-panel"><h4>📈 اتجاه نتائج الاختبارات</h4>${chartCanvasStudent('v54StudentTrendChart',270)}</div></div>
+  <div class="v54-grid"><div class="v54-panel"><h4>🧠 أداء المهارات</h4>${topicRows.length?chartCanvasStudent('v54StudentTopicChart',280):'<div class="v54-empty">أجرِ اختبارًا واحدًا على الأقل لعرض أداء المهارات.</div>'}</div><div class="v54-panel"><h4>💡 قراءة سريعة</h4>${delta==null?`<div class="v54-insight">ابدأ باختبارين على الأقل حتى تتمكن المنصة من قياس اتجاه التحسن بدقة.</div>`:delta>0?`<div class="v54-good">✅ متوسط آخر الاختبارات أعلى من المجموعة السابقة بنحو <b>${delta} نقطة</b>. استمر على نفس المسار.</div>`:delta<0?`<div class="v54-risk">⚠️ متوسط آخر الاختبارات أقل من المجموعة السابقة بنحو <b>${Math.abs(delta)} نقطة</b>. نفّذ جلسة تدريب تكيفي قبل الاختبار القادم.</div>`:`<div class="v54-insight">↔️ متوسط الأداء قريب من مستواك السابق. ركّز على المهارة الأقل نتيجة.</div>`}<div style="margin-top:12px">${topicRows.length?`<div class="muted">أكثر مهارة تحتاج متابعة الآن:</div><strong>${esc(topicRows[0].name)} — ${topicRows[0].avg}%</strong>`:'لا توجد بيانات مهارات كافية بعد.'}</div></div></div></div>`;
+  if(typeof Chart==='undefined')return;
+  v54StudentCharts.activity=new Chart($('v54StudentActivityChart'),{type:'bar',data:{labels:days.map(v54DateLabel),datasets:[{label:'عدد النشاطات',data:dayCount}]},options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'النشاط خلال آخر 7 أيام'}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  const trend=attempts.slice().reverse().slice(-10); if(trend.length){v54StudentCharts.trend=new Chart($('v54StudentTrendChart'),{type:'line',data:{labels:trend.map((a,i)=>`${i+1}`),datasets:[{label:'النتيجة %',data:trend.map(a=>Number(a.percentage||0)),tension:.25,fill:false}]},options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'آخر 10 اختبارات'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}});}
+  if(topicRows.length){v54StudentCharts.topic=new Chart($('v54StudentTopicChart'),{type:'bar',data:{labels:topicRows.map(x=>x.name),datasets:[{label:'متوسط الأداء %',data:topicRows.map(x=>x.avg)}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:true},title:{display:true,text:'متوسط الأداء حسب الموضوع'}},scales:{x:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}});}
+}
+async function renderV54TrainerCenter({attempts=[],exams=[],profiles=[]}={}){
+  const host=$('v54TrainerAnalyticsArea'); if(!host)return;
+  v54DestroyCharts(v54TrainerCharts); v54TrainerCharts={};
+  host.innerHTML='<div class="v54-panel"><div class="muted">⏳ جارٍ بناء مركز التحليلات...</div></div>';
+  try{
+    const exr=await db.from('exercise_attempts').select('student_id,score,is_correct,created_at');
+    const exercises=exr.error?[]:(exr.data||[]);
+    const aas=await db.from('attempt_answers').select('attempt_id,question_id,is_correct');
+    const answers=aas.error?[]:(aas.data||[]);
+    const qids=[...new Set(answers.map(a=>a.question_id).filter(Boolean))];
+    let qmap=new Map(); if(qids.length){const qr=await db.from('trainer_questions').select('id,topic'); if(!qr.error)qmap=new Map((qr.data||[]).map(q=>[q.id,q.topic||'غير مصنف']));}
+    const students=profiles.filter(p=>p.role==='student');
+    const last7=v54LastNDays(7); const activity7=last7.map(k=>attempts.filter(a=>v54DayKey(a.submitted_at)===k).length+exercises.filter(x=>v54DayKey(x.created_at)===k).length);
+    const avg=attempts.length?Math.round(attempts.reduce((n,a)=>n+Number(a.percentage||0),0)/attempts.length):0;
+    const pass=attempts.length?Math.round(attempts.filter(a=>Number(a.percentage||0)>=60).length/attempts.length*100):0;
+    const practiceRate=exercises.length?Math.round(exercises.filter(x=>x.is_correct).length/exercises.length*100):0;
+    const active14=new Set([...attempts.map(a=>({id:a.student_id,d:a.submitted_at})),...exercises.map(x=>({id:x.student_id,d:x.created_at}))].filter(x=>x.d&&(Date.now()-new Date(x.d).getTime())<=14*86400000).map(x=>x.id)).size;
+    const topic={}; attempts.forEach(a=>{const t=a.trainer_exams?.topic||'اختبارات عامة'; if(!topic[t])topic[t]={sum:0,n:0}; topic[t].sum+=Number(a.percentage||0);topic[t].n++;});
+    const topicRows=Object.entries(topic).map(([name,v])=>({name,avg:Math.round(v.sum/v.n),n:v.n})).sort((a,b)=>a.avg-b.avg);
+    const qStats={}; answers.forEach(a=>{const t=qmap.get(a.question_id); if(!t)return; if(!qStats[t])qStats[t]={correct:0,n:0}; qStats[t].n++; if(a.is_correct)qStats[t].correct++;});
+    const skillRows=Object.entries(qStats).map(([name,v])=>({name,acc:Math.round(v.correct/v.n*100),n:v.n})).sort((a,b)=>a.acc-b.acc);
+    const groups={}; students.forEach(p=>{const g=p.group_name||'بدون شعبة'; if(!groups[g])groups[g]={name:g,students:0,attempts:0,sum:0,pass:0};groups[g].students++;});
+    attempts.forEach(a=>{const p=profiles.find(x=>x.id===a.student_id);const g=p?.group_name||'بدون شعبة'; if(!groups[g])groups[g]={name:g,students:0,attempts:0,sum:0,pass:0};groups[g].attempts++;groups[g].sum+=Number(a.percentage||0);if(Number(a.percentage||0)>=60)groups[g].pass++;});
+    const groupRows=Object.values(groups).map(g=>({...g,avg:g.attempts?Math.round(g.sum/g.attempts):0,passRate:g.attempts?Math.round(g.pass/g.attempts*100):0})).sort((a,b)=>b.avg-a.avg);
+    const hardest=skillRows[0];
+    host.innerHTML=`<div class="v54-panel"><div class="v54-head"><div><span class="v54-badge">📊 V54 — مركز التحليلات الذكي</span><h3 style="margin:8px 0 3px">لوحة قرار للمدرب</h3><div class="muted">تجمع نتائج الاختبارات، التمارين، نشاط المتدربين، وتحليل المهارات في مكان واحد.</div></div><div class="v54-badge">بدون Migration جديدة</div></div>
+      <div class="v54-kpis"><div class="v54-kpi"><div class="num">${students.length}</div><div class="label">إجمالي المتدربين</div></div><div class="v54-kpi"><div class="num">${active14}</div><div class="label">نشطون خلال 14 يومًا</div></div><div class="v54-kpi"><div class="num">${avg}%</div><div class="label">متوسط الاختبارات</div></div><div class="v54-kpi"><div class="num">${pass}%</div><div class="label">نسبة النجاح</div></div><div class="v54-kpi"><div class="num">${practiceRate||0}%</div><div class="label">نجاح التمارين</div></div></div>
+      <div class="v54-grid"><div class="v54-panel"><h4>📅 النشاط خلال 7 أيام</h4>${chartCanvas('v54TrainerActivityChart',270)}</div><div class="v54-panel"><h4>🧠 أداء المهارات</h4>${skillRows.length?chartCanvas('v54TrainerSkillsChart',270):'<div class="v54-empty">لا توجد إجابات تفصيلية كافية لتحليل المهارات.</div>'}</div></div>
+      <div class="v54-grid"><div class="v54-panel"><h4>📚 متوسط الأداء حسب الموضوع</h4>${topicRows.length?chartCanvas('v54TrainerTopicsChart',270):'<div class="v54-empty">لا توجد نتائج اختبارات كافية بعد.</div>'}</div><div class="v54-panel"><h4>🚦 تنبيه المدرب</h4>${hardest?`<div class="v54-risk">الموضوع ذو أقل دقة في الإجابات المحفوظة هو <b>${esc(hardest.name)}</b> بنسبة <b>${hardest.acc}%</b> عبر ${hardest.n} إجابة. فكّر في إضافة شرح أو تمارين إضافية لهذا الموضوع.</div>`:'<div class="v54-insight">سيظهر التنبيه بعد تسجيل إجابات تفصيلية في الاختبارات.</div>'}</div></div>
+      <div class="v54-panel v54-group-table" style="margin-top:14px"><h4>👥 ملخص الشعب</h4>${groupRows.length?`<table><tr><th>الشعبة</th><th>المتدربون</th><th>المحاولات</th><th>المتوسط</th><th>نسبة النجاح</th></tr>${groupRows.map(g=>`<tr><td>${esc(g.name)}</td><td>${g.students}</td><td>${g.attempts}</td><td>${g.avg}%</td><td>${g.passRate}%</td></tr>`).join('')}</table>`:'<div class="v54-empty">لا توجد بيانات شعبية كافية.</div>'}</div>
+    </div>`;
+    if(typeof Chart==='undefined')return;
+    v54TrainerCharts.activity=new Chart($('v54TrainerActivityChart'),{type:'bar',data:{labels:last7.map(v54DateLabel),datasets:[{label:'عدد النشاطات',data:activity7}]},options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'نشاط المنصة خلال آخر 7 أيام'}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+    if(skillRows.length)v54TrainerCharts.skills=new Chart($('v54TrainerSkillsChart'),{type:'bar',data:{labels:skillRows.map(x=>x.name),datasets:[{label:'دقة الإجابات %',data:skillRows.map(x=>x.acc)}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:true},title:{display:true,text:'دقة الإجابات حسب المهارة'}},scales:{x:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}});
+    if(topicRows.length)v54TrainerCharts.topics=new Chart($('v54TrainerTopicsChart'),{type:'bar',data:{labels:topicRows.map(x=>x.name),datasets:[{label:'متوسط الاختبارات %',data:topicRows.map(x=>x.avg)}]},options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'متوسط النتائج حسب الموضوع'}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:v=>v+'%'}}}}});
+  }catch(e){host.innerHTML=`<div class="v54-panel bad">❌ تعذر بناء مركز التحليلات: ${esc(e?.message||String(e))}</div>`;}
+}
 
 /* ==================== V53 — Smart Exam Blueprint ==================== */
 let v53Blueprint=[];
