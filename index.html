@@ -65,6 +65,20 @@
 @media(max-width:900px){.smart-hero,.smart-columns{grid-template-columns:1fr}.smart-kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:600px){.smart-kpis{grid-template-columns:1fr 1fr}.smart-activity-row{grid-template-columns:65px 1fr}.smart-activity-row .date{grid-column:2;text-align:right}}
 .smart-coach{margin-top:14px;padding:14px;border:1px solid #cfe1ef;border-radius:12px;background:linear-gradient(135deg,#f4fbff,#fff)}.smart-coach-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.smart-coach-title strong{color:#0759a5}.hint-level{display:inline-block;padding:4px 9px;border-radius:14px;background:#fff3cd;border:1px solid #e8ca6a;font-size:12px}.error-explain{font-size:12px;line-height:1.7;margin-top:5px}.coach-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+
+/* V50 — التدريب التكيفي */
+.v50-adaptive-card{border:2px solid #8ec8ab;background:linear-gradient(135deg,#f4fff8,#fff)}
+.v50-adaptive-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.v50-adaptive-badge{display:inline-flex;align-items:center;gap:6px;background:#e6f7ed;color:#167844;border:1px solid #a9dbbd;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v50-reason{background:#fff;border:1px dashed #b9d9c7;border-radius:10px;padding:11px;line-height:1.8}
+.v50-reco-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.v50-reco-item{background:#fff;border:1px solid #dbe9e1;border-radius:10px;padding:10px}
+.v50-reco-item strong{color:#167844}
+.v50-mini-progress{height:8px;background:#e7f0eb;border-radius:8px;overflow:hidden;margin-top:6px}
+.v50-mini-progress span{display:block;height:100%;background:#159447;border-radius:8px}
+.v50-session{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
+@media(max-width:700px){.v50-reco-grid{grid-template-columns:1fr}}
+
 /* V40 — لوحة المدرب الذكية */
 .trainer-smart-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0}.trainer-smart-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:15px;text-align:center}.trainer-smart-kpi .num{font-size:28px;font-weight:bold;color:#0759a5}.trainer-smart-kpi .label{font-size:12px;color:#65788a;margin-top:4px}.trainer-smart-columns{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}.trainer-smart-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}.trainer-smart-panel h3{margin-top:0}.follow-row{display:grid;grid-template-columns:1.4fr .7fr .7fr .7fr 1.1fr;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #edf2f6}.follow-row:last-child{border-bottom:0}.follow-status{padding:5px 9px;border-radius:16px;font-weight:bold;font-size:12px;display:inline-block}.follow-status.high{background:#ffe8e8;color:#a51f1f}.follow-status.medium{background:#fff4d8;color:#8a6200}.follow-status.good{background:#e7f7ed;color:#137b39}.follow-mini{font-size:12px;color:#65788a}.follow-action{display:flex;gap:5px;flex-wrap:wrap}.group-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.group-card{border:1px solid #dce8f2;border-radius:12px;padding:12px;background:#f9fcff}.group-card strong{color:#0759a5}.trainer-smart-empty{padding:20px;text-align:center;background:#f8fbfd;border-radius:10px;color:#65788a}.trainer-smart-note{padding:11px 13px;background:#eef7ff;border-right:4px solid #0759a5;border-radius:9px;line-height:1.8}
 @media(max-width:950px){.trainer-smart-grid{grid-template-columns:repeat(2,1fr)}.trainer-smart-columns{grid-template-columns:1fr}.follow-row{grid-template-columns:1.4fr .7fr .7fr .7fr 1fr}}
@@ -98,13 +112,13 @@
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
   <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
-  <div class="practice-menu"><button class="primary" style="background:#0b63b6" onclick="startBinaryLab()">🔢 مختبر Decimal ↔ Binary</button><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div>
+  <div class="practice-menu"><button class="primary green" onclick="startAdaptiveTraining()">🧠 تدريب تكيفي — درّبني الآن</button><button class="primary" style="background:#0b63b6" onclick="startBinaryLab()">🔢 مختبر Decimal ↔ Binary</button><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div>
   <div class="competition-settings"><div><h3>🏁 منافسة Subnetting</h3><p class="muted">10 أسئلة — اختر الوقت المناسب لك قبل البدء.</p></div><div class="duration-control"><label for="competitionDuration">⏱️ وقت المنافسة</label><select id="competitionDuration"><option value="5">5 دقائق</option><option value="10">10 دقائق</option><option value="15" selected>15 دقيقة</option><option value="20">20 دقيقة</option><option value="30">30 دقيقة</option><option value="45">45 دقيقة</option><option value="60">60 دقيقة</option><option value="0">بدون وقت</option></select></div><button class="primary green competition-start" onclick="startCompetition()">🏁 ابدأ المنافسة</button></div>
-  <div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
+  <div id="v50AdaptiveArea"></div><div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
 </div></section>
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V48 • IPv4 + Binary + CLASS C FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V50 • IPv4 + Binary + Adaptive Training</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
@@ -265,30 +279,38 @@ function renderCoach(containerId,wrongSteps,q){const box=$(containerId);if(!box)
 function nextCoachHint(containerId){coachHintIndex++;if(exercise){const ids=['eb','ep','em','eg','eh'];const exp=[exercise.bits,exercise.prefix,exercise.mask,exercise.block,exercise.hosts].map(String);const wrong=ids.map((id,i)=>$(id)&&String($(id).value||'').trim()!==exp[i]?i:-1).filter(i=>i>=0);renderCoach(containerId,wrong,exercise);}}
 function showSimilarExample(containerId){const q=exercise||challenge;if(!q)return;const ex=`📘 مثال مشابه: إذا كانت الشبكة 192.168.10.0/24 والمطلوب ${q.need} شبكات، فإن Borrowed Bits = ${q.bits} و Prefix = /${q.prefix} و Magic Number = ${q.block}.`;const box=$(containerId);if(box)box.innerHTML=`<div class="smart-coach"><div class="smart-coach-title"><strong>📘 مثال مشابه</strong></div>${ex}</div>`;}
 
-const binaryLabState={round:0,total:10,score:0,history:[],current:null};
+const binaryLabState={round:0,total:10,score:0,history:[],current:null,focus:null,difficulty:'medium',adaptive:false};
 function decimalToBinary8(n){return Number(n).toString(2).padStart(8,'0');}
 function binaryToDecimal8(bits){return parseInt(bits,2);}
 function normalizeBinaryInput(v){return String(v||'').trim().replace(/\s+/g,'');}
 function normalizeNumberInput(v){const s=String(v||'').trim().replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));return s;}
-function binaryQuestion(){
-  const dir=Math.random()<0.5?'d2b':'b2d';
+function binaryQuestion(opts={}){
+  const focus=opts.focus||null;
+  const difficulty=opts.difficulty||'medium';
+  let dir=focus||(Math.random()<0.5?'d2b':'b2d');
+  const pools={
+    easy:[0,1,2,5,8,10,15,16,32,64,128,192,255],
+    medium:[85,127,136,150,168,170,200,224,240,254],
+    hard:[3,7,11,23,42,63,77,99,119,129,173,189,201,213,231,246,250,253]};
+  const pool=pools[difficulty]||pools.medium;
+  const n=pool[Math.floor(Math.random()*pool.length)];
   if(dir==='d2b'){
-    const n=[0,1,2,5,8,10,15,16,32,64,85,127,128,136,150,168,170,192,200,224,240,254,255][Math.floor(Math.random()*23)];
-    return {dir,value:String(n),answer:decimalToBinary8(n),label:'Decimal → Binary',hint:`ابحث عن أوزان 128، 64، 32، 16، 8، 4، 2، 1 التي مجموعها ${n}.`};
+    return {dir,value:String(n),answer:decimalToBinary8(n),label:'Decimal → Binary',hint:`ابحث عن أوزان 128، 64، 32، 16، 8، 4، 2، 1 التي مجموعها ${n}.`,difficulty};
   }
-  const n=[0,1,2,5,8,10,15,16,32,64,85,127,128,136,150,168,170,192,200,224,240,254,255][Math.floor(Math.random()*23)];
   const bits=decimalToBinary8(n);
-  return {dir,value:bits,answer:String(n),label:'Binary → Decimal',hint:`اجمع أوزان الـ Bits التي قيمتها 1 في ${bits}.`};
+  return {dir,value:bits,answer:String(n),label:'Binary → Decimal',hint:`اجمع أوزان الـ Bits التي قيمتها 1 في ${bits}.`,difficulty};
 }
 function renderBitVisual(bits){return String(bits).split('').map((b,i)=>`<span class="bit-chip ${b==='1'?'one':'zero'}">${b}</span>`).join('');}
-function startBinaryLab(){
+function startBinaryLab(adaptive=false){
   binaryLabState.round=0;binaryLabState.score=0;binaryLabState.history=[];binaryLabState.current=null;
+  if(!adaptive){binaryLabState.focus=null;binaryLabState.difficulty='medium';}
+  binaryLabState.adaptive=adaptive;
   $('practiceArea').innerHTML=`<div class="card binary-lab-card"><div class="binary-lab-head"><div><span class="badge">🔢 Binary Lab</span><h3>تحويل Decimal ↔ Binary</h3><p class="muted">10 جولات متدرجة — كل جولة 10 نقاط. يمكنك طلب تلميح قبل التسليم.</p></div><div class="score-pill" id="binaryScore">0 / 100</div></div><div id="binaryRound"></div><div id="binaryFeedback"></div></div>`;
   $('challengeArea').innerHTML='';$('competitionArea').innerHTML='';renderBinaryRound();updatePracticeStats();
 }
 function renderBinaryRound(){
   if(binaryLabState.round>=binaryLabState.total){return finishBinaryLab();}
-  const q=binaryQuestion();binaryLabState.current=q;binaryLabState.round++;
+  const q=binaryQuestion({focus:binaryLabState.focus,difficulty:binaryLabState.difficulty});binaryLabState.current=q;binaryLabState.round++;
   const prompt=q.dir==='d2b'?`حوّل <b>${q.value}</b> إلى Binary (8 Bits).`:`حوّل <b>${q.value}</b> إلى Decimal.`;
   const visual=q.dir==='b2d'?`<div style="margin:12px 0">${renderBitVisual(q.value)}</div>`:'<div class="question"><b>أوزان الـ 8 Bits:</b><br>128 • 64 • 32 • 16 • 8 • 4 • 2 • 1</div>';
   $('binaryRound').innerHTML=`<div class="question"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>الجولة ${binaryLabState.round} من ${binaryLabState.total}</b><span class="badge">${q.label}</span></div><div style="font-size:20px;margin:14px 0">${prompt}</div>${visual}<input id="binaryAnswer" class="binary-answer" placeholder="اكتب الإجابة هنا" autocomplete="off" onkeydown="if(event.key==='Enter')submitBinaryAnswer()"><div class="practice-actions"><button class="primary green" onclick="submitBinaryAnswer()">✅ تحقق</button><button class="primary" onclick="showBinaryHint()">💡 تلميح</button></div></div>`;
@@ -316,7 +338,7 @@ async function finishBinaryLab(){
   $('binaryFeedback').innerHTML='';updatePracticeStats();
 }
 
-function startExercise(){exercise=problem($('level').value);q=exercise;$('practiceArea').innerHTML=`<div class="question"><h3>🧩 ${q.network}/24 → المطلوب إنشاء ${q.need} شبكات متساوية</h3><div class="hint-box">ابدأ بعدد الشبكات المطلوبة، ثم احسب Borrowed Bits وPrefix وMask وMagic Number وعدد الأجهزة.</div><div class="step-grid"><div><label>1) Borrowed Bits</label><input id="eb" placeholder="مثال: 2"><div id="r1"></div></div><div><label>2) New Prefix</label><input id="ep" placeholder="مثال: 26"><div id="r2"></div></div><div><label>3) Subnet Mask</label><input id="em" placeholder="مثال: 255.255.255.192"><div id="r3"></div></div><div><label>4) Magic Number</label><input id="eg" placeholder="مثال: 64"><div id="r4"></div></div><div><label>5) Hosts/Subnet</label><input id="eh" placeholder="مثال: 62"><div id="r5"></div></div></div><div class="practice-actions"><button class="primary" onclick="checkSteps()">✅ تحقق من الحل</button><button class="primary purple" onclick="showPracticeHint()">💡 أعطني تلميحًا</button></div><div id="sf"></div></div>`;updatePracticeStats();}
+function startExercise(levelOverride=null){const chosen=levelOverride||$('level').value; if($('level'))$('level').value=chosen; exercise=problem(chosen);q=exercise;$('practiceArea').innerHTML=`<div class="question"><h3>🧩 ${q.network}/24 → المطلوب إنشاء ${q.need} شبكات متساوية</h3><div class="hint-box">ابدأ بعدد الشبكات المطلوبة، ثم احسب Borrowed Bits وPrefix وMask وMagic Number وعدد الأجهزة.</div><div class="step-grid"><div><label>1) Borrowed Bits</label><input id="eb" placeholder="مثال: 2"><div id="r1"></div></div><div><label>2) New Prefix</label><input id="ep" placeholder="مثال: 26"><div id="r2"></div></div><div><label>3) Subnet Mask</label><input id="em" placeholder="مثال: 255.255.255.192"><div id="r3"></div></div><div><label>4) Magic Number</label><input id="eg" placeholder="مثال: 64"><div id="r4"></div></div><div><label>5) Hosts/Subnet</label><input id="eh" placeholder="مثال: 62"><div id="r5"></div></div></div><div class="practice-actions"><button class="primary" onclick="checkSteps()">✅ تحقق من الحل</button><button class="primary purple" onclick="showPracticeHint()">💡 أعطني تلميحًا</button></div><div id="sf"></div></div>`;updatePracticeStats();}
 function showPracticeHint(){if(!exercise){alert('ابدأ تمرينًا أولًا.');return;}const hints=[`عدد Borrowed Bits هو أصغر n يحقق 2^n ≥ ${exercise.need}.`,`Prefix الجديد = 24 + Borrowed Bits.`,`الـ Mask للـ /${exercise.prefix} هو ${exercise.mask}.`,`Magic Number = 256 - قيمة الأوكتت المتغير في الـ Mask.`,`Hosts/Subnet = 2^(32-${exercise.prefix}) - 2 = ${exercise.hosts}.`];const box=$('sf');if(box)box.innerHTML=`<div class="hint-box">💡 ${hints[Math.floor(Math.random()*hints.length)]}</div>`;}
 async function checkSteps(){let q=exercise;if(!q)return;let a=[$('eb').value.trim(),$('ep').value.trim().replace('/',''),$('em').value.trim(),$('eg').value.trim(),$('eh').value.trim()],b=[String(q.bits),String(q.prefix),q.mask,String(q.block),String(q.hosts)],ok=a.map((v,i)=>v===b[i]);ok.forEach((v,i)=>{const el=$('r'+(i+1));if(el)el.innerHTML=`<div class="step-result ${v?'good':'bad'}">${v?'✅ صحيح':'❌ غير صحيح'}${!v?'<div class="error-explain">راجع هذه الخطوة مع المدرب الذكي بالأسفل.</div>':''}</div>`;});const total=ok.filter(Boolean).length,points=total*20;coachHintIndex=0;$('sf').innerHTML=total===5?'<div class="good">🎉 ممتاز! أكملت جميع الخطوات بنجاح وتم حفظ النتيجة.</div>':`<div class="bad">أكملت ${total}/5 خطوات بشكل صحيح. المدرب الذكي سيشرح لك الأخطاء.</div>`;renderCoach('sf',ok.map((v,i)=>v?-1:i).filter(i=>i>=0),q);if(total===5){await db.from('exercise_attempts').insert({student_id:user.id,score:points,is_correct:true,borrowed_bits_answer:a[0],prefix_answer:a[1],subnet_mask_answer:a[2],magic_number_answer:a[3],hosts_answer:a[4]});await markCoursePractice(points);updatePracticeStats();}}
 
@@ -681,6 +703,84 @@ async function renderDashboard(){
   await renderV49MasteryAndErrors({lessons,lp,attempts:a});
 }
 
+
+function v50DifficultyFromAccuracy(acc){
+  if(acc<50) return 'easy';
+  if(acc<75) return 'medium';
+  return 'hard';
+}
+function v50TopicLabel(topic){
+  const map={'Binary Conversion':'Decimal ↔ Binary','Subnetting':'Subnetting / Prefix','FLSM':'FLSM','VLSM':'VLSM','IPv4':'أساسيات IPv4'};
+  return map[topic]||topic||'التدريب العام';
+}
+async function getV50WeaknessProfile(){
+  if(!user) return {rows:[],weak:null,source:'no-user'};
+  try{
+    const attemptsR=await db.from('attempts').select('id,percentage,submitted_at,trainer_exams(topic)').eq('student_id',user.id).order('submitted_at',{ascending:false}).limit(50);
+    const attempts=attemptsR.data||[];
+    const ids=attempts.map(x=>x.id).filter(Boolean);
+    const answerR=ids.length?await db.from('attempt_answers').select('attempt_id,question_id,is_correct').in('attempt_id',ids):{data:[],error:null};
+    const answers=answerR.data||[];
+    const qids=[...new Set(answers.map(a=>a.question_id).filter(Boolean))];
+    const qR=qids.length?await db.from('trainer_questions').select('id,topic,difficulty').in('id',qids):{data:[],error:null};
+    const qMap=new Map((qR.data||[]).map(q=>[q.id,q]));
+    const stats={};
+    answers.forEach(a=>{
+      const q=qMap.get(a.question_id)||{}; const topic=q.topic||'Subnetting';
+      if(!stats[topic]) stats[topic]={topic,total:0,wrong:0,correct:0};
+      stats[topic].total++; if(a.is_correct)stats[topic].correct++;else stats[topic].wrong++;
+    });
+    // Add exam-level topic performance even when attempt_answers are unavailable.
+    attempts.forEach(a=>{
+      const topic=a.trainer_exams?.topic; if(!topic)return;
+      if(!stats[topic])stats[topic]={topic,total:0,wrong:0,correct:0,fromExam:true};
+      if(stats[topic].total===0){stats[topic].total=1; stats[topic].correct=Number(a.percentage||0)>=70?1:0; stats[topic].wrong=Number(a.percentage||0)>=70?0:1;}
+    });
+    const rows=Object.values(stats).map(x=>{const acc=x.total?Math.round(x.correct*100/x.total):0;return {...x,accuracy:acc,difficulty:v50DifficultyFromAccuracy(acc)}}).sort((a,b)=>a.accuracy-b.accuracy);
+    const weak=rows[0]||null;
+    return {rows,weak,source:answers.length?'attempt_answers':'attempts'};
+  }catch(e){console.warn('V50 weakness profile',e);return {rows:[],weak:null,source:'error'};}
+}
+function v50RenderRecommendation(profile){
+  const host=$('v50AdaptiveArea'); if(!host)return;
+  if(!profile?.weak){
+    host.innerHTML=`<div class="v50-adaptive-card card"><div class="v50-adaptive-head"><div><span class="v50-adaptive-badge">🧠 V50 — التدريب التكيفي</span><h3 style="margin:8px 0 4px">ابدأ أول جلسة ذكية</h3><div class="muted">بعد أول اختبار أو تمرين محفوظ، ستتعرف المنصة تلقائيًا على نقاط الضعف وتعيد ترتيب التدريب.</div></div><button class="primary green" onclick="startAdaptiveTraining(true)">🚀 ابدأ تدريبًا تمهيديًا</button></div></div>`;
+    return;
+  }
+  const w=profile.weak;
+  const suggested=w.topic==='Binary Conversion'?'مختبر Decimal ↔ Binary':(w.topic==='VLSM'?'تحدي VLSM لاحقًا':'تمرين Subnetting متدرج');
+  host.innerHTML=`<div class="v50-adaptive-card card"><div class="v50-adaptive-head"><div><span class="v50-adaptive-badge">🧠 V50 — تدريب تكيفي</span><h3 style="margin:8px 0 4px">الخطوة التالية المقترحة: ${esc(v50TopicLabel(w.topic))}</h3></div><button class="primary green" onclick="startAdaptiveTraining()">🚀 درّبني الآن</button></div><div class="v50-reason" style="margin-top:10px"><b>لماذا هذه المهارة؟</b><div class="muted">دقة إجاباتك الحالية في هذا الموضوع حوالي <b>${w.accuracy}%</b>، لذلك ستبدأ بجولة مناسبة لمستواك قبل رفع الصعوبة تدريجيًا.</div></div><div class="v50-reco-grid"><div class="v50-reco-item"><strong>الموضوع</strong><div style="margin-top:4px">${esc(suggested)}</div></div><div class="v50-reco-item"><strong>المستوى المقترح</strong><div style="margin-top:4px">${w.difficulty==='easy'?'سهل':w.difficulty==='medium'?'متوسط':'متقدم'}</div><div class="v50-mini-progress"><span style="width:${Math.min(100,w.accuracy)}%"></span></div></div></div></div>`;
+}
+async function startAdaptiveTraining(previewOnly=false){
+  const host=$('v50AdaptiveArea'); if(host)host.innerHTML='<div class="v50-adaptive-card card"><div class="muted">⏳ يحلل المدرب الذكي نتائجك ويختار أفضل تمرين...</div></div>';
+  const profile=await getV50WeaknessProfile();
+  if(previewOnly && !profile.weak){
+    binaryLabState.focus=null; binaryLabState.difficulty='easy'; binaryLabState.adaptive=true;
+    startBinaryLab(true);
+    if(host)host.innerHTML=`<div class="v50-adaptive-card card"><div class="good">🎯 هذه جلسة تمهيدية. بعد تسجيل أول نتيجة سيبدأ V50 بالتكيف مع أخطائك.</div></div>`;
+    return;
+  }
+  if(!profile.weak){
+    binaryLabState.focus=null; binaryLabState.difficulty='easy'; binaryLabState.adaptive=true;
+    startBinaryLab(true); return;
+  }
+  const w=profile.weak;
+  if(w.topic==='Binary Conversion'){
+    const focus = w.accuracy<60 ? null : (Math.random()<0.5?'d2b':'b2d');
+    binaryLabState.focus=focus; binaryLabState.difficulty=w.difficulty; binaryLabState.adaptive=true;
+    startBinaryLab(true);
+    if($('binaryFeedback'))$('binaryFeedback').innerHTML=`<div class="v50-session"><span class="hint-box" style="flex:1;margin:0">🧠 جلسة تكيفية: ${esc(v50TopicLabel(w.topic))} — مستوى ${w.difficulty==='easy'?'سهل':w.difficulty==='medium'?'متوسط':'متقدم'} — لأن دقتك الحالية ${w.accuracy}%.</span></div>`;
+    return;
+  }
+  if(w.topic==='VLSM'){
+    startChallenge();
+  }else{
+    startExercise(w.difficulty);
+  }
+  const msgBox=$('practiceArea');
+  if(msgBox)msgBox.insertAdjacentHTML('afterbegin',`<div class="v50-session"><div class="hint-box" style="flex:1;margin:0">🧠 جلسة تكيفية: <b>${esc(v50TopicLabel(w.topic))}</b> — مستوى ${w.difficulty==='easy'?'سهل':w.difficulty==='medium'?'متوسط':'متقدم'} — دقتك الحالية ${w.accuracy}%.</div></div>`);
+}
+
 async function renderV49MasteryAndErrors({lessons=[],lp=[],attempts=[]}={}){
   const masteryHost=$('v49MasteryPanel'), errorHost=$('v49ErrorPanel');
   if(!masteryHost || !errorHost || !user) return;
@@ -741,6 +841,7 @@ async function renderV49MasteryAndErrors({lessons=[],lp=[],attempts=[]}={}){
     }
   }catch(e){console.warn('V49 error analyzer',e);}
   errorHost.innerHTML=`<div class="v49-card" style="margin-top:16px"><h3>🧠 محلل الأخطاء</h3><div class="muted" style="margin-bottom:10px">يعرض أكثر الموضوعات التي أخطأت فيها داخل الاختبارات، مع أمثلة على الأسئلة التي تحتاج مراجعة.</div>${wrongAnalysis.length?`<div class="error-summary">${wrongAnalysis.map(x=>`<div class="error-topic"><div class="error-topic-head"><strong>${esc(x.topic)}</strong><span class="badge" style="background:#c62828">${x.wrong} أخطاء</span></div>${x.items.map(it=>`<div class="error-q"><strong>${esc(it.q)}</strong><div class="muted" style="margin-top:5px">إجابتك: ${esc(it.selected)} — الصحيح: ${esc(it.correct)}${it.difficulty?` — ${esc(it.difficulty)}`:''}</div></div>`).join('')}</div>`).join('')}</div><div class="v49-actions"><button class="primary purple" onclick="page('practice')">🔁 تدرب على نقاط الضعف</button></div>`:`<div class="good">✅ لا توجد أخطاء مفصلة محفوظة بعد. عند إجراء اختبارات جديدة سيبدأ محلل الأخطاء بتجميع نقاط الضعف تلقائيًا.</div>`}</div>`;
+  try{const profile=await getV50WeaknessProfile(); v50RenderRecommendation(profile);}catch(e){console.warn('V50 render',e);}
 }
 
 async function renderTrainer(){
