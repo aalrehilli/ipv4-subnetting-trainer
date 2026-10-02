@@ -446,6 +446,8 @@ body{background:var(--v64-bg);color:var(--v64-text)}
   <nav id="nav" class="hidden v65-nav">
     <button class="active" onclick="page('home',this)">🏠 الرئيسية</button>
     <button onclick="page('dashboard',this)">📊 لوحة المتدرب</button>
+    <button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button>
+    <button onclick="page('certificate',this)">📜 الشهادة</button>
     <button id="trainerNav" class="hidden" onclick="page('trainer',this)">👨‍🏫 لوحة المدرب</button>
     <button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button>
     <button onclick="page('account',this)">👤 الحساب</button>
