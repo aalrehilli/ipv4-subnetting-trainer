@@ -131,6 +131,18 @@
 @media(max-width:600px){.v51-toolbar{grid-template-columns:1fr}.v51-bitrow{grid-template-columns:repeat(8,1fr)}.v51-bits{grid-template-columns:1fr 1fr}.v51-info-grid{grid-template-columns:1fr}}
 
 
+/* V53 — بناء الاختبار الذكي من بنك الأسئلة */
+.v53-blueprint-card{border:2px solid #8ab6e8;background:linear-gradient(135deg,#f4f9ff,#fff)}
+.v53-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.v53-badge{display:inline-flex;align-items:center;gap:6px;background:#e7f1ff;color:#0b5ca8;border:1px solid #b9d3ef;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v53-row{display:grid;grid-template-columns:1.3fr 1fr 1fr .6fr auto;gap:8px;align-items:end;margin:8px 0;padding:10px;background:#fff;border:1px solid #dbe8f4;border-radius:12px}
+.v53-row label{display:block;font-size:12px;font-weight:800;color:#31536f;margin-bottom:4px}
+.v53-summary{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:8px;margin:12px 0}
+.v53-summary .box{background:#fff;border:1px solid #dbe8f4;border-radius:10px;padding:10px;text-align:center}
+.v53-summary .box b{display:block;font-size:22px;color:#0b63b6;margin-top:4px}
+@media(max-width:900px){.v53-row{grid-template-columns:1fr 1fr}.v53-row .remove-row{grid-column:1/-1}}
+@media(max-width:600px){.v53-row{grid-template-columns:1fr}.v53-summary{grid-template-columns:1fr 1fr}}
+
 /* V52 — اختبار تحديد المستوى الذكي */
 .v52-placement-card{border:2px solid #b7a3e8;background:linear-gradient(135deg,#fbf8ff,#fff)}
 .v52-placement-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
@@ -163,7 +175,7 @@
 .v42-test-config{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}.v42-test-config .cfg{background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:12px}.v42-test-config label{font-weight:700;display:block;margin-bottom:6px}.v42-test-config input,.v42-test-config select{width:100%;box-sizing:border-box}.v42-test-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:10px;margin:12px 0}.v42-question-nav{display:flex;gap:6px;flex-wrap:wrap}.v42-qbtn{min-width:38px;border:1px solid #c8dbea;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}.v42-qbtn.answered{background:#e8f7ef;border-color:#9bd5b1}.v42-qbtn.flagged{box-shadow:inset 0 0 0 2px #f0a000}.v42-qbtn.current{background:#0b63b6;color:#fff;border-color:#0b63b6}.v42-qcard{scroll-margin-top:90px}.v42-qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.v42-qactions{display:flex;gap:6px;flex-wrap:wrap}.v42-qactions button{font-size:13px;padding:6px 9px}.v42-status{font-size:13px}.v42-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v42-summary .mini{background:#fff;border:1px solid #dbe9f4;border-radius:10px;padding:10px;text-align:center}.v42-summary b{display:block;font-size:20px;color:#0b63b6}@media(max-width:800px){.v42-test-config{grid-template-columns:1fr 1fr}.v42-summary{grid-template-columns:1fr 1fr}}@media(max-width:520px){.v42-test-config{grid-template-columns:1fr}.v42-summary{grid-template-columns:1fr}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V52 • Supabase</div></div>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V53 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
@@ -179,7 +191,7 @@
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="placement" class="hidden"><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اختبار تحديد المستوى الذكي</h2><p class="muted" style="margin:0">20 سؤالًا متوازنًا. لا يوجد نجاح أو رسوب؛ الهدف هو معرفة نقطة البداية الأنسب لك.</p></div><div id="v52PlacementStatus" class="v52-placement-badge">لم يبدأ بعد</div></div><div id="v52PlacementArea" style="margin-top:16px"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V52 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V53 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
@@ -190,7 +202,7 @@
 <section id="trainer" class="hidden">
 <div class="card hero"><h2>👨‍🏫 لوحة المدرب</h2><p class="muted">إدارة المتدربين وبنك الأسئلة ومتابعة النتائج من مكان واحد.</p>
 <div id="trainerStats"></div></div>
-<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary orange" onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
+<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('blueprint',this)">🧩 V53 بناء اختبار ذكي</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary orange" onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
 <div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="Binary Conversion">Binary Conversion</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
@@ -232,6 +244,26 @@
   </div>
 </div>
 <div id="cohortAnalyticsArea"></div>
+</div>
+<div id="trainerBlueprint" class="hidden">
+<h3>🧩 V53 — بناء اختبار ذكي من بنك الأسئلة</h3>
+<div class="card v53-blueprint-card">
+  <div class="v53-head"><div><span class="v53-badge">V53 • Blueprint</span><h3 style="margin:8px 0 4px">كوّن اختبارًا مختلطًا بدقة</h3><div class="muted">اختر لكل مجموعة: التصنيف + المستوى + نوع السؤال + العدد. المنصة ستسحب أسئلة مختلفة عشوائيًا من بنك الأسئلة.</div></div><div class="v53-badge">🧠 بدون Migration جديدة</div></div>
+  <div class="grid" style="margin-top:14px">
+    <div><label>اسم الاختبار</label><input id="v53Title" placeholder="اختبار تشخيصي IPv4 — المرحلة 1"></div>
+    <div><label>المدة بالدقائق</label><input id="v53Duration" type="number" min="1" value="30"></div>
+    <div><label>عدد المحاولات</label><select id="v53Attempts"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="5">5</option><option value="">غير محدود</option></select></div>
+    <div><label>الشعبة</label><input id="v53Group" placeholder="كل الشعب"></div>
+  </div>
+  <div class="grid">
+    <div><label>تاريخ ووقت البداية</label><input id="v53Start" type="datetime-local"></div>
+    <div><label>تاريخ ووقت النهاية</label><input id="v53End" type="datetime-local"></div>
+    <div><label>الوصف</label><input id="v53Desc" placeholder="اختبار مختلط من بنك الأسئلة"></div>
+    <div style="display:flex;align-items:end"><label style="width:100%"><input id="v53Active" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label></div>
+  </div>
+  <div id="v53Rows" style="margin-top:14px"></div>
+  <div class="practice-actions" style="margin-top:10px"><button class="primary" onclick="v53AddBlueprintRow()">➕ إضافة مجموعة</button><button class="primary orange" onclick="v53UsePreset('foundation')">📚 أساسيات IPv4</button><button class="primary purple" onclick="v53UsePreset('subnetting')">🧠 Subnetting متقدم</button><button class="primary green" onclick="v53CreateExamFromBlueprint()">🚀 إنشاء الاختبار</button></div>
+  <div id="v53Summary" style="margin-top:12px"></div></div>
 </div>
 <div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>Binary Conversion</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div><div id="examAnalyticsPanel" class="card" style="margin-top:18px"><h3>📊 تحليلات الاختبارات</h3><p class="muted">اختر «التحليل» بجانب أي اختبار لعرض النتائج، ترتيب المتدربين، ومراجعة الإجابات.</p><div id="examAnalyticsBody"></div></div></div></section>
 <section id="certificate" class="hidden">
@@ -998,13 +1030,14 @@ async function renderTrainer(){
   await loadTrainerOverview();
 }
 function trainerTab(tab,btn){
-  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerAnalytics","trainerSmartFollow"].forEach(id=>$(id)?.classList.add("hidden"));
-  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",analytics:"trainerAnalytics",smartFollow:"trainerSmartFollow"};
+  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerBlueprint","trainerAnalytics","trainerSmartFollow"].forEach(id=>$(id)?.classList.add("hidden"));
+  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",blueprint:"trainerBlueprint",analytics:"trainerAnalytics",smartFollow:"trainerSmartFollow"};
   $(map[tab])?.classList.remove("hidden");
   if(btn){document.querySelectorAll("#trainer .card button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
   if(tab==="students")loadTrainerStudents();
   if(tab==="questions")loadTrainerQuestions();
   if(tab==="exams")loadTrainerExams();
+  if(tab==="blueprint")v53InitBlueprint();
   if(tab==="analytics")loadTrainerAnalytics();
   if(tab==="smartFollow")loadTrainerSmartFollow();
 }
@@ -2670,6 +2703,67 @@ async function loadCertificate(){
  if(x.certificate_no) renderCertificate(x);
 }
 
+
+/* ==================== V53 — Smart Exam Blueprint ==================== */
+let v53Blueprint=[];
+const V53_TYPES={short:'إجابة قصيرة',mcq:'اختيار من متعدد',true_false:'صح / خطأ',matching:'وصل بين العمودين'};
+const V53_TOPICS=['Binary Conversion','IPv4','Subnetting','FLSM','VLSM'];
+const V53_DIFFS=['easy','medium','hard'];
+const V53_DIFF_LABEL={easy:'سهل',medium:'متوسط',hard:'متقدم'};
+function v53Esc(v){return esc(v==null?'':String(v));}
+function v53DefaultRows(kind='foundation'){
+  if(kind==='subnetting') return [
+    {topic:'Subnetting',difficulty:'hard',type:'short',count:5},
+    {topic:'FLSM',difficulty:'hard',type:'matching',count:3},
+    {topic:'Binary Conversion',difficulty:'medium',type:'mcq',count:2}
+  ];
+  return [
+    {topic:'Binary Conversion',difficulty:'easy',type:'short',count:4},
+    {topic:'IPv4',difficulty:'easy',type:'mcq',count:3},
+    {topic:'Subnetting',difficulty:'medium',type:'short',count:3}
+  ];
+}
+function v53UsePreset(kind){v53Blueprint=v53DefaultRows(kind);v53RenderBlueprint();}
+function v53InitBlueprint(){if(!v53Blueprint.length)v53Blueprint=v53DefaultRows('foundation');v53RenderBlueprint();}
+function v53AddBlueprintRow(row={topic:'IPv4',difficulty:'medium',type:'short',count:2}){v53Blueprint.push({...row});v53RenderBlueprint();}
+function v53RemoveBlueprintRow(i){v53Blueprint.splice(i,1);v53RenderBlueprint();}
+function v53UpdateRow(i,key,val){if(!v53Blueprint[i])return;v53Blueprint[i][key]=key==='count'?Math.max(1,Number(val||1)):val;v53RenderBlueprint();}
+function v53RenderBlueprint(){
+  const host=$('v53Rows'); if(!host)return;
+  host.innerHTML=v53Blueprint.map((r,i)=>`<div class="v53-row">
+    <div><label>التصنيف</label><select onchange="v53UpdateRow(${i},'topic',this.value)">${V53_TOPICS.map(x=>`<option value="${v53Esc(x)}" ${x===r.topic?'selected':''}>${v53Esc(x)}</option>`).join('')}</select></div>
+    <div><label>المستوى</label><select onchange="v53UpdateRow(${i},'difficulty',this.value)">${V53_DIFFS.map(x=>`<option value="${x}" ${x===r.difficulty?'selected':''}>${V53_DIFF_LABEL[x]}</option>`).join('')}</select></div>
+    <div><label>نوع السؤال</label><select onchange="v53UpdateRow(${i},'type',this.value)">${Object.entries(V53_TYPES).map(([k,v])=>`<option value="${k}" ${k===r.type?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div><label>العدد</label><input type="number" min="1" value="${Number(r.count||1)}" onchange="v53UpdateRow(${i},'count',this.value)"></div>
+    <button class="primary red mini-btn remove-row" onclick="v53RemoveBlueprintRow(${i})">🗑️ حذف</button>
+  </div>`).join('');
+  const total=v53Blueprint.reduce((n,r)=>n+Number(r.count||0),0);
+  $('v53Summary').innerHTML=`<div class="v53-summary"><div class="box">المجموع<b>${total}</b></div><div class="box">المجموعات<b>${v53Blueprint.length}</b></div><div class="box">سهل<b>${v53Blueprint.filter(x=>x.difficulty==='easy').reduce((n,r)=>n+Number(r.count||0),0)}</b></div><div class="box">متقدم<b>${v53Blueprint.filter(x=>x.difficulty==='hard').reduce((n,r)=>n+Number(r.count||0),0)}</b></div></div><div class="muted">سيتم التحقق من توفر العدد المطلوب في كل مجموعة قبل إنشاء الاختبار.</div>`;
+}
+async function v53CreateExamFromBlueprint(){
+  if(!['trainer','admin'].includes(profile?.role))return;
+  const title=$('v53Title')?.value.trim(), description=$('v53Desc')?.value.trim()||'اختبار منشأ من مخطط V53.', duration_minutes=Math.max(1,Number($('v53Duration')?.value||30)), max_attempts=$('v53Attempts')?.value===''?null:Number($('v53Attempts')?.value||3), group_name=$('v53Group')?.value.trim()||null, starts_at=$('v53Start')?.value?new Date($('v53Start').value).toISOString():null, ends_at=$('v53End')?.value?new Date($('v53End').value).toISOString():null, is_active=!!$('v53Active')?.checked;
+  if(!title)return msg('v53Summary','❌ أدخل اسم الاختبار.');
+  if(!v53Blueprint.length)return msg('v53Summary','❌ أضف مجموعة أسئلة واحدة على الأقل.');
+  const chosen=new Set(), picked=[];
+  $('v53Summary').innerHTML='<div class="hint-box">⏳ جاري فحص بنك الأسئلة وتجهيز الاختبار...</div>';
+  for(let i=0;i<v53Blueprint.length;i++){
+    const r=v53Blueprint[i], need=Math.max(1,Number(r.count||1));
+    const qr=await db.from('trainer_questions').select('id,topic,difficulty,question_type').eq('topic',r.topic).eq('difficulty',r.difficulty).eq('question_type',r.type).limit(500);
+    if(qr.error){$('v53Summary').innerHTML=`<div class="bad">❌ تعذر قراءة بنك الأسئلة للمجموعة ${i+1}: ${v53Esc(qr.error.message)}</div>`;return;}
+    const pool=(qr.data||[]).filter(x=>!chosen.has(x.id)).sort(()=>Math.random()-0.5);
+    if(pool.length<need){$('v53Summary').innerHTML=`<div class="bad">❌ المجموعة ${i+1} تحتاج ${need} سؤالًا، لكن المتاح ${pool.length} فقط. أضف أسئلة إلى بنك الأسئلة أو خفّض العدد.</div>`;return;}
+    pool.slice(0,need).forEach(x=>{chosen.add(x.id);picked.push(x.id);});
+  }
+  const total=picked.length, first=v53Blueprint[0];
+  const er=await db.from('trainer_exams').insert({title,description,difficulty:first.difficulty,topic:first.topic,question_count:total,duration_minutes,max_attempts,group_name,starts_at,ends_at,is_active,created_by:user.id}).select('id').single();
+  if(er.error){$('v53Summary').innerHTML=`<div class="bad">❌ تعذر إنشاء الاختبار: ${v53Esc(er.error.message)}</div>`;return;}
+  const items=picked.map((id,i)=>({exam_id:er.data.id,question_id:id,question_order:i+1}));
+  const ir=await db.from('trainer_exam_questions').insert(items);
+  if(ir.error){await db.from('trainer_exams').delete().eq('id',er.data.id);$('v53Summary').innerHTML=`<div class="bad">❌ تعذر ربط الأسئلة: ${v53Esc(ir.error.message)}</div>`;return;}
+  $('v53Summary').innerHTML=`<div class="good">✅ تم إنشاء الاختبار بنجاح وربط <b>${total}</b> سؤالًا من <b>${v53Blueprint.length}</b> مجموعات. افتح «إدارة الاختبارات» لمراجعته ونشره.</div>`;
+  if(typeof loadTrainerExams==='function')loadTrainerExams();
+}
 
 /* ==================== V52 — Smart Placement Assessment ==================== */
 const V52_STORAGE_KEY='ipv4_v52_placement_v1';
