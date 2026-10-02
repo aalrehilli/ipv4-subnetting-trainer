@@ -71,6 +71,18 @@
 @media(max-width:650px){.trainer-smart-grid{grid-template-columns:1fr 1fr}.follow-row{grid-template-columns:1fr 1fr}.follow-row>*:first-child{grid-column:1/-1}.follow-action{grid-column:1/-1}.group-card-grid{grid-template-columns:1fr}}
 
 .tests-page-head{display:flex;justify-content:space-between;gap:18px;align-items:center;background:linear-gradient(135deg,#f7fbff,#eef7ff);border:1px solid #d9e8f5;border-radius:18px;padding:20px;margin-bottom:18px}.tests-role-note{background:#fff;border:1px solid #dce8f1;border-radius:14px;padding:12px 16px;text-align:center;font-weight:800;line-height:1.8;min-width:190px}.tests-role-note span{color:#52708b;font-weight:600}.published-exams-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}.published-exam-card{background:#fff;border:1px solid #dce8f1;border-radius:18px;padding:18px;box-shadow:0 8px 24px rgba(25,65,95,.06)}.published-exam-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.published-exam-top h3{margin:8px 0 0}.exam-chip,.difficulty-chip{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.exam-chip{background:#eaf7ef;color:#1f7a45}.difficulty-chip{background:#eef4ff;color:#315f9a}.published-exam-meta{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.published-exam-meta span{background:#f7fafc;border:1px solid #e5edf3;border-radius:10px;padding:7px 9px;font-size:13px}.published-exam-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #edf2f5;padding-top:14px}.empty-tests{text-align:center;padding:42px 20px;border:1px dashed #cfdde7;border-radius:18px;background:#fbfdff}.empty-icon{font-size:42px;margin-bottom:8px}@media(max-width:700px){.tests-page-head{flex-direction:column;align-items:stretch}.tests-role-note{min-width:0}.published-exam-foot{flex-direction:column;align-items:stretch}.published-exam-foot button{width:100%}}
+
+.binary-lab-card{border:2px solid #b8d7ec;background:linear-gradient(135deg,#f7fbff,#fff)}
+.binary-lab-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.binary-mode{display:inline-flex;gap:7px;flex-wrap:wrap}
+.binary-mode span{background:#eaf5ff;border:1px solid #c4deef;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800;color:#2c6289}
+.binary-table{width:100%;border-collapse:collapse;margin:12px 0;background:#fff}
+.binary-table th,.binary-table td{border:1px solid #d7e5ef;padding:8px;text-align:center}
+.binary-table th{background:#0b63b6;color:#fff}
+.bit-chip{display:inline-block;min-width:28px;padding:6px 4px;margin:2px;border-radius:7px;background:#f2f7fb;border:1px solid #cfdeea;font-family:monospace;font-weight:700}
+.bit-chip.one{background:#e7f7ee;border-color:#9bd5b1;color:#137b39}
+.bit-chip.zero{background:#f8f8f8;color:#6b7280}
+.binary-answer{font-family:monospace;letter-spacing:2px;font-size:20px;text-align:center}
 </style>
 <style>
 .v42-test-config{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}.v42-test-config .cfg{background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:12px}.v42-test-config label{font-weight:700;display:block;margin-bottom:6px}.v42-test-config input,.v42-test-config select{width:100%;box-sizing:border-box}.v42-test-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:10px;margin:12px 0}.v42-question-nav{display:flex;gap:6px;flex-wrap:wrap}.v42-qbtn{min-width:38px;border:1px solid #c8dbea;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}.v42-qbtn.answered{background:#e8f7ef;border-color:#9bd5b1}.v42-qbtn.flagged{box-shadow:inset 0 0 0 2px #f0a000}.v42-qbtn.current{background:#0b63b6;color:#fff;border-color:#0b63b6}.v42-qcard{scroll-margin-top:90px}.v42-qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.v42-qactions{display:flex;gap:6px;flex-wrap:wrap}.v42-qactions button{font-size:13px;padding:6px 9px}.v42-status{font-size:13px}.v42-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v42-summary .mini{background:#fff;border:1px solid #dbe9f4;border-radius:10px;padding:10px;text-align:center}.v42-summary b{display:block;font-size:20px;color:#0b63b6}@media(max-width:800px){.v42-test-config{grid-template-columns:1fr 1fr}.v42-summary{grid-template-columns:1fr 1fr}}@media(max-width:520px){.v42-test-config{grid-template-columns:1fr}.v42-summary{grid-template-columns:1fr}}
@@ -80,17 +92,17 @@
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
-<section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
+<section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج، ويشمل المسار الآن تدريب Decimal ↔ Binary قبل Subnetting.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
   <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
-  <div class="practice-menu"><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div>
+  <div class="practice-menu"><button class="primary" style="background:#0b63b6" onclick="startBinaryLab()">🔢 مختبر Decimal ↔ Binary</button><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div>
   <div class="competition-settings"><div><h3>🏁 منافسة Subnetting</h3><p class="muted">10 أسئلة — اختر الوقت المناسب لك قبل البدء.</p></div><div class="duration-control"><label for="competitionDuration">⏱️ وقت المنافسة</label><select id="competitionDuration"><option value="5">5 دقائق</option><option value="10">10 دقائق</option><option value="15" selected>15 دقيقة</option><option value="20">20 دقيقة</option><option value="30">30 دقيقة</option><option value="45">45 دقيقة</option><option value="60">60 دقيقة</option><option value="0">بدون وقت</option></select></div><button class="primary green competition-start" onclick="startCompetition()">🏁 ابدأ المنافسة</button></div>
   <div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
 </div></section>
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V37 • CLASS C + FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V48 • IPv4 + Binary + CLASS C FLSM</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
@@ -104,11 +116,11 @@
 <div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="primary" onclick="trainerTab('overview',this)">📊 النتائج</button><button class="primary purple" onclick="trainerTab('students',this)">👥 المتدربون</button><button class="primary orange" onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button class="primary purple" onclick="trainerTab('exams',this)">📋 إدارة الاختبارات</button><button class="primary" onclick="trainerTab('analytics',this)">📈 التحليلات</button><button class="primary orange" onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button class="primary green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
-<div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
+<div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="Binary Conversion">Binary Conversion</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
 <input id="qSearch" placeholder="🔎 بحث في نص السؤال..." oninput="renderQuestionBank()">
 <select id="qFilterType" onchange="renderQuestionBank()"><option value="">كل الأنواع</option><option value="short">إجابة قصيرة</option><option value="mcq">اختيار من متعدد</option><option value="true_false">صح / خطأ</option><option value="matching">وصل بين العمودين</option></select>
 <select id="qFilterDifficulty" onchange="renderQuestionBank()"><option value="">كل المستويات</option><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select>
-<select id="qFilterTopic" onchange="renderQuestionBank()"><option value="">كل التصنيفات</option><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select>
+<select id="qFilterTopic" onchange="renderQuestionBank()"><option value="">كل التصنيفات</option><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="Binary Conversion">Binary Conversion</option><option value="VLSM">VLSM</option></select>
 </div>
 <div id="qStats" class="qstats"></div>
 <div id="questionsTable"></div></div>
@@ -144,7 +156,7 @@
 </div>
 <div id="cohortAnalyticsArea"></div>
 </div>
-<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div><div id="examAnalyticsPanel" class="card" style="margin-top:18px"><h3>📊 تحليلات الاختبارات</h3><p class="muted">اختر «التحليل» بجانب أي اختبار لعرض النتائج، ترتيب المتدربين، ومراجعة الإجابات.</p><div id="examAnalyticsBody"></div></div></div></section>
+<div id="trainerExams" class="hidden"><h3>📋 إدارة الاختبارات</h3><div class="question"><h3>➕ إنشاء اختبار جديد</h3><p class="muted">حدد إعدادات الاختبار، ثم اختر «تفعيل الاختبار» ليظهر للمتدربين المستهدفين.</p><div class="grid"><div><label>اسم الاختبار</label><input id="exTitle" placeholder="Class C FLSM - المستوى الأول"></div><div><label>المستوى</label><select id="exDifficulty"><option value="easy">سهل</option><option value="medium" selected>متوسط</option><option value="hard">متقدم</option></select></div><div><label>الموضوع</label><select id="exTopic"><option>FLSM</option><option>IPv4</option><option>Subnetting</option><option>Binary Conversion</option><option>VLSM</option></select></div></div><div class="grid"><div><label>عدد الأسئلة</label><input id="exCount" type="number" min="1" value="20"></div><div><label>المدة بالدقائق</label><input id="exDuration" type="number" min="1" value="30"></div><div><label>عدد المحاولات المسموح بها</label><select id="exMaxAttempts"><option value="1">محاولة واحدة</option><option value="2">محاولتان</option><option value="3" selected>3 محاولات</option><option value="4">4 محاولات</option><option value="5">5 محاولات</option><option value="10">10 محاولات</option><option value="">غير محدود</option></select><small class="muted">يُحتسب الاستخدام عند تسليم الاختبار.</small></div><div><label>الشعبة</label><input id="exGroup" placeholder="1"></div></div><div class="grid"><div><label>تاريخ ووقت البداية</label><input id="exStart" type="datetime-local"></div><div><label>تاريخ ووقت النهاية</label><input id="exEnd" type="datetime-local"></div><div><label>الوصف</label><input id="exDesc" placeholder="اختبار FLSM"></div></div><label><input id="exActive" type="checkbox" style="width:auto"> تفعيل الاختبار مباشرة</label><br><button class="primary green" onclick="createTrainerExam()">➕ إنشاء الاختبار ونشره للمتدربين</button><div id="examMsg"></div></div><div id="examsTable"></div><div id="examAnalyticsPanel" class="card" style="margin-top:18px"><h3>📊 تحليلات الاختبارات</h3><p class="muted">اختر «التحليل» بجانب أي اختبار لعرض النتائج، ترتيب المتدربين، ومراجعة الإجابات.</p><div id="examAnalyticsBody"></div></div></div></section>
 <section id="certificate" class="hidden">
 <div class="card hero"><span class="badge">V12 • CERTIFICATE</span><h2>🏆 شهادة إتمام المقرر</h2><p>تحقق من استيفاء متطلبات إتمام مقرر IPv4 Subnetting ثم أصدر شهادة باسم المتدرب.</p><div id="certificateStatus"></div></div>
 <div class="card" id="certificateCard"><div id="certificateDetails"></div></div>
@@ -250,6 +262,57 @@ function coachExplanation(step,q){const map={0:{title:'Borrowed Bits',body:`نح
 function renderCoach(containerId,wrongSteps,q){const box=$(containerId);if(!box)return;if(!wrongSteps.length){box.innerHTML=`<div class="smart-coach"><div class="smart-coach-title"><strong>🧠 المدرب الذكي</strong><span class="hint-level">ممتاز</span></div>🎉 جميع الخطوات صحيحة. أنت جاهز للانتقال إلى سؤال أصعب.</div>`;return;}const idx=wrongSteps[Math.min(coachHintIndex,wrongSteps.length-1)],ex=coachExplanation(idx,q);box.innerHTML=`<div class="smart-coach"><div class="smart-coach-title"><strong>🧠 المدرب الذكي</strong><span class="hint-level">تلميح ${Math.min(coachHintIndex+1,wrongSteps.length)} من ${wrongSteps.length}</span></div><div><b>راجع: ${ex.title}</b><div class="error-explain">${ex.body}</div></div><div class="coach-actions"><button class="primary" onclick="nextCoachHint('${containerId}')">💡 تلميح آخر</button><button class="primary purple" onclick="showSimilarExample('${containerId}')">📘 مثال مشابه</button></div></div>`;}
 function nextCoachHint(containerId){coachHintIndex++;if(exercise){const ids=['eb','ep','em','eg','eh'];const exp=[exercise.bits,exercise.prefix,exercise.mask,exercise.block,exercise.hosts].map(String);const wrong=ids.map((id,i)=>$(id)&&String($(id).value||'').trim()!==exp[i]?i:-1).filter(i=>i>=0);renderCoach(containerId,wrong,exercise);}}
 function showSimilarExample(containerId){const q=exercise||challenge;if(!q)return;const ex=`📘 مثال مشابه: إذا كانت الشبكة 192.168.10.0/24 والمطلوب ${q.need} شبكات، فإن Borrowed Bits = ${q.bits} و Prefix = /${q.prefix} و Magic Number = ${q.block}.`;const box=$(containerId);if(box)box.innerHTML=`<div class="smart-coach"><div class="smart-coach-title"><strong>📘 مثال مشابه</strong></div>${ex}</div>`;}
+
+const binaryLabState={round:0,total:10,score:0,history:[],current:null};
+function decimalToBinary8(n){return Number(n).toString(2).padStart(8,'0');}
+function binaryToDecimal8(bits){return parseInt(bits,2);}
+function normalizeBinaryInput(v){return String(v||'').trim().replace(/\s+/g,'');}
+function normalizeNumberInput(v){const s=String(v||'').trim().replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));return s;}
+function binaryQuestion(){
+  const dir=Math.random()<0.5?'d2b':'b2d';
+  if(dir==='d2b'){
+    const n=[0,1,2,5,8,10,15,16,32,64,85,127,128,136,150,168,170,192,200,224,240,254,255][Math.floor(Math.random()*23)];
+    return {dir,value:String(n),answer:decimalToBinary8(n),label:'Decimal → Binary',hint:`ابحث عن أوزان 128، 64، 32، 16، 8، 4، 2، 1 التي مجموعها ${n}.`};
+  }
+  const n=[0,1,2,5,8,10,15,16,32,64,85,127,128,136,150,168,170,192,200,224,240,254,255][Math.floor(Math.random()*23)];
+  const bits=decimalToBinary8(n);
+  return {dir,value:bits,answer:String(n),label:'Binary → Decimal',hint:`اجمع أوزان الـ Bits التي قيمتها 1 في ${bits}.`};
+}
+function renderBitVisual(bits){return String(bits).split('').map((b,i)=>`<span class="bit-chip ${b==='1'?'one':'zero'}">${b}</span>`).join('');}
+function startBinaryLab(){
+  binaryLabState.round=0;binaryLabState.score=0;binaryLabState.history=[];binaryLabState.current=null;
+  $('practiceArea').innerHTML=`<div class="card binary-lab-card"><div class="binary-lab-head"><div><span class="badge">🔢 Binary Lab</span><h3>تحويل Decimal ↔ Binary</h3><p class="muted">10 جولات متدرجة — كل جولة 10 نقاط. يمكنك طلب تلميح قبل التسليم.</p></div><div class="score-pill" id="binaryScore">0 / 100</div></div><div id="binaryRound"></div><div id="binaryFeedback"></div></div>`;
+  $('challengeArea').innerHTML='';$('competitionArea').innerHTML='';renderBinaryRound();updatePracticeStats();
+}
+function renderBinaryRound(){
+  if(binaryLabState.round>=binaryLabState.total){return finishBinaryLab();}
+  const q=binaryQuestion();binaryLabState.current=q;binaryLabState.round++;
+  const prompt=q.dir==='d2b'?`حوّل <b>${q.value}</b> إلى Binary (8 Bits).`:`حوّل <b>${q.value}</b> إلى Decimal.`;
+  const visual=q.dir==='b2d'?`<div style="margin:12px 0">${renderBitVisual(q.value)}</div>`:'<div class="question"><b>أوزان الـ 8 Bits:</b><br>128 • 64 • 32 • 16 • 8 • 4 • 2 • 1</div>';
+  $('binaryRound').innerHTML=`<div class="question"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><b>الجولة ${binaryLabState.round} من ${binaryLabState.total}</b><span class="badge">${q.label}</span></div><div style="font-size:20px;margin:14px 0">${prompt}</div>${visual}<input id="binaryAnswer" class="binary-answer" placeholder="اكتب الإجابة هنا" autocomplete="off" onkeydown="if(event.key==='Enter')submitBinaryAnswer()"><div class="practice-actions"><button class="primary green" onclick="submitBinaryAnswer()">✅ تحقق</button><button class="primary" onclick="showBinaryHint()">💡 تلميح</button></div></div>`;
+  $('binaryFeedback').innerHTML='';
+}
+function showBinaryHint(){const q=binaryLabState.current;if(!$('binaryFeedback')||!q)return;$('binaryFeedback').innerHTML=`<div class="hint-box">💡 ${q.hint}</div>`;}
+async function submitBinaryAnswer(){
+  const q=binaryLabState.current;if(!q)return;
+  const raw=$('binaryAnswer')?.value||'';
+  const got=q.dir==='d2b'?normalizeBinaryInput(raw):normalizeNumberInput(raw);
+  const ok=got===q.answer;
+  if(ok)binaryLabState.score+=10;
+  binaryLabState.history.push({round:binaryLabState.round,ok,expected:q.answer,got});
+  $('binaryScore').textContent=`${binaryLabState.score} / 100`;
+  $('binaryFeedback').innerHTML=`<div class="${ok?'good':'bad'}">${ok?'✅ صحيح — ممتاز!':'❌ غير صحيح'} ${!ok?`الإجابة الصحيحة: <b>${q.answer}</b>`:''}</div>`;
+  setTimeout(renderBinaryRound,550);
+}
+async function finishBinaryLab(){
+  const pct=binaryLabState.score;
+  const correct=binaryLabState.history.filter(x=>x.ok).length;
+  if(user){try{await db.from('exercise_attempts').insert({student_id:user.id,score:pct,is_correct:pct>=60});}catch(e){console.warn('binary lab save',e)}}
+  await markCoursePractice(pct);
+  const weak=binaryLabState.history.filter(x=>!x.ok).map(x=>x.round);
+  $('binaryRound').innerHTML=`<div class="question"><h3>🎉 انتهى مختبر التحويل</h3><p style="font-size:20px"><b>${correct}/10</b> إجابات صحيحة — النتيجة <b>${pct}/100</b></p><div class="progress"><div class="bar" style="width:${pct}%"></div></div>${weak.length?`<p class="muted">الجولات التي تحتاج مراجعة: ${weak.join('، ')}</p>`:'<div class="good">ممتاز! لا توجد أخطاء في هذه المحاولة.</div>'}<div class="practice-actions"><button class="primary" onclick="startBinaryLab()">🔄 إعادة المحاولة</button><button class="primary orange" onclick="startExercise()">🎯 الانتقال إلى Subnetting</button></div></div>`;
+  $('binaryFeedback').innerHTML='';updatePracticeStats();
+}
 
 function startExercise(){exercise=problem($('level').value);q=exercise;$('practiceArea').innerHTML=`<div class="question"><h3>🧩 ${q.network}/24 → المطلوب إنشاء ${q.need} شبكات متساوية</h3><div class="hint-box">ابدأ بعدد الشبكات المطلوبة، ثم احسب Borrowed Bits وPrefix وMask وMagic Number وعدد الأجهزة.</div><div class="step-grid"><div><label>1) Borrowed Bits</label><input id="eb" placeholder="مثال: 2"><div id="r1"></div></div><div><label>2) New Prefix</label><input id="ep" placeholder="مثال: 26"><div id="r2"></div></div><div><label>3) Subnet Mask</label><input id="em" placeholder="مثال: 255.255.255.192"><div id="r3"></div></div><div><label>4) Magic Number</label><input id="eg" placeholder="مثال: 64"><div id="r4"></div></div><div><label>5) Hosts/Subnet</label><input id="eh" placeholder="مثال: 62"><div id="r5"></div></div></div><div class="practice-actions"><button class="primary" onclick="checkSteps()">✅ تحقق من الحل</button><button class="primary purple" onclick="showPracticeHint()">💡 أعطني تلميحًا</button></div><div id="sf"></div></div>`;updatePracticeStats();}
 function showPracticeHint(){if(!exercise){alert('ابدأ تمرينًا أولًا.');return;}const hints=[`عدد Borrowed Bits هو أصغر n يحقق 2^n ≥ ${exercise.need}.`,`Prefix الجديد = 24 + Borrowed Bits.`,`الـ Mask للـ /${exercise.prefix} هو ${exercise.mask}.`,`Magic Number = 256 - قيمة الأوكتت المتغير في الـ Mask.`,`Hosts/Subnet = 2^(32-${exercise.prefix}) - 2 = ${exercise.hosts}.`];const box=$('sf');if(box)box.innerHTML=`<div class="hint-box">💡 ${hints[Math.floor(Math.random()*hints.length)]}</div>`;}
@@ -891,7 +954,7 @@ function editTrainerQuestion(id){
     <label>نوع السؤال</label><select id="editQuestionType" onchange="renderEditQuestionFields()">
     <option value="short">إجابة قصيرة</option><option value="mcq">اختيار من متعدد</option><option value="true_false">صح / خطأ</option><option value="matching">وصل بين العمودين</option></select>
     <label>نص السؤال</label><textarea id="editQuestionText" style="width:100%;min-height:100px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea>
-    <div class="grid"><div><label>المستوى</label><select id="editDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="editTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="VLSM">VLSM</option></select></div></div>
+    <div class="grid"><div><label>المستوى</label><select id="editDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="editTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="Binary Conversion">Binary Conversion</option><option value="VLSM">VLSM</option></select></div></div>
     <div id="editQuestionFields"></div><div id="editQuestionMsg"></div>
     <div class="actions"><button type="button" class="primary green" onclick="saveEditedTrainerQuestion()">💾 حفظ التعديلات</button><button type="button" class="light" onclick="closeQuestionEdit()">إلغاء</button></div>`;
   document.getElementById('questionEditBody').innerHTML=body;
@@ -1753,6 +1816,28 @@ const lesson1Detailed=`
 </div>`;
 
 
+const lesson1BinaryAddendum=`
+<div class="lesson-extra" style="margin-top:18px">
+  <div class="card binary-lab-card">
+    <div class="binary-lab-head"><div><span class="badge">🔢 مهارة أساسية</span><h3 style="margin:10px 0 6px">التحويل بين Decimal وBinary</h3><p class="muted" style="margin:0">هذه المهارة ستُستخدم لاحقًا عند قراءة Subnet Mask والـ Prefix وحل مسائل Subnetting.</p></div><div class="binary-mode"><span>Decimal → Binary</span><span>Binary → Decimal</span></div></div>
+    <h3>1️⃣ أوزان الـ 8 Bits</h3>
+    <table class="binary-table"><tr><th>Bit</th><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr><tr><th>Position</th><td>2⁷</td><td>2⁶</td><td>2⁵</td><td>2⁴</td><td>2³</td><td>2²</td><td>2¹</td><td>2⁰</td></tr></table>
+    <h3>2️⃣ من Decimal إلى Binary</h3>
+    <p>نبحث عن أكبر وزن يمكن طرحه من الرقم، ونضع <b>1</b> عند استخدام الوزن و<b>0</b> عند عدم استخدامه.</p>
+    <div class="question"><b>مثال: 192</b><br><span class="bit-chip one">128</span> + <span class="bit-chip one">64</span> = 192<br><code>11000000</code></div>
+    <div class="question"><b>مثال: 10</b><br><span class="bit-chip one">8</span> + <span class="bit-chip one">2</span> = 10<br><code>00001010</code></div>
+    <h3>3️⃣ من Binary إلى Decimal</h3>
+    <p>نجمع أوزان الـ Bits التي قيمتها <b>1</b>.</p>
+    <div class="question"><b>مثال: 10101000</b><br>128 + 32 + 8 = <b>168</b></div>
+    <div class="good"><b>قاعدة مهمة:</b> كل Octet في IPv4 يتكون من 8 Bits، ولذلك لا يتجاوز قيمته 255.</div>
+    <h3>4️⃣ لماذا نحتاج هذا في Subnetting؟</h3>
+    <p>عندما ننتقل إلى Subnet Mask والـ Prefix، سنرى أن القناع مبني من Bits قيمتها 1 للشبكة وBits قيمتها 0 للمضيف. لذلك فهم التحويل بين النظامين يجعل قراءة /25 و/26 و/27 أكثر وضوحًا.</p>
+    <div class="question"><b>/26</b> → <code>11111111.11111111.11111111.11000000</code> → <b>255.255.255.192</b></div>
+    <h3>📝 تطبيق ذاتي</h3>
+    <p>حوّل الأعداد التالية إلى Binary: <b>8، 15، 128، 168، 224</b>. ثم جرّب العكس: <b>00001111، 10101000، 11100000</b>.</p>
+  </div>
+</div>`;
+
 const lesson2Media=`
 <div class="lesson-extra" style="margin-top:18px">
   <div class="card" style="background:#f8fbff">
@@ -1793,6 +1878,16 @@ const lesson2Detailed=`
 <h3>📝 تطبيق سريع</h3>
 <p>ما القناع المقابل لـ <b>/27</b>؟</p>
 <ul><li>الإجابة: <b>255.255.255.224</b>.</li><li>عدد بتات المضيف: <b>5</b>.</li><li>عدد العناوين في كل شبكة: <b>32</b>.</li></ul>
+</div>`;
+
+const lesson2BinaryAddendum=`
+<div class="lesson-extra" style="margin-top:18px">
+  <div class="card binary-lab-card">
+    <h3>🔗 ربط Binary بالـ Subnet Mask</h3>
+    <p>عند قراءة Subnet Mask، تذكّر أن <b>1 = Network Bit</b> و<b>0 = Host Bit</b>.</p>
+    <table class="binary-table"><tr><th>Prefix</th><th>Binary Mask</th><th>Decimal Mask</th></tr><tr><td>/25</td><td><code>11111111.11111111.11111111.10000000</code></td><td>255.255.255.128</td></tr><tr><td>/26</td><td><code>11111111.11111111.11111111.11000000</code></td><td>255.255.255.192</td></tr><tr><td>/27</td><td><code>11111111.11111111.11111111.11100000</code></td><td>255.255.255.224</td></tr></table>
+    <div class="hint-box">💡 كلما زاد الـ Prefix زادت الـ 1s للشبكة وقلّت الـ 0s للمضيف.</div>
+  </div>
 </div>`;
 
 const lesson3Media=`
@@ -2117,7 +2212,7 @@ const lesson8Media=`
 </div>`;
 
 const courseFallback=[
- {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:20,content:lesson1Detailed+lesson1Media},
+ {id:'local-1',lesson_no:1,title:'مقدمة في IPv4 وعناوين الشبكة',duration:25,content:lesson1Detailed+lesson1BinaryAddendum+lesson1Media},
  {id:'local-2',lesson_no:2,title:'Prefix و Subnet Mask',duration:25,content:lesson2Detailed+lesson2Media},
  {id:'local-3',lesson_no:3,title:'Borrowed Bits وعدد الشبكات',duration:30,content:lesson3Detailed+lesson3Media},
  {id:'local-4',lesson_no:4,title:'Magic Number',duration:30,content:lesson4Detailed+lesson4Media},
@@ -2149,10 +2244,10 @@ async function loadCourse(){
    const exam=acts.find(a=>a.activity_type==='exam' && a.exam_id);
    let lessonContent=x.content_html||x.content||'';
    if(Number(x.lesson_no)===1 && !String(x.id).startsWith('local-')){
-     lessonContent += lesson1Detailed + lesson1Media;
+     lessonContent += lesson1Detailed + lesson1BinaryAddendum + lesson1Media;
    }
    if(Number(x.lesson_no)===2 && !String(x.id).startsWith('local-')){
-     lessonContent += lesson2Detailed + lesson2Media;
+     lessonContent += lesson2Detailed + lesson2BinaryAddendum + lesson2Media;
    }
    if(Number(x.lesson_no)===3 && !String(x.id).startsWith('local-')){
      lessonContent += lesson3Detailed + lesson3Media;
@@ -2182,6 +2277,7 @@ async function loadCourse(){
        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
          <button class="primary ${d?'':'green'}" onclick="toggleLesson('${x.id}',${d?'false':'true'})">${d?'↩️ إعادة فتح الدرس':'✅ إكمال الدرس'}</button>
          ${practice?`<button class="primary orange" onclick="startCoursePractice('${x.id}',${x.lesson_no||i+1})">${pd?'🔁 إعادة التمرين':'🎯 ابدأ تمرين الدرس'}</button>`:''}
+         ${Number(x.lesson_no)===1?`<button class="primary" style="background:#0b63b6" onclick="startCourseBinaryLab('${x.id}')">🔢 تدريب التحويل Binary</button>`:''}
          ${exam?`<button class="primary purple" onclick="startCourseExam('${exam.exam_id}')">📝 ابدأ الاختبار</button>`:''}
        </div>
        <div style="margin-top:9px;display:flex;gap:10px;flex-wrap:wrap">
@@ -2201,6 +2297,13 @@ function startCoursePractice(lessonId,lessonNo){
  $('level').value=level;
  startExercise();
  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startCourseBinaryLab(lessonId){
+  coursePracticeLessonId=lessonId;
+  page('practice');
+  startBinaryLab();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 async function startCourseExam(examId){
