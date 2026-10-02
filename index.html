@@ -234,21 +234,39 @@
 @media(max-width:950px){.v57-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v57-summary{grid-template-columns:repeat(2,minmax(120px,1fr))}}
 @media(max-width:600px){.v57-grid{grid-template-columns:1fr}.v57-summary{grid-template-columns:1fr 1fr}.v57-stat .num{font-size:21px}}
 </style>
-</head><body>
+<style>
+/* Home flow — V57.1 */
+.home-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.home-main-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+.home-feature{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;min-height:150px}
+.home-feature h2,.home-main-grid h2{color:#0b63b6}
+.placement-feature{border:2px solid #b7a3e8;background:linear-gradient(135deg,#fbf8ff,#fff)}
+.review-feature{border:2px solid #c8dcf2;background:linear-gradient(135deg,#f7fbff,#fff)}
+@media(max-width:900px){.home-main-grid{grid-template-columns:1fr 1fr}.home-feature-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.home-main-grid{grid-template-columns:1fr}}
+</style></head><body>
 <header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V57 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>$('v57AchievementsPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),140)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
-<section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج، ويشمل المسار الآن تدريب Decimal ↔ Binary قبل Subnetting.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div><button class="primary purple" onclick="page('placement')">🚀 ابدأ التحديد</button></div></div>
-</div><div class="card v56-card" id="homeV56ReviewCard"><div class="v56-head"><div><span class="v56-badge">🧠 V56 — المراجعة الذكية</span><h2 style="margin:9px 0 5px">راجع نقاط الضعف قبل الاختبار</h2><p class="muted" style="margin:0">جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div><button class="primary green" onclick="page('dashboard')">📊 افتح المراجعة الذكية</button></div></div><div class="card v57-card" id="homeV57AchievementsCard"><div class="v57-head"><div><span class="v57-badge">🏅 V57 — نظام الإنجازات والشارات</span><h2 style="margin:9px 0 5px">اجمع الإنجازات وابنِ مستوى إتقانك</h2><p class="muted" style="margin:0">شارات تلقائية تُفتح مع تقدمك في الدروس والتمارين والاختبارات والمراجعة الذكية، مع تتبع للسلاسل والمهارات المتقنة.</p></div><button class="primary orange" onclick="page('dashboard');setTimeout(()=>$('v57AchievementsPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),140)">🏅 عرض إنجازاتي</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
-<section id="practice" class="hidden"><div class="card practice-shell">
-  <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
-  <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
-  <div class="practice-menu"><button class="primary green" onclick="startAdaptiveTraining()">🧠 تدريب تكيفي — درّبني الآن</button><button class="primary" style="background:#0b63b6" onclick="startBinaryLab()">🔢 مختبر Decimal ↔ Binary</button><button class="primary purple" onclick="startVisualLab()">🧭 مختبر IPv4 البصري</button><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div>
-  <div class="competition-settings"><div><h3>🏁 منافسة Subnetting</h3><p class="muted">10 أسئلة — اختر الوقت المناسب لك قبل البدء.</p></div><div class="duration-control"><label for="competitionDuration">⏱️ وقت المنافسة</label><select id="competitionDuration"><option value="5">5 دقائق</option><option value="10">10 دقائق</option><option value="15" selected>15 دقيقة</option><option value="20">20 دقيقة</option><option value="30">30 دقيقة</option><option value="45">45 دقيقة</option><option value="60">60 دقيقة</option><option value="0">بدون وقت</option></select></div><button class="primary green competition-start" onclick="startCompetition()">🏁 ابدأ المنافسة</button></div>
-  <div id="v50AdaptiveArea"></div><div id="v51VisualArea"></div><div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
-</div></section>
-<section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
+<section id="home">
+<div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>ابدأ من تحديد مستواك، ثم راجع نقاط ضعفك، وبعدها انتقل إلى المقرر والتمارين والاختبارات.</p></div>
+<div class="home-feature-grid">
+  <div class="card home-feature placement-feature">
+    <div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:10px 0 6px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div>
+    <button class="primary purple" onclick="page('placement',this)">🚀 ابدأ تحديد المستوى</button>
+  </div>
+  <div class="card home-feature review-feature">
+    <div><span class="v56-badge">🧠 V56 — المراجعة الذكية</span><h2 style="margin:10px 0 6px">راجع نقاط الضعف قبل الاختبار</h2><p class="muted" style="margin:0">جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div>
+    <button class="primary green" onclick="openHomeSmartReview(this)">🧠 ابدأ المراجعة الذكية</button>
+  </div>
+</div>
+<div class="home-main-grid">
+  <div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div>
+  <div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts، مع تدريب Binary ومختبر IPv4 بصري.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div>
+  <div class="card"><h2>🏆 الاختبارات</h2><p>اختبارات منشورة، نتائج محفوظة، واختبارات ذكية مبنية على مستوى المتدرب.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div>
+</div>
+</section>
 <section id="placement" class="hidden"><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اختبار تحديد المستوى الذكي</h2><p class="muted" style="margin:0">20 سؤالًا متوازنًا. لا يوجد نجاح أو رسوب؛ الهدف هو معرفة نقطة البداية الأنسب لك.</p></div><div id="v52PlacementStatus" class="v52-placement-badge">لم يبدأ بعد</div></div><div id="v52PlacementArea" style="margin-top:16px"></div></div></section>
 <section id="course" class="hidden">
 <div class="card hero"><span class="badge">V57 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams + Analytics + Error Notebook + Achievements</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
@@ -422,7 +440,35 @@ async function loadProfile(){
   profile=r.data;return r;
 }
 async function logout(){await db.auth.signOut();window.location.href='login.html';}
-function page(id,b){document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));$(id).classList.remove("hidden");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(b)b.classList.add("active");if(id==="dashboard")renderDashboard();if(id==="home"&&profile?.role==="student")loadStudentNotifications();if(id==="practice")updatePracticeStats();if(id==="trainer")renderTrainer();if(id==="account")renderAccount();if(id==="adminUsers")loadAdminUsers();if(id==="tests")loadPublishedExams();if(id==="course")loadCourse();if(id==="placement")renderV52PlacementHome();if(id==="dashboard")renderV52PlacementSummary()}
+function resetHomeView(){
+  document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));
+  const home=$("home"); if(home) home.classList.remove("hidden");
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  try{window.scrollTo({top:0,left:0,behavior:"instant"});}catch(_e){window.scrollTo(0,0);}
+}
+function openHomeSmartReview(button){
+  page("dashboard",button);
+  setTimeout(()=>{
+    const panel=$("v56SmartReview");
+    if(panel) panel.scrollIntoView({behavior:"smooth",block:"start"});
+  },350);
+}
+function page(id,b){
+  if(id==="home"){resetHomeView();if(profile?.role==="student")loadStudentNotifications();return;}
+  document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));
+  const target=$(id); if(target) target.classList.remove("hidden");
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  if(b)b.classList.add("active");
+  if(id==="dashboard")renderDashboard();
+  if(id==="practice")updatePracticeStats();
+  if(id==="trainer")renderTrainer();
+  if(id==="account")renderAccount();
+  if(id==="adminUsers")loadAdminUsers();
+  if(id==="tests")loadPublishedExams();
+  if(id==="course")loadCourse();
+  if(id==="placement")renderV52PlacementHome();
+  if(id==="dashboard")renderV52PlacementSummary();
+}
 function ip(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join(".")}
 function problem(level){let a=level==="easy"?[2,4,8]:level==="medium"?[3,5,6,7,8,10,12]:[5,6,7,9,10,11,12,13,14,15,16],need=a[Math.floor(Math.random()*a.length)],o=Math.floor(Math.random()*223)+1,b=Math.ceil(Math.log2(need)),p=24+b,block=2**(32-p);return{network:`192.168.${o}.0`,need,bits:b,prefix:p,mask:ip((0xffffffff<<(32-p))>>>0),block,hosts:block-2}}
 
