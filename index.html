@@ -468,6 +468,16 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 .v66-student-note{margin-top:10px;background:#eef8ff;border:1px solid #cfe7f6;color:#2a5d82;border-radius:10px;padding:10px 12px;font-size:13px}
 </style>
 
+
+<style id="v66_2_setup_css">
+.v66-setup-card{background:linear-gradient(135deg,#fff9ed,#fff);border:1px solid #ecd6a7;border-radius:14px;padding:16px;margin:10px 0 14px}
+.v66-setup-card h4{margin:0 0 8px;color:#8b5b00}
+.v66-setup-steps{margin:8px 0 0;padding-right:20px;color:#5b6370}
+.v66-setup-steps li{margin:6px 0}
+.v66-setup-code{display:inline-block;background:#f6f1e4;border:1px solid #e5d7b6;padding:3px 7px;border-radius:6px;font-family:monospace;font-size:12px}
+.v66-setup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1043,13 +1053,55 @@ async function v66RenderDashboardSummary(){
  host.innerHTML=`<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><span class="badge">🧪 V66</span><h3 style="margin:8px 0 4px">المختبرات العملية</h3><div class="muted">مكتملة: ${done} • قيد المراجعة: ${pending}</div></div><button class="primary" onclick="page('packetLabs')">فتح مركز المختبرات</button></div>${rows.length?rows.slice(0,3).map(s=>`<div class="stat"><b>مختبر ${esc(s.packet_tracer_labs?.lab_no||'')}</b><span>${esc(s.packet_tracer_labs?.title||'مختبر Packet Tracer')} — ${s.score!=null?Number(s.score):'قيد المراجعة'}</span></div>`).join(''):'<div class="muted" style="margin-top:10px">ابدأ أول مختبر عملي.</div>'}</div>`;
 }
 async function v66RenderTrainerLabs(){
- if(!['trainer','admin'].includes(profile?.role))return;const area=$('v66TrainerLabsArea'),subArea=$('v66TrainerSubmissionsArea');if(!area||!subArea)return;
- const lr=await db.from('packet_tracer_labs').select('*').order('lab_no');if(lr.error){area.innerHTML=`<div class="bad">❌ تعذر تحميل المختبرات. طبّق Migration V66 أولًا.<br>${esc(lr.error.message)}</div>`;subArea.innerHTML='';return;}
- area.innerHTML=(lr.data||[]).map(l=>`<div class="v66-trainer-lab"><div><b>مختبر ${Number(l.lab_no)} — ${esc(l.title)}</b><div class="muted">${esc(l.module_name)} • ${esc(l.topic)} • ${Number(l.max_score||0)} درجة</div><div style="margin-top:7px">${l.starter_path?'<span class="good" style="display:inline-block;padding:6px 9px">✅ ملف بداية مرتبط</span>':'<span class="bad" style="display:inline-block;padding:6px 9px">⚠️ لا يوجد ملف بداية</span>'}</div></div><div><input id="v66starter_${l.id}" type="file" accept=".pkt,.pka"><button class="primary" onclick="v66UploadStarter('${l.id}')">📤 رفع/استبدال ملف البداية</button></div></div>`).join('');
- const sr=await db.from('packet_tracer_submissions').select('*').order('submitted_at',{ascending:false}).limit(100);if(sr.error){subArea.innerHTML=`<div class="bad">❌ تعذر تحميل التسليمات: ${esc(sr.error.message)}</div>`;return;}
- const labMap=new Map((lr.data||[]).map(x=>[x.id,x])),ids=[...new Set((sr.data||[]).map(x=>x.student_id))],pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null},pm=new Map((pr.data||[]).map(x=>[x.id,x]));
- subArea.innerHTML=sr.data?.length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>المختبر</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${sr.data.map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>Lab ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+  if(!['trainer','admin'].includes(profile?.role))return;
+  const area=$('v66TrainerLabsArea'),subArea=$('v66TrainerSubmissionsArea');
+  if(!area||!subArea)return;
+
+  const lr=await db.from('packet_tracer_labs').select('*').order('lab_no');
+
+  if(lr.error){
+    const missingTable=/packet_tracer_labs|schema cache|42P01|PGRST/i.test(String(lr.error.message||''));
+    if(missingTable){
+      area.innerHTML=`<div class="v66-setup-card">
+        <h4>🔧 تهيئة مركز المختبرات مطلوبة مرة واحدة</h4>
+        <div>المختبرات جاهزة داخل النسخة، لكن قاعدة البيانات لم تُهيّأ بعد.</div>
+        <ol class="v66-setup-steps">
+          <li>افتح <b>Supabase → SQL Editor</b>.</li>
+          <li>افتح ملف <span class="v66-setup-code">MIGRATION_V66_PACKET_TRACER_LABS.sql</span>.</li>
+          <li>الصق محتواه في SQL Editor ثم اختر <b>Run</b> مرة واحدة.</li>
+          <li>ارجع إلى هذه الصفحة واضغط <b>تحديث الحالة</b>.</li>
+        </ol>
+        <div class="v66-setup-actions">
+          <a class="primary" href="./MIGRATION_V66_PACKET_TRACER_LABS.sql" download>📄 تحميل ملف التهيئة</a>
+          <button type="button" class="primary green" onclick="v66RenderTrainerLabs()">🔄 تحديث الحالة</button>
+        </div>
+      </div>`;
+      subArea.innerHTML=`<div class="v66-setup-card">
+        <h4>📤 التسليمات</h4>
+        <div>بعد تهيئة قاعدة البيانات ستظهر هنا ملفات المتدربين، الدرجات، الملاحظات وحالة كل مختبر.</div>
+      </div>`;
+      return;
+    }
+    area.innerHTML=`<div class="bad">❌ تعذر تحميل مركز المختبرات حاليًا.<br><small>${esc(lr.error.message||'خطأ غير معروف')}</small></div>`;
+    subArea.innerHTML='';
+    return;
+  }
+
+  const rows=lr.data||[];
+  area.innerHTML=rows.length?rows.map(l=>`<div class="v66-trainer-lab"><div><b>مختبر ${Number(l.lab_no)} — ${esc(l.title)}</b><div class="muted">${esc(l.module_name)} • ${esc(l.topic)} • ${Number(l.max_score||0)} درجة</div><div style="margin-top:7px">${l.starter_path?'<span class="good" style="display:inline-block;padding:6px 9px">✅ ملف بداية مرتبط</span>':'<span class="bad" style="display:inline-block;padding:6px 9px">⚠️ لا يوجد ملف بداية</span>'}</div></div><div><input id="v66starter_${l.id}" type="file" accept=".pkt,.pka"><button class="primary" onclick="v66UploadStarter('${l.id}')">📤 رفع/استبدال ملف البداية</button></div></div>`).join(''):'<div class="muted">لا توجد مختبرات بعد.</div>';
+
+  const sr=await db.from('packet_tracer_submissions').select('*').order('submitted_at',{ascending:false}).limit(100);
+  if(sr.error){
+    subArea.innerHTML=`<div class="bad">❌ تعذر تحميل التسليمات: ${esc(sr.error.message||'خطأ غير معروف')}</div>`;
+    return;
+  }
+  const labMap=new Map(rows.map(x=>[x.id,x]));
+  const ids=[...new Set((sr.data||[]).map(x=>x.student_id))];
+  const pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null};
+  const pm=new Map((pr.data||[]).map(x=>[x.id,x]));
+  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>المختبر</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>Lab ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
 }
+
 async function v66UploadStarter(labId){
  const f=$(`v66starter_${labId}`)?.files?.[0];if(!f){alert('اختر ملف PKT أو PKA.');return;}if(f.size>30*1024*1024){alert('حجم ملف البداية يجب ألا يتجاوز 30MB.');return;}
  const path=`starter/${labId}/${v66SafeFileName(f.name)}`,up=await db.storage.from('packet-tracer').upload(path,f,{upsert:true});if(up.error){alert('تعذر رفع ملف البداية: '+up.error.message);return;}
