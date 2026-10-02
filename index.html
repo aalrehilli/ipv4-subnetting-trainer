@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V49</title>
+<title>IPv4 Subnetting Trainer — V51</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -99,12 +99,43 @@
 .binary-answer{font-family:monospace;letter-spacing:2px;font-size:20px;text-align:center}
 
 .v49-shell{margin-top:18px}.v49-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.v49-card{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}.v49-card h3{margin:0 0 10px}.mastery-list{display:grid;gap:10px}.mastery-row{border:1px solid #dbe6ef;border-radius:12px;padding:11px;background:#fbfdff}.mastery-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.mastery-name{font-weight:bold;color:#17324d}.mastery-status{font-size:12px;padding:5px 9px;border-radius:999px;background:#eef5fb;color:#0759a5}.mastery-status.good{background:#eaf8ef;color:#137b39}.mastery-status.warn{background:#fff6df;color:#9a6400}.mastery-status.bad{background:#fff0f0;color:#b3261e}.mastery-track{height:10px;background:#e7eef5;border-radius:999px;overflow:hidden;margin-top:8px}.mastery-track span{display:block;height:100%;border-radius:999px;background:#0b75c9}.mastery-meta{display:flex;justify-content:space-between;gap:10px;margin-top:6px;font-size:12px;color:#65788a}.error-summary{display:grid;gap:9px}.error-topic{border:1px solid #ecd6d6;border-right:4px solid #c62828;border-radius:10px;padding:10px;background:#fffafa}.error-topic-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.error-q{padding:9px;border:1px dashed #d8e3eb;border-radius:9px;background:#fff;margin-top:8px}.error-q strong{display:block;line-height:1.7}.v49-note{background:#eef7ff;border-right:4px solid #0759a5;padding:10px;border-radius:9px;margin-bottom:10px}.v49-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@media(max-width:800px){.v49-grid{grid-template-columns:1fr}}
+
+/* V51 — مختبر IPv4 البصري */
+.v51-visual-card{border:2px solid #9bbde8;background:linear-gradient(135deg,#f5faff,#fff)}
+.v51-toolbar{display:grid;grid-template-columns:1.3fr .7fr auto;gap:10px;align-items:end;margin:12px 0}
+.v51-toolbar label{display:block;font-weight:700;margin-bottom:5px;color:#23435e}
+.v51-ip-input{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;direction:ltr;text-align:left}
+.v51-visual-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
+.v51-board{background:#fff;border:1px solid #dbe7f0;border-radius:14px;padding:14px}
+.v51-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.v51-pill{display:inline-flex;align-items:center;gap:6px;background:#edf5ff;color:#0759a5;border:1px solid #c9ddf3;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v51-bits{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.v51-octet{border:1px solid #cfe0ef;border-radius:10px;padding:10px;background:#fbfdff;text-align:center}
+.v51-octet .dec{font-size:22px;font-weight:800;color:#0759a5}
+.v51-octet .bin{font-family:ui-monospace,monospace;font-size:16px;letter-spacing:1px;margin-top:5px;direction:ltr}
+.v51-bitrow{display:grid;grid-template-columns:repeat(32,1fr);gap:2px;margin-top:14px}
+.v51-bit{font-family:ui-monospace,monospace;font-size:11px;min-height:34px;display:flex;align-items:center;justify-content:center;border:1px solid #d6e1eb;border-radius:5px;background:#fff;position:relative}
+.v51-bit.network{background:#e9f3ff;border-color:#9fc3ea;color:#0759a5;font-weight:800}
+.v51-bit.host{background:#f5f7fa;color:#566879}
+.v51-bit.boundary:after{content:'';position:absolute;right:-3px;top:-4px;bottom:-4px;width:4px;border-radius:3px;background:#ed8916}
+.v51-bitnum{font-size:9px;color:#8192a1;position:absolute;top:1px}
+.v51-info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.v51-info{background:#fbfdff;border:1px solid #dbe7f0;border-radius:10px;padding:11px}
+.v51-info b{display:block;color:#0759a5;margin-bottom:4px}
+.v51-value{font-family:ui-monospace,monospace;direction:ltr;text-align:left;font-size:15px;word-break:break-word}
+.v51-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:#62798d}
+.v51-dot{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-left:5px}
+.v51-explain{background:#eef7ff;border-right:4px solid #0759a5;padding:12px;border-radius:9px;line-height:1.9;margin-top:12px}
+.v51-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:850px){.v51-visual-grid{grid-template-columns:1fr}.v51-toolbar{grid-template-columns:1fr 1fr}.v51-toolbar button{grid-column:1/-1}.v51-bitrow{grid-template-columns:repeat(16,1fr)}}
+@media(max-width:600px){.v51-toolbar{grid-template-columns:1fr}.v51-bitrow{grid-template-columns:repeat(8,1fr)}.v51-bits{grid-template-columns:1fr 1fr}.v51-info-grid{grid-template-columns:1fr}}
+
 </style>
 <style>
 .v42-test-config{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}.v42-test-config .cfg{background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:12px}.v42-test-config label{font-weight:700;display:block;margin-bottom:6px}.v42-test-config input,.v42-test-config select{width:100%;box-sizing:border-box}.v42-test-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:10px;margin:12px 0}.v42-question-nav{display:flex;gap:6px;flex-wrap:wrap}.v42-qbtn{min-width:38px;border:1px solid #c8dbea;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}.v42-qbtn.answered{background:#e8f7ef;border-color:#9bd5b1}.v42-qbtn.flagged{box-shadow:inset 0 0 0 2px #f0a000}.v42-qbtn.current{background:#0b63b6;color:#fff;border-color:#0b63b6}.v42-qcard{scroll-margin-top:90px}.v42-qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.v42-qactions{display:flex;gap:6px;flex-wrap:wrap}.v42-qactions button{font-size:13px;padding:6px 9px}.v42-status{font-size:13px}.v42-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v42-summary .mini{background:#fff;border:1px solid #dbe9f4;border-radius:10px;padding:10px;text-align:center}.v42-summary b{display:block;font-size:20px;color:#0b63b6}@media(max-width:800px){.v42-test-config{grid-template-columns:1fr 1fr}.v42-summary{grid-template-columns:1fr 1fr}}@media(max-width:520px){.v42-test-config{grid-template-columns:1fr}.v42-summary{grid-template-columns:1fr}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">Class C • FLSM • V40 • Supabase</div></div>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V51 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
@@ -112,13 +143,13 @@
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
   <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
-  <div class="practice-menu"><button class="primary green" onclick="startAdaptiveTraining()">🧠 تدريب تكيفي — درّبني الآن</button><button class="primary" style="background:#0b63b6" onclick="startBinaryLab()">🔢 مختبر Decimal ↔ Binary</button><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div>
+  <div class="practice-menu"><button class="primary green" onclick="startAdaptiveTraining()">🧠 تدريب تكيفي — درّبني الآن</button><button class="primary" style="background:#0b63b6" onclick="startBinaryLab()">🔢 مختبر Decimal ↔ Binary</button><button class="primary purple" onclick="startVisualLab()">🧭 مختبر IPv4 البصري</button><button class="primary orange" onclick="startExercise()">🎯 تمرين الخطوات</button><button class="primary" onclick="showPracticeHint()">💡 تلميح</button><button class="primary purple" onclick="startChallenge()">🧠 تحدي متقدم</button></div>
   <div class="competition-settings"><div><h3>🏁 منافسة Subnetting</h3><p class="muted">10 أسئلة — اختر الوقت المناسب لك قبل البدء.</p></div><div class="duration-control"><label for="competitionDuration">⏱️ وقت المنافسة</label><select id="competitionDuration"><option value="5">5 دقائق</option><option value="10">10 دقائق</option><option value="15" selected>15 دقيقة</option><option value="20">20 دقيقة</option><option value="30">30 دقيقة</option><option value="45">45 دقيقة</option><option value="60">60 دقيقة</option><option value="0">بدون وقت</option></select></div><button class="primary green competition-start" onclick="startCompetition()">🏁 ابدأ المنافسة</button></div>
-  <div id="v50AdaptiveArea"></div><div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
+  <div id="v50AdaptiveArea"></div><div id="v51VisualArea"></div><div id="practiceArea"></div><div id="challengeArea"></div><div id="competitionArea"></div>
 </div></section>
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V50 • IPv4 + Binary + Adaptive Training</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V51 • IPv4 + Binary + Visual Lab + Adaptive Training</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
@@ -341,6 +372,81 @@ async function finishBinaryLab(){
 function startExercise(levelOverride=null){const chosen=levelOverride||$('level').value; if($('level'))$('level').value=chosen; exercise=problem(chosen);q=exercise;$('practiceArea').innerHTML=`<div class="question"><h3>🧩 ${q.network}/24 → المطلوب إنشاء ${q.need} شبكات متساوية</h3><div class="hint-box">ابدأ بعدد الشبكات المطلوبة، ثم احسب Borrowed Bits وPrefix وMask وMagic Number وعدد الأجهزة.</div><div class="step-grid"><div><label>1) Borrowed Bits</label><input id="eb" placeholder="مثال: 2"><div id="r1"></div></div><div><label>2) New Prefix</label><input id="ep" placeholder="مثال: 26"><div id="r2"></div></div><div><label>3) Subnet Mask</label><input id="em" placeholder="مثال: 255.255.255.192"><div id="r3"></div></div><div><label>4) Magic Number</label><input id="eg" placeholder="مثال: 64"><div id="r4"></div></div><div><label>5) Hosts/Subnet</label><input id="eh" placeholder="مثال: 62"><div id="r5"></div></div></div><div class="practice-actions"><button class="primary" onclick="checkSteps()">✅ تحقق من الحل</button><button class="primary purple" onclick="showPracticeHint()">💡 أعطني تلميحًا</button></div><div id="sf"></div></div>`;updatePracticeStats();}
 function showPracticeHint(){if(!exercise){alert('ابدأ تمرينًا أولًا.');return;}const hints=[`عدد Borrowed Bits هو أصغر n يحقق 2^n ≥ ${exercise.need}.`,`Prefix الجديد = 24 + Borrowed Bits.`,`الـ Mask للـ /${exercise.prefix} هو ${exercise.mask}.`,`Magic Number = 256 - قيمة الأوكتت المتغير في الـ Mask.`,`Hosts/Subnet = 2^(32-${exercise.prefix}) - 2 = ${exercise.hosts}.`];const box=$('sf');if(box)box.innerHTML=`<div class="hint-box">💡 ${hints[Math.floor(Math.random()*hints.length)]}</div>`;}
 async function checkSteps(){let q=exercise;if(!q)return;let a=[$('eb').value.trim(),$('ep').value.trim().replace('/',''),$('em').value.trim(),$('eg').value.trim(),$('eh').value.trim()],b=[String(q.bits),String(q.prefix),q.mask,String(q.block),String(q.hosts)],ok=a.map((v,i)=>v===b[i]);ok.forEach((v,i)=>{const el=$('r'+(i+1));if(el)el.innerHTML=`<div class="step-result ${v?'good':'bad'}">${v?'✅ صحيح':'❌ غير صحيح'}${!v?'<div class="error-explain">راجع هذه الخطوة مع المدرب الذكي بالأسفل.</div>':''}</div>`;});const total=ok.filter(Boolean).length,points=total*20;coachHintIndex=0;$('sf').innerHTML=total===5?'<div class="good">🎉 ممتاز! أكملت جميع الخطوات بنجاح وتم حفظ النتيجة.</div>':`<div class="bad">أكملت ${total}/5 خطوات بشكل صحيح. المدرب الذكي سيشرح لك الأخطاء.</div>`;renderCoach('sf',ok.map((v,i)=>v?-1:i).filter(i=>i>=0),q);if(total===5){await db.from('exercise_attempts').insert({student_id:user.id,score:points,is_correct:true,borrowed_bits_answer:a[0],prefix_answer:a[1],subnet_mask_answer:a[2],magic_number_answer:a[3],hosts_answer:a[4]});await markCoursePractice(points);updatePracticeStats();}}
+
+
+/* ============================
+   V51 — IPv4 Visual Lab
+   ============================ */
+function v51OctetBinary(n){return Number(n).toString(2).padStart(8,'0');}
+function v51IpParts(value){
+  const parts=String(value||'').trim().split('.').map(x=>Number(x));
+  if(parts.length!==4 || parts.some(x=>!Number.isInteger(x)||x<0||x>255)) return null;
+  return parts;
+}
+function v51Mask(prefix){return cidrMask(prefix);}
+function v51NetworkInt(parts,prefix){
+  const val=(((parts[0]<<24)>>>0)|(parts[1]<<16)|(parts[2]<<8)|parts[3])>>>0;
+  const mask=prefix===0?0:((0xffffffff << (32-prefix))>>>0);
+  return (val & mask)>>>0;
+}
+function v51IntToParts(n){return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255];}
+function v51IntToIp(n){return v51IntToParts(n).join('.');}
+function v51CountHosts(prefix){const h=32-prefix;return h===0?0:(2**h-2);}
+function v51RenderBoard(ipValue,prefix){
+  const area=$('v51VisualArea'); if(!area) return;
+  const parts=v51IpParts(ipValue);
+  prefix=Number(prefix);
+  if(!parts || !Number.isInteger(prefix) || prefix<0 || prefix>32){
+    area.innerHTML='<div class="v51-visual-card card"><div class="bad">أدخل IPv4 صحيحًا مثل <code>192.168.10.130</code> وPrefix بين 0 و32.</div></div>';
+    return;
+  }
+  const net=v51NetworkInt(parts,prefix), mask=v51Mask(prefix), broadcast=(net + (2**(32-prefix))-1)>>>0;
+  const first=(prefix===32)?net:net+1, last=(prefix===32)?net:broadcast-1;
+  const hostBits=32-prefix, subnetBits=prefix;
+  const octets=parts.map((n,i)=>`<div class="v51-octet"><div class="dec">${n}</div><div class="bin">${v51OctetBinary(n)}</div><div class="muted">Octet ${i+1}</div></div>`).join('');
+  let bitIndex=0, bitHtml='';
+  for(let oi=0;oi<4;oi++){
+    const b=v51OctetBinary(parts[oi]);
+    for(let bi=0;bi<8;bi++,bitIndex++){
+      const cls=bitIndex<prefix?'network':'host';
+      const boundary=bitIndex===prefix-1 && prefix>0 && prefix<32 ? ' boundary':'';
+      bitHtml+=`<div class="v51-bit ${cls}${boundary}"><span class="v51-bitnum">${bitIndex+1}</span>${b[bi]}</div>`;
+    }
+  }
+  const block=2**hostBits;
+  const explanation = prefix===32 ? 'هذا Prefix /32 يعني أن جميع الـ32 Bit ضمن جزء العنوان المحدد، ولا توجد Hosts إضافية داخل هذه الوحدة.' : `الـ Prefix /${prefix} يحجز ${subnetBits} Bit للجزء الأول، ويبقي ${hostBits} Bit للـ Host. حجم الكتلة = 2^${hostBits} = ${block}.`;
+  area.innerHTML=`<div class="v51-visual-card card">
+    <div class="v51-title"><div><span class="v51-pill">🧭 V51 — مختبر IPv4 البصري</span><h3 style="margin:8px 0 3px">شاهد حدود Network / Host أمامك</h3><div class="muted">اكتب العنوان والـ Prefix، وستتحول الـ32 Bit إلى مخطط بصري قابل للقراءة.</div></div><span class="v51-pill">${ipValue}/${prefix}</span></div>
+    <div class="v51-toolbar"><div><label>عنوان IPv4</label><input id="v51Ip" class="v51-ip-input" value="${esc(ipValue)}" placeholder="192.168.10.130"></div><div><label>Prefix</label><select id="v51Prefix">${Array.from({length:33},(_,i)=>`<option value="${i}" ${i===prefix?'selected':''}>/${i}</option>`).join('')}</select></div><button class="primary purple" onclick="runVisualLabFromInputs()">🔄 تحليل العنوان</button></div>
+    <div class="v51-visual-grid"><div class="v51-board"><div class="muted">القيمة العشرية لكل Octet والتحويل إلى Binary</div><div class="v51-bits">${octets}</div><div class="muted" style="margin-top:14px">خريطة الـ32 Bit — الأزرق = Network، الرمادي = Host</div><div class="v51-bitrow">${bitHtml}</div><div class="v51-legend"><span><span class="v51-dot" style="background:#e9f3ff;border:1px solid #9fc3ea"></span>Network Bits (${subnetBits})</span><span><span class="v51-dot" style="background:#f5f7fa;border:1px solid #d6e1eb"></span>Host Bits (${hostBits})</span></div></div>
+    <div class="v51-board"><div class="v51-info-grid"><div class="v51-info"><b>Network Address</b><div class="v51-value">${v51IntToIp(net)}</div></div><div class="v51-info"><b>Broadcast</b><div class="v51-value">${v51IntToIp(broadcast)}</div></div><div class="v51-info"><b>First Host</b><div class="v51-value">${v51IntToIp(first)}</div></div><div class="v51-info"><b>Last Host</b><div class="v51-value">${v51IntToIp(last)}</div></div><div class="v51-info"><b>Subnet Mask</b><div class="v51-value">${mask}</div></div><div class="v51-info"><b>Hosts/Subnet</b><div class="v51-value">${v51CountHosts(prefix)}</div></div><div class="v51-info"><b>Host Bits</b><div class="v51-value">${hostBits}</div></div><div class="v51-info"><b>Block Size</b><div class="v51-value">${block}</div></div></div><div class="v51-explain">💡 <b>كيف وصلنا للنتيجة؟</b><br>${explanation}<br><span class="muted">يمكنك تغيير الـ Prefix إلى /24 أو /25 أو /26 أو /27 ومشاهدة انتقال حد Network/Host مباشرةً.</span></div></div></div>
+    <div class="v51-actions"><button class="primary" onclick="v51Demo('192.168.10.130',24)">مثال /24</button><button class="primary" onclick="v51Demo('192.168.10.130',26)">مثال /26</button><button class="primary orange" onclick="v51Demo('192.168.10.130',27)">مثال /27</button><button class="primary green" onclick="saveVisualLabSession()">💾 سجل جلسة التدريب</button></div>
+    <div id="v51SaveMsg" style="margin-top:10px"></div>
+  </div>`;
+}
+function startVisualLab(){
+  $('practiceArea').innerHTML='';$('challengeArea').innerHTML='';$('competitionArea').innerHTML='';
+  v51RenderBoard('192.168.10.130',26);
+  window.scrollTo({top:document.getElementById('v51VisualArea').getBoundingClientRect().top+window.scrollY-20,behavior:'smooth'});
+}
+function runVisualLabFromInputs(){
+  const ipValue=$('v51Ip')?.value?.trim()||''; const prefix=Number($('v51Prefix')?.value||26); v51RenderBoard(ipValue,prefix);
+}
+function v51Demo(ipValue,prefix){v51RenderBoard(ipValue,prefix);}
+async function saveVisualLabSession(){
+  const msg=$('v51SaveMsg'); if(msg)msg.innerHTML='<div class="muted">⏳ جارٍ حفظ جلسة المختبر...</div>';
+  try{
+    if(!user){if(msg)msg.innerHTML='<div class="bad">سجّل الدخول أولًا لحفظ جلسة التدريب.</div>';return;}
+    const ipValue=$('v51Ip')?.value?.trim()||'192.168.10.130'; const prefix=Number($('v51Prefix')?.value||26); const parts=v51IpParts(ipValue);
+    if(!parts || prefix<0 || prefix>32){if(msg)msg.innerHTML='<div class="bad">العنوان أو الـ Prefix غير صحيح.</div>';return;}
+    const net=v51NetworkInt(parts,prefix); const mask=v51Mask(prefix);
+    const payload={student_id:user.id,score:10,is_correct:true,prefix_answer:String(prefix),subnet_mask_answer:mask,created_at:new Date().toISOString()};
+    const r=await db.from('exercise_attempts').insert(payload);
+    if(r.error) throw r.error;
+    if(msg)msg.innerHTML='<div class="good">✅ تم تسجيل جلسة المختبر ضمن تقدمك.</div>';
+    updatePracticeStats();
+  }catch(e){console.warn('V51 save',e); if(msg)msg.innerHTML='<div class="bad">تعذر الحفظ الآن. يمكنك متابعة التدريب بشكل طبيعي.</div>';}
+}
 
 let challenge=null;
 function cidrMask(prefix){return ip((0xffffffff << (32-prefix)) >>> 0)}
