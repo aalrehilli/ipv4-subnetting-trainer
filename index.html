@@ -198,13 +198,27 @@
 /* V55 — دفتر أخطاء المتدرب */
 .v55-card{margin-top:16px;border:1px solid #d8e4ee;border-radius:16px;background:#fff;padding:16px}.v55-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.v55-head h3{margin:0 0 6px;color:#17324d}.v55-badge{display:inline-flex;align-items:center;gap:6px;background:#fff2f2;color:#b21f1f;border:1px solid #f0c0c0;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}.v55-kpis{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;margin:14px 0}.v55-kpi{border:1px solid #dbe6ef;border-radius:12px;padding:13px;text-align:center;background:#fbfdff}.v55-kpi .num{font-size:24px;font-weight:900;color:#b21f1f}.v55-kpi .lbl{font-size:12px;color:#667788;margin-top:3px}.v55-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}.v55-toolbar select{min-width:150px}.v55-error-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v55-error{border:1px solid #ead8d8;border-right:4px solid #c62828;border-radius:12px;padding:14px;background:#fffafa}.v55-error.reviewed{border-right-color:#2e8b57;opacity:.82;background:#f7fcf8}.v55-error-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.v55-q{font-weight:800;line-height:1.8;color:#23394d}.v55-answer{margin-top:8px;background:#fff;border:1px solid #e0e7ee;border-radius:8px;padding:8px;line-height:1.8}.v55-meta{font-size:12px;color:#6b7c8f;margin-top:7px}.v55-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.v55-empty{padding:22px;text-align:center;border:1px dashed #cfdde7;border-radius:14px;color:#6a7b8b;background:#fbfdff}.v55-topic{margin:16px 0 8px;color:#17324d;font-weight:900}.v55-filter-note{font-size:12px;color:#667788}@media(max-width:850px){.v55-error-grid{grid-template-columns:1fr}.v55-kpis{grid-template-columns:repeat(2,minmax(120px,1fr))}}@media(max-width:520px){.v55-kpis{grid-template-columns:1fr 1fr}.v55-toolbar select{min-width:140px}}
 </style>
+
+<style>
+/* V56 — المراجعة الذكية */
+.v56-card{margin-top:16px;border:1px solid #d9e5ef;border-radius:16px;background:#fff;padding:16px}
+.v56-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.v56-badge{display:inline-flex;align-items:center;gap:6px;background:#eef5ff;color:#0b63b6;border:1px solid #c8dcf2;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.v56-kpis{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;margin:14px 0}
+.v56-kpi{border:1px solid #dbe6ef;border-radius:12px;padding:13px;text-align:center;background:#fbfdff}.v56-kpi .num{font-size:24px;font-weight:900;color:#0b63b6}.v56-kpi .lbl{font-size:12px;color:#667788;margin-top:3px}
+.v56-plan{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin-top:12px}
+.v56-box{border:1px solid #dbe6ef;border-radius:12px;padding:13px;background:#fbfdff}.v56-box h4{margin:0 0 8px;color:#17324d}
+.v56-tags{display:flex;gap:7px;flex-wrap:wrap}.v56-tag{background:#eef7ff;border:1px solid #cfe1f2;color:#245b82;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}
+.v56-review-shell{margin-top:14px;border-top:1px solid #e3ebf2;padding-top:14px}.v56-q{border:1px solid #d9e5ef;border-right:4px solid #0b63b6;border-radius:12px;padding:14px;background:#fff;margin:10px 0}.v56-q.wrong{border-right-color:#c62828;background:#fffafa}.v56-q.correct{border-right-color:#2e8b57;background:#f7fcf8}.v56-qhead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.v56-qnum{font-weight:900;color:#17324d}.v56-option{display:block;background:#fff;border:1px solid #d8e6f1;border-radius:9px;padding:10px;margin:7px 0;cursor:pointer}.v56-feedback{margin-top:10px;padding:10px;border-radius:9px;line-height:1.8}.v56-feedback.good{background:#eef9f1;border-right:4px solid #2e8b57}.v56-feedback.bad{background:#fff2f2;border-right:4px solid #c62828}.v56-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.v56-progress{height:9px;background:#e9f0f6;border-radius:999px;overflow:hidden;margin-top:8px}.v56-progress span{display:block;height:100%;background:#0b63b6}.v56-small{font-size:12px;color:#667788}.v56-ready{padding:12px;border-radius:10px;background:#eef7ff;border-right:4px solid #0b63b6;line-height:1.9}.v56-empty{padding:20px;text-align:center;border:1px dashed #cfdde7;border-radius:14px;color:#6a7b8b;background:#fbfdff}
+@media(max-width:800px){.v56-plan{grid-template-columns:1fr}.v56-kpis{grid-template-columns:repeat(2,minmax(120px,1fr))}}
+</style>
 </head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V55 • Supabase</div></div>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V56 • Supabase</div></div>
 <nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
 <section id="home"><div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>تمارين واختبارات مع حفظ مركزي للنتائج، ويشمل المسار الآن تدريب Decimal ↔ Binary قبل Subnetting.</p></div><div class="grid"><div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div><div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div><div class="card"><h2>🏆 الاختبارات</h2><p>أسئلة عشوائية وتسجيل الدرجة.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card"><h2>📊 المتابعة</h2><p>لوحة متدرب ولوحة مدرب.</p><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div><button class="primary purple" onclick="page('placement')">🚀 ابدأ التحديد</button></div></div>
-<div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
+</div><div class="card v56-card" id="homeV56ReviewCard"><div class="v56-head"><div><span class="v56-badge">🧠 V56 — المراجعة الذكية</span><h2 style="margin:9px 0 5px">راجع نقاط الضعف قبل الاختبار</h2><p class="muted" style="margin:0">جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div><button class="primary green" onclick="page('dashboard')">📊 افتح المراجعة الذكية</button></div></div><div class="card hidden" id="homeNotificationsCard"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">🔔 إشعاراتك</h2><p class="muted" style="margin:6px 0 0">آخر تنبيهات الاختبارات والنتائج من المدرب.</p></div><button class="primary" onclick="page('dashboard')">كل الإشعارات</button></div><div id="homeStudentNotifications" style="margin-top:14px"><span class="muted">جارٍ تحميل الإشعارات...</span></div></div></section>
 <section id="practice" class="hidden"><div class="card practice-shell">
   <div class="practice-hero"><div><span class="badge">🧪 مختبر تفاعلي</span><h2>🎯 تدرب الآن — مختبر Subnetting</h2><p class="muted">تدرّب على خطوات Subnetting، وإذا أخطأت سيحدد لك المدرب الذكي موضع الخطأ ويعطيك تلميحًا تدريجيًا.</p></div><div class="practice-icon">🎯</div></div>
   <div class="practice-stats"><div class="practice-control"><label for="level">📈 مستوى التمرين</label><select id="level"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div class="stat"><b>🔁 محاولاتك</b><span id="practiceCountValue">—</span></div><div class="stat"><b>⭐ نقاط التمرين</b><span id="practicePointsValue">—</span></div></div>
@@ -890,6 +904,8 @@ async function renderDashboard(){
   $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v49-shell"><div id="v49MasteryPanel"></div><div id="v49ErrorPanel"></div></div>');
   $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v54-shell"><div id="v54StudentAnalytics"></div></div>');
   renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
+  $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v56-card" id="v56SmartReviewCard"><div id="v56SmartReview"></div></div>');
+  renderV56SmartReviewPanel({attempts:a,lessons,lp});
   $('studentAchievements').innerHTML=`<div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div>`;
   $('attemptTable').innerHTML=all.length?`<table><tr><th>النوع</th><th>العنوان</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${all.slice(0,15).map(x=>`<tr><td>${x.t}</td><td>${esc(x.title)}</td><td>${new Date(x.d).toLocaleString('ar-SA')}</td><td>${x.t==='منافسة'?x.s+'/1000':x.t==='تمرين'?x.s+'/100':x.s+'%'}</td><td>${x.z}</td></tr>`).join('')}</table>`:'لا توجد محاولات حتى الآن. ابدأ بأول تمرين الآن 🎯';
 
@@ -1059,6 +1075,115 @@ async function renderTrainer(){
   trainerTab("overview");
   await loadTrainerOverview();
 }
+
+/* ==================== V56 — المراجعة الذكية ==================== */
+let v56ReviewState={questions:[],answers:{},feedback:{},index:0,score:0,submitted:false,topics:[],weakTopic:null,sessionId:null};
+function v56LabelTopic(t){return ({'Binary Conversion':'Decimal ↔ Binary','IPv4':'أساسيات IPv4','Subnetting':'Subnetting / Prefix','FLSM':'FLSM','VLSM':'VLSM'}[t]||t||'مهارات متنوعة');}
+function v56DifficultyLabel(d){return ({easy:'سهل',medium:'متوسط',hard:'متقدم'}[d]||d||'عام');}
+function v56TopicLessonHint(topic){return ({'Binary Conversion':'راجع درس التحويل بين Decimal وBinary ثم طبّق المختبر.','IPv4':'راجع أساسيات IPv4، الـ Octets، والـ 32 Bits.','Subnetting':'راجع Subnet Mask وPrefix وNetwork/Host.','FLSM':'راجع FLSM وحساب عدد الشبكات وحجم الـ Block.','VLSM':'راجع توزيع أحجام الشبكات قبل البدء بمسائل VLSM.'}[topic]||'راجع الدرس المرتبط بهذه المهارة ثم أعد المحاولة.');}
+function v56ReviewStorageKey(){return `ipv4_v56_review_${user?.id||'guest'}`;}
+function v56SaveLastSession(summary){try{localStorage.setItem(v56ReviewStorageKey(),JSON.stringify(summary));}catch(_e){}}
+function v56LoadLastSession(){try{return JSON.parse(localStorage.getItem(v56ReviewStorageKey())||'null');}catch(_e){return null;}}
+function v56QuestionOptions(q){return parseJsonSafe(q.options_json,[])}
+function v56RenderQuestion(q,i){
+  const parsed=parseQuestion(q.question_text||'',q.question_type,v56QuestionOptions(q),parseJsonSafe(q.matching_json,[]));
+  const head=`<div class="v56-qhead"><div><div class="v56-qnum">${i+1}. ${esc(parsed.stem)}</div><div class="v56-small">${esc(v56LabelTopic(q.topic))} • ${esc(v56DifficultyLabel(q.difficulty))}</div></div><span class="v56-tag">مراجعة</span></div>`;
+  if(parsed.type==='true_false')return `<div class="v56-q" id="v56q${i}">${head}<label class="v56-option"><input type="radio" name="v56_${i}" value="true" style="width:auto"> ✅ صح</label><label class="v56-option"><input type="radio" name="v56_${i}" value="false" style="width:auto"> ❌ خطأ</label><div id="v56f${i}"></div></div>`;
+  if(parsed.type==='mcq'||parsed.options.length>=2)return `<div class="v56-q" id="v56q${i}">${head}${parsed.options.map(o=>`<label class="v56-option"><input type="radio" name="v56_${i}" value="${esc(o.key)}" style="width:auto;margin-left:7px"> <b>${esc(o.key)})</b> ${esc(o.text)}</label>`).join('')}<div id="v56f${i}"></div></div>`;
+  return `<div class="v56-q" id="v56q${i}">${head}<input id="v56_${i}" placeholder="اكتب الإجابة هنا" style="margin-top:8px"><div id="v56f${i}"></div></div>`;
+}
+function v56GetAnswer(i,q){
+  const radio=document.querySelector(`input[name="v56_${i}"]:checked`); if(radio)return radio.value.trim();
+  const inp=$(`v56_${i}`); return inp?inp.value.trim():'';
+}
+function v56Normalize(v){return String(v??'').trim().toLowerCase().replace(/\s+/g,' ');}
+function v56IsCorrect(q,ans){return v56Normalize(ans)===v56Normalize(q.correct_answer||'');}
+function v56WeakFromRows(rows){
+  if(!rows.length)return null;
+  const grouped={};
+  rows.forEach(x=>{const t=x.topic||'غير مصنف';if(!grouped[t])grouped[t]={topic:t,count:0};grouped[t].count+=1;});
+  return Object.values(grouped).sort((a,b)=>b.count-a.count)[0];
+}
+async function v56BuildPlan(){
+  const host=$('v56SmartReview'); if(!host||!user)return;
+  host.innerHTML='<div class="v56-box"><div class="muted">⏳ يحلل دفتر الأخطاء وخريطة الإتقان لبناء مراجعتك...</div></div>';
+  try{
+    const ar=await db.from('attempts').select('id,submitted_at,percentage,trainer_exams(topic,title)').eq('student_id',user.id).order('submitted_at',{ascending:false}).limit(100);
+    const attempts=ar.error?[]:(ar.data||[]), ids=attempts.map(a=>a.id).filter(Boolean);
+    let wrong=[];
+    if(ids.length){const rr=await db.from('attempt_answers').select('attempt_id,question_id,is_correct,created_at').in('attempt_id',ids).eq('is_correct',false).order('created_at',{ascending:false}); wrong=rr.error?[]:(rr.data||[]);}
+    const qids=[...new Set(wrong.map(x=>x.question_id).filter(Boolean))];
+    let qmap=new Map();
+    if(qids.length){const qr=await db.from('trainer_questions').select('id,question_text,topic,difficulty,question_type,options_json,matching_json,correct_answer').in('id',qids); if(!qr.error)qmap=new Map((qr.data||[]).map(q=>[q.id,q]));}
+    const rows=wrong.map(w=>qmap.get(w.question_id)).filter(Boolean);
+    const weak=v56WeakFromRows(rows) || {topic:'',count:0};
+    const topicCounts={}; rows.forEach(q=>{const t=q.topic||'غير مصنف';topicCounts[t]=(topicCounts[t]||0)+1;});
+    const rankedTopics=Object.entries(topicCounts).sort((a,b)=>b[1]-a[1]);
+    const targetTopics=rankedTopics.map(x=>x[0]).slice(0,4);
+    if(!targetTopics.length){
+      const topicFromExam=attempts.filter(a=>a.trainer_exams?.topic).map(a=>a.trainer_exams.topic)[0];
+      if(topicFromExam)targetTopics.push(topicFromExam);
+    }
+    if(!targetTopics.length)targetTopics.push('Binary Conversion','IPv4','Subnetting');
+    return {wrong,rows,weak,targetTopics,attempts};
+  }catch(e){return {wrong:[],rows:[],weak:{topic:'',count:0},targetTopics:['Binary Conversion','IPv4','Subnetting'],attempts:[],error:e};}
+}
+async function renderV56SmartReviewPanel(){
+  const host=$('v56SmartReview');if(!host||!user)return;
+  const plan=await v56BuildPlan();
+  v56ReviewState.weakTopic=plan.weak?.topic||null;v56ReviewState.topics=plan.targetTopics||[];
+  const last=v56LoadLastSession();
+  const weakLabel=plan.weak?.topic?v56LabelTopic(plan.weak.topic):'لم تتحدد بعد';
+  const reason=plan.rows.length?`يعتمد المسار على ${plan.rows.length} خطأ محفوظ، ويبدأ بالموضوع الأكثر تكرارًا: ${weakLabel}.`:`لا توجد أخطاء محفوظة كافية؛ ستبدأ بجلسة تأسيسية تغطي أهم المهارات.`;
+  host.innerHTML=`<div class="v56-head"><div><span class="v56-badge">🧠 V56 — المراجعة الذكية</span><h3 style="margin:8px 0 4px">راجع نقاط الضعف بدل إعادة المقرر كاملًا</h3><div class="muted">جلسة قصيرة مبنية على أخطائك السابقة، ثم أسئلة جديدة من نفس المهارة لتتأكد أنك فهمت الفكرة.</div></div><button class="primary green" onclick="v56StartSmartReview()">🎯 ابدأ مراجعة ذكية</button></div>
+    <div class="v56-kpis"><div class="v56-kpi"><div class="num">${plan.rows.length}</div><div class="lbl">أخطاء محللة</div></div><div class="v56-kpi"><div class="num">${plan.weak?.count||0}</div><div class="lbl">أخطاء في أضعف موضوع</div></div><div class="v56-kpi"><div class="num">${plan.targetTopics.length}</div><div class="lbl">مهارات مقترحة للمراجعة</div></div><div class="v56-kpi"><div class="num">10</div><div class="lbl">أسئلة الجلسة</div></div></div>
+    <div class="v56-plan"><div class="v56-box"><h4>📌 لماذا هذه المراجعة؟</h4><div class="v56-ready">${esc(reason)}</div><div class="v56-tags" style="margin-top:10px">${plan.targetTopics.map(t=>`<span class="v56-tag">${esc(v56LabelTopic(t))}</span>`).join('')}</div></div><div class="v56-box"><h4>🔁 آخر جلسة</h4>${last?`<div><b>${last.score}%</b> من ${last.total} سؤال — ${new Date(last.at).toLocaleString('ar-SA')}</div><div class="v56-small" style="margin-top:6px">${esc(last.weakTopic?`الموضوع المستهدف: ${v56LabelTopic(last.weakTopic)}`:'جلسة مراجعة عامة')}</div>`:'<div class="muted">لا توجد جلسة مراجعة مسجلة بعد.</div>'}</div></div>`;
+  if(plan.error)host.insertAdjacentHTML('beforeend',`<div class="v56-small" style="margin-top:10px">ℹ️ تعذر تحميل بعض بيانات الأخطاء، وسيتم استخدام جلسة تأسيسية بدلًا منها.</div>`);
+}
+async function v56StartSmartReview(){
+  const area=$('v56SmartReview'); if(!area)return;
+  area.innerHTML='<div class="v56-box"><div class="muted">⏳ نبني جلسة المراجعة من بنك الأسئلة...</div></div>';
+  try{
+    const plan=await v56BuildPlan();
+    const wrongIds=new Set(plan.rows.map(q=>q.id));
+    const picked=[];
+    for(const topic of plan.targetTopics){
+      const qr=await db.from('trainer_questions').select('id,question_text,correct_answer,question_type,options_json,matching_json,topic,difficulty').eq('topic',topic).limit(80);
+      if(qr.error)continue;
+      const rows=(qr.data||[]).filter(q=>q.question_type!=='matching' && !wrongIds.has(q.id));
+      rows.sort(()=>Math.random()-.5);
+      for(const q of rows){if(picked.length>=10)break;picked.push(q);} if(picked.length>=10)break;
+    }
+    if(picked.length<6){
+      const qr=await db.from('trainer_questions').select('id,question_text,correct_answer,question_type,options_json,matching_json,topic,difficulty').limit(120);
+      if(!qr.error){const extras=(qr.data||[]).filter(q=>q.question_type!=='matching' && !wrongIds.has(q.id)&&!picked.some(x=>x.id===q.id)).sort(()=>Math.random()-.5);for(const q of extras){if(picked.length>=10)break;picked.push(q);}}
+    }
+    if(!picked.length){
+      area.innerHTML='<div class="v56-empty">لا توجد أسئلة كافية في بنك الأسئلة لبناء مراجعة الآن. جرّب <b>التدريب التكيفي</b> من صفحة التمارين.</div>';return;
+    }
+    v56ReviewState={questions:picked.slice(0,10),answers:{},feedback:{},index:0,score:0,submitted:false,topics:plan.targetTopics,weakTopic:plan.weak?.topic||null,sessionId:crypto?.randomUUID?crypto.randomUUID():String(Date.now())};
+    v56RenderReviewSession();
+  }catch(e){area.innerHTML=`<div class="bad">❌ تعذر بدء المراجعة الذكية: ${esc(e?.message||String(e))}</div>`;}
+}
+function v56RenderReviewSession(){
+  const area=$('v56SmartReview'); if(!area)return;const qs=v56ReviewState.questions;const answered=Object.keys(v56ReviewState.answers).length;const done=v56ReviewState.submitted;
+  if(done){v56RenderReviewResult();return;}
+  area.innerHTML=`<div class="v56-head"><div><span class="v56-badge">🎯 جلسة مراجعة ذكية</span><h3 style="margin:8px 0 4px">${qs.length} أسئلة — ركّز على الفهم</h3><div class="muted">كل سؤال من نفس المهارات التي تحتاج تعزيزها، مع أسئلة جديدة قدر الإمكان.</div></div><div class="v56-tag">${answered}/${qs.length} تمت الإجابة</div></div><div class="v56-progress"><span style="width:${qs.length?Math.round(answered*100/qs.length):0}%"></span></div><div style="margin-top:12px">${qs.map((q,i)=>v56RenderQuestion(q,i)).join('')}</div><div class="v56-actions"><button class="primary green" onclick="v56SubmitReview()">✅ أنهِ جلسة المراجعة</button><button class="primary orange" onclick="v56CancelReview()">↩️ العودة</button></div>`;
+}
+function v56SubmitReview(){
+  const qs=v56ReviewState.questions; let score=0,answered=0;
+  qs.forEach((q,i)=>{const ans=v56GetAnswer(i,q);v56ReviewState.answers[i]=ans;if(ans!=='')answered++;if(v56IsCorrect(q,ans)){score++;v56ReviewState.feedback[i]={ok:true,correct:q.correct_answer};}else v56ReviewState.feedback[i]={ok:false,correct:q.correct_answer};});
+  if(answered<qs.length){if(!confirm(`أجبت عن ${answered} من ${qs.length} فقط. هل تريد إنهاء الجلسة؟`))return;}
+  v56ReviewState.score=score;v56ReviewState.submitted=true;
+  v56SaveLastSession({score:Math.round(score*100/qs.length),total:qs.length,at:new Date().toISOString(),weakTopic:v56ReviewState.weakTopic});
+  db.from('exercise_attempts').insert({student_id:user.id,score:Math.round(score*100/qs.length),is_correct:score*100/Math.max(1,qs.length)>=60}).then(()=>{}).catch(()=>{});
+  v56RenderReviewResult();
+}
+function v56RenderReviewResult(){
+  const area=$('v56SmartReview');if(!area)return;const qs=v56ReviewState.questions,score=Math.round(v56ReviewState.score*100/Math.max(1,qs.length));const level=score>=85?'ممتاز — انتقل لمستوى أصعب':score>=70?'جيد — كرر نقطة الضعف مرة أخرى':'تحتاج تعزيز — أعد التدريب قبل الاختبار التالي';
+  area.innerHTML=`<div class="v56-head"><div><span class="v56-badge">✅ اكتملت المراجعة</span><h3 style="margin:8px 0 4px">نتيجتك ${score}%</h3><div class="muted">${level}</div></div><div class="v56-tag">${v56ReviewState.score}/${qs.length} صحيحة</div></div><div class="v56-kpis"><div class="v56-kpi"><div class="num">${score}%</div><div class="lbl">نسبة المراجعة</div></div><div class="v56-kpi"><div class="num">${v56ReviewState.score}</div><div class="lbl">إجابات صحيحة</div></div><div class="v56-kpi"><div class="num">${qs.length-v56ReviewState.score}</div><div class="lbl">تحتاج مراجعة</div></div><div class="v56-kpi"><div class="num">${v56LabelTopic(v56ReviewState.weakTopic)}</div><div class="lbl">نقطة التركيز</div></div></div><div class="v56-box"><h4>🧾 مراجعة الإجابات</h4>${qs.map((q,i)=>{const f=v56ReviewState.feedback[i]||{};return `<div class="v56-q ${f.ok?'correct':'wrong'}"><div class="v56-qhead"><div><div class="v56-qnum">${i+1}. ${esc(parseQuestion(q.question_text,q.question_type,v56QuestionOptions(q)).stem)}</div><div class="v56-small">${esc(v56LabelTopic(q.topic))}</div></div><span>${f.ok?'🟢 صحيح':'🔴 يحتاج مراجعة'}</span></div><div class="v56-feedback ${f.ok?'good':'bad'}"><b>إجابتك:</b> ${esc(v56ReviewState.answers[i]||'—')}<br><b>الصحيح:</b> ${esc(q.correct_answer||'—')}${!f.ok?`<br><span class="v56-small">${esc(v56TopicLessonHint(q.topic))}</span>`:''}</div></div>`}).join('')}</div><div class="v56-actions"><button class="primary green" onclick="page('practice');setTimeout(()=>startAdaptiveTraining(),80)">🧠 تدريب تكيفي الآن</button><button class="primary purple" onclick="renderV56SmartReviewPanel()">🔄 بناء مراجعة جديدة</button><button class="primary" onclick="page('tests')">🏆 الاستعداد للاختبار</button></div>`;
+}
+function v56CancelReview(){renderV56SmartReviewPanel();}
 
 /* ==================== V55 — Error Notebook ==================== */
 const v55State={rows:[],topic:'',reviewedOnly:false,sort:'recent'};
