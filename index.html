@@ -1,6 +1,6 @@
 <!doctype html><html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPv4 Subnetting Trainer — V47.1</title>
+<title>IPv4 Subnetting Trainer — V49</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -83,6 +83,8 @@
 .bit-chip.one{background:#e7f7ee;border-color:#9bd5b1;color:#137b39}
 .bit-chip.zero{background:#f8f8f8;color:#6b7280}
 .binary-answer{font-family:monospace;letter-spacing:2px;font-size:20px;text-align:center}
+
+.v49-shell{margin-top:18px}.v49-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.v49-card{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:16px}.v49-card h3{margin:0 0 10px}.mastery-list{display:grid;gap:10px}.mastery-row{border:1px solid #dbe6ef;border-radius:12px;padding:11px;background:#fbfdff}.mastery-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.mastery-name{font-weight:bold;color:#17324d}.mastery-status{font-size:12px;padding:5px 9px;border-radius:999px;background:#eef5fb;color:#0759a5}.mastery-status.good{background:#eaf8ef;color:#137b39}.mastery-status.warn{background:#fff6df;color:#9a6400}.mastery-status.bad{background:#fff0f0;color:#b3261e}.mastery-track{height:10px;background:#e7eef5;border-radius:999px;overflow:hidden;margin-top:8px}.mastery-track span{display:block;height:100%;border-radius:999px;background:#0b75c9}.mastery-meta{display:flex;justify-content:space-between;gap:10px;margin-top:6px;font-size:12px;color:#65788a}.error-summary{display:grid;gap:9px}.error-topic{border:1px solid #ecd6d6;border-right:4px solid #c62828;border-radius:10px;padding:10px;background:#fffafa}.error-topic-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.error-q{padding:9px;border:1px dashed #d8e3eb;border-radius:9px;background:#fff;margin-top:8px}.error-q strong{display:block;line-height:1.7}.v49-note{background:#eef7ff;border-right:4px solid #0759a5;padding:10px;border-radius:9px;margin-bottom:10px}.v49-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@media(max-width:800px){.v49-grid{grid-template-columns:1fr}}
 </style>
 <style>
 .v42-test-config{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin:14px 0}.v42-test-config .cfg{background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:12px}.v42-test-config label{font-weight:700;display:block;margin-bottom:6px}.v42-test-config input,.v42-test-config select{width:100%;box-sizing:border-box}.v42-test-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#f7fbff;border:1px solid #dbe9f4;border-radius:12px;padding:10px;margin:12px 0}.v42-question-nav{display:flex;gap:6px;flex-wrap:wrap}.v42-qbtn{min-width:38px;border:1px solid #c8dbea;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font-weight:700}.v42-qbtn.answered{background:#e8f7ef;border-color:#9bd5b1}.v42-qbtn.flagged{box-shadow:inset 0 0 0 2px #f0a000}.v42-qbtn.current{background:#0b63b6;color:#fff;border-color:#0b63b6}.v42-qcard{scroll-margin-top:90px}.v42-qhead{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.v42-qactions{display:flex;gap:6px;flex-wrap:wrap}.v42-qactions button{font-size:13px;padding:6px 9px}.v42-status{font-size:13px}.v42-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.v42-summary .mini{background:#fff;border:1px solid #dbe9f4;border-radius:10px;padding:10px;text-align:center}.v42-summary b{display:block;font-size:20px;color:#0b63b6}@media(max-width:800px){.v42-test-config{grid-template-columns:1fr 1fr}.v42-summary{grid-template-columns:1fr 1fr}}@media(max-width:520px){.v42-test-config{grid-template-columns:1fr}.v42-summary{grid-template-columns:1fr}}
@@ -671,9 +673,74 @@ async function renderDashboard(){
     <div class="smart-columns"><div class="smart-panel"><h3>🏅 إنجازاتي</h3><div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div></div><div class="smart-panel"><div class="smart-streak"><div><strong>🔥 سلسلة التدريب</strong><div class="muted">${streak?`تدربت ${streak} يوم${streak===1?'':'ًا'} متتاليًا.`:'ابدأ اليوم لبناء سلسلة تدريب.'}</div></div><div class="fire">🔥 ${streak}</div></div></div></div>
     <div class="smart-panel"><h3>🕘 آخر نشاط</h3>${last?`<div class="smart-activity"><div class="smart-activity-row"><div class="type">${last.t}</div><div><strong>${esc(last.title)}</strong><div class="muted">النتيجة: ${last.s}${last.t==='منافسة'?' / 1000':last.t==='تمرين'?' / 100':'%' } — ${last.z}</div></div><div class="date">${new Date(last.d).toLocaleDateString('ar-SA')}</div></div></div>`:'<div class="smart-empty">لا يوجد نشاط حتى الآن. ابدأ بأول تمرين 🎯</div>'}</div>
   </div>`;
+  $('studentDashboard').insertAdjacentHTML('beforeend','<div class="v49-shell"><div id="v49MasteryPanel"></div><div id="v49ErrorPanel"></div></div>');
   $('studentAchievements').innerHTML=`<div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div>`;
   $('attemptTable').innerHTML=all.length?`<table><tr><th>النوع</th><th>العنوان</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${all.slice(0,15).map(x=>`<tr><td>${x.t}</td><td>${esc(x.title)}</td><td>${new Date(x.d).toLocaleString('ar-SA')}</td><td>${x.t==='منافسة'?x.s+'/1000':x.t==='تمرين'?x.s+'/100':x.s+'%'}</td><td>${x.z}</td></tr>`).join('')}</table>`:'لا توجد محاولات حتى الآن. ابدأ بأول تمرين الآن 🎯';
+
   updatePracticeStats();
+  await renderV49MasteryAndErrors({lessons,lp,attempts:a});
+}
+
+async function renderV49MasteryAndErrors({lessons=[],lp=[],attempts=[]}={}){
+  const masteryHost=$('v49MasteryPanel'), errorHost=$('v49ErrorPanel');
+  if(!masteryHost || !errorHost || !user) return;
+  masteryHost.innerHTML='<div class="v49-card"><div class="muted">⏳ جارٍ بناء خريطة الإتقان...</div></div>';
+  errorHost.innerHTML='';
+  const skillDefs=[
+    {key:'binary',name:'Decimal ↔ Binary',match:/binary|تحويل|بت|bit/i,topics:['Binary Conversion']},
+    {key:'ipv4',name:'أساسيات IPv4',match:/ipv4|ip address|عنوان/i,topics:['IPv4']},
+    {key:'prefix',name:'Subnet Mask / Prefix',match:/mask|prefix|subnet/i,topics:['Subnetting']},
+    {key:'flsm',name:'FLSM',match:/flsm/i,topics:['FLSM']},
+    {key:'vlsm',name:'VLSM',match:/vlsm/i,topics:['VLSM']}
+  ];
+  const examStats={};
+  (attempts||[]).forEach(a=>{
+    const t=a.trainer_exams?.topic||'';
+    if(!examStats[t])examStats[t]={sum:0,n:0};
+    examStats[t].sum+=Number(a.percentage||0); examStats[t].n++;
+  });
+  const lessonStats=skillDefs.map(def=>{
+    const matched=(lessons||[]).filter(l=>def.match.test(String(l.title||'')));
+    const done=matched.filter(l=>(lp||[]).some(p=>p.lesson_id===l.id&&p.completed)).length;
+    const practice=matched.filter(l=>(lp||[]).some(p=>p.lesson_id===l.id&&p.practice_completed)).length;
+    return {def,matched,lessonScore:matched.length?Math.round(((done+practice)/(matched.length*2))*100):0};
+  });
+  const mastery=lessonStats.map(x=>{
+    const examVals=x.def.topics.map(t=>examStats[t]?.n?Math.round(examStats[t].sum/examStats[t].n):null).filter(v=>v!=null);
+    const examScore=examVals.length?Math.max(...examVals):null;
+    let score=0;
+    if(examScore!=null&&x.lessonScore>0) score=Math.round(examScore*.65+x.lessonScore*.35);
+    else if(examScore!=null) score=examScore;
+    else score=x.lessonScore;
+    return {...x,examScore,score};
+  });
+  const status=s=>s>=85?['متقن','good']:s>=70?['جيد','good']:s>=50?['يحتاج تعزيز','warn']:s>0?['يبدأ الآن','warn']:['لم يبدأ','bad'];
+  const overall=Math.round(mastery.reduce((n,x)=>n+x.score,0)/Math.max(1,mastery.length));
+  masteryHost.innerHTML=`<div class="v49-card"><div class="v49-note"><strong>🧭 V49 — خريطة الإتقان</strong><div class="muted" style="margin-top:4px">المنصة تجمع إكمال الدروس ونتائج الاختبارات لتحديد المهارة التالية التي تحتاجها.</div></div><div class="smart-progress"><div class="smart-progress-row"><span>مؤشر الإتقان العام</span><span>${overall}%</span></div><div class="smart-progress-track"><span style="width:${overall}%"></span></div></div><div class="mastery-list" style="margin-top:12px">${mastery.map(x=>{const st=status(x.score);return `<div class="mastery-row"><div class="mastery-head"><span class="mastery-name">${esc(x.def.name)}</span><span class="mastery-status ${st[1]}">${st[0]}</span></div><div class="mastery-track"><span style="width:${x.score}%"></span></div><div class="mastery-meta"><span>${x.score}% إتقان</span><span>${x.examScore!=null?`اختبارات: ${x.examScore}%`:'لا توجد نتيجة اختبار بعد'}</span></div></div>`}).join('')}</div><div class="v49-actions"><button class="primary orange" onclick="page('practice')">🎯 تدريب إضافي</button><button class="primary green" onclick="page('tests')">🏆 ابدأ اختبارًا</button></div></div>`;
+
+  let wrongAnalysis=[];
+  try{
+    const ids=(attempts||[]).map(a=>a.id).filter(Boolean);
+    if(ids.length){
+      const ar=await db.from('attempt_answers').select('attempt_id,question_id,selected_answer,correct_answer,is_correct,created_at').in('attempt_id',ids).eq('is_correct',false).order('created_at',{ascending:false});
+      if(!ar.error && (ar.data||[]).length){
+        const answers=ar.data||[];
+        const qids=[...new Set(answers.map(a=>a.question_id).filter(Boolean))];
+        const qr=qids.length?await db.from('trainer_questions').select('id,question_text,topic,difficulty').in('id',qids):{data:[],error:null};
+        const qmap=new Map((qr.data||[]).map(q=>[q.id,q]));
+        const groups={};
+        answers.forEach(a=>{
+          const q=qmap.get(a.question_id)||{};
+          const topic=q.topic||'غير مصنف';
+          if(!groups[topic])groups[topic]={wrong:0,items:[]};
+          groups[topic].wrong++;
+          if(groups[topic].items.length<3)groups[topic].items.push({q:q.question_text||'سؤال غير متاح',selected:a.selected_answer||'—',correct:a.correct_answer||'—',difficulty:q.difficulty||''});
+        });
+        wrongAnalysis=Object.entries(groups).map(([topic,v])=>({topic,wrong:v.wrong,items:v.items})).sort((a,b)=>b.wrong-a.wrong).slice(0,5);
+      }
+    }
+  }catch(e){console.warn('V49 error analyzer',e);}
+  errorHost.innerHTML=`<div class="v49-card" style="margin-top:16px"><h3>🧠 محلل الأخطاء</h3><div class="muted" style="margin-bottom:10px">يعرض أكثر الموضوعات التي أخطأت فيها داخل الاختبارات، مع أمثلة على الأسئلة التي تحتاج مراجعة.</div>${wrongAnalysis.length?`<div class="error-summary">${wrongAnalysis.map(x=>`<div class="error-topic"><div class="error-topic-head"><strong>${esc(x.topic)}</strong><span class="badge" style="background:#c62828">${x.wrong} أخطاء</span></div>${x.items.map(it=>`<div class="error-q"><strong>${esc(it.q)}</strong><div class="muted" style="margin-top:5px">إجابتك: ${esc(it.selected)} — الصحيح: ${esc(it.correct)}${it.difficulty?` — ${esc(it.difficulty)}`:''}</div></div>`).join('')}</div>`).join('')}</div><div class="v49-actions"><button class="primary purple" onclick="page('practice')">🔁 تدرب على نقاط الضعف</button></div>`:`<div class="good">✅ لا توجد أخطاء مفصلة محفوظة بعد. عند إجراء اختبارات جديدة سيبدأ محلل الأخطاء بتجميع نقاط الضعف تلقائيًا.</div>`}</div>`;
 }
 
 async function renderTrainer(){
