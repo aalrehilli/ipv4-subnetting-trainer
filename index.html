@@ -376,11 +376,6 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 .v64-pill.p1{right:11%;top:12%}.v64-pill.p2{left:4%;top:26%}.v64-pill.p3{right:3%;bottom:28%}.v64-pill.p4{left:16%;bottom:11%}
 .v64-section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:20px 0 12px}
 .v64-section-title h2{margin:0;color:#0a5fae;font-size:26px}.v64-section-title p{margin:0;color:var(--v64-muted)}
-.v64-start-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.v64-start-card{position:relative;overflow:hidden;border-radius:18px!important;padding:22px!important;margin:0!important;border:1px solid var(--v64-border)!important}
-.v64-start-card::after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;right:-28px;top:-28px;opacity:.11;background:currentColor}
-.v64-start-card.placement{color:#7048a8;background:linear-gradient(135deg,#fbf8ff,#fff)!important;border:2px solid #d7c8ee!important}
-.v64-start-card.review{color:#0b63b6;background:linear-gradient(135deg,#f5fbff,#fff)!important;border:2px solid #c7def1!important}
 .v64-start-card h3{margin:9px 0 6px;color:currentColor;font-size:23px}
 .v64-start-card p{color:var(--v64-muted);margin:0;line-height:1.8}
 .v64-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
@@ -482,8 +477,8 @@ body{background:var(--v64-bg);color:var(--v64-text)}
           مع تمارين تفاعلية، اختبارات ذكية، مراجعة شخصية، وتحليل واضح لتقدمك.
         </p>
         <div class="v64-hero-actions">
-          <button type="button" class="v64-hero-btn primary" onclick="page('placement',this)">🚀 ابدأ رحلتك الآن</button>
-          <button type="button" class="v64-hero-btn secondary" onclick="openHomeSmartReview(this)">▶️ ابدأ جولة سريعة</button>
+          <button type="button" class="v64-hero-btn primary" onclick="page('placement',this)">🎯 ابدأ تحديد المستوى</button>
+          <button type="button" class="v64-hero-btn secondary" onclick="openHomeSmartReview(this)">🧠 ابدأ المراجعة الذكية</button>
         </div>
         <div class="v64-mini-stat">
           <div class="ic">🧭</div><div><b>مسار واضح</b><div style="font-size:12px;color:#c9e8fb">تحديد المستوى ← تعلم ← تدريب ← اختبار ← شهادة</div></div>
@@ -539,23 +534,10 @@ body{background:var(--v64-bg);color:var(--v64-text)}
       </div>
     </div>
   </div>
-
-  <div class="v64-section-title">
-    <div><h2>ابدأ من هنا</h2><p>اختر نقطة البداية المناسبة لك أو انتقل مباشرة إلى المراجعة.</p></div>
-  </div>
-
-  <div class="v64-start-grid">
-    <div class="card v64-start-card placement">
-      <div class="v64-card-top"><div><span class="v52-placement-badge">🎯 اختبار تحديد المستوى</span><h3>اعرف نقطة البداية المناسبة لك</h3><p>اختبار تشخيصي يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting ثم يقترح لك بداية مناسبة.</p></div><div class="v64-card-icon">🎯</div></div>
+<div class="v64-card-icon">🎯</div></div>
       <div style="margin-top:16px"><button class="primary purple" onclick="page('placement',this)">ابدأ تحديد المستوى</button></div>
     </div>
-    <div class="card v64-start-card review">
-      <div class="v64-card-top"><div><span class="v56-badge">🧠 المراجعة الذكية</span><h3>راجع نقاط الضعف قبل الاختبار</h3><p>جلسة قصيرة تعتمد على أخطائك السابقة وتختار أسئلة جديدة من المهارات التي تحتاج تعزيزًا.</p></div><div class="v64-card-icon">🧠</div></div>
-      <div style="margin-top:16px"><button class="primary green" onclick="openHomeSmartReview(this)">ابدأ المراجعة الذكية</button></div>
-    </div>
-  </div>
-
-  <div class="v64-section-title">
+    <div class="v64-section-title">
     <div><h2>رحلتك التعليمية</h2><p>مسار متدرج من الفهم إلى التطبيق ثم التقييم.</p></div>
   </div>
 
