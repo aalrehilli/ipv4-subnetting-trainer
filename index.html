@@ -283,13 +283,34 @@
 .review-feature{border:2px solid #c8dcf2;background:linear-gradient(135deg,#f7fbff,#fff)}
 @media(max-width:900px){.home-main-grid{grid-template-columns:1fr 1fr}.home-feature-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.home-main-grid{grid-template-columns:1fr}}
-</style></head><body>
-<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V57 • Supabase</div></div>
-<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
+</style>
+<style>
+/* V60 — Final Comprehensive Exam */
+.v60-final-card{border:2px solid #b9d7f0;background:linear-gradient(135deg,#f7fbff,#fff)}
+.v60-final-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}
+.v60-final-badge{display:inline-block;background:#0759a5;color:#fff;border-radius:20px;padding:7px 12px;font-weight:900}
+.v60-final-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.v60-final-kpi{background:#fff;border:1px solid #dce8f2;border-radius:12px;padding:14px;text-align:center}
+.v60-final-kpi .num{font-size:24px;font-weight:900;color:#0759a5}.v60-final-kpi .lbl{font-size:12px;color:#65788a}
+.v60-readiness{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px}
+.v60-readiness-box{background:#fff;border:1px solid #dce8f2;border-radius:12px;padding:14px}
+.v60-status{display:flex;align-items:center;gap:8px;font-weight:900}.v60-dot{width:11px;height:11px;border-radius:50%;display:inline-block}.v60-dot.green{background:#159447}.v60-dot.orange{background:#ed8916}.v60-dot.red{background:#bd3434}
+.v60-breakdown{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}
+.v60-topic-row{border:1px solid #e0e9f0;border-radius:10px;padding:10px;background:#fbfdff}.v60-topic-head{display:flex;justify-content:space-between;gap:8px;font-weight:700}.v60-topic-bar{height:9px;background:#e8eef4;border-radius:999px;overflow:hidden;margin-top:7px}.v60-topic-bar span{display:block;height:100%;background:#0b75c9;border-radius:999px}
+.v60-exam-shell{margin-top:16px}.v60-exam-toolbar{position:sticky;top:8px;z-index:10;background:#ffffffef;backdrop-filter:blur(6px);border:1px solid #dce8f2;border-radius:12px;padding:11px;margin-bottom:12px}.v60-progress{height:10px;background:#e6edf3;border-radius:999px;overflow:hidden;margin-top:8px}.v60-progress span{display:block;height:100%;background:#159447}
+.v60-result{border:2px solid #b9d7f0;border-radius:14px;padding:18px;background:#fbfdff}.v60-result.pass{border-color:#9bd3b0;background:#f2fcf5}.v60-result.fail{border-color:#f0b5b5;background:#fff8f8}.v60-result-score{font-size:42px;font-weight:900;color:#0759a5}
+.v60-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+@media(max-width:900px){.v60-final-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.v60-readiness{grid-template-columns:1fr}}
+@media(max-width:650px){.v60-final-kpis{grid-template-columns:1fr 1fr}.v60-breakdown{grid-template-columns:1fr}}
+</style>
+
+</head><body>
+<header><div><div class="logo">🌐 IPv4 Subnetting Trainer</div><div class="sub">IPv4 • Binary • FLSM • V60 • Supabase</div></div>
+<nav id="nav" class="hidden"><button class="active" onclick="page('home',this)">الرئيسية</button><button onclick="page('practice',this)">التمارين</button><button onclick="page('course',this)">📚 المقرر</button><button onclick="page('tests',this)">الاختبارات</button><button onclick="page('finalExam',this)">🎓 الاختبار النهائي</button><button onclick="page('dashboard',this)">لوحة المتدرب</button><button onclick="page('dashboard',this);setTimeout(()=>studentDashboardTab('achievements'),250)">🏅 الإنجازات</button><button onclick="page('placement',this)">🎯 تحديد المستوى</button><button onclick="page('certificate',this)">🏆 الشهادة</button><button id="trainerNav" class="hidden" onclick="page('trainer',this)">لوحة المدرب</button><button id="adminNav" class="hidden" onclick="page('adminUsers',this)">👑 إدارة الحسابات</button><button onclick="page('account',this)">الحساب</button><button onclick="logout()">خروج</button></nav></header>
 <div class="container">
 <div id="app" class="hidden">
 <section id="home">
-<div class="card hero"><span class="badge">CLASS C + FLSM</span><h1>منصة تدريب IPv4 Subnetting</h1><p>ابدأ من تحديد مستواك، ثم راجع نقاط ضعفك، وبعدها انتقل إلى المقرر والتمارين والاختبارات.</p></div>
+<div class="card hero"><span class="badge">CLASS C + FLSM + FINAL ASSESSMENT</span><h1>منصة تدريب IPv4 Subnetting</h1><p>ابدأ من تحديد مستواك، ثم راجع نقاط ضعفك، وبعدها انتقل إلى المقرر والتمارين والاختبارات.</p></div>
 <div class="home-feature-grid">
   <div class="card home-feature placement-feature">
     <div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:10px 0 6px">اعرف نقطة البداية المناسبة لك</h2><p class="muted" style="margin:0">اختبار تشخيصي قصير يقيس Binary وIPv4 وSubnet Mask وCIDR وSubnetting، ثم يبني لك خطة بداية مناسبة.</p></div>
@@ -303,7 +324,7 @@
 <div class="home-main-grid">
   <div class="card"><h2>📚 المقرر التدريبي</h2><p>دروس مرتبة من أساسيات IPv4 حتى FLSM مع متابعة تقدم المتدرب.</p><button class="primary" onclick="page('course',this)">ابدأ التعلم</button></div>
   <div class="card"><h2>🎯 التمارين</h2><p>Borrowed Bits، Prefix، Mask، Magic Number، Hosts، مع تدريب Binary ومختبر IPv4 بصري.</p><button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button></div>
-  <div class="card"><h2>🏆 الاختبارات</h2><p>اختبارات منشورة، نتائج محفوظة، واختبارات ذكية مبنية على مستوى المتدرب.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div>
+  <div class="card"><h2>🏆 الاختبارات</h2><p>اختبارات منشورة، نتائج محفوظة، واختبارات ذكية مبنية على مستوى المتدرب.</p><button class="primary green" onclick="page('tests',this)">ابدأ الاختبارات</button></div><div class="card v60-final-card"><h2>🎓 الاختبار النهائي الشامل</h2><p>اختبار ختامي يغطي Binary وIPv4 وSubnetting وFLSM وVLSM ويقيس جاهزيتك لإكمال المقرر.</p><button class="primary" onclick="page('finalExam',this);renderV60FinalExamHome()">🚀 ابدأ الاختبار النهائي</button></div>
 </div>
 <div class="card home-tracking-link" style="margin-top:16px"><div style="display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap"><div><span class="v54-badge">📊 المتابعة</span><h2 style="margin:9px 0 5px">تابع تقدمك من لوحة المتدرب</h2><p class="muted" style="margin:0">النتائج، مستوى الإتقان، التحليلات، الإنجازات ودفتر الأخطاء في مكان واحد.</p></div><button class="primary purple" onclick="page('dashboard',this)">عرض المتابعة</button></div></div>
 
@@ -317,6 +338,20 @@
 </div></section>
 <section id="tests" class="hidden"><div class="card tests-student-page"><div class="tests-page-head"><div><span class="badge">🏆 الاختبارات</span><h2 style="margin:10px 0 6px">الاختبارات المنشورة</h2><p class="muted" style="margin:0">الاختبارات هنا ينشئها المدرب ويحدد عدد الأسئلة والمدة والشعبة وموعد الإتاحة. اختر اختبارًا منشورًا وابدأ مباشرة.</p></div><div class="tests-role-note">👨‍🏫 المدرب ينشئ الاختبارات<br><span>🎓 والمتدرب يؤدي الاختبار</span></div></div><div id="publishedTests" class="published-exams-grid"><div class="muted">جارٍ تحميل الاختبارات...</div></div><div id="testMeta" class="hidden"></div><div id="testTimer" class="hidden" style="position:sticky;top:8px;z-index:5;margin:10px 0"></div><div id="testArea"></div><button id="submitTest" class="primary green hidden" onclick="gradeTest()">تسليم الاختبار</button><div id="score"></div></div></section>
 <section id="placement" class="hidden"><div class="card v52-placement-card"><div class="v52-placement-head"><div><span class="v52-placement-badge">🎯 V52 — اختبار تحديد المستوى</span><h2 style="margin:9px 0 5px">اختبار تحديد المستوى الذكي</h2><p class="muted" style="margin:0">20 سؤالًا متوازنًا. لا يوجد نجاح أو رسوب؛ الهدف هو معرفة نقطة البداية الأنسب لك.</p></div><div id="v52PlacementStatus" class="v52-placement-badge">لم يبدأ بعد</div></div><div id="v52PlacementArea" style="margin-top:16px"></div></div></section>
+<section id="finalExam" class="hidden">
+  <div class="card v60-final-card">
+    <div class="v60-final-head">
+      <div>
+        <span class="v60-final-badge">🎓 V60 — الاختبار النهائي الشامل</span>
+        <h2 style="margin:10px 0 6px">الاختبار النهائي للمقرر</h2>
+        <p class="muted" style="margin:0">30 سؤالًا متنوعًا — 45 دقيقة — درجة النجاح 70%. يغطي المهارات الأساسية والتطبيقية للمقرر.</p>
+      </div>
+      <div id="v60FinalStatus" class="v60-final-badge" style="background:#168a46">جاهز للتقييم</div>
+    </div>
+    <div id="v60FinalHomeArea" style="margin-top:16px"></div>
+    <div id="v60FinalExamArea" class="v60-exam-shell"></div>
+  </div>
+</section>
 <section id="course" class="hidden">
 <div class="card hero"><span class="badge">V57 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams + Analytics + Error Notebook + Achievements</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
@@ -480,6 +515,8 @@
 <script>
 let db=null,user=null,profile=null,exercise=null,test=[],trainerStudents=[],trainerQuestionRows=[],coursePracticeLessonId=null;
 let currentExamId=null,currentExamTitle='',testStartedAt=null,testDurationMinutes=0,timerHandle=null,testSubmitted=false;
+let v60FinalMode=false;
+let v60FinalState={questions:[],answers:{},startedAt:null,durationMinutes:45,passPercent:70,submitted:false,attemptId:null};
 let testFlags={},testCurrentIndex=0,testRandomize=true;
 const SUPABASE_URL="https://cvakitsdwxkksxemdhxj.supabase.co";
 const SUPABASE_KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA";
@@ -587,6 +624,7 @@ function page(id,b){
   if(id==="account")renderAccount();
   if(id==="adminUsers")loadAdminUsers();
   if(id==="tests")loadPublishedExams();
+  if(id==="finalExam")renderV60FinalExamHome();
   if(id==="course")loadCourse();
   if(id==="placement")renderV52PlacementHome();
   if(id==="dashboard")renderV52PlacementSummary();
