@@ -794,6 +794,64 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 .v66-exercise-panels{min-height:20px}
 </style>
 
+
+<style id="v66_12_header_color_refinement">
+/* V66.12 — soft section headers: lighter backgrounds, stronger text contrast */
+.v66-box-head{
+  position:relative;
+  min-height:54px;
+  box-sizing:border-box;
+  border-bottom:1px solid rgba(30,70,100,.08);
+}
+.v66-box-head.blue{
+  background:linear-gradient(90deg,#edf7ff 0%,#f8fbff 100%) !important;
+  color:#0759a5 !important;
+}
+.v66-box-head.green{
+  background:linear-gradient(90deg,#edf9f1 0%,#fbfffc 100%) !important;
+  color:#11723a !important;
+}
+.v66-box-head.orange{
+  background:linear-gradient(90deg,#fff5e6 0%,#fffaf3 100%) !important;
+  color:#a95b00 !important;
+}
+.v66-box-head.purple{
+  background:linear-gradient(90deg,#f1eaff 0%,#fcf9ff 100%) !important;
+  color:#6f43a5 !important;
+}
+.v66-box-head.red{
+  background:linear-gradient(90deg,#fff0f3 0%,#fffafd 100%) !important;
+  color:#bd3043 !important;
+}
+.v66-box-head .box-icon{
+  background:#fff !important;
+  box-shadow:0 2px 7px rgba(20,65,100,.06);
+}
+.v66-box-head.blue .box-icon{border-color:#c9e2f4 !important;color:#0759a5}
+.v66-box-head.green .box-icon{border-color:#cbe6d4 !important;color:#11723a}
+.v66-box-head.orange .box-icon{border-color:#f0d8b2 !important;color:#a95b00}
+.v66-box-head.purple .box-icon{border-color:#dbcef0 !important;color:#6f43a5}
+.v66-box-head.red .box-icon{border-color:#efd0d7 !important;color:#bd3043}
+
+/* Keep body surfaces neutral so headings do the visual grouping. */
+.v66-section-box{
+  border-color:#d9e7f1 !important;
+  box-shadow:0 6px 18px rgba(24,73,111,.055) !important;
+}
+.v66-section-box .v66-box-body{
+  background:#fff !important;
+}
+
+/* Slightly stronger typography for the right-column section titles. */
+.v66-layout-right .v66-box-head{
+  font-size:20px;
+  letter-spacing:-.1px;
+}
+@media(max-width:650px){
+  .v66-layout-right .v66-box-head{font-size:18px}
+}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
