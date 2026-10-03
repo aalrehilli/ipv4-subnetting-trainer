@@ -1109,6 +1109,28 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:650px){.v66-form-grid{grid-template-columns:1fr}.v66-form-grid .full{grid-column:auto}.v66-studio-select{min-width:0;width:100%}}
 </style>
 
+
+<style id="v66_20_visual_editor_css">
+.v66-editor-help{font-size:12px;color:#6b7f8e;margin-bottom:8px;padding:7px 9px;border-radius:8px;background:#f8fbfd;border:1px solid #e3edf3}
+.v66-add-row{border:1px solid #cadde8;background:#fff;border-radius:9px;padding:8px 11px;font-weight:900;cursor:pointer;margin-top:9px}
+.v66-add-row.green{color:#16723a;border-color:#cbe4d3;background:#f5fbf7}
+.v66-add-row.orange{color:#a95b00;border-color:#efd8b5;background:#fffaf3}
+.v66-add-row.purple{color:#7048a8;border-color:#dbcfed;background:#fbf9ff}
+.v66-editor-row,.v66-rubric-editor-row{display:grid;grid-template-columns:32px minmax(0,1fr) 34px;gap:7px;align-items:center;margin:7px 0}
+.v66-rubric-editor-row{grid-template-columns:32px minmax(0,1fr) 92px 34px}
+.v66-row-no{width:28px;height:28px;border-radius:8px;background:#edf5fa;color:#0759a5;display:grid;place-items:center;font-weight:900;font-size:12px}
+.v66-editor-row input,.v66-editor-row textarea,.v66-rubric-editor-row input{width:100%;box-sizing:border-box;padding:8px;border:1px solid #cadce7;border-radius:8px;background:#fff;font-size:13px}
+.v66-editor-row textarea{min-height:58px;resize:vertical;line-height:1.65}
+.v66-rubric-editor-row input[type=number]{direction:ltr;text-align:center}
+.v66-icon-btn{width:32px;height:32px;border:1px solid #e1e7ec;border-radius:8px;background:#fff;cursor:pointer}
+.v66-empty-editor{padding:12px;border:1px dashed #cedfe8;border-radius:9px;text-align:center;color:#7890a0;background:#fafcfd;font-size:12px}
+@media(max-width:650px){
+ .v66-rubric-editor-row{grid-template-columns:28px minmax(0,1fr) 70px 30px}
+ .v66-editor-row{grid-template-columns:28px minmax(0,1fr) 30px}
+ .v66-editor-row input,.v66-editor-row textarea,.v66-rubric-editor-row input{font-size:12px;padding:7px}
+}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1940,6 +1962,43 @@ function v66JsonText(v){
   if(Array.isArray(v))return JSON.stringify(v,null,2);
   try{return JSON.stringify(JSON.parse(v||'[]'),null,2)}catch(_e){return '[]'}
 }
+
+let v66EditorState={objectives:[],tasks:[],rubric:[]};
+function v66ParseStudioList(v){if(Array.isArray(v))return v;try{return JSON.parse(v||'[]')}catch(_e){return []}}
+function v66SetStudioState(l){
+  v66EditorState={
+    objectives:v66ParseStudioList(l.objectives).map(x=>String(x)),
+    tasks:v66ParseStudioList(l.tasks).map(x=>String(x)),
+    rubric:v66ParseStudioList(l.rubric).map(x=>({criterion:String(x?.criterion||''),points:Number(x?.points||0)}))
+  };
+  v66RenderStudioEditors();
+}
+function v66SyncEditorState(){
+  document.querySelectorAll('[data-v66-kind="objective"]').forEach(el=>{v66EditorState.objectives[Number(el.dataset.index)]=el.value});
+  document.querySelectorAll('[data-v66-kind="task"]').forEach(el=>{v66EditorState.tasks[Number(el.dataset.index)]=el.value});
+  document.querySelectorAll('[data-v66-kind="criterion"]').forEach(el=>{const i=Number(el.dataset.index);v66EditorState.rubric[i]=v66EditorState.rubric[i]||{criterion:'',points:0};v66EditorState.rubric[i].criterion=el.value});
+  document.querySelectorAll('[data-v66-kind="points"]').forEach(el=>{const i=Number(el.dataset.index);v66EditorState.rubric[i]=v66EditorState.rubric[i]||{criterion:'',points:0};v66EditorState.rubric[i].points=Number(el.value||0)});
+}
+function v66RenderStudioEditors(){
+  const o=$('v66ObjectiveEditor'),t=$('v66TaskEditor'),r=$('v66RubricEditor');
+  if(o)o.innerHTML=v66EditorState.objectives.map((x,i)=>`<div class="v66-editor-row"><span class="v66-row-no">${i+1}</span><input data-v66-kind="objective" data-index="${i}" value="${esc(x)}" placeholder="مثال: التعرف على واجهة Packet Tracer"><button type="button" class="v66-icon-btn" title="حذف الهدف" onclick="v66RemoveEditorRow('objectives',${i})">🗑️</button></div>`).join('')||'<div class="v66-empty-editor">لا توجد أهداف. أضف أول هدف.</div>';
+  if(t)t.innerHTML=v66EditorState.tasks.map((x,i)=>`<div class="v66-editor-row"><span class="v66-row-no">${i+1}</span><textarea data-v66-kind="task" data-index="${i}" placeholder="اكتب خطوة التنفيذ">${esc(x)}</textarea><button type="button" class="v66-icon-btn" title="حذف الخطوة" onclick="v66RemoveEditorRow('tasks',${i})">🗑️</button></div>`).join('')||'<div class="v66-empty-editor">لا توجد خطوات. أضف أول خطوة.</div>';
+  if(r)r.innerHTML=v66EditorState.rubric.map((x,i)=>`<div class="v66-rubric-editor-row"><span class="v66-row-no">${i+1}</span><input data-v66-kind="criterion" data-index="${i}" value="${esc(x.criterion)}" placeholder="مثال: تنفيذ المطلوب"><input data-v66-kind="points" data-index="${i}" type="number" min="0" value="${Number(x.points||0)}" placeholder="الدرجة"><button type="button" class="v66-icon-btn" title="حذف المعيار" onclick="v66RemoveEditorRow('rubric',${i})">🗑️</button></div>`).join('')||'<div class="v66-empty-editor">لا توجد معايير. أضف أول معيار.</div>';
+  document.querySelectorAll('[data-v66-kind]').forEach(el=>el.addEventListener('input',v66SyncEditorState));
+}
+function v66AddObjective(){v66SyncEditorState();v66EditorState.objectives.push('');v66RenderStudioEditors()}
+function v66AddTask(){v66SyncEditorState();v66EditorState.tasks.push('');v66RenderStudioEditors()}
+function v66AddRubric(){v66SyncEditorState();v66EditorState.rubric.push({criterion:'',points:0});v66RenderStudioEditors()}
+function v66RemoveEditorRow(kind,i){v66SyncEditorState();v66EditorState[kind].splice(i,1);v66RenderStudioEditors()}
+function v66GetEditorData(){
+  v66SyncEditorState();
+  return {
+    objectives:v66EditorState.objectives.map(x=>String(x||'').trim()).filter(Boolean),
+    tasks:v66EditorState.tasks.map(x=>String(x||'').trim()).filter(Boolean),
+    rubric:v66EditorState.rubric.map(x=>({criterion:String(x?.criterion||'').trim(),points:Math.max(0,Number(x?.points||0))})).filter(x=>x.criterion)
+  };
+}
+
 function v66TrainerArrayFromText(id){
   const t=$(id)?.value||'[]';
   let v;try{v=JSON.parse(t)}catch(e){throw new Error(`صيغة JSON غير صحيحة في ${id}`);}
@@ -1952,9 +2011,10 @@ function v66RenderTrainerStudio(l){
   const opts=v66TrainerLabsCache.map(x=>`<option value="${Number(x.lab_no)}" ${Number(x.lab_no)===Number(l.lab_no)?'selected':''}>تمرين ${Number(x.lab_no)} — ${esc(x.title)}</option>`).join('');
   area.innerHTML=`<div class="v66-studio">
     <div class="v66-studio-toolbar">
-      <div><span class="badge">V66.19 • Trainer Studio</span><h3 style="margin:7px 0 3px">🛠️ استوديو إعداد التمرين</h3><div class="muted">كل ما يحتاجه المدرب لإعداد تمرين Packet Tracer من مكان واحد.</div></div>
+      <div><span class="badge">V66.20 • Visual Editor</span><h3 style="margin:7px 0 3px">🛠️ استوديو إعداد التمرين</h3><div class="muted">اكتب المحتوى بطريقة طبيعية؛ المنصة تحول الإدخال إلى بياناتها الداخلية تلقائيًا.</div></div>
       <div class="v66-studio-select"><label>التمرين</label><select onchange="v66TrainerSelectLab(this.value)">${opts}</select></div>
     </div>
+
     <div class="v66-studio-grid">
       <div>
         <section class="v66-studio-card">
@@ -1973,19 +2033,35 @@ function v66RenderTrainerStudio(l){
             <div class="full v66-active-toggle"><label><input id="v66edit_active" type="checkbox" ${l.is_active?'checked':''}> نشر التمرين للمتدربين</label></div>
           </div>
         </section>
+
         <section class="v66-studio-card">
           <div class="v66-studio-card-head green">🎯 الأهداف</div>
-          <div class="v66-studio-body"><textarea id="v66edit_objectives" class="v66-json-editor">${esc(objectives)}</textarea><small class="muted">قائمة JSON، عنصر لكل هدف.</small></div>
+          <div class="v66-studio-body">
+            <div class="v66-editor-help">اكتب كل هدف في سطر مستقل.</div>
+            <div id="v66ObjectiveEditor"></div>
+            <button type="button" class="v66-add-row green" onclick="v66AddObjective()">➕ إضافة هدف</button>
+          </div>
         </section>
+
         <section class="v66-studio-card">
           <div class="v66-studio-card-head orange">📋 المطلوب</div>
-          <div class="v66-studio-body"><textarea id="v66edit_tasks" class="v66-json-editor">${esc(tasks)}</textarea><small class="muted">قائمة JSON، خطوة لكل عنصر.</small></div>
+          <div class="v66-studio-body">
+            <div class="v66-editor-help">كل سطر يمثل خطوة واحدة بالترتيب الذي سيظهر للمتدرب.</div>
+            <div id="v66TaskEditor"></div>
+            <button type="button" class="v66-add-row orange" onclick="v66AddTask()">➕ إضافة خطوة</button>
+          </div>
         </section>
+
         <section class="v66-studio-card">
-          <div class="v66-studio-card-head purple">⭐ Rubric</div>
-          <div class="v66-studio-body"><textarea id="v66edit_rubric" class="v66-json-editor">${esc(rubric)}</textarea><small class="muted">كل عنصر: {"criterion":"...","points":5}</small></div>
+          <div class="v66-studio-card-head purple">⭐ معايير التقييم (Rubric)</div>
+          <div class="v66-studio-body">
+            <div class="v66-editor-help">أضف معيارًا ثم حدد درجته مباشرة.</div>
+            <div id="v66RubricEditor"></div>
+            <button type="button" class="v66-add-row purple" onclick="v66AddRubric()">➕ إضافة معيار</button>
+          </div>
         </section>
       </div>
+
       <div>
         <section class="v66-studio-card">
           <div class="v66-studio-card-head blue">🖼️ صورة السيناريو</div>
@@ -2006,7 +2082,7 @@ function v66RenderTrainerStudio(l){
         <section class="v66-studio-card v66-studio-save">
           <div class="v66-studio-card-head teal">💾 حفظ ونشر</div>
           <div class="v66-studio-body">
-            <p class="muted">عدّل المحتوى، تحقق من القوائم، ثم احفظ. عند تفعيل النشر سيظهر التمرين للمتدربين حسب مسار الإتقان.</p>
+            <p class="muted">راجع المحتوى ثم احفظ. عند تفعيل النشر سيظهر التمرين للمتدربين.</p>
             <button class="primary green" onclick="v66SaveExercise('${l.id}')">💾 حفظ التمرين</button>
             <button class="primary" onclick="v66RenderTrainerLabs()">↻ تحديث</button>
             <div id="v66StudioSaveMsg" style="margin-top:9px"></div>
@@ -2015,6 +2091,7 @@ function v66RenderTrainerStudio(l){
       </div>
     </div>
   </div>`;
+  v66SetStudioState(l);
   if(l.topology_image_path)v66LoadTopologyPreview(l.topology_image_path);
 }
 
@@ -2038,11 +2115,15 @@ async function v66UploadTopology(labId){
 async function v66SaveExercise(labId){
   const msg=$('v66StudioSaveMsg'); if(msg)msg.innerHTML='';
   try{
-    const objectives=v66TrainerArrayFromText('v66edit_objectives');
-    const tasks=v66TrainerArrayFromText('v66edit_tasks');
-    const rubric=v66TrainerArrayFromText('v66edit_rubric');
+    const editorData=v66GetEditorData();
+    const objectives=editorData.objectives;
+    const tasks=editorData.tasks;
+    const rubric=editorData.rubric;
     const title=$('v66edit_title').value.trim();
     if(!title){throw new Error('عنوان التمرين مطلوب.');}
+    if(!objectives.length)throw new Error('أضف هدفًا واحدًا على الأقل.');
+    if(!tasks.length)throw new Error('أضف خطوة واحدة على الأقل.');
+    if(!rubric.length)throw new Error('أضف معيار تقييم واحدًا على الأقل.');
     const duration=Math.max(1,Number($('v66edit_duration').value||30));
     const score=Math.max(1,Number($('v66edit_score').value||20));
     const update={
