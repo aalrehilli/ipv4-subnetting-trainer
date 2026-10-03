@@ -1383,6 +1383,18 @@ async function v66WithTimeout(promise,ms,fallback){
   return result;
 }
 
+function v66RenderAddressTable(no,l){
+  const cfg=v66ScenarioData[Number(no)]||{};
+  const pcs=(cfg.nodes||[]).filter(n=>n[2]==='pc' && n[5]);
+  if(!pcs.length)return '';
+  return `<section class="v66-section-box"><div class="v66-box-head purple"><span class="box-icon">🧾</span>جدول عناوين الأجهزة</div><div class="v66-box-body"><table class="v66-address-table" aria-label="جدول عناوين الأجهزة"><thead><tr><th>الجهاز</th><th>عنوان IP</th><th>Subnet Mask</th><th>Default Gateway</th></tr></thead><tbody>${pcs.map(n=>{
+    const parts=String(n[5]).split('/');
+    const ip=parts[0],prefix=parts[1];
+    const mask=prefix==='24'?'255.255.255.0':prefix==='16'?'255.255.0.0':prefix==='8'?'255.0.0.0':'—';
+    return `<tr><td><b>${esc(n[1])}</b></td><td>${esc(ip)}</td><td>${esc(mask)}</td><td>—</td></tr>`;
+  }).join('')}</tbody></table></div></section>`;
+}
+
 function v66BuildExercisePanel(l, s){
   const obj=Array.isArray(l.objectives)?l.objectives:JSON.parse(l.objectives||'[]');
   const tasks=Array.isArray(l.tasks)?l.tasks:JSON.parse(l.tasks||'[]');
@@ -1454,7 +1466,8 @@ function v66SelectExercise(no){
   const host=$('v66ExerciseActivePanel');
   const l=v66ExercisesCache.find(x=>Number(x.lab_no)===v66ActiveExerciseNo);
   if(host&&l){
-    host.innerHTML=v66BuildExercisePanel(l,v66ExerciseSubMap.get(l.id));
+    try{host.innerHTML=v66BuildExercisePanel(l,v66ExerciseSubMap.get(l.id));}
+    catch(e){console.error('V66 exercise select error',e);host.innerHTML='<div class="bad">تعذر عرض التمرين. أعد تحميل الصفحة.</div>';}
   }
   const pos=$('v66ExercisePosition'); if(pos)pos.textContent=`تمرين ${v66ActiveExerciseNo} من ${v66ExerciseTotal}`;
   window.scrollTo({top:Math.max(0,(document.getElementById('packetLabs')?.offsetTop||0)-12),behavior:'smooth'});
@@ -1464,7 +1477,14 @@ async function v66RenderLabs(){
   const host=$('v66LabsGrid'); if(!host)return;
   host.innerHTML='<div class="muted">⏳ جارٍ تجهيز قائمة التمارين...</div>';
 
-  const labFallback={labs:v66FallbackLabs.map(x=>({...x,id:'local-lab-'+x.lab_no,rubric:[{criterion:'تنفيذ المطلوب',points:Math.round(x.max_score*.35)},{criterion:'صحة الإعدادات',points:Math.round(x.max_score*.30)},{criterion:'التحقق والاختبار',points:Math.round(x.max_score*.20)},{criterion:'التنظيم والتوثيق',points:x.max_score-Math.round(x.max_score*.35)-Math.round(x.max_score*.30)-Math.round(x.max_score*.20)}]})),configured:false,error:null};
+  const labFallback={labs:(Array.isArray(v66FallbackLabs)?v66FallbackLabs:[]).map((x,i)=>{
+  if(Array.isArray(x)) return {
+    id:'local-lab-'+(x[0]??i+1), lab_no:x[0], title:x[1], level:x[2], duration_minutes:x[3], max_score:x[4],
+    module_name:x[5], topic:x[6], objectives:x[7]||[], tasks:x[8]||[],
+    rubric:[{criterion:'تنفيذ المطلوب',points:Math.round(x[4]*.35)},{criterion:'صحة الإعدادات',points:Math.round(x[4]*.30)},{criterion:'التحقق والاختبار',points:Math.round(x[4]*.20)},{criterion:'التنظيم والتوثيق',points:x[4]-Math.round(x[4]*.35)-Math.round(x[4]*.30)-Math.round(x[4]*.20)}]
+  };
+  return {...x,id:x.id||'local-lab-'+(x.lab_no??i+1),rubric:x.rubric||[]};
+}),configured:false,error:null};
   const r=await v66WithTimeout(v66GetLabs(),3000,labFallback);
   const rows=r.labs||[];
   v66ExercisesCache=rows; v66ExerciseTotal=rows.length;
@@ -1480,7 +1500,10 @@ async function v66RenderLabs(){
   v66ExerciseSubMap=new Map();
   const active=rows.find(x=>Number(x.lab_no)===v66ActiveExerciseNo);
   const activeHost=$('v66ExerciseActivePanel');
-  if(activeHost&&active)activeHost.innerHTML=v66BuildExercisePanel(active,undefined);
+  if(activeHost&&active){
+  try{activeHost.innerHTML=v66BuildExercisePanel(active,v66ExerciseSubMap.get(active.id));}
+  catch(e){console.error('V66 exercise render error',e);activeHost.innerHTML='<div class="bad">تعذر عرض التمرين الحالي. أعد تحميل الصفحة.</div>';}
+}
 
   // Update submission states in the background; do not block the UI.
   subPromise.then(submissions=>{
