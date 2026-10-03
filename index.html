@@ -712,6 +712,27 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 }
 </style>
 
+
+<style id="v66_8_scenario_css">
+.v66-scenario-wrap{margin:16px 0 18px}
+.v66-scenario-title{display:flex;align-items:center;gap:9px;margin-bottom:9px;padding:10px 13px;border:1px solid #cfe2f2;border-radius:12px;background:linear-gradient(90deg,#eaf5ff,#f9fcff);color:#0759a5;font-size:18px;font-weight:900}
+.v66-scenario-title .ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:#fff;border:1px solid #d4e5f1}
+.v66-scenario-panel{border:1px solid #d6e7f2;border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 7px 18px rgba(20,70,110,.06)}
+.v66-scenario-svg{padding:10px;background:linear-gradient(#f3f8fc 1px,transparent 1px),linear-gradient(90deg,#f3f8fc 1px,transparent 1px);background-size:24px 24px}
+.v66-scenario-svg svg{display:block;width:100%;height:auto}
+.v66-scenario-caption{padding:10px 14px;background:#f8fbfe;border-top:1px solid #dbe8f2;color:#496277;font-size:14px;line-height:1.75}
+.v66-scenario-caption b{color:#0759a5}
+.v66-net-link{stroke:#2d4252;stroke-width:3;stroke-linecap:round}.v66-net-link.ok{stroke:#1a9b55}.v66-net-link.bad{stroke:#d95555;stroke-dasharray:9 6}
+.v66-net-device{fill:#fff;stroke:#5e8db2;stroke-width:2}.v66-net-switch{fill:#0b78c9;stroke:#0759a5;stroke-width:2}.v66-net-router{fill:#0c69b0;stroke:#0759a5;stroke-width:2}
+.v66-net-text{font:800 14px Arial,sans-serif;fill:#17324d}.v66-net-white{font:800 13px Arial,sans-serif;fill:#fff}.v66-net-ip{font:800 11px Arial,sans-serif;fill:#0759a5}.v66-net-label{fill:#eef7ff;stroke:#c9e0f2}.v66-net-label-text{font:800 11px Arial,sans-serif;fill:#245d86}
+@media(max-width:650px){.v66-scenario-title{font-size:16px}.v66-scenario-caption{font-size:13px}}
+</style>
+
+
+<style id="v66_8_panel_spacing">
+.v66-exercise-panel{padding:18px}.v66-exercise-panel .v66-scenario-wrap{margin-left:-2px;margin-right:-2px}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1259,6 +1280,26 @@ async function v66RenderLabSummary(labs, submissions){
  const total=labs.length,done=(submissions.data||[]).filter(s=>s.status==='reviewed').length,pending=(submissions.data||[]).filter(s=>s.status!=='reviewed').length,scoreRows=(submissions.data||[]).filter(s=>s.score!=null),avg=scoreRows.length?Math.round(scoreRows.reduce((n,s)=>n+Number(s.score||0),0)/scoreRows.length):0;
  host.innerHTML=`<div class="v66-lab-kpis"><div class="v66-kpi"><b>${total}</b><span>إجمالي التمارين</span></div><div class="v66-kpi"><b>${done}</b><span>مكتملة</span></div><div class="v66-kpi"><b>${pending}</b><span>قيد المراجعة</span></div><div class="v66-kpi"><b>${avg}%</b><span>متوسط الدرجات</span></div></div>${submissions.error?'<div class="v66-student-note">ℹ️ يمكنك استعراض التمرينات الآن. رفع ملفات Packet Tracer والتسليم الإلكتروني سيظهر عند تفعيل خدمة التمرينات.</div>':''}`;
 }
+
+const v66ScenarioData={"1":{"caption":"أنشئ شبكة LAN بسيطة: Switch1 في الوسط، وثلاثة أجهزة PC مرتبطة به.","nodes":[["pc1","PC1","pc",150,285,"192.168.1.1"],["pc2","PC2","pc",430,335,"192.168.1.2"],["pc3","PC3","pc",710,285,"192.168.1.3"],["sw","Switch1","switch",430,125,""]],"links":[["sw","pc1","ok"],["sw","pc2","ok"],["sw","pc3","ok"]]},"2":{"caption":"افتح CLI على Switch1 وتدرّب على أوضاع IOS والتنقل بينها.","nodes":[["pc","PC1","pc",120,245,""],["sw","Switch1","switch",390,140,""],["cli","CLI / IOS","router",660,245,""]],"links":[["pc","sw","ok"],["sw","cli","ok"]]},"3":{"caption":"تدريب أوامر IOS والمساعدة والاختصارات وسجل الأوامر.","nodes":[["pc","PC1","pc",120,245,""],["sw","Switch1","switch",390,140,""],["cli","CLI","router",660,245,""]],"links":[["pc","sw","ok"],["sw","cli","ok"]]},"4":{"caption":"هيّئ Switch1 إعدادًا أساسيًا وآمنًا ثم احفظ التكوين.","nodes":[["pc1","PC1","pc",120,210,""],["pc2","PC2","pc",120,355,""],["sw","Switch1","switch",455,280,""]],"links":[["pc1","sw","ok"],["pc2","sw","ok"]]},"5":{"caption":"اضبط IPv4 وSubnet Mask وDefault Gateway للأجهزة وفق السيناريو.","nodes":[["pc1","PC1","pc",125,165,"192.168.10.10/24"],["pc2","PC2","pc",125,360,"192.168.10.11/24"],["r1","R1","router",520,265,"192.168.10.1/24"]],"links":[["pc1","r1","ok"],["pc2","r1","ok"]]},"6":{"caption":"ابنِ شبكة محلية ثم اختبر الاتصال بين الأجهزة باستخدام ping.","nodes":[["pc1","PC1","pc",90,170,"192.168.1.10/24"],["pc2","PC2","pc",90,360,"192.168.1.11/24"],["sw","Switch1","switch",420,265,""],["pc3","PC3","pc",735,265,"192.168.1.12/24"]],"links":[["pc1","sw","ok"],["pc2","sw","ok"],["sw","pc3","ok"]]},"7":{"caption":"كوّن R1 إعدادًا أوليًا آمنًا قبل استخدامه في الشبكة.","nodes":[["pc","PC1","pc",100,270,""],["sw","Switch1","switch",350,145,""],["r1","R1","router",650,270,""]],"links":[["pc","sw","ok"],["sw","r1","ok"]]},"8":{"caption":"جهّز واجهتي R1 لربط شبكتين ثم استخدم no shutdown.","nodes":[["lan1","LAN 1","switch",110,265,""],["r1","R1","router",430,265,"G0/0/0 • G0/0/1"],["lan2","LAN 2","switch",750,265,""]],"links":[["lan1","r1","ok"],["r1","lan2","ok"]]},"9":{"caption":"تحقق من حالة الواجهات وجدول التوجيه وإحصاءات الواجهات.","nodes":[["lan","LAN","switch",110,265,""],["r1","R1","router",430,265,""],["net","Network","router",750,265,""]],"links":[["lan","r1","ok"],["r1","net","ok"]]},"10":{"caption":"شبكتان محليتان متصلتان عبر R1؛ اضبط Default Gateway ثم اختبر الوصول.","nodes":[["pc1","PC1","pc",65,145,"192.168.10.10/24"],["pc2","PC2","pc",65,365,"192.168.10.11/24"],["s1","Switch1","switch",260,255,""],["r1","R1","router",480,255,"G0/0/0 • G0/0/1"],["s2","Switch2","switch",700,255,""],["pc3","PC3","pc",830,255,"192.168.20.10/24"]],"links":[["pc1","s1","ok"],["pc2","s1","ok"],["s1","r1","ok"],["r1","s2","ok"],["s2","pc3","ok"]]},"11":{"caption":"هذه الشبكة تحتوي عطلًا مقصودًا. اعزل المشكلة ثم أصلحها واختبر الاتصال.","nodes":[["pc1","PC1","pc",70,170,"192.168.20.10/24"],["s1","Switch1","switch",275,110,""],["r1","R1","router",500,255,"Gateway ؟"],["pc2","PC2","pc",735,350,"192.168.30.10/24"]],"links":[["pc1","s1","ok"],["s1","r1","ok"],["r1","pc2","bad"]]},"12":{"caption":"المشروع الشامل: شبكتان، مبدلان، موجّه، أجهزة طرفية، تحقق واستكشاف أخطاء.","nodes":[["pc1","PC1","pc",50,145,"192.168.10.10/24"],["pc2","PC2","pc",50,365,"192.168.10.11/24"],["s1","SW1","switch",245,255,""],["r1","R1","router",470,255,""],["s2","SW2","switch",665,170,""],["pc3","PC3","pc",825,120,"192.168.20.10/24"],["pc4","PC4","pc",825,325,"192.168.20.11/24"]],"links":[["pc1","s1","ok"],["pc2","s1","ok"],["s1","r1","ok"],["r1","s2","ok"],["s2","pc3","ok"],["s2","pc4","ok"]]}};
+function v66RenderTopologySvg(no){
+ const cfg=v66ScenarioData[Number(no)]||v66ScenarioData[1],pos={};
+ cfg.nodes.forEach(n=>pos[n[0]]={x:Number(n[3]),y:Number(n[4])});
+ const out=['<svg viewBox="0 0 880 440" role="img" aria-label="شكل السيناريو المطلوب">','<rect x="8" y="8" width="864" height="424" rx="18" fill="#fff"/>'];
+ cfg.links.forEach(l=>{const a=pos[l[0]],b=pos[l[1]];if(!a||!b)return;out.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="v66-net-link ${l[2]||''}"/>`)});
+ cfg.nodes.forEach(n=>{
+   const [id,label,type,x,y,meta]=n,X=Number(x),Y=Number(y);
+   if(type==='pc'){out.push(`<rect x="${X-52}" y="${Y-31}" width="104" height="62" rx="11" class="v66-net-device"/><rect x="${X-34}" y="${Y-15}" width="68" height="36" rx="5" fill="#dff2fc" stroke="#79aeca"/><line x1="${X-27}" y1="${Y+25}" x2="${X+27}" y2="${Y+25}" stroke="#79aeca" stroke-width="5"/><text x="${X}" y="${Y-42}" text-anchor="middle" class="v66-net-text">${label}</text>${meta?`<text x="${X}" y="${Y+53}" text-anchor="middle" class="v66-net-ip">${meta}</text>`:''}`)}else if(type==='switch'){out.push(`<rect x="${X-68}" y="${Y-29}" width="136" height="58" rx="11" class="v66-net-switch"/><rect x="${X-46}" y="${Y-9}" width="92" height="15" rx="5" fill="#8bd5f4" opacity=".65"/><text x="${X}" y="${Y+4}" text-anchor="middle" class="v66-net-white">${label}</text>`)}else{out.push(`<circle cx="${X}" cy="${Y}" r="45" class="v66-net-router"/><circle cx="${X}" cy="${Y}" r="29" fill="none" stroke="#c9edff" stroke-width="2" opacity=".55"/><text x="${X}" y="${Y+5}" text-anchor="middle" class="v66-net-white">${label}</text>${meta?`<text x="${X}" y="${Y+67}" text-anchor="middle" class="v66-net-ip">${meta}</text>`:''}`)}
+ });
+ out.push('<rect x="24" y="24" width="210" height="40" rx="10" class="v66-net-label"/><text x="129" y="50" text-anchor="middle" class="v66-net-label-text">🧭 السيناريو المطلوب</text>');
+ if(Number(no)===11)out.push('<rect x="620" y="24" width="230" height="42" rx="10" fill="#fff0f0" stroke="#edb6b6"/><text x="735" y="51" text-anchor="middle" class="v66-net-text" fill="#b83a3a">⚠️ عطل مقصود — ابحث عن السبب</text>');
+ out.push('</svg>'); return out.join('');
+}
+function v66RenderScenario(no,l){
+ const cfg=v66ScenarioData[Number(no)]||v66ScenarioData[1];
+ return `<div class="v66-scenario-wrap"><div class="v66-scenario-title"><span class="ico">🖧</span>شكل السيناريو المطلوب في Packet Tracer</div><div class="v66-scenario-panel"><div class="v66-scenario-svg">${v66RenderTopologySvg(no)}</div><div class="v66-scenario-caption"><b>السيناريو:</b> ${esc(cfg.caption)}<br><b>مهم:</b> ابنِ الـTopology في Packet Tracer بنفس شكل الأجهزة والروابط الظاهر هنا، ثم نفّذ خطوات التمرين.</div></div></div>`;
+}
+
 let v66ActiveExerciseNo=1;
 
 function v66SelectExercise(no){
@@ -1309,6 +1350,7 @@ async function v66RenderLabs(){
       <h3>${esc(l.title)}</h3>
       <div class="v66-lab-meta"><span class="v66-chip">📘 ${esc(l.module_name)}</span><span class="v66-chip">⏱️ ${Number(l.duration_minutes||30)} دقيقة</span><span class="v66-chip">⭐ ${Number(l.max_score||20)} درجة</span></div>
       <p class="muted">${esc(l.topic||'Packet Tracer')}</p>
+      ${v66RenderScenario(l.lab_no,l)}
       <details open><summary><b>🎯 الأهداف والمهام</b></summary>
         <div class="muted" style="margin-top:9px"><b>الأهداف</b><ul class="v66-task-list">${obj.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
         <b>المطلوب</b><ol class="v66-task-list">${tasks.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
