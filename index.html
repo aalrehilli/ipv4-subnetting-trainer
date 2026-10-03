@@ -1195,6 +1195,21 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:520px){.v66-report-toolbar{grid-template-columns:1fr}.v66-report-cards{grid-template-columns:1fr}.v66-assess-head{flex-direction:column}.v66-assess-row{grid-template-columns:1fr 70px}}
 </style>
 
+
+<style id="v66_23_lab_readiness_css">
+.v66-lab-readiness{margin-bottom:12px}
+.v66-readiness-summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid #d9e6ed;border-radius:13px;background:#f7fafc}
+.v66-readiness-summary>div{display:flex;flex-direction:column;gap:2px}.v66-readiness-summary b{color:#31566e;font-size:15px}.v66-readiness-summary span{color:#718290;font-size:11px}.v66-readiness-summary strong{color:#356b57;font-size:14px;white-space:nowrap}
+.v66-readiness-list{display:grid;gap:6px;margin-top:8px}
+.v66-ready-row{display:grid;grid-template-columns:78px minmax(180px,1fr) minmax(360px,1.8fr) 92px;gap:9px;align-items:center;padding:8px 10px;border:1px solid #e0e8ee;border-radius:10px;background:#fff}
+.v66-ready-number{font-weight:900;color:#31566e;font-size:12px}.v66-ready-title{display:flex;flex-direction:column;gap:2px;min-width:0}.v66-ready-title b{font-size:12px;color:#3f5e70;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v66-ready-title span{font-size:10px;color:#748593}
+.v66-ready-assets{display:flex;flex-wrap:wrap;gap:5px}.v66-ready-assets span{font-size:10px;border-radius:999px;padding:4px 7px;border:1px solid #dce7ed;background:#fafcfd;color:#6d7f8b}.v66-ready-assets span.ok{color:#3d6f59;background:#f4faf7;border-color:#d5e9dd}.v66-ready-assets span.missing{color:#8b7a62;background:#fcfaf5;border-color:#eadfca}
+.v66-ready-open{border:1px solid #d3e0e7;background:#fbfdfe;color:#35586e;border-radius:8px;padding:7px 8px;font-weight:800;cursor:pointer}
+.v66-ready-open:hover{background:#f3f8fb}
+@media(max-width:900px){.v66-ready-row{grid-template-columns:70px 1fr 92px}.v66-ready-assets{grid-column:1/-1}}
+@media(max-width:560px){.v66-readiness-summary{align-items:flex-start;flex-direction:column}.v66-ready-row{grid-template-columns:1fr 90px}.v66-ready-assets{grid-column:1/-1}}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1481,7 +1496,7 @@ html,body{max-width:100%;overflow-x:hidden}
 <div id="trainerLabs" class="hidden">
   <h3>🧪 إدارة تمارين Packet Tracer</h3>
   <div class="trainer-report-note">ارفع ملفات البداية PKT/PKA لكل مختبر وتابع تسليمات المتدربين ثم ضع الدرجة والملاحظات.</div>
-  <div id="v66TrainerLabsArea"><div class="muted">⏳ جارٍ تحميل التمرينات...</div></div>
+  <div id="v66LabReadinessArea" class="v66-lab-readiness"></div><div id="v66TrainerLabsArea"><div class="muted">⏳ جارٍ تحميل التمرينات...</div></div>
   <hr style="margin:24px 0;border:0;border-top:1px solid #dbe6ef">
   <h3>📤 آخر التسليمات</h3>
   <div id="v66TrainerSubmissionsArea"><div class="muted">⏳ جارٍ تحميل التسليمات...</div></div>
@@ -1996,6 +2011,54 @@ async function v66RenderDashboardSummary(){
  host.innerHTML=`<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><span class="badge">🧪 V66</span><h3 style="margin:8px 0 4px">التمارين العملية</h3><div class="muted">مكتملة: ${done} • قيد المراجعة: ${pending}</div></div><button class="primary" onclick="page('packetLabs')">فتح مركز التمارين</button></div>${rows.length?rows.slice(0,3).map(s=>`<div class="stat"><b>مختبر ${esc(s.packet_tracer_labs?.lab_no||'')}</b><span>${esc(s.packet_tracer_labs?.title||'مختبر Packet Tracer')} — ${s.score!=null?Number(s.score):'قيد المراجعة'}</span></div>`).join(''):'<div class="muted" style="margin-top:10px">ابدأ أول تمرين عملي.</div>'}</div>`;
 }
 let v66TrainerLabsCache=[];
+
+function v66JsonArray(v){
+  try{return Array.isArray(v)?v:JSON.parse(v||'[]')}catch(_e){return []}
+}
+function v66LabReadiness(l){
+  const checks={
+    info:!!(l.title&&l.module_name&&l.topic),
+    objectives:v66JsonArray(l.objectives).length>0,
+    tasks:v66JsonArray(l.tasks).length>0,
+    rubric:v66JsonArray(l.rubric).length>0,
+    topology:!!l.topology_image_path,
+    starter:!!l.starter_path,
+    published:!!l.is_active
+  };
+  const required=['info','objectives','tasks','rubric','topology','starter'];
+  const ready=required.every(k=>checks[k]);
+  const missing=[];
+  if(!checks.info)missing.push('البيانات الأساسية');
+  if(!checks.objectives)missing.push('الأهداف');
+  if(!checks.tasks)missing.push('المطلوب');
+  if(!checks.rubric)missing.push('Rubric');
+  if(!checks.topology)missing.push('صورة السيناريو');
+  if(!checks.starter)missing.push('ملف PKT/PKA');
+  return {checks,ready,missing};
+}
+function v66RenderLabReadiness(rows){
+  const host=$('v66LabReadinessArea');if(!host)return;
+  const items=rows.map(l=>{
+    const r=v66LabReadiness(l);
+    return `<div class="v66-ready-row">
+      <div class="v66-ready-number">تمرين ${Number(l.lab_no)}</div>
+      <div class="v66-ready-title"><b>${esc(l.title||'بدون عنوان')}</b><span>${r.ready?'✅ جاهز للنشر':'🟡 يحتاج تجهيز'}</span></div>
+      <div class="v66-ready-assets">
+        <span class="${r.checks.info?'ok':'missing'}">${r.checks.info?'✓':'○'} البيانات</span>
+        <span class="${r.checks.objectives?'ok':'missing'}">${r.checks.objectives?'✓':'○'} الأهداف</span>
+        <span class="${r.checks.tasks?'ok':'missing'}">${r.checks.tasks?'✓':'○'} المطلوب</span>
+        <span class="${r.checks.rubric?'ok':'missing'}">${r.checks.rubric?'✓':'○'} Rubric</span>
+        <span class="${r.checks.topology?'ok':'missing'}">${r.checks.topology?'✓':'○'} Topology</span>
+        <span class="${r.checks.starter?'ok':'missing'}">${r.checks.starter?'✓':'○'} PKT/PKA</span>
+      </div>
+      <button class="v66-ready-open" type="button" onclick="v66TrainerSelectLab(${Number(l.lab_no)})">فتح التمرين</button>
+    </div>`;
+  }).join('');
+  const readyCount=rows.filter(l=>v66LabReadiness(l).ready).length;
+  host.innerHTML=`<div class="v66-readiness-summary"><div><b>📦 جاهزية المختبرات</b><span>راجع اكتمال كل عنصر قبل نشر التمرين للمتدربين.</span></div><strong>${readyCount} / ${rows.length} جاهز</strong></div>
+  <div class="v66-readiness-list">${items}</div>`;
+}
+
 async function v66RenderTrainerLabs(){
   if(!['trainer','admin'].includes(profile?.role))return;
   const area=$('v66TrainerLabsArea'),subArea=$('v66TrainerSubmissionsArea');if(!area||!subArea)return;
@@ -2011,6 +2074,7 @@ async function v66RenderTrainerLabs(){
   }
   v66TrainerLabsCache=lr.data||[];
   if(!v66TrainerLabsCache.length){area.innerHTML='<div class="muted">لا توجد تمارين بعد.</div>';subArea.innerHTML='';return;}
+  const readinessHost=$('v66LabReadinessArea'); if(readinessHost) v66RenderLabReadiness(v66TrainerLabsCache);
   const first=v66TrainerLabsCache.find(x=>Number(x.lab_no)===Number(window.v66TrainerActiveNo||1))||v66TrainerLabsCache[0];
   window.v66TrainerActiveNo=Number(first.lab_no);
   v66RenderTrainerStudio(first);
