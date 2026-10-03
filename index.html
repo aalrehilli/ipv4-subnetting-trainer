@@ -787,6 +787,13 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 @media(max-width:650px){.v66-exercise-head-title h3{font-size:24px}.v66-meta-strip{grid-template-columns:1fr}.v66-meta-card{justify-content:flex-start}}
 </style>
 
+
+<style id="v66_10_performance_css">
+#v66LabsGrid{min-height:180px}
+.v66-lab-kpis{margin-bottom:10px}
+.v66-exercise-panels{min-height:20px}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1368,101 +1375,121 @@ function v66SelectExercise(no){
   if(active)active.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+async function v66WithTimeout(promise,ms,fallback){
+  let t;
+  const timeout=new Promise(resolve=>{t=setTimeout(()=>resolve(fallback),ms);});
+  const result=await Promise.race([promise,timeout]);
+  clearTimeout(t);
+  return result;
+}
+
+function v66BuildExercisePanel(l, s){
+  const obj=Array.isArray(l.objectives)?l.objectives:JSON.parse(l.objectives||'[]');
+  const tasks=Array.isArray(l.tasks)?l.tasks:JSON.parse(l.tasks||'[]');
+  const rubric=Array.isArray(l.rubric)?l.rubric:JSON.parse(l.rubric||'[]');
+  return `<article id="v66ExercisePanel_${Number(l.lab_no)}" data-exercise-no="${Number(l.lab_no)}" class="v66-lab-card v66-exercise-panel active">
+    <div class="v66-exercise-head-simple">
+      <div class="v66-exercise-head-title">
+        <span class="badge">تمرين ${Number(l.lab_no)}</span>
+        <span class="v66-chip">${esc(l.level)}</span>
+        <h3>${esc(l.title)}</h3>
+        <p>${esc(l.topic||'Packet Tracer')}</p>
+      </div>
+      ${s?`<span class="${v66StatusClass(s.status)}" style="padding:8px 12px;border:1px solid;border-radius:999px;white-space:nowrap">${v66StatusLabel(s.status)}${s.score!=null?` — ${Number(s.score)}/${Number(l.max_score||20)}`:''}</span>`:''}
+    </div>
+    <div class="v66-meta-strip">
+      <div class="v66-meta-card blue"><b>📘 الوحدة</b><span>${esc(l.module_name)}</span></div>
+      <div class="v66-meta-card green"><b>⏱️ الوقت</b><span>${Number(l.duration_minutes||30)} دقيقة</span></div>
+      <div class="v66-meta-card orange"><b>⭐ الدرجة</b><span>${Number(l.max_score||20)} درجة</span></div>
+    </div>
+
+    <div class="v66-exact-layout">
+      <div class="v66-layout-left">
+        <section class="v66-section-box">
+          <div class="v66-box-head blue"><span class="box-icon">🖧</span>شكل السيناريو المطلوب</div>
+          <div class="v66-box-body compact">${v66RenderScenario(l.lab_no,l)}</div>
+        </section>
+        ${v66RenderAddressTable(l.lab_no,l)}
+        <section class="v66-section-box">
+          <div class="v66-box-head red"><span class="box-icon">☁️</span>تسليم التمرين</div>
+          <div class="v66-box-body">
+            ${s?`<div class="${v66StatusClass(s.status)} v66-status-box">${v66StatusLabel(s.status)} ${s.score!=null?`— الدرجة: <b>${Number(s.score)}/${Number(l.max_score||20)}</b>`:''}${s.feedback?`<div style="margin-top:5px">${esc(s.feedback)}</div>`:''}</div>`:''}
+            ${l.starter_path?`<button class="primary" onclick="v66DownloadStarter('${l.id}')">📥 تحميل ملف البداية PKT/PKA</button>`:'<div class="v66-safe-note">ملف البداية PKT/PKA يضاف من لوحة المدرب لهذا التمرين.</div>'}
+            <div class="v66-submit-grid" style="margin-top:10px">
+              <div class="v66-submit-field"><label>📦 Packet Tracer (PKT/PKA)</label><input id="v66file_${l.id}" type="file" accept=".pkt,.pka"></div>
+              <div class="v66-submit-field"><label>🖼️ صورة من الـTopology (اختياري)</label><input id="v66shot_${l.id}" type="file" accept=".png,.jpg,.jpeg,.webp"></div>
+            </div>
+            <div class="v66-submit-field v66-submit-notes" style="margin-top:10px"><label>💬 ملاحظات للمدرب (اختياري)</label><textarea id="v66note_${l.id}" placeholder="أضف أي ملاحظة عن التمرين..."></textarea></div>
+            <button class="primary green v66-submit-button" onclick="v66SubmitLab('${l.id}')">📤 تسليم التمرين</button>
+          </div>
+        </section>
+      </div>
+      <div class="v66-layout-right">
+        <section class="v66-section-box">
+          <div class="v66-box-head green"><span class="box-icon">🎯</span>الأهداف</div>
+          <div class="v66-box-body"><p style="margin:0 0 8px;color:#416176">في نهاية هذا التمرين ستكون قادرًا على:</p><ul class="v66-goal-list">${obj.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+        </section>
+        <section class="v66-section-box">
+          <div class="v66-box-head orange"><span class="box-icon">📋</span>المطلوب</div>
+          <div class="v66-box-body"><p style="margin:0 0 8px;color:#8a6124">نفّذ الخطوات التالية في Packet Tracer:</p><ol class="v66-task-list-exact">${tasks.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
+        </section>
+        <section class="v66-section-box">
+          <div class="v66-box-head purple"><span class="box-icon">☆</span>معايير التقييم (Rubric)</div>
+          <div class="v66-box-body"><p style="margin:0 0 8px;color:#6a4b8f">سيتم تقييم التمرين حسب المعايير التالية:</p><div class="v66-rubric-exact">${rubric.map(x=>`<div>${esc(x.criterion||'')}</div><div>${Number(x.points||0)} درجة</div>`).join('')}</div></div>
+        </section>
+      </div>
+    </div>
+  </article>`;
+}
+
+let v66ExercisesCache=[];
+let v66ExerciseSubMap=new Map();
+let v66ExerciseTotal=12;
+
+function v66SelectExercise(no){
+  v66ActiveExerciseNo=Number(no)||1;
+  document.querySelectorAll('.v66-exercise-tab').forEach(b=>{
+    b.classList.toggle('active',Number(b.dataset.exerciseNo)===v66ActiveExerciseNo);
+  });
+  const host=$('v66ExerciseActivePanel');
+  const l=v66ExercisesCache.find(x=>Number(x.lab_no)===v66ActiveExerciseNo);
+  if(host&&l){
+    host.innerHTML=v66BuildExercisePanel(l,v66ExerciseSubMap.get(l.id));
+  }
+  const pos=$('v66ExercisePosition'); if(pos)pos.textContent=`تمرين ${v66ActiveExerciseNo} من ${v66ExerciseTotal}`;
+  window.scrollTo({top:Math.max(0,(document.getElementById('packetLabs')?.offsetTop||0)-12),behavior:'smooth'});
+}
+
 async function v66RenderLabs(){
   const host=$('v66LabsGrid'); if(!host)return;
-  const r=await v66GetLabs();
-  const submissions=user?.id
-    ? await db.from('packet_tracer_submissions').select('lab_id,status,score,feedback,submitted_at').eq('student_id',user.id)
-    : {data:[],error:null};
+  host.innerHTML='<div class="muted">⏳ جارٍ تجهيز قائمة التمارين...</div>';
+
+  const labFallback={labs:v66FallbackLabs.map(x=>({...x,id:'local-lab-'+x.lab_no,rubric:[{criterion:'تنفيذ المطلوب',points:Math.round(x.max_score*.35)},{criterion:'صحة الإعدادات',points:Math.round(x.max_score*.30)},{criterion:'التحقق والاختبار',points:Math.round(x.max_score*.20)},{criterion:'التنظيم والتوثيق',points:x.max_score-Math.round(x.max_score*.35)-Math.round(x.max_score*.30)-Math.round(x.max_score*.20)}]})),configured:false,error:null};
+  const r=await v66WithTimeout(v66GetLabs(),3000,labFallback);
   const rows=r.labs||[];
-  const subMap=new Map((submissions.data||[]).map(s=>[s.lab_id,s]));
-  await v66RenderLabSummary(rows,submissions);
+  v66ExercisesCache=rows; v66ExerciseTotal=rows.length;
 
-  if(!rows.length){host.innerHTML='<div class="muted">لا توجد تمارين حاليًا.</div>';return;}
-
-  const pendingIndex=rows.findIndex(x=>subMap.get(x.id)?.status!=='reviewed');
-  if(!rows.some(x=>Number(x.lab_no)===Number(v66ActiveExerciseNo))){
-    v66ActiveExerciseNo=pendingIndex>=0?Number(rows[pendingIndex].lab_no):Number(rows[0].lab_no);
-  }
+  // Render tabs and the first active exercise immediately.
+  const subPromise=user?.id?db.from('packet_tracer_submissions').select('lab_id,status,score,feedback,submitted_at').eq('student_id',user.id):Promise.resolve({data:[],error:null});
+  const initialSub={data:[],error:null};
+  const pendingIndex=rows.findIndex(x=>x.lab_no===1);
+  if(!rows.some(x=>Number(x.lab_no)===Number(v66ActiveExerciseNo)))v66ActiveExerciseNo=pendingIndex>=0?1:Number(rows[0]?.lab_no||1);
 
   const tabs=rows.map(l=>`<button type="button" class="v66-exercise-tab ${Number(l.lab_no)===v66ActiveExerciseNo?'active':''}" data-exercise-no="${Number(l.lab_no)}" onclick="v66SelectExercise(${Number(l.lab_no)})">تمرين ${Number(l.lab_no)}</button>`).join('');
+  host.innerHTML=`<div class="v66-exercise-tabs" role="tablist" aria-label="تمارين Packet Tracer">${tabs}</div><div id="v66ExerciseActivePanel"></div><div class="v66-exercise-nav"><button type="button" class="light" onclick="v66SelectExercise(Math.max(1,v66ActiveExerciseNo-1))">→ التمرين السابق</button><span id="v66ExercisePosition">تمرين ${v66ActiveExerciseNo} من ${rows.length}</span><button type="button" class="light" onclick="v66SelectExercise(Math.min(${rows.length},v66ActiveExerciseNo+1))">التمرين التالي ←</button></div>`;
+  v66ExerciseSubMap=new Map();
+  const active=rows.find(x=>Number(x.lab_no)===v66ActiveExerciseNo);
+  const activeHost=$('v66ExerciseActivePanel');
+  if(activeHost&&active)activeHost.innerHTML=v66BuildExercisePanel(active,undefined);
 
-  const panels=rows.map(l=>{
-    const obj=Array.isArray(l.objectives)?l.objectives:JSON.parse(l.objectives||'[]');
-    const tasks=Array.isArray(l.tasks)?l.tasks:JSON.parse(l.tasks||'[]');
-    const rubric=Array.isArray(l.rubric)?l.rubric:JSON.parse(l.rubric||'[]');
-    const s=subMap.get(l.id);
-    return `<article id="v66ExercisePanel_${Number(l.lab_no)}" data-exercise-no="${Number(l.lab_no)}" class="v66-lab-card v66-exercise-panel ${Number(l.lab_no)===v66ActiveExerciseNo?'active':''}">
-      <div class="v66-exercise-head-simple">
-        <div class="v66-exercise-head-title">
-          <span class="badge">تمرين ${Number(l.lab_no)}</span>
-          <span class="v66-chip">${esc(l.level)}</span>
-          <h3>${esc(l.title)}</h3>
-          <p>${esc(l.topic||'Packet Tracer')}</p>
-        </div>
-        ${s?`<span class="${v66StatusClass(s.status)}" style="padding:8px 12px;border:1px solid;border-radius:999px;white-space:nowrap">${v66StatusLabel(s.status)}${s.score!=null?` — ${Number(s.score)}/${Number(l.max_score||20)}`:''}</span>`:''}
-      </div>
-      <div class="v66-meta-strip">
-        <div class="v66-meta-card blue"><b>📘 الوحدة</b><span>${esc(l.module_name)}</span></div>
-        <div class="v66-meta-card green"><b>⏱️ الوقت</b><span>${Number(l.duration_minutes||30)} دقيقة</span></div>
-        <div class="v66-meta-card orange"><b>⭐ الدرجة</b><span>${Number(l.max_score||20)} درجة</span></div>
-      </div>
-
-      <div class="v66-exact-layout">
-        <div class="v66-layout-left">
-          <section class="v66-section-box">
-            <div class="v66-box-head blue"><span class="box-icon">🖧</span>شكل السيناريو المطلوب</div>
-            <div class="v66-box-body compact">${v66RenderScenario(l.lab_no,l)}</div>
-          </section>
-
-          ${v66RenderAddressTable(l.lab_no,l)}
-
-          <section class="v66-section-box">
-            <div class="v66-box-head red"><span class="box-icon">☁️</span>تسليم التمرين</div>
-            <div class="v66-box-body">
-              ${s?`<div class="${v66StatusClass(s.status)} v66-status-box">${v66StatusLabel(s.status)} ${s.score!=null?`— الدرجة: <b>${Number(s.score)}/${Number(l.max_score||20)}</b>`:''}${s.feedback?`<div style="margin-top:5px">${esc(s.feedback)}</div>`:''}</div>`:''}
-              ${l.starter_path?`<button class="primary" onclick="v66DownloadStarter('${l.id}')">📥 تحميل ملف البداية PKT/PKA</button>`:'<div class="v66-safe-note">ملف البداية PKT/PKA يضاف من لوحة المدرب لهذا التمرين.</div>'}
-              <div class="v66-submit-grid" style="margin-top:10px">
-                <div class="v66-submit-field"><label>📦 Packet Tracer (PKT/PKA)</label><input id="v66file_${l.id}" type="file" accept=".pkt,.pka"></div>
-                <div class="v66-submit-field"><label>🖼️ صورة من الـTopology (اختياري)</label><input id="v66shot_${l.id}" type="file" accept=".png,.jpg,.jpeg,.webp"></div>
-              </div>
-              <div class="v66-submit-field v66-submit-notes" style="margin-top:10px"><label>💬 ملاحظات للمدرب (اختياري)</label><textarea id="v66note_${l.id}" placeholder="أضف أي ملاحظة عن التمرين..."></textarea></div>
-              <button class="primary green v66-submit-button" onclick="v66SubmitLab('${l.id}')">📤 تسليم التمرين</button>
-            </div>
-          </section>
-        </div>
-
-        <div class="v66-layout-right">
-          <section class="v66-section-box">
-            <div class="v66-box-head green"><span class="box-icon">🎯</span>الأهداف</div>
-            <div class="v66-box-body"><p style="margin:0 0 8px;color:#416176">في نهاية هذا التمرين ستكون قادرًا على:</p><ul class="v66-goal-list">${obj.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
-          </section>
-
-          <section class="v66-section-box">
-            <div class="v66-box-head orange"><span class="box-icon">📋</span>المطلوب</div>
-            <div class="v66-box-body"><p style="margin:0 0 8px;color:#8a6124">نفّذ الخطوات التالية في Packet Tracer:</p><ol class="v66-task-list-exact">${tasks.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
-          </section>
-
-          <section class="v66-section-box">
-            <div class="v66-box-head purple"><span class="box-icon">☆</span>معايير التقييم (Rubric)</div>
-            <div class="v66-box-body"><p style="margin:0 0 8px;color:#6a4b8f">سيتم تقييم التمرين حسب المعايير التالية:</p><div class="v66-rubric-exact">${rubric.map(x=>`<div>${esc(x.criterion||'')}</div><div>${Number(x.points||0)} درجة</div>`).join('')}</div></div>
-          </section>
-        </div>
-      </div>
-    </article>`;
-  }).join('');
-
-  host.innerHTML=`<div class="v66-exercise-tabs" role="tablist" aria-label="تمارين Packet Tracer">${tabs}</div><div class="v66-exercise-panels">${panels}</div>
-    <div class="v66-exercise-nav"><button type="button" class="light" onclick="v66SelectExercise(Math.max(1,v66ActiveExerciseNo-1))">→ التمرين السابق</button><span id="v66ExercisePosition">تمرين ${v66ActiveExerciseNo} من ${rows.length}</span><button type="button" class="light" onclick="v66SelectExercise(Math.min(${rows.length},v66ActiveExerciseNo+1))">التمرين التالي ←</button></div>`;
-}
-function v66RenderAddressTable(no,l){
-  const cfg=v66ScenarioConfigs[Number(no)]||{};
-  const pcs=(cfg.nodes||[]).filter(n=>n[2]==='pc' && n[5]);
-  if(!pcs.length)return '';
-  return `<section class="v66-section-box"><div class="v66-box-head purple"><span class="box-icon">🧾</span>جدول عناوين الأجهزة</div><div class="v66-box-body"><table class="v66-address-table" aria-label="جدول عناوين الأجهزة"><thead><tr><th>الجهاز</th><th>عنوان IP</th><th>Subnet Mask</th><th>Default Gateway</th></tr></thead><tbody>${pcs.map(n=>{
-    const parts=String(n[5]).split('/');const ip=parts[0];const prefix=parts[1];const mask=prefix==='24'?'255.255.255.0':prefix==='16'?'255.255.0.0':prefix==='8'?'255.0.0.0':'—';
-    return `<tr><td><b>${esc(n[1])}</b></td><td>${esc(ip)}</td><td>${esc(mask)}</td><td>—</td></tr>`;
-  }).join('')}</tbody></table></div></section>`;
+  // Update submission states in the background; do not block the UI.
+  subPromise.then(submissions=>{
+    v66ExerciseSubMap=new Map((submissions.data||[]).map(s=>[s.lab_id,s]));
+    v66RenderLabSummary(rows,submissions);
+    const current=rows.find(x=>Number(x.lab_no)===v66ActiveExerciseNo);
+    if(current&&activeHost)activeHost.innerHTML=v66BuildExercisePanel(current,v66ExerciseSubMap.get(current.id));
+  }).catch(()=>{});
+  v66RenderLabSummary(rows,initialSub);
 }
 async function v66DownloadStarter(labId){
  const r=await db.from('packet_tracer_labs').select('starter_path').eq('id',labId).single();if(r.error||!r.data?.starter_path){alert('لا يوجد ملف بداية مرفوع لهذا التمرين بعد.');return;}
