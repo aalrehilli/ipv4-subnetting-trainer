@@ -491,6 +491,227 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 @media(max-width:650px){.v66-exercise-nav{flex-wrap:wrap}.v66-exercise-nav button{flex:1 1 40%}}
 </style>
 
+
+<style id="v66_7_visual_hierarchy">
+/* V66.7 — larger, clearer and color-highlighted exercise content */
+.v66-exercise-panel{
+  font-size:16px;
+  line-height:1.9;
+  background:linear-gradient(135deg,#ffffff,#f9fcff);
+  border:2px solid #cfe2f2;
+  box-shadow:0 12px 28px rgba(24,73,111,.08);
+}
+.v66-exercise-panel > div:first-child .badge{
+  font-size:15px;
+  padding:8px 13px;
+  background:#0a63b6;
+}
+.v66-exercise-panel > div:first-child .v66-chip{
+  font-size:13px;
+  padding:7px 11px;
+  font-weight:900;
+}
+.v66-exercise-panel h3{
+  font-size:28px;
+  line-height:1.35;
+  margin:10px 0 8px;
+  color:#0759a5;
+  letter-spacing:-.2px;
+}
+.v66-exercise-panel .v66-lab-meta{
+  gap:9px;
+  margin:10px 0 14px;
+}
+.v66-exercise-panel .v66-lab-meta .v66-chip{
+  background:#eef7ff;
+  border-color:#c8e1f3;
+  color:#244d6b;
+}
+.v66-exercise-panel > p.muted{
+  font-size:15px;
+  font-weight:800;
+  color:#5b7084;
+  background:#f2f7fb;
+  border:1px solid #dce8f2;
+  border-radius:10px;
+  padding:8px 11px;
+}
+.v66-exercise-panel details{
+  margin-top:12px;
+  padding:0;
+}
+.v66-exercise-panel details > summary{
+  font-size:18px;
+  font-weight:900;
+  color:#17324d;
+  background:#eef7ff;
+  border:1px solid #d1e5f5;
+  border-radius:12px;
+  padding:10px 13px;
+  cursor:pointer;
+}
+.v66-exercise-panel details > .muted{
+  margin-top:10px!important;
+  color:#334c61;
+}
+.v66-exercise-panel details > .muted > b{
+  display:block;
+  font-size:17px;
+  margin:12px 0 7px;
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:900;
+}
+.v66-exercise-panel details > .muted > b:nth-of-type(1){
+  background:#eaf8ef;
+  color:#16723a;
+  border-right:5px solid #25a85b;
+}
+.v66-exercise-panel details > .muted > b:nth-of-type(2){
+  background:#fff4e5;
+  color:#a65b00;
+  border-right:5px solid #f18b18;
+}
+.v66-exercise-panel details > .muted > b:nth-of-type(3){
+  background:#efeaff;
+  color:#7048a8;
+  border-right:5px solid #8a63c7;
+}
+.v66-exercise-panel .v66-task-list{
+  font-size:15.5px;
+  padding-right:8px;
+  margin:8px 0 12px;
+}
+.v66-exercise-panel .v66-task-list li{
+  position:relative;
+  margin:8px 0;
+  padding:9px 13px 9px 10px;
+  background:#fbfdff;
+  border:1px solid #dce9f3;
+  border-right:4px solid #86bde6;
+  border-radius:10px;
+  color:#29445a;
+  font-weight:650;
+}
+.v66-exercise-panel ol.v66-task-list{
+  counter-reset:v66task;
+  list-style:none;
+  padding-right:0;
+}
+.v66-exercise-panel ol.v66-task-list li{
+  counter-increment:v66task;
+  padding-right:48px;
+}
+.v66-exercise-panel ol.v66-task-list li::before{
+  content:counter(v66task);
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:27px;
+  height:27px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  background:#0a63b6;
+  color:#fff;
+  font-size:13px;
+  font-weight:900;
+}
+.v66-exercise-panel ul.v66-task-list{
+  list-style:none;
+  padding-right:0;
+}
+.v66-exercise-panel ul.v66-task-list li{
+  padding-right:38px;
+}
+.v66-exercise-panel ul.v66-task-list li::before{
+  content:"✓";
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#25a85b;
+  color:#fff;
+  font-size:13px;
+  font-weight:900;
+}
+.v66-exercise-panel .v66-rubric{
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin-top:8px;
+}
+.v66-exercise-panel .v66-rubric div{
+  font-size:14px;
+  font-weight:750;
+  background:#f7f9fc;
+  border:1px solid #e0e7ef;
+  border-radius:9px;
+  padding:9px 10px;
+}
+.v66-exercise-panel .v66-rubric div:nth-child(2n){
+  background:#eef7ff;
+  color:#0759a5;
+  font-weight:900;
+}
+.v66-exercise-panel .v66-submit-box{
+  margin-top:18px;
+  background:#f9fcff;
+  border:1px solid #d8e7f2;
+  border-radius:14px;
+  padding:14px;
+}
+.v66-exercise-panel .v66-submit-box > label{
+  display:block;
+  font-size:15px;
+  font-weight:850;
+  color:#244d6b;
+  margin-top:9px;
+}
+.v66-exercise-panel .v66-submit-box input[type=file]{
+  font-size:14px;
+  padding:9px;
+  border:1px solid #cbdde9;
+  border-radius:9px;
+}
+.v66-exercise-panel .v66-submit-box textarea{
+  font-size:14px!important;
+  line-height:1.7!important;
+}
+.v66-exercise-panel .v66-safe-note{
+  font-size:14px;
+  line-height:1.7;
+}
+.v66-exercise-tabs{
+  background:linear-gradient(90deg,#eff8ff,#f9fbff);
+  padding:10px;
+}
+.v66-exercise-tab{
+  font-size:14px;
+  min-width:94px;
+  padding:11px 15px;
+}
+.v66-exercise-tab.active{
+  box-shadow:0 7px 16px rgba(7,89,165,.2);
+  transform:translateY(-1px);
+}
+.v66-exercise-nav{
+  font-size:14px;
+  font-weight:800;
+}
+@media(max-width:650px){
+  .v66-exercise-panel{font-size:15px}
+  .v66-exercise-panel h3{font-size:23px}
+  .v66-exercise-panel details > summary{font-size:16px}
+  .v66-exercise-panel .v66-task-list{font-size:15px}
+}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
