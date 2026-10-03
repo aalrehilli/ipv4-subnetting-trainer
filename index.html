@@ -1131,6 +1131,59 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 </style>
 
+
+<style id="v66_21_soft_palette_delete">
+/* V66.21 — lighter trainer colors + submission deletion */
+.v66-studio-card-head.blue,
+.v66-studio-card-head.green,
+.v66-studio-card-head.orange,
+.v66-studio-card-head.purple,
+.v66-studio-card-head.teal{
+  color:#24435a !important;
+  border-bottom:1px solid #dde8ef !important;
+}
+.v66-studio-card-head.blue{background:#f2f8fc !important}
+.v66-studio-card-head.green{background:#f2faf4 !important}
+.v66-studio-card-head.orange{background:#fff8ef !important}
+.v66-studio-card-head.purple{background:#f7f3fc !important}
+.v66-studio-card-head.teal{background:#f1faf8 !important}
+.v66-studio-card{
+  border-color:#dce7ee !important;
+  box-shadow:0 4px 14px rgba(35,75,105,.04) !important;
+}
+.v66-studio-toolbar{
+  background:#f7fafc !important;
+  border-color:#dfe9ef !important;
+}
+.v66-add-row.green,.v66-add-row.orange,.v66-add-row.purple{
+  color:#3b596a !important;
+  background:#fbfdfe !important;
+  border-color:#d6e3eb !important;
+}
+.v66-delete-attempt{
+  border:1px solid #e7c8cc!important;
+  background:#fff7f7!important;
+  color:#a6424e!important;
+  border-radius:8px!important;
+  padding:7px 9px!important;
+  font-weight:800!important;
+  cursor:pointer!important;
+}
+.v66-delete-attempt:hover{background:#fff0f1!important;border-color:#dcaeb5!important}
+#v66TrainerSubmissionsArea table{width:100%;border-collapse:collapse;background:#fff}
+#v66TrainerSubmissionsArea table th{
+  background:#eef5f9 !important;
+  color:#31566e !important;
+  border-color:#d7e4ec !important;
+  font-weight:900;
+}
+#v66TrainerSubmissionsArea table td{
+  border-color:#dfe9ef !important;
+  color:#385569;
+}
+#v66TrainerSubmissionsArea table tr:nth-child(even) td{background:#fbfdfe}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -2144,7 +2197,25 @@ async function v66RenderTrainerSubmissions(rows,subArea){
   const sr=await db.from('packet_tracer_submissions').select('*').order('submitted_at',{ascending:false}).limit(100);
   if(sr.error){subArea.innerHTML=`<div class="bad">❌ تعذر تحميل التسليمات: ${esc(sr.error.message||'')}</div>`;return;}
   const labMap=new Map(rows.map(x=>[x.id,x])),ids=[...new Set((sr.data||[]).map(x=>x.student_id))],pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null},pm=new Map((pr.data||[]).map(x=>[x.id,x]));
-  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>التمرين</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>تمرين ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>التمرين</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>تمرين ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button> <button class="v66-delete-attempt" onclick="v66DeleteSubmission('${s.id}')">🗑️ حذف المحاولة</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+}
+
+async function v66DeleteSubmission(id){
+  if(!confirm('هل أنت متأكد من حذف هذه المحاولة؟\nسيتم حذف سجل المحاولة وملفاتها المرتبطة من التخزين إن أمكن.'))return;
+  const row=await db.from('packet_tracer_submissions').select('id,file_path,screenshot_path').eq('id',id).single();
+  if(row.error){alert('تعذر العثور على المحاولة: '+row.error.message);return;}
+  const files=[row.data?.file_path,row.data?.screenshot_path].filter(Boolean);
+  if(files.length){
+    const rm=await db.storage.from('packet-tracer').remove(files);
+    if(rm.error){
+      const proceed=confirm('تعذر حذف ملف أو أكثر من التخزين. هل تريد حذف سجل المحاولة من قاعدة البيانات مع ترك الملف؟');
+      if(!proceed)return;
+    }
+  }
+  const del=await db.from('packet_tracer_submissions').delete().eq('id',id);
+  if(del.error){alert('تعذر حذف المحاولة: '+del.error.message+'\nقد تحتاج إلى تنفيذ Migration V66.21.');return;}
+  alert('✅ تم حذف المحاولة.');
+  await v66RenderTrainerLabs();
 }
 function v66ForceRefresh(){
   try{
