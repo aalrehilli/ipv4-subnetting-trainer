@@ -1210,6 +1210,173 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:560px){.v66-readiness-summary{align-items:flex-start;flex-direction:column}.v66-ready-row{grid-template-columns:1fr 90px}.v66-ready-assets{grid-column:1/-1}}
 </style>
 
+
+<style id="v66_24_safe_visual_refresh">
+/* V66.24 — Visual refresh only. V66.23 readiness logic/IDs remain untouched. */
+#trainerLabs{direction:rtl}
+#trainerLabs>h3{font-size:24px;line-height:1.3;color:#174e78;margin:0 0 7px;font-weight:900}
+#trainerLabs>.trainer-report-note{
+  border:1px solid #dce8ee!important;
+  background:#f7fafc!important;
+  color:#617686!important;
+  border-radius:11px!important;
+  padding:10px 13px!important;
+  line-height:1.7!important;
+  font-size:12px!important;
+}
+#v66LabReadinessArea{margin-top:12px!important}
+
+/* Studio structure: editor on the right, files/preview on the left. */
+#v66TrainerLabsArea .v66-studio-grid{
+  direction:rtl;
+  grid-template-columns:minmax(0,1.3fr) minmax(300px,.7fr)!important;
+  gap:14px!important;
+  align-items:start!important;
+}
+#v66TrainerLabsArea .v66-studio-grid>div:first-child{grid-column:1}
+#v66TrainerLabsArea .v66-studio-grid>div:last-child{grid-column:2}
+
+/* Softer card language. */
+#v66TrainerLabsArea .v66-studio-card{
+  border:1px solid #dce7ed!important;
+  border-radius:15px!important;
+  box-shadow:0 4px 14px rgba(35,75,105,.045)!important;
+  margin-bottom:12px!important;
+}
+#v66TrainerLabsArea .v66-studio-card-head{
+  min-height:48px!important;
+  display:flex!important;
+  align-items:center!important;
+  padding:10px 14px!important;
+  font-size:18px!important;
+  border-bottom:1px solid #dfe9ee!important;
+}
+#v66TrainerLabsArea .v66-studio-card-head.blue{background:#f0f7fb!important;color:#2c566e!important}
+#v66TrainerLabsArea .v66-studio-card-head.green{background:#f1f9f4!important;color:#37644d!important}
+#v66TrainerLabsArea .v66-studio-card-head.orange{background:#fff7ed!important;color:#805f3b!important}
+#v66TrainerLabsArea .v66-studio-card-head.purple{background:#f7f3fb!important;color:#604f78!important}
+#v66TrainerLabsArea .v66-studio-card-head.teal{background:#f1faf8!important;color:#3f6661!important}
+#v66TrainerLabsArea .v66-studio-body{padding:13px!important}
+
+/* Larger, clearer labels and field text. */
+#v66TrainerLabsArea .v66-form-grid label{
+  font-size:13px!important;
+  color:#496173!important;
+  margin-bottom:5px!important;
+}
+#v66TrainerLabsArea .v66-form-grid input,
+#v66TrainerLabsArea .v66-form-grid select,
+#v66TrainerLabsArea .v66-form-grid textarea{
+  min-height:42px!important;
+  padding:9px 10px!important;
+  border-color:#cddde6!important;
+  border-radius:9px!important;
+  font-size:15px!important;
+  color:#29495d!important;
+  background:#fff!important;
+}
+#v66TrainerLabsArea .v66-form-grid textarea{min-height:82px!important}
+
+/* Objectives / tasks editor: clean numbered rows. */
+#v66TrainerLabsArea .v66-editor-help{
+  background:#f8fbfd!important;
+  border-color:#e1ebf0!important;
+  color:#6b7d89!important;
+}
+#v66TrainerLabsArea .v66-editor-row,
+#v66TrainerLabsArea .v66-rubric-editor-row{
+  background:#fff;
+  border:1px solid #e1e9ee;
+  border-radius:10px;
+  padding:4px;
+}
+#v66TrainerLabsArea .v66-editor-row input,
+#v66TrainerLabsArea .v66-editor-row textarea,
+#v66TrainerLabsArea .v66-rubric-editor-row input{
+  font-size:14px!important;
+  border-color:#d1e0e7!important;
+}
+#v66TrainerLabsArea .v66-row-no{
+  background:#eef5f9!important;
+  color:#376078!important;
+}
+#v66TrainerLabsArea .v66-add-row{
+  box-shadow:none!important;
+  font-size:13px!important;
+  padding:8px 11px!important;
+}
+#v66TrainerLabsArea .v66-icon-btn{
+  background:#fff!important;
+  border-color:#e1e8ed!important;
+}
+
+/* Media cards become compact and visual rather than form-heavy. */
+#v66TrainerLabsArea .v66-topology-preview{
+  border:1px solid #dbe7ee!important;
+  border-radius:11px!important;
+  background:#fbfdfe!important;
+  padding:7px!important;
+}
+#v66TrainerLabsArea .v66-topology-preview img{
+  width:100%!important;
+  max-height:300px!important;
+  object-fit:contain!important;
+  border-radius:8px!important;
+}
+#v66TrainerLabsArea .v66-topology-empty{
+  min-height:105px!important;
+  display:grid!important;
+  place-items:center!important;
+}
+#v66TrainerLabsArea input[type=file]{
+  font-size:12px!important;
+  color:#687b88!important;
+}
+
+/* Make save/publish card visually dominant without a harsh color. */
+#v66TrainerLabsArea .v66-studio-save{
+  border-color:#cfdfe7!important;
+  background:#fbfdfe!important;
+}
+#v66TrainerLabsArea .v66-studio-save .primary{
+  min-height:40px!important;
+  border-radius:9px!important;
+}
+
+/* Keep V66.23 readiness panel readable and visually separate. */
+#v66LabReadinessArea .v66-readiness-summary{
+  background:#f7fafc!important;
+  border-color:#dce7ed!important;
+}
+#v66LabReadinessArea .v66-ready-row{
+  background:#fff!important;
+  border-color:#e0e8ee!important;
+}
+
+/* No new overflow caused by the visual layer. */
+#v66TrainerLabsArea,
+#v66TrainerLabsArea .v66-studio,
+#v66TrainerLabsArea .v66-studio-grid{
+  max-width:100%!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+}
+@media(max-width:900px){
+  #v66TrainerLabsArea .v66-studio-grid{
+    grid-template-columns:1fr!important;
+  }
+  #v66TrainerLabsArea .v66-studio-grid>div:first-child,
+  #v66TrainerLabsArea .v66-studio-grid>div:last-child{grid-column:1}
+}
+@media(max-width:650px){
+  #trainerLabs>h3{font-size:21px}
+  #v66TrainerLabsArea .v66-studio-card-head{font-size:17px!important}
+  #v66TrainerLabsArea .v66-form-grid input,
+  #v66TrainerLabsArea .v66-form-grid select,
+  #v66TrainerLabsArea .v66-form-grid textarea{font-size:14px!important}
+}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
