@@ -5825,4 +5825,47 @@ window.addEventListener("DOMContentLoaded",async()=>{
  }
  boot();
 });
-</script></body></html>
+</script>
+<section id="v66IosSimulator" class="v66-ios-simulator" dir="rtl">
+  <div class="v66-ios-hero">
+    <div><span class="v66-ios-badge">V66.26 • المرحلة الأولى</span><h2>🖥️ محاكي Cisco IOS</h2><p>تدريب تفاعلي على أوامر <b>السويتش والموجّه</b> من الوحدة 2 والوحدة 10 مباشرة داخل المتصفح.</p></div>
+    <div class="v66-ios-stats"><span>📘 الوحدة 2</span><span>🌐 الوحدة 10</span><span>⌨️ CLI</span></div>
+  </div>
+  <div class="v66-ios-tabs" role="tablist">
+    <button class="v66-ios-tab active" data-mode="learn">🎓 تدريب موجّه</button>
+    <button class="v66-ios-tab" data-mode="free">⌨️ تدريب حر</button>
+    <button class="v66-ios-tab" data-mode="test">📝 اختبار محاكاة</button>
+    <button class="v66-ios-tab" data-mode="commands">📚 دليل الأوامر</button>
+  </div>
+  <div class="v66-ios-layout">
+    <div class="v66-ios-terminal-card">
+      <div class="v66-ios-terminal-head"><div><b>🖧 السويتش</b><span id="v66IosPromptLabel">Switch&gt;</span></div><div class="v66-ios-dotbar"><i></i><i></i><i></i></div></div>
+      <div id="v66IosTerminal" class="v66-ios-terminal"></div>
+      <div class="v66-ios-command-line">
+        <span id="v66IosPrompt" class="v66-ios-prompt">Switch&gt;</span>
+        <input id="v66IosInput" autocomplete="off" spellcheck="false" placeholder="اكتب أمر Cisco IOS ثم Enter">
+        <button id="v66IosRunBtn">↵ تنفيذ</button>
+      </div>
+      <div class="v66-ios-quickbar">
+        <button data-cmd="enable">enable</button>
+        <button data-cmd="configure terminal">configure terminal</button>
+        <button data-cmd="show running-config">show running-config</button>
+        <button data-cmd="show ip interface brief">show ip interface brief</button>
+        <button id="v66IosResetBtn">↻ إعادة</button>
+      </div>
+    </div>
+    <div class="v66-ios-side">
+      <section class="v66-ios-card"><div class="v66-ios-card-head blue">🎯 المهمة الحالية</div><div class="v66-ios-card-body">
+        <div id="v66IosChallengeTitle" class="v66-ios-challenge-title"></div><div id="v66IosChallengeText" class="v66-ios-challenge-text"></div>
+        <div id="v66IosChallengeHint" class="v66-ios-hint"></div><div id="v66IosChallengeStatus" class="v66-ios-challenge-status"></div>
+        <button id="v66IosNextChallenge" class="v66-ios-next">التالي ←</button>
+      </div></section>
+      <section class="v66-ios-card"><div class="v66-ios-card-head green">✅ حالة السويتش</div><div class="v66-ios-card-body" id="v66IosState"></div></section>
+      <section class="v66-ios-card"><div class="v66-ios-card-head orange">💡 تلميح</div><div class="v66-ios-card-body">ابدأ بالأمر <code>enable</code> للانتقال إلى وضع EXEC ذي الامتيازات.</div></section>
+    </div>
+  </div>
+  <section class="v66-ios-card v66-ios-commandbook"><div class="v66-ios-card-head purple">📚 أوامر المرحلة الأولى — الوحدة 2 والوحدة 10</div><div class="v66-ios-card-body"><div id="v66IosCommandBook"></div></div></section>
+</section>
+
+<script src="v66_26_ios_simulator.js"></script>
+</body></html>
