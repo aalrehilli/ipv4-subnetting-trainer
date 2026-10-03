@@ -1184,6 +1184,17 @@ html,body{max-width:100%;overflow-x:hidden}
 #v66TrainerSubmissionsArea table tr:nth-child(even) td{background:#fbfdfe}
 </style>
 
+
+<style id="v66_22_assessment_css">
+.v66-report-toolbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;padding:11px;border:1px solid #dce7ee;border-radius:12px;background:#f8fbfd;margin-bottom:10px}
+.v66-report-toolbar label{display:block;font-size:11px;font-weight:900;color:#627587;margin-bottom:4px}.v66-report-toolbar select{width:100%;box-sizing:border-box;padding:8px;border:1px solid #cadbe5;border-radius:8px;background:#fff}
+.v66-group-report{margin-bottom:10px;border:1px solid #dfe9ef;border-radius:12px;background:#fbfdfe;padding:10px}.v66-report-summary-head{display:flex;justify-content:space-between;color:#35566a;font-size:13px;margin-bottom:7px}.v66-report-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.v66-report-card{background:#fff;border:1px solid #dfe8ee;border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:3px;font-size:11px;color:#5b6f7e}.v66-report-card b{font-size:13px;color:#31566e}.v66-report-card strong{color:#356b57}
+.v66-submissions-table{width:100%;border-collapse:collapse}.v66-submissions-table th{background:#f1f6f9!important;color:#34566b!important;border-color:#dbe6ec!important}.v66-submissions-table td{border-color:#e0e9ef!important;color:#38576a}.v66-student-id{display:block;font-size:10px;color:#8a9aa5}.v66-group-pill{display:inline-block;background:#f2f6f8;border:1px solid #d8e4ea;color:#496579;border-radius:999px;padding:4px 8px;font-size:11px}
+.v66-assessment-panel{padding:12px;border:1px solid #dbe7ee;border-radius:12px;background:#fbfdff}.v66-assess-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}.v66-assess-head b{color:#31566e}.v66-assess-head span{font-size:11px;color:#70818e}.v66-assess-grid{display:grid;gap:6px}.v66-assess-row{display:grid;grid-template-columns:minmax(0,1fr) 80px;gap:8px;align-items:center;padding:7px;border:1px solid #e0e9ef;border-radius:8px;background:#fff}.v66-assess-row b{display:block;font-size:12px;color:#3a596c}.v66-assess-row small{font-size:10px;color:#80909b}.v66-assess-row input{width:100%;box-sizing:border-box;padding:7px;border:1px solid #cddde6;border-radius:7px;text-align:center;direction:ltr}.v66-assess-total{display:flex;justify-content:space-between;margin:9px 0;padding:9px 10px;border-radius:9px;background:#f1f7fa;color:#36596c}.v66-assess-total strong{color:#1f7a58}.v66-assessment-panel textarea{width:100%;box-sizing:border-box;min-height:70px;padding:8px;border:1px solid #cddde6;border-radius:8px;resize:vertical}.v66-assess-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+@media(max-width:800px){.v66-report-toolbar{grid-template-columns:1fr 1fr}.v66-report-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.v66-report-toolbar{grid-template-columns:1fr}.v66-report-cards{grid-template-columns:1fr}.v66-assess-head{flex-direction:column}.v66-assess-row{grid-template-columns:1fr 70px}}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -2193,53 +2204,114 @@ async function v66SaveExercise(labId){
     if(msg)msg.innerHTML=`<div class="bad">❌ ${esc(e.message||'تعذر الحفظ.')}</div>`;else alert(e.message);
   }
 }
-async function v66RenderTrainerSubmissions(rows,subArea){
-  const sr=await db.from('packet_tracer_submissions').select('*').order('submitted_at',{ascending:false}).limit(100);
-  if(sr.error){subArea.innerHTML=`<div class="bad">❌ تعذر تحميل التسليمات: ${esc(sr.error.message||'')}</div>`;return;}
-  const labMap=new Map(rows.map(x=>[x.id,x])),ids=[...new Set((sr.data||[]).map(x=>x.student_id))],pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null},pm=new Map((pr.data||[]).map(x=>[x.id,x]));
-  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>التمرين</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>تمرين ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button> <button class="v66-delete-attempt" onclick="v66DeleteSubmission('${s.id}')">🗑️ حذف المحاولة</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+function v66TrainerNormalizeRubric(l){
+  let raw=[];
+  try{raw=Array.isArray(l?.rubric)?l.rubric:JSON.parse(l?.rubric||'[]')}catch(_e){}
+  return raw.map((x,i)=>({key:String(i),criterion:String(x?.criterion||''),max:Number(x?.points||0)})).filter(x=>x.criterion);
 }
-
-async function v66DeleteSubmission(id){
-  if(!confirm('هل أنت متأكد من حذف هذه المحاولة؟\nسيتم حذف سجل المحاولة وملفاتها المرتبطة من التخزين إن أمكن.'))return;
-  const row=await db.from('packet_tracer_submissions').select('id,file_path,screenshot_path').eq('id',id).single();
-  if(row.error){alert('تعذر العثور على المحاولة: '+row.error.message);return;}
-  const files=[row.data?.file_path,row.data?.screenshot_path].filter(Boolean);
-  if(files.length){
-    const rm=await db.storage.from('packet-tracer').remove(files);
-    if(rm.error){
-      const proceed=confirm('تعذر حذف ملف أو أكثر من التخزين. هل تريد حذف سجل المحاولة من قاعدة البيانات مع ترك الملف؟');
-      if(!proceed)return;
-    }
-  }
-  const del=await db.from('packet_tracer_submissions').delete().eq('id',id);
-  if(del.error){alert('تعذر حذف المحاولة: '+del.error.message+'\nقد تحتاج إلى تنفيذ Migration V66.21.');return;}
-  alert('✅ تم حذف المحاولة.');
+function v66RenderAssessmentPanel(s,l){
+  const rubric=v66TrainerNormalizeRubric(l);
+  let scores={};
+  try{scores=typeof s?.rubric_scores==='string'?JSON.parse(s.rubric_scores||'{}'):(s?.rubric_scores||{})}catch(_e){}
+  const totalMax=rubric.reduce((sum,x)=>sum+x.max,0)||Number(l?.max_score||20);
+  return `<div class="v66-assessment-panel" id="v66Assessment_${s.id}">
+    <div class="v66-assess-head"><b>🎯 تقييم التمرين</b><span>أدخل درجة كل معيار وسيُحسب المجموع تلقائيًا.</span></div>
+    <div class="v66-assess-grid">
+      ${rubric.map(x=>`<div class="v66-assess-row"><div><b>${esc(x.criterion)}</b><small>الحد الأقصى: ${x.max} درجة</small></div><input type="number" min="0" max="${x.max}" value="${scores[x.key]!=null?Number(scores[x.key]):0}" data-rubric-key="${x.key}" data-rubric-max="${x.max}" oninput="v66RecalcAssessment('${s.id}',${totalMax})"></div>`).join('')||'<div class="muted">لا توجد معايير تقييم.</div>'}
+    </div>
+    <div class="v66-assess-total"><span>المجموع</span><strong id="v66AssessTotal_${s.id}">0 / ${totalMax}</strong></div>
+    <textarea id="v66AssessFeedback_${s.id}" placeholder="ملاحظات المدرب">${esc(s.feedback||'')}</textarea>
+    <div class="v66-assess-actions">
+      <button class="primary green" onclick="v66SaveAssessment('${s.id}',${totalMax},false)">✅ اعتماد التقييم</button>
+      <button class="primary orange" onclick="v66SaveAssessment('${s.id}',${totalMax},true)">🟡 يحتاج تعديل</button>
+      <button class="light" onclick="document.getElementById('v66Assessment_${s.id}')?.closest('tr')?.remove()">إغلاق</button>
+    </div>
+  </div>`;
+}
+function v66RecalcAssessment(id,totalMax){
+  let total=0;
+  document.querySelectorAll(`#v66Assessment_${id} [data-rubric-key]`).forEach(el=>{
+    const max=Number(el.dataset.rubricMax||0);
+    const val=Math.max(0,Math.min(max,Number(el.value||0)));
+    el.value=val; total+=val;
+  });
+  const out=$(`v66AssessTotal_${id}`);if(out)out.textContent=`${total} / ${totalMax}`;
+}
+async function v66OpenAssessment(id){
+  const existing=$(`v66Assessment_${id}`);
+  if(existing){existing.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  const r=await db.from('packet_tracer_submissions').select('*').eq('id',id).single();
+  if(r.error){alert('تعذر فتح التقييم: '+r.error.message);return;}
+  const l=v66TrainerLabsCache.find(x=>x.id===r.data.lab_id);
+  const row=document.querySelector(`[data-submission-row="${id}"]`);
+  if(!l||!row)return;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td colspan="7">${v66RenderAssessmentPanel(r.data,l)}</td>`;
+  row.parentNode.insertBefore(tr,row.nextSibling);
+  v66RecalcAssessment(id,v66TrainerNormalizeRubric(l).reduce((a,x)=>a+x.max,0)||Number(l.max_score||20));
+  tr.scrollIntoView({behavior:'smooth',block:'center'});
+}
+async function v66SaveAssessment(id,totalMax,needsRevision){
+  const panel=$(`v66Assessment_${id}`);if(!panel)return;
+  const scores={};let total=0;
+  panel.querySelectorAll('[data-rubric-key]').forEach(el=>{
+    const max=Number(el.dataset.rubricMax||0),val=Math.max(0,Math.min(max,Number(el.value||0)));
+    scores[el.dataset.rubricKey]=val;total+=val;
+  });
+  const feedback=$(`v66AssessFeedback_${id}`)?.value||'';
+  const status=needsRevision?'requires_revision':'reviewed';
+  const u=await db.from('packet_tracer_submissions').update({
+    rubric_scores:scores,score:total,feedback,status,reviewed_at:new Date().toISOString(),reviewed_by:user.id
+  }).eq('id',id);
+  if(u.error){alert('تعذر حفظ التقييم: '+u.error.message);return;}
+  alert(needsRevision?'🟡 تم حفظ «يحتاج تعديل».':'✅ تم اعتماد التقييم.');
   await v66RenderTrainerLabs();
 }
-function v66ForceRefresh(){
-  try{
-    const u=new URL(window.location.href);
-    u.searchParams.set('v66_refresh',Date.now().toString());
-    window.location.replace(u.toString());
-  }catch(_e){window.location.reload();}
+async function v66RenderTrainerSubmissions(rows,subArea){
+  const sr=await db.from('packet_tracer_submissions').select('*').order('submitted_at',{ascending:false}).limit(200);
+  if(sr.error){subArea.innerHTML=`<div class="bad">❌ تعذر تحميل التسليمات: ${esc(sr.error.message||'')}</div>`;return;}
+  const labMap=new Map(rows.map(x=>[x.id,x]));
+  const ids=[...new Set((sr.data||[]).map(x=>x.student_id))];
+  const pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null};
+  const pm=new Map((pr.data||[]).map(x=>[x.id,x]));
+  const groups=[...new Set((pr.data||[]).map(x=>String(x.group_name||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ar'));
+  const labNos=[...new Set(rows.map(x=>Number(x.lab_no)))].sort((a,b)=>a-b);
+  subArea.innerHTML=`<div class="v66-report-toolbar">
+    <div><label>🔎 الشعبة</label><select id="v66GroupFilter" onchange="v66ApplySubmissionFilters()"><option value="">كل الشعب</option>${groups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('')}</select></div>
+    <div><label>🧪 التمرين</label><select id="v66LabFilter" onchange="v66ApplySubmissionFilters()"><option value="">كل التمارين</option>${labNos.map(n=>`<option value="${n}">تمرين ${n}</option>`).join('')}</select></div>
+    <div><label>📌 الحالة</label><select id="v66StatusFilter" onchange="v66ApplySubmissionFilters()"><option value="">كل الحالات</option><option value="submitted">قيد المراجعة</option><option value="reviewed">تمت المراجعة</option><option value="requires_revision">يحتاج تعديل</option></select></div>
+  </div>
+  <div id="v66GroupReport" class="v66-group-report"></div>
+  <div class="v66-table-wrap"><table class="v66-submissions-table"><thead><tr><th>التاريخ</th><th>المتدرب</th><th>رقم الشعبة</th><th>التمرين</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr></thead><tbody id="v66SubmissionsBody"></tbody></table></div>`;
+  window.v66TrainerSubmissionRows=(sr.data||[]).map(s=>{
+    const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};
+    return {...s,_labNo:Number(l.lab_no||0),_labTitle:l.title||'',_max:Number(l.max_score||0),_student:p.full_name||p.student_id||s.student_id,_studentId:p.student_id||'',_group:String(p.group_name||'').trim()};
+  });
+  v66ApplySubmissionFilters();
 }
-
-async function v66UploadStarter(labId){
- const f=$(`v66starter_${labId}`)?.files?.[0];if(!f){alert('اختر ملف PKT أو PKA.');return;}if(f.size>30*1024*1024){alert('حجم ملف البداية يجب ألا يتجاوز 30MB.');return;}
- const path=`starter/${labId}/${v66SafeFileName(f.name)}`,up=await db.storage.from('packet-tracer').upload(path,f,{upsert:true});if(up.error){alert('تعذر رفع ملف البداية: '+up.error.message);return;}
- const r=await db.from('packet_tracer_labs').update({starter_path:up.data.path,updated_at:new Date().toISOString()}).eq('id',labId);if(r.error){alert('تم رفع الملف لكن تعذر ربطه بالتمرين: '+r.error.message);return;}alert('✅ تم ربط ملف البداية بالتمرين.');await v66RenderTrainerLabs();
+function v66ApplySubmissionFilters(){
+  const rows=window.v66TrainerSubmissionRows||[];
+  const g=$('v66GroupFilter')?.value||'',n=$('v66LabFilter')?.value||'',st=$('v66StatusFilter')?.value||'';
+  const filtered=rows.filter(s=>(!g||s._group===g)&&(!n||String(s._labNo)===String(n))&&(!st||s.status===st));
+  const body=$('v66SubmissionsBody');if(!body)return;
+  body.innerHTML=filtered.length?filtered.map(s=>`<tr data-submission-row="${s.id}">
+    <td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td>
+    <td><b>${esc(s._student)}</b><small class="v66-student-id">${esc(s._studentId)}</small></td>
+    <td><span class="v66-group-pill">${esc(s._group||'غير محددة')}</span></td>
+    <td>تمرين ${s._labNo} — ${esc(s._labTitle)}</td>
+    <td>${esc(v66StatusLabel(s.status))}</td>
+    <td>${s.score!=null?`${Number(s.score)} / ${s._max}`:'—'}</td>
+    <td><button class="primary" onclick="v66OpenAssessment('${s.id}')">📝 تقييم</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button> <button class="v66-delete-attempt" onclick="v66DeleteSubmission('${s.id}')">🗑️ حذف</button></td>
+  </tr>`).join(''):'<tr><td colspan="7" class="muted">لا توجد نتائج وفق عوامل التصفية.</td></tr>';
+  v66RenderGroupReport(filtered);
 }
-async function v66DownloadSubmission(path){
- const s=await db.storage.from('packet-tracer').createSignedUrl(path,3600);if(s.error){alert('تعذر إنشاء الرابط: '+s.error.message);return;}window.open(s.data.signedUrl,'_blank','noopener');
+function v66RenderGroupReport(rows){
+  const host=$('v66GroupReport');if(!host)return;
+  const map=new Map();
+  rows.forEach(s=>{const g=s._group||'غير محددة';const x=map.get(g)||{count:0,reviewed:0,scores:[]};x.count++;if(s.status==='reviewed')x.reviewed++;if(s.score!=null)x.scores.push(Number(s.score));map.set(g,x);});
+  host.innerHTML=`<div class="v66-report-summary-head"><b>📊 تقرير الشعب</b><span>${rows.length} تسليم</span></div>
+  <div class="v66-report-cards">${[...map.entries()].map(([g,x])=>{const avg=x.scores.length?(x.scores.reduce((a,b)=>a+b,0)/x.scores.length).toFixed(1):'—';return `<div class="v66-report-card"><b>${esc(g)}</b><span>${x.count} تسليم</span><span>${x.reviewed} تمت مراجعتها</span><strong>متوسط الدرجات: ${avg}</strong></div>`}).join('')||'<div class="muted">لا توجد بيانات تقرير.</div>'}</div>`;
 }
-async function v66ReviewSubmission(id,maxScore){
- const r=await db.from('packet_tracer_submissions').select('score,feedback,status').eq('id',id).single();if(r.error){alert('تعذر فتح التسليم: '+r.error.message);return;}
- const score=prompt(`أدخل الدرجة من 0 إلى ${maxScore}:`,r.data.score==null?'':String(r.data.score));if(score===null)return;const num=Number(score);if(!Number.isFinite(num)||num<0||num>maxScore){alert('الدرجة غير صحيحة.');return;}
- const feedback=prompt('ملاحظات المدرب:',r.data.feedback||'')||'',status=num===0?'requires_revision':'reviewed';
- const u=await db.from('packet_tracer_submissions').update({score:num,feedback,status,reviewed_at:new Date().toISOString(),reviewed_by:user.id}).eq('id',id);if(u.error){alert('تعذر حفظ المراجعة: '+u.error.message);return;}alert('✅ تم حفظ تقييم التمرين.');await v66RenderTrainerLabs();
-}
-
 function resetHomeView(){
   document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));
   const home=$("home"); if(home) home.classList.remove("hidden");
