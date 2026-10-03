@@ -1071,6 +1071,17 @@ html,body{max-width:100%;overflow-x:hidden}
 .v66-command-list code{direction:ltr;unicode-bidi:isolate;background:#f1f7fa;border:1px solid #d6e5ec;color:#244d6b;border-radius:7px;padding:6px 8px;font-size:11px;white-space:nowrap}
 </style>
 
+
+<style id="v66_17_content_css">
+.v66-practical-card{margin-top:12px;border:1px solid #dce9f2;border-radius:12px;background:#fbfdff;overflow:hidden}
+.v66-practical-head{padding:9px 12px;background:linear-gradient(90deg,#eef8ff,#fbfdff);color:#0759a5;font-weight:900}
+.v66-practical-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
+.v66-practical-item{background:#fff;border:1px solid #e2edf4;border-radius:9px;padding:8px 10px}
+.v66-practical-item b{display:block;font-size:11px;color:#607487;margin-bottom:3px}.v66-practical-item span{font-size:13px;color:#29485e;font-weight:700}
+.v66-command-chip{direction:ltr;unicode-bidi:isolate;display:inline-block;background:#f3f7fa;border:1px solid #d7e4eb;color:#234b66;border-radius:7px;padding:5px 7px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;margin:3px}
+@media(max-width:650px){.v66-practical-grid{grid-template-columns:1fr}}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1787,6 +1798,13 @@ function v66BuildExercisePanel(l, s){
       <div class="v66-meta-card blue"><b>📘 الوحدة</b><span>${esc(l.module_name)}</span></div>
       <div class="v66-meta-card green"><b>⏱️ الوقت</b><span>${Number(l.duration_minutes||30)} دقيقة</span></div>
       <div class="v66-meta-card orange"><b>⭐ الدرجة</b><span>${Number(l.max_score||20)} درجة</span></div>
+    ${l.prerequisites?`<div class="v66-practical-card"><div class="v66-practical-head">🧪 معلومات التنفيذ</div><div class="v66-practical-grid">
+      <div class="v66-practical-item"><b>المتطلبات السابقة</b><span>${esc(l.prerequisites)}</span></div>
+      <div class="v66-practical-item"><b>الأدوات والأجهزة</b><span>${esc(l.tools||'Packet Tracer')}</span></div>
+      <div class="v66-practical-item"><b>النتيجة المتوقعة</b><span>${esc(l.expected_result||'إكمال التمرين بنجاح')}</span></div>
+      <div class="v66-practical-item"><b>اسم ملف البداية</b><span>${esc(l.starter_filename||'يرفعه المدرب')}</span></div>
+    </div>${Array.isArray(l.quick_commands)&&l.quick_commands.length?`<div style="padding:0 10px 10px"><b style="font-size:11px;color:#607487">⌨️ أوامر مرتبطة:</b><div>${l.quick_commands.map(c=>`<code class="v66-command-chip">${esc(c)}</code>`).join('')}</div></div>`:''}</div>`:''}
+
     </div>
 
     <div class="v66-exact-layout">
