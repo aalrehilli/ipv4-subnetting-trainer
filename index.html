@@ -1377,6 +1377,29 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 </style>
 
+
+<style id="v66_25_file_delete_css">
+.v66-submissions-table td:last-child{
+  white-space:nowrap;
+}
+.v66-submissions-table .primary,
+.v66-submissions-table .v66-delete-attempt{
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  min-height:34px;
+  margin:2px 0;
+  cursor:pointer;
+}
+.v66-submissions-table .v66-delete-attempt{
+  padding:7px 9px!important;
+}
+@media(max-width:800px){
+  .v66-submissions-table td:last-child{white-space:normal}
+}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -2543,6 +2566,63 @@ function v66RenderGroupReport(rows){
   host.innerHTML=`<div class="v66-report-summary-head"><b>📊 تقرير الشعب</b><span>${rows.length} تسليم</span></div>
   <div class="v66-report-cards">${[...map.entries()].map(([g,x])=>{const avg=x.scores.length?(x.scores.reduce((a,b)=>a+b,0)/x.scores.length).toFixed(1):'—';return `<div class="v66-report-card"><b>${esc(g)}</b><span>${x.count} تسليم</span><span>${x.reviewed} تمت مراجعتها</span><strong>متوسط الدرجات: ${avg}</strong></div>`}).join('')||'<div class="muted">لا توجد بيانات تقرير.</div>'}</div>`;
 }
+
+async function v66DownloadSubmission(path){
+  if(!path){alert('لا يوجد ملف PKT/PKA مرتبط بهذه المحاولة.');return;}
+  try{
+    const clean=String(path).replace(/^\/+/, '');
+    // Accept either a storage path or a full public URL.
+    if(/^https?:\/\//i.test(clean)){
+      window.open(clean,'_blank','noopener,noreferrer');
+      return;
+    }
+    const s=await db.storage.from('packet-tracer').createSignedUrl(clean,3600);
+    if(s.error){alert('تعذر إنشاء رابط الملف: '+s.error.message);return;}
+    if(!s.data?.signedUrl){alert('تعذر إنشاء رابط الملف.');return;}
+    window.open(s.data.signedUrl,'_blank','noopener,noreferrer');
+  }catch(e){
+    alert('تعذر فتح الملف: '+(e.message||e));
+  }
+}
+
+async function v66DeleteSubmission(id){
+  if(!id)return;
+  if(!confirm('هل أنت متأكد من حذف هذه المحاولة؟\\nسيتم حذف سجل المحاولة والملفات المرتبطة بها من التخزين إن أمكن.'))return;
+
+  try{
+    const row=await db.from('packet_tracer_submissions')
+      .select('id,file_path,screenshot_path')
+      .eq('id',id)
+      .single();
+
+    if(row.error){alert('تعذر العثور على المحاولة: '+row.error.message);return;}
+
+    const files=[row.data?.file_path,row.data?.screenshot_path]
+      .filter(Boolean)
+      .map(x=>String(x).replace(/^\/+/, ''))
+      .filter(x=>!/^https?:\/\//i.test(x));
+
+    if(files.length){
+      const rm=await db.storage.from('packet-tracer').remove(files);
+      if(rm.error){
+        const proceed=confirm('تعذر حذف ملف أو أكثر من التخزين.\\nهل تريد حذف سجل المحاولة من قاعدة البيانات فقط؟');
+        if(!proceed)return;
+      }
+    }
+
+    const del=await db.from('packet_tracer_submissions').delete().eq('id',id);
+    if(del.error){
+      alert('تعذر حذف المحاولة: '+del.error.message+'\\nتأكد من تنفيذ Migration V66.21.');
+      return;
+    }
+
+    alert('✅ تم حذف المحاولة.');
+    await v66RenderTrainerLabs();
+  }catch(e){
+    alert('حدث خطأ أثناء حذف المحاولة: '+(e.message||e));
+  }
+}
+
 function resetHomeView(){
   document.querySelectorAll("#app section").forEach(x=>x.classList.add("hidden"));
   const home=$("home"); if(home) home.classList.remove("hidden");
