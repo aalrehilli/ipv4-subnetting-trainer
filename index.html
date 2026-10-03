@@ -1091,6 +1091,24 @@ html,body{max-width:100%;overflow-x:hidden}
 .v66-exercise-gate{display:flex;align-items:center;gap:9px;margin:10px 0 12px;padding:10px 12px;border-radius:10px;border:1px solid #dce8f2;background:#f8fbfe}.v66-exercise-gate b{font-size:13px;white-space:nowrap}.v66-exercise-gate span{font-size:12px;color:#597083}.v66-exercise-gate.open{background:#eef9f2;border-color:#cfe8d7}.v66-exercise-gate.open b{color:#16723a}.v66-exercise-gate.locked{background:#fff4f4;border-color:#efcccc}.v66-exercise-gate.locked b{color:#b53a3a}
 @media(max-width:650px){.v66-learning-gate-head{align-items:flex-start;flex-direction:column}.v66-learning-gate-foot{flex-direction:column}.v66-exercise-gate{align-items:flex-start;flex-direction:column}}
 </style>
+
+<style id="v66_19_studio_css">
+.v66-studio-toolbar{display:flex;justify-content:space-between;gap:15px;align-items:flex-end;flex-wrap:wrap;padding:14px;border:1px solid #dbe8f2;border-radius:14px;background:#f8fbff;margin-bottom:12px}
+.v66-studio-select{min-width:280px}.v66-studio-select label{display:block;font-size:12px;font-weight:900;color:#607487;margin-bottom:5px}.v66-studio-select select{width:100%;padding:9px;border:1px solid #ccdce8;border-radius:9px;background:#fff}
+.v66-studio-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:12px}
+.v66-studio-card{border:1px solid #dbe7ef;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 5px 16px rgba(20,70,110,.05);margin-bottom:12px}
+.v66-studio-card-head{padding:10px 13px;font-weight:900;font-size:16px}.v66-studio-card-head.blue{background:#edf7ff;color:#0759a5}.v66-studio-card-head.green{background:#eef9f2;color:#16723a}.v66-studio-card-head.orange{background:#fff5e7;color:#a95b00}.v66-studio-card-head.purple{background:#f2ebff;color:#7048a8}.v66-studio-card-head.teal{background:#eafaf8;color:#13786f}
+.v66-studio-body{padding:12px}.v66-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.v66-form-grid .full{grid-column:1/-1}
+.v66-form-grid label{display:block;font-size:12px;font-weight:900;color:#536a7c;margin-bottom:4px}.v66-form-grid input,.v66-form-grid select,.v66-form-grid textarea{width:100%;box-sizing:border-box;padding:8px;border:1px solid #ccdce8;border-radius:8px;background:#fff}.v66-form-grid textarea{min-height:75px;resize:vertical}
+.v66-active-toggle{padding:9px;border-radius:9px;background:#f4faf6;border:1px solid #d6ebdd}.v66-active-toggle label{margin:0;color:#16723a}.v66-active-toggle input{width:auto!important}
+.v66-json-editor{width:100%;min-height:180px;box-sizing:border-box;padding:9px;border:1px solid #ccdce8;border-radius:9px;background:#fbfdff;direction:ltr;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.55}
+.v66-topology-preview img{max-width:100%}.v66-topology-empty{padding:25px 10px;text-align:center;border:1px dashed #cddfe9;border-radius:10px;background:#f8fbfd;color:#728394;font-size:13px}
+.v66-studio-error{padding:14px;border-radius:12px;border:1px solid #ebc9c9;background:#fff3f3;color:#8d3e3e}.v66-studio-error h4{margin:0 0 7px}
+.v66-studio-save .primary{margin-left:6px;margin-top:4px}
+@media(max-width:900px){.v66-studio-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.v66-form-grid{grid-template-columns:1fr}.v66-form-grid .full{grid-column:auto}.v66-studio-select{min-width:0;width:100%}}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1891,74 +1909,162 @@ async function v66RenderDashboardSummary(){
  const rows=r.data||[],done=rows.filter(x=>x.status==='reviewed').length,pending=rows.filter(x=>x.status!=='reviewed').length;
  host.innerHTML=`<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><span class="badge">🧪 V66</span><h3 style="margin:8px 0 4px">التمارين العملية</h3><div class="muted">مكتملة: ${done} • قيد المراجعة: ${pending}</div></div><button class="primary" onclick="page('packetLabs')">فتح مركز التمارين</button></div>${rows.length?rows.slice(0,3).map(s=>`<div class="stat"><b>مختبر ${esc(s.packet_tracer_labs?.lab_no||'')}</b><span>${esc(s.packet_tracer_labs?.title||'مختبر Packet Tracer')} — ${s.score!=null?Number(s.score):'قيد المراجعة'}</span></div>`).join(''):'<div class="muted" style="margin-top:10px">ابدأ أول تمرين عملي.</div>'}</div>`;
 }
+let v66TrainerLabsCache=[];
 async function v66RenderTrainerLabs(){
   if(!['trainer','admin'].includes(profile?.role))return;
-  const area=$('v66TrainerLabsArea'),subArea=$('v66TrainerSubmissionsArea');
-  if(!area||!subArea)return;
-
-  area.innerHTML='<div class="muted">⏳ جارٍ التحقق من مركز التمرينات...</div>';
-  subArea.innerHTML='';
-
-  // First make sure the authenticated DB connection itself is alive.
-  const health=await db.from('profiles').select('id').eq('id',user?.id).maybeSingle();
-  if(health.error){
-    area.innerHTML=`<div class="v66-setup-card">
-      <h4>⚠️ تعذر الاتصال بقاعدة البيانات</h4>
-      <div>الاتصال بالحساب أو Supabase غير متاح حاليًا.</div>
-      <div class="v66-setup-actions">
-        <button type="button" class="primary green" onclick="v66ForceRefresh()">🔄 إعادة تحميل الاتصال</button>
-      </div>
-      <small>${esc(health.error.message||'')}</small>
-    </div>`;
-    return;
-  }
+  const area=$('v66TrainerLabsArea'),subArea=$('v66TrainerSubmissionsArea');if(!area||!subArea)return;
+  area.innerHTML='<div class="muted">⏳ جارٍ تحميل استوديو التمارين...</div>';
 
   const lr=await db.from('packet_tracer_labs').select('*').order('lab_no');
-
   if(lr.error){
     const msg=String(lr.error.message||'');
-    const missingTable=/packet_tracer_labs|schema cache|42P01|PGRST/i.test(msg);
-    if(missingTable){
-      area.innerHTML=`<div class="v66-setup-card">
-        <h4>🔧 صلاحيات جدول التمرينات في Supabase تحتاج تحديثًا</h4>
-        <div style="line-height:1.8">الجدول موجود، لكن حساب <b>authenticated</b> لا يملك الصلاحيات المطلوبة للوصول إليه عبر Supabase REST.</div>
-        <ol class="v66-setup-steps">
-          <li>افتح <b>Supabase → SQL Editor</b>.</li>
-          <li>افتح ملف <span class="v66-setup-code">MIGRATION_V66_PACKET_TRACER_LABS.sql</span> المرفق مع هذه النسخة.</li>
-          <li>نفّذ الملف مرة أخرى بالكامل.</li>
-          <li>تأكد أن الملف يتضمن أوامر <b>GRANT</b> ثم أعد تشغيله.
-          </li>
-          <li>ارجع واضغط <b>🔄 فحص الحالة</b>.</li>
-        </ol>
-        <div class="v66-setup-actions">
-          <a class="primary" href="./MIGRATION_V66_4_PERMISSION_FIX.sql" download>📄 تحميل Migration V66.4</a>
-          <button type="button" class="primary green" onclick="v66RenderTrainerLabs()">🔄 فحص الحالة</button>
-          <button type="button" class="primary" onclick="v66ForceRefresh()">♻️ إعادة تحميل المنصة</button>
-        </div>
-        <div class="muted" style="margin-top:9px">تفاصيل Supabase: ${esc(msg)}</div>
-      </div>`;
-      subArea.innerHTML=`<div class="v66-setup-card"><h4>📤 التسليمات</h4><div>ستظهر التسليمات بعد ظهور جدول التمرينات في Supabase REST.</div></div>`;
-      return;
-    }
-    area.innerHTML=`<div class="bad">❌ تعذر تحميل مركز التمرينات.<br><small>${esc(msg)}</small></div>`;
+    const needsMigration=/topology_image_path|author_notes|packet_tracer_labs|permission|schema cache|42P01|PGRST/i.test(msg);
+    area.innerHTML=`<div class="v66-studio-error"><h4>⚠️ تعذر فتح استوديو التمارين</h4><div>${needsMigration?'قد تحتاج إلى تنفيذ Migration V66.19 في Supabase SQL Editor مرة واحدة.':'تعذر الوصول إلى بيانات التمرينات حاليًا.'}</div><small>${esc(msg)}</small></div>`;
+    subArea.innerHTML='';
     return;
   }
-
-  const rows=lr.data||[];
-  area.innerHTML=rows.length?rows.map(l=>`<div class="v66-trainer-lab"><div><b>مختبر ${Number(l.lab_no)} — ${esc(l.title)}</b><div class="muted">${esc(l.module_name)} • ${esc(l.topic)} • ${Number(l.max_score||0)} درجة</div><div style="margin-top:7px">${l.starter_path?'<span class="good" style="display:inline-block;padding:6px 9px">✅ ملف بداية مرتبط</span>':'<span class="bad" style="display:inline-block;padding:6px 9px">⚠️ لا يوجد ملف بداية</span>'}</div></div><div><input id="v66starter_${l.id}" type="file" accept=".pkt,.pka"><button class="primary" onclick="v66UploadStarter('${l.id}')">📤 رفع/استبدال ملف البداية</button></div></div>`).join(''):'<div class="muted">لا توجد مختبرات بعد.</div>';
-
-  const sr=await db.from('packet_tracer_submissions').select('*').order('submitted_at',{ascending:false}).limit(100);
-  if(sr.error){
-    subArea.innerHTML=`<div class="bad">❌ تعذر تحميل التسليمات: ${esc(sr.error.message||'خطأ غير معروف')}</div>`;
-    return;
-  }
-  const labMap=new Map(rows.map(x=>[x.id,x]));
-  const ids=[...new Set((sr.data||[]).map(x=>x.student_id))];
-  const pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null};
-  const pm=new Map((pr.data||[]).map(x=>[x.id,x]));
-  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>التمرين</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>تمرين ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+  v66TrainerLabsCache=lr.data||[];
+  if(!v66TrainerLabsCache.length){area.innerHTML='<div class="muted">لا توجد تمارين بعد.</div>';subArea.innerHTML='';return;}
+  const first=v66TrainerLabsCache.find(x=>Number(x.lab_no)===Number(window.v66TrainerActiveNo||1))||v66TrainerLabsCache[0];
+  window.v66TrainerActiveNo=Number(first.lab_no);
+  v66RenderTrainerStudio(first);
+  await v66RenderTrainerSubmissions(v66TrainerLabsCache,subArea);
 }
 
+function v66TrainerSelectLab(no){
+  const l=v66TrainerLabsCache.find(x=>Number(x.lab_no)===Number(no));if(!l)return;
+  window.v66TrainerActiveNo=Number(no);v66RenderTrainerStudio(l);
+}
+
+function v66JsonText(v){
+  if(Array.isArray(v))return JSON.stringify(v,null,2);
+  try{return JSON.stringify(JSON.parse(v||'[]'),null,2)}catch(_e){return '[]'}
+}
+function v66TrainerArrayFromText(id){
+  const t=$(id)?.value||'[]';
+  let v;try{v=JSON.parse(t)}catch(e){throw new Error(`صيغة JSON غير صحيحة في ${id}`);}
+  if(!Array.isArray(v))throw new Error(`يجب أن يكون ${id} قائمة JSON.`);
+  return v;
+}
+function v66RenderTrainerStudio(l){
+  const area=$('v66TrainerLabsArea');if(!area)return;
+  const objectives=v66JsonText(l.objectives),tasks=v66JsonText(l.tasks),rubric=v66JsonText(l.rubric);
+  const opts=v66TrainerLabsCache.map(x=>`<option value="${Number(x.lab_no)}" ${Number(x.lab_no)===Number(l.lab_no)?'selected':''}>تمرين ${Number(x.lab_no)} — ${esc(x.title)}</option>`).join('');
+  area.innerHTML=`<div class="v66-studio">
+    <div class="v66-studio-toolbar">
+      <div><span class="badge">V66.19 • Trainer Studio</span><h3 style="margin:7px 0 3px">🛠️ استوديو إعداد التمرين</h3><div class="muted">كل ما يحتاجه المدرب لإعداد تمرين Packet Tracer من مكان واحد.</div></div>
+      <div class="v66-studio-select"><label>التمرين</label><select onchange="v66TrainerSelectLab(this.value)">${opts}</select></div>
+    </div>
+    <div class="v66-studio-grid">
+      <div>
+        <section class="v66-studio-card">
+          <div class="v66-studio-card-head blue">🧩 البيانات الأساسية</div>
+          <div class="v66-studio-body v66-form-grid">
+            <div><label>عنوان التمرين</label><input id="v66edit_title" value="${esc(l.title||'')}"></div>
+            <div><label>المستوى</label><select id="v66edit_level"><option ${l.level==='مبتدئ'?'selected':''}>مبتدئ</option><option ${l.level==='متوسط'?'selected':''}>متوسط</option><option ${l.level==='متقدم'?'selected':''}>متقدم</option></select></div>
+            <div><label>الوحدة</label><input id="v66edit_module" value="${esc(l.module_name||'')}"></div>
+            <div><label>المدة بالدقائق</label><input id="v66edit_duration" type="number" min="1" value="${Number(l.duration_minutes||30)}"></div>
+            <div><label>الدرجة</label><input id="v66edit_score" type="number" min="1" value="${Number(l.max_score||20)}"></div>
+            <div><label>الموضوع</label><input id="v66edit_topic" value="${esc(l.topic||'')}"></div>
+            <div class="full"><label>المتطلبات السابقة</label><input id="v66edit_prereq" value="${esc(l.prerequisites||'')}"></div>
+            <div class="full"><label>الأدوات والأجهزة</label><input id="v66edit_tools" value="${esc(l.tools||'')}"></div>
+            <div class="full"><label>النتيجة المتوقعة</label><textarea id="v66edit_expected">${esc(l.expected_result||'')}</textarea></div>
+            <div class="full"><label>ملاحظات المدرب الخاصة بالتمرين</label><textarea id="v66edit_notes">${esc(l.author_notes||'')}</textarea></div>
+            <div class="full v66-active-toggle"><label><input id="v66edit_active" type="checkbox" ${l.is_active?'checked':''}> نشر التمرين للمتدربين</label></div>
+          </div>
+        </section>
+        <section class="v66-studio-card">
+          <div class="v66-studio-card-head green">🎯 الأهداف</div>
+          <div class="v66-studio-body"><textarea id="v66edit_objectives" class="v66-json-editor">${esc(objectives)}</textarea><small class="muted">قائمة JSON، عنصر لكل هدف.</small></div>
+        </section>
+        <section class="v66-studio-card">
+          <div class="v66-studio-card-head orange">📋 المطلوب</div>
+          <div class="v66-studio-body"><textarea id="v66edit_tasks" class="v66-json-editor">${esc(tasks)}</textarea><small class="muted">قائمة JSON، خطوة لكل عنصر.</small></div>
+        </section>
+        <section class="v66-studio-card">
+          <div class="v66-studio-card-head purple">⭐ Rubric</div>
+          <div class="v66-studio-body"><textarea id="v66edit_rubric" class="v66-json-editor">${esc(rubric)}</textarea><small class="muted">كل عنصر: {"criterion":"...","points":5}</small></div>
+        </section>
+      </div>
+      <div>
+        <section class="v66-studio-card">
+          <div class="v66-studio-card-head blue">🖼️ صورة السيناريو</div>
+          <div class="v66-studio-body">
+            ${l.topology_image_path?`<div id="v66TopologyPreview" class="v66-topology-preview">⏳ جارٍ تجهيز المعاينة...</div>`:'<div class="v66-topology-empty">لا توجد صورة سيناريو مرتبطة بهذا التمرين.</div>'}
+            <input id="v66topology_${l.id}" type="file" accept=".png,.jpg,.jpeg,.webp" style="margin-top:10px">
+            <button class="primary" style="margin-top:8px" onclick="v66UploadTopology('${l.id}')">📤 رفع/استبدال صورة السيناريو</button>
+          </div>
+        </section>
+        <section class="v66-studio-card">
+          <div class="v66-studio-card-head blue">📦 ملف البداية Packet Tracer</div>
+          <div class="v66-studio-body">
+            <div>${l.starter_path?'<span class="good">✅ يوجد ملف بداية</span>':'<span class="bad">⚠️ لا يوجد ملف بداية</span>'}</div>
+            <input id="v66starter_${l.id}" type="file" accept=".pkt,.pka" style="margin-top:10px">
+            <button class="primary" style="margin-top:8px" onclick="v66UploadStarter('${l.id}')">📤 رفع/استبدال PKT / PKA</button>
+          </div>
+        </section>
+        <section class="v66-studio-card v66-studio-save">
+          <div class="v66-studio-card-head teal">💾 حفظ ونشر</div>
+          <div class="v66-studio-body">
+            <p class="muted">عدّل المحتوى، تحقق من القوائم، ثم احفظ. عند تفعيل النشر سيظهر التمرين للمتدربين حسب مسار الإتقان.</p>
+            <button class="primary green" onclick="v66SaveExercise('${l.id}')">💾 حفظ التمرين</button>
+            <button class="primary" onclick="v66RenderTrainerLabs()">↻ تحديث</button>
+            <div id="v66StudioSaveMsg" style="margin-top:9px"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>`;
+  if(l.topology_image_path)v66LoadTopologyPreview(l.topology_image_path);
+}
+
+async function v66LoadTopologyPreview(path){
+  const host=$('v66TopologyPreview');if(!host)return;
+  const r=await db.storage.from('packet-tracer').createSignedUrl(path,3600);
+  if(r.error){host.innerHTML='<div class="bad">تعذر عرض الصورة.</div>';return;}
+  host.innerHTML=`<img src="${r.data.signedUrl}" alt="Topology" style="width:100%;max-height:320px;object-fit:contain;border:1px solid #dce7ef;border-radius:10px;background:#fff">`;
+}
+async function v66UploadTopology(labId){
+  const f=$(`v66topology_${labId}`)?.files?.[0];
+  if(!f){alert('اختر صورة PNG/JPG/WebP.');return;}
+  if(f.size>10*1024*1024){alert('حجم صورة السيناريو يجب ألا يتجاوز 10MB.');return;}
+  const path=`topology/${labId}/${Date.now()}_${v66SafeFileName(f.name)}`;
+  const up=await db.storage.from('packet-tracer').upload(path,f,{upsert:true});
+  if(up.error){alert('تعذر رفع صورة السيناريو: '+up.error.message);return;}
+  const r=await db.from('packet_tracer_labs').update({topology_image_path:up.data.path,updated_at:new Date().toISOString()}).eq('id',labId);
+  if(r.error){alert('تم رفع الصورة لكن تعذر ربطها بالتمرين. نفّذ Migration V66.19 ثم أعد المحاولة.');return;}
+  alert('✅ تم رفع صورة السيناريو.');await v66RenderTrainerLabs();
+}
+async function v66SaveExercise(labId){
+  const msg=$('v66StudioSaveMsg'); if(msg)msg.innerHTML='';
+  try{
+    const objectives=v66TrainerArrayFromText('v66edit_objectives');
+    const tasks=v66TrainerArrayFromText('v66edit_tasks');
+    const rubric=v66TrainerArrayFromText('v66edit_rubric');
+    const title=$('v66edit_title').value.trim();
+    if(!title){throw new Error('عنوان التمرين مطلوب.');}
+    const duration=Math.max(1,Number($('v66edit_duration').value||30));
+    const score=Math.max(1,Number($('v66edit_score').value||20));
+    const update={
+      title,level:$('v66edit_level').value,module_name:$('v66edit_module').value.trim(),duration_minutes:duration,max_score:score,
+      topic:$('v66edit_topic').value.trim(),prerequisites:$('v66edit_prereq').value.trim(),tools:$('v66edit_tools').value.trim(),
+      expected_result:$('v66edit_expected').value.trim(),author_notes:$('v66edit_notes').value.trim(),
+      objectives,tasks,rubric,is_active:$('v66edit_active').checked,updated_at:new Date().toISOString(),content_version:'V66.19'
+    };
+    const r=await db.from('packet_tracer_labs').update(update).eq('id',labId);
+    if(r.error)throw new Error(r.error.message);
+    if(msg)msg.innerHTML='<div class="good">✅ تم حفظ التمرين بنجاح.</div>';
+    await v66RenderTrainerLabs();
+  }catch(e){
+    if(msg)msg.innerHTML=`<div class="bad">❌ ${esc(e.message||'تعذر الحفظ.')}</div>`;else alert(e.message);
+  }
+}
+async function v66RenderTrainerSubmissions(rows,subArea){
+  const sr=await db.from('packet_tracer_submissions').select('*').order('submitted_at',{ascending:false}).limit(100);
+  if(sr.error){subArea.innerHTML=`<div class="bad">❌ تعذر تحميل التسليمات: ${esc(sr.error.message||'')}</div>`;return;}
+  const labMap=new Map(rows.map(x=>[x.id,x])),ids=[...new Set((sr.data||[]).map(x=>x.student_id))],pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null},pm=new Map((pr.data||[]).map(x=>[x.id,x]));
+  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>التمرين</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>تمرين ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+}
 function v66ForceRefresh(){
   try{
     const u=new URL(window.location.href);
