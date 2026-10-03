@@ -907,6 +907,149 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 .v66-address-table td:nth-child(4){font-weight:750;color:#315267}
 </style>
 
+
+<style id="v66_15_responsive_no_scroll">
+/* V66.15 — Responsive exercise page: no horizontal scrolling, clean measurements */
+html,body{max-width:100%;overflow-x:hidden}
+#packetLabs,#packetLabs *{box-sizing:border-box}
+#packetLabs{width:100%;max-width:100%;overflow-x:hidden}
+#packetLabs .card,#packetLabs .v66-lab-card,#packetLabs .v66-section-box,
+#packetLabs .v66-scenario-panel,#packetLabs .v66-scenario-wrap,#packetLabs .v66-exact-layout,
+#packetLabs .v66-layout-left,#packetLabs .v66-layout-right{min-width:0;max-width:100%}
+#packetLabs .v66-exact-layout{
+  grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);
+}
+#packetLabs .v66-scenario-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(250px,.9fr);
+}
+#packetLabs .v66-scenario-svg{
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+}
+#packetLabs .v66-scenario-svg svg{
+  width:100%;
+  max-width:100%;
+  height:auto;
+}
+#packetLabs .v66-exercise-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  overflow:visible;
+  justify-content:flex-start;
+  gap:8px;
+  width:100%;
+}
+#packetLabs .v66-exercise-tab{
+  flex:1 1 95px;
+  min-width:82px;
+  max-width:150px;
+  white-space:nowrap;
+}
+#packetLabs .v66-exercise-panels,
+#packetLabs #v66ExerciseActivePanel,
+#packetLabs .v66-exercise-panel{
+  width:100%;
+  min-width:0;
+  max-width:100%;
+}
+#packetLabs .v66-address-scroll{
+  width:100%;
+  overflow:visible;
+}
+#packetLabs .v66-address-table{
+  width:100%;
+  min-width:0 !important;
+  table-layout:fixed;
+  font-size:clamp(10px,1.15vw,13px);
+}
+#packetLabs .v66-address-table th,
+#packetLabs .v66-address-table td{
+  min-width:0;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  padding:7px 6px;
+}
+#packetLabs .v66-address-table th:nth-child(1),
+#packetLabs .v66-address-table td:nth-child(1){width:24%}
+#packetLabs .v66-address-table th:nth-child(2),
+#packetLabs .v66-address-table td:nth-child(2){width:27%}
+#packetLabs .v66-address-table th:nth-child(3),
+#packetLabs .v66-address-table td:nth-child(3){width:27%}
+#packetLabs .v66-address-table th:nth-child(4),
+#packetLabs .v66-address-table td:nth-child(4){width:22%}
+#packetLabs .v66-address-table td:nth-child(2),
+#packetLabs .v66-address-table td:nth-child(3){
+  font-size:clamp(9px,1.1vw,12px);
+  white-space:normal;
+}
+#packetLabs .v66-submit-grid{min-width:0}
+#packetLabs input,#packetLabs textarea,#packetLabs select{
+  max-width:100%;
+  width:100%;
+}
+#packetLabs button{max-width:100%}
+#packetLabs .v66-meta-strip{min-width:0}
+#packetLabs .v66-meta-card{
+  min-width:0;
+  overflow:hidden;
+}
+#packetLabs .v66-meta-card b,#packetLabs .v66-meta-card span{
+  overflow-wrap:anywhere;
+}
+@media(max-width:900px){
+  #packetLabs .v66-exact-layout,
+  #packetLabs .v66-scenario-grid{
+    grid-template-columns:1fr;
+  }
+  #packetLabs .v66-layout-left,#packetLabs .v66-layout-right{
+    grid-column:1;
+  }
+  #packetLabs .v66-exercise-tab{
+    flex:1 1 calc(25% - 8px);
+    max-width:none;
+  }
+}
+@media(max-width:650px){
+  #packetLabs .v66-exercise-tab{
+    flex:1 1 calc(33.333% - 8px);
+    min-width:78px;
+    font-size:12px;
+    padding:9px 8px;
+  }
+  #packetLabs .v66-exercise-nav{
+    flex-wrap:wrap;
+  }
+  #packetLabs .v66-exercise-nav button{
+    flex:1 1 45%;
+    min-width:0;
+  }
+  #packetLabs .v66-box-body{
+    padding:10px;
+  }
+  #packetLabs .v66-address-table th,
+  #packetLabs .v66-address-table td{
+    padding:6px 4px;
+    line-height:1.45;
+  }
+}
+@media(max-width:430px){
+  #packetLabs .v66-exercise-tab{
+    flex:1 1 calc(50% - 8px);
+  }
+  #packetLabs .v66-exercise-head-simple{
+    flex-wrap:wrap;
+  }
+  #packetLabs .v66-meta-strip{
+    grid-template-columns:1fr;
+  }
+  #packetLabs .v66-address-table{
+    font-size:10px;
+  }
+}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1651,7 +1794,6 @@ function v66SelectExercise(no){
     catch(e){console.error('V66 exercise select error',e);host.innerHTML='<div class="bad">تعذر عرض التمرين. أعد تحميل الصفحة.</div>';}
   }
   const pos=$('v66ExercisePosition'); if(pos)pos.textContent=`تمرين ${v66ActiveExerciseNo} من ${v66ExerciseTotal}`;
-  window.scrollTo({top:Math.max(0,(document.getElementById('packetLabs')?.offsetTop||0)-12),behavior:'smooth'});
 }
 
 async function v66RenderLabs(){
