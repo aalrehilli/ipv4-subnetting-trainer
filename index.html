@@ -895,6 +895,18 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 }
 </style>
 
+
+<style id="v66_14_address_table_css">
+.v66-address-section{width:100%}
+.v66-address-note{margin-bottom:9px;padding:8px 10px;background:#f8fbff;border:1px solid #dce8f2;border-radius:9px;color:#557084;font-size:12px;line-height:1.7}
+.v66-address-scroll{overflow-x:auto}
+.v66-address-table{min-width:650px}
+.v66-address-table td:nth-child(2),.v66-address-table td:nth-child(3){font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;direction:ltr}
+.v66-address-table td:nth-child(2){font-weight:800;color:#0759a5}
+.v66-address-table td:nth-child(3){font-weight:800;color:#6f43a5}
+.v66-address-table td:nth-child(4){font-weight:750;color:#315267}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1484,16 +1496,84 @@ async function v66WithTimeout(promise,ms,fallback){
   return result;
 }
 
+const v66AddressPlans={
+  1:[
+    ["PC1","192.168.1.1","255.255.255.0","—"],
+    ["PC2","192.168.1.2","255.255.255.0","—"],
+    ["PC3","192.168.1.3","255.255.255.0","—"]
+  ],
+  2:[
+    ["PC1","—","—","—"],
+    ["Switch1","—","—","—"]
+  ],
+  3:[
+    ["PC1","—","—","—"],
+    ["Switch1","—","—","—"]
+  ],
+  4:[
+    ["PC1","يُحدد في التمرين","255.255.255.0","—"],
+    ["PC2","يُحدد في التمرين","255.255.255.0","—"]
+  ],
+  5:[
+    ["PC1","192.168.10.10","255.255.255.0","192.168.10.1"],
+    ["PC2","192.168.10.11","255.255.255.0","192.168.10.1"],
+    ["R1 • LAN","192.168.10.1","255.255.255.0","—"]
+  ],
+  6:[
+    ["PC1","192.168.1.10","255.255.255.0","—"],
+    ["PC2","192.168.1.11","255.255.255.0","—"],
+    ["PC3","192.168.1.12","255.255.255.0","—"]
+  ],
+  7:[
+    ["PC1","—","—","—"],
+    ["R1","—","—","—"]
+  ],
+  8:[
+    ["R1 • G0/0/0","يُحدد في التمرين","يُحدد في التمرين","—"],
+    ["R1 • G0/0/1","يُحدد في التمرين","يُحدد في التمرين","—"]
+  ],
+  9:[
+    ["R1 • الواجهات","يُحدد في التمرين","يُحدد في التمرين","—"],
+    ["Network","يُحدد في التمرين","يُحدد في التمرين","—"]
+  ],
+  10:[
+    ["PC1","192.168.10.10","255.255.255.0","192.168.10.1"],
+    ["PC2","192.168.10.11","255.255.255.0","192.168.10.1"],
+    ["R1 • G0/0/0","192.168.10.1","255.255.255.0","—"],
+    ["R1 • G0/0/1","192.168.20.1","255.255.255.0","—"],
+    ["PC3","192.168.20.10","255.255.255.0","192.168.20.1"]
+  ],
+  11:[
+    ["PC1","192.168.20.10","255.255.255.0","يُكتشف أثناء التمرين"],
+    ["R1","يُفحص أثناء التمرين","يُفحص أثناء التمرين","—"],
+    ["PC2","192.168.30.10","255.255.255.0","يُكتشف أثناء التمرين"]
+  ],
+  12:[
+    ["PC1","192.168.10.10","255.255.255.0","192.168.10.1"],
+    ["PC2","192.168.10.11","255.255.255.0","192.168.10.1"],
+    ["R1 • LAN1","192.168.10.1","255.255.255.0","—"],
+    ["R1 • LAN2","192.168.20.1","255.255.255.0","—"],
+    ["PC3","192.168.20.10","255.255.255.0","192.168.20.1"],
+    ["PC4","192.168.20.11","255.255.255.0","192.168.20.1"]
+  ]
+};
+
 function v66RenderAddressTable(no,l){
-  const cfg=v66ScenarioData[Number(no)]||{};
-  const pcs=(cfg.nodes||[]).filter(n=>n[2]==='pc' && n[5]);
-  if(!pcs.length)return '';
-  return `<section class="v66-section-box"><div class="v66-box-head purple"><span class="box-icon">🧾</span>جدول عناوين الأجهزة</div><div class="v66-box-body"><table class="v66-address-table" aria-label="جدول عناوين الأجهزة"><thead><tr><th>الجهاز</th><th>عنوان IP</th><th>Subnet Mask</th><th>Default Gateway</th></tr></thead><tbody>${pcs.map(n=>{
-    const parts=String(n[5]).split('/');
-    const ip=parts[0],prefix=parts[1];
-    const mask=prefix==='24'?'255.255.255.0':prefix==='16'?'255.255.0.0':prefix==='8'?'255.0.0.0':'—';
-    return `<tr><td><b>${esc(n[1])}</b></td><td>${esc(ip)}</td><td>${esc(mask)}</td><td>—</td></tr>`;
-  }).join('')}</tbody></table></div></section>`;
+  const rows=v66AddressPlans[Number(no)]||[
+    [String(l?.title||'الجهاز'),"—","—","—"]
+  ];
+  return `<section class="v66-section-box v66-address-section">
+    <div class="v66-box-head purple"><span class="box-icon">🧾</span>جدول عناوين الأجهزة</div>
+    <div class="v66-box-body">
+      <div class="v66-address-note">📌 هذا الجدول يوضح العنونة المستخدمة في سيناريو التمرين أو ما يجب تحديده أثناء التنفيذ.</div>
+      <div class="v66-address-scroll">
+        <table class="v66-address-table" aria-label="جدول عناوين الأجهزة">
+          <thead><tr><th>الجهاز / الواجهة</th><th>عنوان IP</th><th>Subnet Mask</th><th>Default Gateway</th></tr></thead>
+          <tbody>${rows.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+  </section>`;
 }
 
 function v66BuildExercisePanel(l, s){
