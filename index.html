@@ -46,7 +46,7 @@
 .competition-card{border:2px solid #f0c36a;background:linear-gradient(135deg,#fffdf4,#fff)}.competition-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.timer-pill{display:inline-block;background:#b3261e;color:#fff;border-radius:20px;padding:7px 13px;font-weight:bold}.leaderboard{width:100%;border-collapse:collapse;margin-top:10px}.leaderboard th,.leaderboard td{border:1px solid #dce6ef;padding:9px;text-align:center}.leaderboard th{background:#f5f8fb}.rank-badge{font-weight:bold}
 .challenge-card{border:2px solid #d9c8ef;background:linear-gradient(135deg,#fff,#faf7ff)}.challenge-title{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.challenge-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.challenge-grid .question{margin:0}.score-pill{display:inline-block;background:#7048a8;color:#fff;border-radius:20px;padding:6px 11px;font-weight:bold}.table-scroll{overflow:auto}.subnet-table td,.subnet-table th{white-space:nowrap}@media(max-width:700px){.challenge-grid{grid-template-columns:1fr}}
 
-/* V36.3 — ترتيب واجهة المختبر */
+/* V36.3 — ترتيب واجهة التمرين */
 .practice-shell{padding:22px;overflow:hidden}.practice-hero{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 20px;border:1px solid #dbe8f3;border-radius:15px;background:linear-gradient(135deg,#eef7ff,#fff);margin-bottom:18px}.practice-hero h2{margin:9px 0 5px}.practice-icon{font-size:48px;min-width:70px;text-align:center}.practice-stats{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin-bottom:14px}.practice-stats .stat{margin:0;min-height:72px;align-items:center}.practice-control{background:#f8fbff;border:1px solid #dbe7f0;border-radius:12px;padding:11px 13px}.practice-control label,.duration-control label{display:block;font-weight:bold;margin-bottom:5px;color:#23435e}.practice-control select,.duration-control select{margin:0}.practice-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.practice-menu button{min-height:48px}.competition-settings{display:grid;grid-template-columns:1.5fr .8fr auto;align-items:end;gap:14px;padding:16px;border:2px solid #f0c36a;border-radius:14px;background:linear-gradient(135deg,#fffaf0,#fff);margin-bottom:18px}.competition-settings h3{margin:0 0 5px}.duration-control select{min-width:170px}.competition-start{min-width:190px;min-height:46px}.practice-shell #practiceArea,.practice-shell #challengeArea,.practice-shell #competitionArea{margin-top:12px}@media(max-width:800px){.practice-stats{grid-template-columns:1fr 1fr}.practice-stats .practice-control{grid-column:1/-1}.competition-settings{grid-template-columns:1fr 1fr}.competition-start{grid-column:1/-1;width:100%}}@media(max-width:600px){.practice-hero{padding:15px}.practice-icon{display:none}.practice-stats,.practice-menu,.competition-settings{grid-template-columns:1fr}.competition-start{grid-column:auto}.practice-menu button{width:100%}}
 
 /* V37 — لوحة المتدرب الذكية */
@@ -478,6 +478,19 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 .v66-setup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 </style>
 
+
+<style id="v66_6_tabs_css">
+.v66-exercise-tabs{display:flex;gap:8px;overflow-x:auto;padding:8px;background:#f3f8fd;border:1px solid #dce8f2;border-radius:14px;margin-bottom:12px;scrollbar-width:thin}
+.v66-exercise-tab{flex:0 0 auto;border:1px solid #d5e3ef;background:#fff;color:#315267;border-radius:10px;padding:9px 14px;font-weight:900;cursor:pointer;white-space:nowrap}
+.v66-exercise-tab:hover{background:#eef7ff;color:#0759a5}
+.v66-exercise-tab.active{background:#0759a5;color:#fff;border-color:#0759a5;box-shadow:0 5px 12px rgba(7,89,165,.16)}
+.v66-exercise-panel{display:none}
+.v66-exercise-panel.active{display:block}
+.v66-exercise-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:10px 4px}
+.v66-exercise-nav span{font-weight:900;color:#0759a5}
+@media(max-width:650px){.v66-exercise-nav{flex-wrap:wrap}.v66-exercise-nav button{flex:1 1 40%}}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -579,8 +592,8 @@ body{background:var(--v64-bg);color:var(--v64-text)}
       <button class="primary orange" onclick="page('practice',this)">ابدأ التمارين</button>
     </div>
 <div class="card v64-path-card lab">
-      <div><span class="v64-path-tag" style="background:#e9f7ff;color:#0a63b6">🧪 عملي</span><h3>مختبرات Packet Tracer</h3><p>تطبيق عملي من بناء الشبكة وتهيئة الأجهزة إلى الاختبار واستكشاف الأخطاء.</p></div>
-      <button class="primary" onclick="page('packetLabs',this)">ابدأ المختبرات</button>
+      <div><span class="v64-path-tag" style="background:#e9f7ff;color:#0a63b6">🧪 عملي</span><h3>تمارين Packet Tracer</h3><p>تطبيق عملي من بناء الشبكة وتهيئة الأجهزة إلى الاختبار واستكشاف الأخطاء.</p></div>
+      <button class="primary" onclick="page('packetLabs',this)">ابدأ التمارين</button>
     </div>
         <div class="card v64-path-card tests">
       <div><span class="v64-path-tag" style="background:#e7f8ef;color:#168a46">🏆 تقييم</span><h3>الاختبارات</h3><p>اختبارات منشورة ونتائج محفوظة وتحليل للأداء والأخطاء.</p></div>
@@ -622,12 +635,12 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 <section id="packetLabs" class="hidden">
   <div class="card hero v66-lab-hero">
     <span class="badge">V66 • PACKET TRACER LAB CENTER</span>
-    <h2>🧪 مركز المختبرات العملية</h2>
+    <h2>🧪 مركز تمارين Packet Tracer</h2>
     <p>تدريب عملي مرتبط بمقرر مبادئ الشبكات: ابنِ الشبكة، نفّذ الإعدادات، اختبر الاتصال، ثم سلّم ملف Packet Tracer.</p>
-    <div class="v66-lab-note">📌 ملفات <b>PKT / PKA</b> تفتح داخل Cisco Packet Tracer، والمنصة تحفظ حالة التسليم ودرجة المختبر وتعليقات المدرب.</div>
+    <div class="v66-lab-note">📌 ملفات <b>PKT / PKA</b> تفتح داخل Cisco Packet Tracer، والمنصة تحفظ حالة التسليم ودرجة التمرين وتعليقات المدرب.</div>
   </div>
   <div id="v66LabsSummary"></div>
-  <div id="v66LabsGrid"><div class="muted">⏳ جارٍ تحميل المختبرات...</div></div>
+  <div id="v66LabsGrid"><div class="muted">⏳ جارٍ تحميل التمرينات...</div></div>
 </section>
 
 <section id="finalExam" class="hidden">
@@ -645,7 +658,7 @@ body{background:var(--v64-bg);color:var(--v64-text)}
   </div>
 </section>
 <section id="course" class="hidden">
-<div class="card hero"><span class="badge">V57 • IPv4 + Binary + Visual Lab + Adaptive Training + Placement + Smart Exams + Analytics + Error Notebook + Achievements</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
+<div class="card hero"><span class="badge">V57 • IPv4 + Binary + Visual تمرين + Adaptive Training + Placement + Smart Exams + Analytics + Error Notebook + Achievements</span><h2>📚 المقرر التدريبي: IPv4 Subnetting</h2><p>مسار تدريبي متدرج من أساسيات IPv4 إلى تقسيم الشبكات باستخدام FLSM. يتم حفظ تقدمك مركزيًا.</p><div id="courseProgress"></div></div>
 <div id="courseLessons"></div>
 </section>
 <section id="dashboard" class="hidden">
@@ -762,9 +775,9 @@ body{background:var(--v64-bg);color:var(--v64-text)}
 </div>
 
 <div id="trainerLabs" class="hidden">
-  <h3>🧪 إدارة مختبرات Packet Tracer</h3>
+  <h3>🧪 إدارة تمارين Packet Tracer</h3>
   <div class="trainer-report-note">ارفع ملفات البداية PKT/PKA لكل مختبر وتابع تسليمات المتدربين ثم ضع الدرجة والملاحظات.</div>
-  <div id="v66TrainerLabsArea"><div class="muted">⏳ جارٍ تحميل المختبرات...</div></div>
+  <div id="v66TrainerLabsArea"><div class="muted">⏳ جارٍ تحميل التمرينات...</div></div>
   <hr style="margin:24px 0;border:0;border-top:1px solid #dbe6ef">
   <h3>📤 آخر التسليمات</h3>
   <div id="v66TrainerSubmissionsArea"><div class="muted">⏳ جارٍ تحميل التسليمات...</div></div>
@@ -1009,7 +1022,7 @@ function v64ContinueAction(){
 }
 
 
-/* ==================== V66 — Packet Tracer Lab Center ==================== */
+/* ==================== V66 — Packet Tracer تمرين Center ==================== */
 const v66FallbackLabs = [[1, "أول شبكة في Packet Tracer", "مبتدئ", 30, 20, "الوحدة 2", "أساسيات Packet Tracer", ["التعرف على واجهة Packet Tracer", "إضافة PC وSwitch", "توصيل الأجهزة", "حفظ ملف المشروع"], ["أنشئ شبكة تحتوي على PC1 وPC2 وSwitch1", "استخدم كابلات مناسبة لربط الأجهزة", "تأكد من ظهور الروابط بحالة صحيحة", "احفظ المشروع باسم LAB01_First_Network.pkt"]], [2, "التنقل داخل Cisco IOS", "مبتدئ", 30, 20, "الوحدة 2", "Cisco IOS", ["الوصول إلى CLI", "التنقل بين أوضاع EXEC", "استخدام أوامر المساعدة"], ["افتح CLI على المبدل", "انتقل بين User EXEC وPrivileged EXEC وGlobal Configuration", "استخدم ? وTab وCtrl+Z", "نفذ أوامر show المطلوبة وسجّل المخرجات"]], [3, "أوامر المساعدة والاختصارات", "مبتدئ", 25, 20, "الوحدة 2", "IOS Command Structure", ["Tab Completion", "Command History", "اختصارات لوحة المفاتيح"], ["استخدم Tab لإكمال الأوامر", "استخدم سجل الأوامر بالسهم للأعلى", "تدرب على Ctrl+C وCtrl+Z", "وثق 5 أوامر استخدمت معها المساعدة"]], [4, "التكوين الأساسي للمبدل", "مبتدئ", 40, 25, "الوحدة 2", "Switch Configuration", ["Hostname", "حماية EXEC", "Console وVTY", "حفظ الإعدادات"], ["غيّر اسم المبدل", "كوّن enable secret وكلمة مرور console", "كوّن خطوط VTY", "فعّل تشفير كلمات المرور", "احفظ running-config إلى startup-config"]], [5, "عنونة IPv4 للأجهزة الطرفية", "مبتدئ", 35, 25, "الوحدة 2", "IPv4 Addressing", ["IP Address", "Subnet Mask", "Default Gateway", "التحقق من الإعدادات"], ["اضبط IPv4 لـPC1 وPC2", "استخدم شبكة واحدة صحيحة", "اضبط Subnet Mask", "اضبط Default Gateway", "تحقق من إعدادات كل جهاز"]], [6, "Switch + PCs والاتصال الأساسي", "مبتدئ", 45, 25, "الوحدة 2", "Connectivity", ["Topology", "IPv4", "Ping", "التحقق من الاتصال"], ["ابنِ شبكة PC1 وPC2 مع Switch", "اضبط العناوين بشكل صحيح", "اختبر ping بين الجهازين", "اكتشف أي خطأ اتصال وأصلحه", "احفظ ملف المشروع"]], [7, "التكوين الأولي للموجّه", "متوسط", 45, 25, "الوحدة 10", "Router Initial Configuration", ["Hostname", "Enable Secret", "Console/VTY", "Banner", "حفظ الإعدادات"], ["كوّن اسم الموجّه R1", "أمّن EXEC المميز والمستخدم", "كوّن VTY", "فعّل service password encryption", "أضف banner MOTD", "احفظ الإعدادات"]], [8, "تكوين واجهات Router", "متوسط", 45, 30, "الوحدة 10", "Router Interfaces", ["Interface", "IP Address", "No Shutdown", "Description"], ["كوّن G0/0/0 وواجهة ثانية على R1", "أضف description لكل واجهة", "اضبط IPv4 وSubnet Mask", "نفّذ no shutdown", "تحقق باستخدام show ip interface brief"]], [9, "التحقق من الواجهات والجداول", "متوسط", 35, 25, "الوحدة 10", "Verification", ["show ip interface brief", "show ip route", "show interfaces"], ["تحقق من حالة الواجهات", "اعرض جدول التوجيه", "اعرض إحصاءات الواجهات", "فسّر أي واجهة down ولماذا", "وثق نتائج أوامر التحقق"]], [10, "Default Gateway", "متوسط", 45, 30, "الوحدة 10", "Default Gateway", ["Gateway على المضيف", "Gateway على الشبكة", "اختبار الوصول بين الشبكات"], ["اربط PCs مع Switch ثم Router", "اضبط عنوان واجهة R1", "اضبط Default Gateway للأجهزة", "اختبر الوصول إلى شبكة أخرى", "حدد سبب أي فشل اتصال"]], [11, "استكشاف أخطاء الاتصال", "متقدم", 50, 30, "الوحدة 10", "Troubleshooting", ["عزل المشكلة", "اختيار الحل", "التحقق بعد الإصلاح", "توثيق الحل"], ["استلم ملف شبكة يحتوي أخطاء مقصودة", "استخدم show وping لعزل الخلل", "أصلح IP أو Mask أو Gateway أو Interface حسب المشكلة", "أعد اختبار الاتصال", "اكتب تقريرًا مختصرًا يوضح المشكلة والحل"]], [12, "المشروع العملي الشامل", "متقدم", 90, 50, "الوحدتان 2 + 10", "Integrated Network Project", ["Switch", "Router", "IPv4", "Gateway", "Verification", "Troubleshooting"], ["ابنِ شبكة متكاملة من الصفر", "كوّن المبدل والموجّه", "اضبط عناوين IPv4 للأجهزة والواجهات", "اضبط Default Gateway", "تحقق من الاتصال", "اعثر على عطل واحد على الأقل وأصلحه", "سلّم ملف Packet Tracer النهائي مع تقرير مختصر"]]];
 
 function v66StatusClass(status){return status==='reviewed'?'v66-status-reviewed':status==='requires_revision'?'v66-status-revision':'v66-status-submitted';}
@@ -1023,19 +1036,81 @@ async function v66GetLabs(){
 async function v66RenderLabSummary(labs, submissions){
  const host=$('v66LabsSummary');if(!host)return;
  const total=labs.length,done=(submissions.data||[]).filter(s=>s.status==='reviewed').length,pending=(submissions.data||[]).filter(s=>s.status!=='reviewed').length,scoreRows=(submissions.data||[]).filter(s=>s.score!=null),avg=scoreRows.length?Math.round(scoreRows.reduce((n,s)=>n+Number(s.score||0),0)/scoreRows.length):0;
- host.innerHTML=`<div class="v66-lab-kpis"><div class="v66-kpi"><b>${total}</b><span>إجمالي المختبرات</span></div><div class="v66-kpi"><b>${done}</b><span>مكتملة</span></div><div class="v66-kpi"><b>${pending}</b><span>قيد المراجعة</span></div><div class="v66-kpi"><b>${avg}%</b><span>متوسط الدرجات</span></div></div>${submissions.error?'<div class="v66-student-note">ℹ️ يمكنك استعراض المختبرات الآن. رفع ملفات Packet Tracer والتسليم الإلكتروني سيظهر عند تفعيل خدمة المختبرات.</div>':''}`;
+ host.innerHTML=`<div class="v66-lab-kpis"><div class="v66-kpi"><b>${total}</b><span>إجمالي التمارين</span></div><div class="v66-kpi"><b>${done}</b><span>مكتملة</span></div><div class="v66-kpi"><b>${pending}</b><span>قيد المراجعة</span></div><div class="v66-kpi"><b>${avg}%</b><span>متوسط الدرجات</span></div></div>${submissions.error?'<div class="v66-student-note">ℹ️ يمكنك استعراض التمرينات الآن. رفع ملفات Packet Tracer والتسليم الإلكتروني سيظهر عند تفعيل خدمة التمرينات.</div>':''}`;
 }
+let v66ActiveExerciseNo=1;
+
+function v66SelectExercise(no){
+  v66ActiveExerciseNo=Number(no)||1;
+  document.querySelectorAll('.v66-exercise-tab').forEach(b=>{
+    b.classList.toggle('active',Number(b.dataset.exerciseNo)===v66ActiveExerciseNo);
+  });
+  document.querySelectorAll('.v66-exercise-panel').forEach(p=>{
+    p.classList.toggle('active',Number(p.dataset.exerciseNo)===v66ActiveExerciseNo);
+  });
+  const active=$(`v66ExercisePanel_${v66ActiveExerciseNo}`);
+  if(active)active.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 async function v66RenderLabs(){
- const host=$('v66LabsGrid');if(!host)return;const r=await v66GetLabs();
- const submissions=user?.id?await db.from('packet_tracer_submissions').select('lab_id,status,score,feedback,submitted_at').eq('student_id',user.id):{data:[],error:null};
- const subMap=new Map((submissions.data||[]).map(s=>[s.lab_id,s]));await v66RenderLabSummary(r.labs,submissions);
- host.innerHTML=`<div class="v66-lab-grid">${r.labs.map(l=>{
-  const obj=Array.isArray(l.objectives)?l.objectives:JSON.parse(l.objectives||'[]'),tasks=Array.isArray(l.tasks)?l.tasks:JSON.parse(l.tasks||'[]'),rubric=Array.isArray(l.rubric)?l.rubric:JSON.parse(l.rubric||'[]'),s=subMap.get(l.id);
-  return `<article class="v66-lab-card"><div><span class="badge">مختبر ${esc(l.lab_no)}</span> <span class="v66-chip">${esc(l.level)}</span></div><h3>${esc(l.title)}</h3><div class="v66-lab-meta"><span class="v66-chip">📘 ${esc(l.module_name)}</span><span class="v66-chip">⏱️ ${Number(l.duration_minutes||30)} دقيقة</span><span class="v66-chip">⭐ ${Number(l.max_score||20)} درجة</span></div><p class="muted">${esc(l.topic||'Packet Tracer')}</p><details><summary><b>🎯 الأهداف والمهام</b></summary><div class="muted" style="margin-top:9px"><b>الأهداف</b><ul class="v66-task-list">${obj.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><b>المطلوب</b><ol class="v66-task-list">${tasks.map(x=>`<li>${esc(x)}</li>`).join('')}</ol><b>Rubric</b><div class="v66-rubric">${rubric.map(x=>`<div>${esc(x.criterion||'')}</div><div>${Number(x.points||0)}</div>`).join('')}</div></div></details><div style="margin-top:10px">${l.starter_path?`<button class="primary" onclick="v66DownloadStarter('${l.id}')">📥 تحميل ملف البداية</button>`:'<div class="v66-safe-note">ملف البداية PKT/PKA يضاف من لوحة المدرب لهذا المختبر.</div>'}</div><div class="v66-submit-box">${s?`<div class="${v66StatusClass(s.status)}" style="padding:9px;border:1px solid;border-radius:9px;margin-bottom:8px">${v66StatusLabel(s.status)} ${s.score!=null?`— الدرجة: <b>${Number(s.score)}/${Number(l.max_score||20)}</b>`:''}${s.feedback?`<div style="margin-top:5px">${esc(s.feedback)}</div>`:''}</div>`:''}<label>📤 ملف Packet Tracer</label><input id="v66file_${l.id}" type="file" accept=".pkt,.pka"><label>🖼️ Screenshot اختياري</label><input id="v66shot_${l.id}" type="file" accept=".png,.jpg,.jpeg,.webp"><textarea id="v66note_${l.id}" placeholder="ملاحظات للمدرب (اختياري)" style="width:100%;min-height:70px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><button class="primary green" style="margin-top:8px" onclick="v66SubmitLab('${l.id}')">📤 تسليم المختبر</button></div></article>`;
- }).join('')}</div>`;
+  const host=$('v66LabsGrid'); if(!host)return;
+  const r=await v66GetLabs();
+  const submissions=user?.id
+    ? await db.from('packet_tracer_submissions').select('lab_id,status,score,feedback,submitted_at').eq('student_id',user.id)
+    : {data:[],error:null};
+  const rows=r.labs||[];
+  const subMap=new Map((submissions.data||[]).map(s=>[s.lab_id,s]));
+  await v66RenderLabSummary(rows,submissions);
+
+  if(!rows.length){
+    host.innerHTML='<div class="muted">لا توجد تمارين حالياً.</div>';
+    return;
+  }
+
+  // Start at first exercise that is not completed/reviewed, otherwise first.
+  const pendingIndex=rows.findIndex(x=>subMap.get(x.id)?.status!=='reviewed');
+  if(!rows.some(x=>Number(x.lab_no)===Number(v66ActiveExerciseNo))){
+    v66ActiveExerciseNo=pendingIndex>=0?Number(rows[pendingIndex].lab_no):Number(rows[0].lab_no);
+  }
+
+  const tabs=rows.map(l=>`<button type="button" class="v66-exercise-tab ${Number(l.lab_no)===v66ActiveExerciseNo?'active':''}" data-exercise-no="${Number(l.lab_no)}" onclick="v66SelectExercise(${Number(l.lab_no)})">تمرين ${Number(l.lab_no)}</button>`).join('');
+
+  const panels=rows.map(l=>{
+    const obj=Array.isArray(l.objectives)?l.objectives:JSON.parse(l.objectives||'[]');
+    const tasks=Array.isArray(l.tasks)?l.tasks:JSON.parse(l.tasks||'[]');
+    const rubric=Array.isArray(l.rubric)?l.rubric:JSON.parse(l.rubric||'[]');
+    const s=subMap.get(l.id);
+    return `<article id="v66ExercisePanel_${Number(l.lab_no)}" data-exercise-no="${Number(l.lab_no)}" class="v66-lab-card v66-exercise-panel ${Number(l.lab_no)===v66ActiveExerciseNo?'active':''}">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">
+        <div><span class="badge">تمرين ${Number(l.lab_no)}</span> <span class="v66-chip">${esc(l.level)}</span></div>
+        ${s?`<span class="${v66StatusClass(s.status)}" style="padding:7px 10px;border:1px solid;border-radius:999px">${v66StatusLabel(s.status)}</span>`:''}
+      </div>
+      <h3>${esc(l.title)}</h3>
+      <div class="v66-lab-meta"><span class="v66-chip">📘 ${esc(l.module_name)}</span><span class="v66-chip">⏱️ ${Number(l.duration_minutes||30)} دقيقة</span><span class="v66-chip">⭐ ${Number(l.max_score||20)} درجة</span></div>
+      <p class="muted">${esc(l.topic||'Packet Tracer')}</p>
+      <details open><summary><b>🎯 الأهداف والمهام</b></summary>
+        <div class="muted" style="margin-top:9px"><b>الأهداف</b><ul class="v66-task-list">${obj.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+        <b>المطلوب</b><ol class="v66-task-list">${tasks.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
+        <b>Rubric</b><div class="v66-rubric">${rubric.map(x=>`<div>${esc(x.criterion||'')}</div><div>${Number(x.points||0)}</div>`).join('')}</div></div>
+      </details>
+      <div style="margin-top:12px">${l.starter_path?`<button class="primary" onclick="v66DownloadStarter('${l.id}')">📥 تحميل ملف البداية</button>`:'<div class="v66-safe-note">ملف البداية PKT/PKA يضاف من لوحة المدرب لهذا التمرين.</div>'}</div>
+      <div class="v66-submit-box">
+        ${s?`<div class="${v66StatusClass(s.status)}" style="padding:10px;border:1px solid;border-radius:9px;margin-bottom:8px">${v66StatusLabel(s.status)} ${s.score!=null?`— الدرجة: <b>${Number(s.score)}/${Number(l.max_score||20)}</b>`:''}${s.feedback?`<div style="margin-top:5px">${esc(s.feedback)}</div>`:''}</div>`:''}
+        <label>📤 ملف Packet Tracer</label>
+        <input id="v66file_${l.id}" type="file" accept=".pkt,.pka">
+        <label>🖼️ Screenshot اختياري</label>
+        <input id="v66shot_${l.id}" type="file" accept=".png,.jpg,.jpeg,.webp">
+        <textarea id="v66note_${l.id}" placeholder="ملاحظات للمدرب (اختياري)" style="width:100%;min-height:70px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea>
+        <button class="primary green" style="margin-top:8px" onclick="v66SubmitLab('${l.id}')">📤 تسليم التمرين</button>
+      </div>
+    </article>`;
+  }).join('');
+
+  host.innerHTML=`<div class="v66-exercise-tabs" role="tablist" aria-label="تمارين Packet Tracer">${tabs}</div><div class="v66-exercise-panels">${panels}</div>
+    <div class="v66-exercise-nav"><button type="button" class="light" onclick="v66SelectExercise(Math.max(1,v66ActiveExerciseNo-1))">→ التمرين السابق</button><span id="v66ExercisePosition">تمرين ${v66ActiveExerciseNo} من ${rows.length}</span><button type="button" class="light" onclick="v66SelectExercise(Math.min(${rows.length},v66ActiveExerciseNo+1))">التمرين التالي ←</button></div>`;
 }
 async function v66DownloadStarter(labId){
- const r=await db.from('packet_tracer_labs').select('starter_path').eq('id',labId).single();if(r.error||!r.data?.starter_path){alert('لا يوجد ملف بداية مرفوع لهذا المختبر بعد.');return;}
+ const r=await db.from('packet_tracer_labs').select('starter_path').eq('id',labId).single();if(r.error||!r.data?.starter_path){alert('لا يوجد ملف بداية مرفوع لهذا التمرين بعد.');return;}
  const s=await db.storage.from('packet-tracer').createSignedUrl(r.data.starter_path,3600);if(s.error){alert('تعذر إنشاء رابط الملف: '+s.error.message);return;}window.open(s.data.signedUrl,'_blank','noopener');
 }
 async function v66SubmitLab(labId){
@@ -1045,19 +1120,19 @@ async function v66SubmitLab(labId){
  if(up.error){alert('تعذر رفع الملف. تأكد من تطبيق Migration V66.\\n\\n'+up.error.message);return;}
  let shotPath=null;if(shot){const su=await db.storage.from('packet-tracer').upload(`${base}/screenshot_${v66SafeFileName(shot.name)}`,shot,{upsert:true});if(!su.error)shotPath=su.data.path;}
  const r=await db.from('packet_tracer_submissions').upsert({lab_id:labId,student_id:user.id,file_path:up.data.path,screenshot_path:shotPath,notes,status:'submitted',score:null,feedback:null,submitted_at:new Date().toISOString(),reviewed_at:null,reviewed_by:null},{onConflict:'lab_id,student_id'}).select('id').single();
- if(r.error){alert('تم رفع الملف لكن تعذر حفظ التسليم: '+r.error.message);return;}alert('✅ تم تسليم المختبر بنجاح.');await v66RenderLabs();
+ if(r.error){alert('تم رفع الملف لكن تعذر حفظ التسليم: '+r.error.message);return;}alert('✅ تم تسليم التمرين بنجاح.');await v66RenderLabs();
 }
 async function v66RenderDashboardSummary(){
  const host=$('v66DashboardLabSummary');if(!host||!user?.id)return;const r=await db.from('packet_tracer_submissions').select('status,score,lab_id,packet_tracer_labs(title,lab_no,max_score)').eq('student_id',user.id).order('submitted_at',{ascending:false}).limit(5);if(r.error){host.innerHTML='';return;}
  const rows=r.data||[],done=rows.filter(x=>x.status==='reviewed').length,pending=rows.filter(x=>x.status!=='reviewed').length;
- host.innerHTML=`<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><span class="badge">🧪 V66</span><h3 style="margin:8px 0 4px">المختبرات العملية</h3><div class="muted">مكتملة: ${done} • قيد المراجعة: ${pending}</div></div><button class="primary" onclick="page('packetLabs')">فتح مركز المختبرات</button></div>${rows.length?rows.slice(0,3).map(s=>`<div class="stat"><b>مختبر ${esc(s.packet_tracer_labs?.lab_no||'')}</b><span>${esc(s.packet_tracer_labs?.title||'مختبر Packet Tracer')} — ${s.score!=null?Number(s.score):'قيد المراجعة'}</span></div>`).join(''):'<div class="muted" style="margin-top:10px">ابدأ أول مختبر عملي.</div>'}</div>`;
+ host.innerHTML=`<div class="card" style="margin-top:14px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><span class="badge">🧪 V66</span><h3 style="margin:8px 0 4px">التمارين العملية</h3><div class="muted">مكتملة: ${done} • قيد المراجعة: ${pending}</div></div><button class="primary" onclick="page('packetLabs')">فتح مركز التمارين</button></div>${rows.length?rows.slice(0,3).map(s=>`<div class="stat"><b>مختبر ${esc(s.packet_tracer_labs?.lab_no||'')}</b><span>${esc(s.packet_tracer_labs?.title||'مختبر Packet Tracer')} — ${s.score!=null?Number(s.score):'قيد المراجعة'}</span></div>`).join(''):'<div class="muted" style="margin-top:10px">ابدأ أول تمرين عملي.</div>'}</div>`;
 }
 async function v66RenderTrainerLabs(){
   if(!['trainer','admin'].includes(profile?.role))return;
   const area=$('v66TrainerLabsArea'),subArea=$('v66TrainerSubmissionsArea');
   if(!area||!subArea)return;
 
-  area.innerHTML='<div class="muted">⏳ جارٍ التحقق من مركز المختبرات...</div>';
+  area.innerHTML='<div class="muted">⏳ جارٍ التحقق من مركز التمرينات...</div>';
   subArea.innerHTML='';
 
   // First make sure the authenticated DB connection itself is alive.
@@ -1081,28 +1156,27 @@ async function v66RenderTrainerLabs(){
     const missingTable=/packet_tracer_labs|schema cache|42P01|PGRST/i.test(msg);
     if(missingTable){
       area.innerHTML=`<div class="v66-setup-card">
-        <h4>🔧 قاعدة بيانات المختبرات لم تُحدّث في Supabase REST بعد</h4>
-        <div style="line-height:1.8">حتى بعد إنشاء الجداول في SQL Editor، قد يحتاج Supabase إلى إعادة تحميل <b>PostgREST schema cache</b>.</div>
+        <h4>🔧 صلاحيات جدول التمرينات في Supabase تحتاج تحديثًا</h4>
+        <div style="line-height:1.8">الجدول موجود، لكن حساب <b>authenticated</b> لا يملك الصلاحيات المطلوبة للوصول إليه عبر Supabase REST.</div>
         <ol class="v66-setup-steps">
           <li>افتح <b>Supabase → SQL Editor</b>.</li>
           <li>افتح ملف <span class="v66-setup-code">MIGRATION_V66_PACKET_TRACER_LABS.sql</span> المرفق مع هذه النسخة.</li>
           <li>نفّذ الملف مرة أخرى بالكامل.</li>
-          <li>تأكد أن آخر سطر هو:
-            <div class="v66-setup-code" style="margin-top:5px">notify pgrst, 'reload schema';</div>
+          <li>تأكد أن الملف يتضمن أوامر <b>GRANT</b> ثم أعد تشغيله.
           </li>
           <li>ارجع واضغط <b>🔄 فحص الحالة</b>.</li>
         </ol>
         <div class="v66-setup-actions">
-          <a class="primary" href="./MIGRATION_V66_PACKET_TRACER_LABS.sql" download>📄 تحميل Migration V66.3</a>
+          <a class="primary" href="./MIGRATION_V66_4_PERMISSION_FIX.sql" download>📄 تحميل Migration V66.4</a>
           <button type="button" class="primary green" onclick="v66RenderTrainerLabs()">🔄 فحص الحالة</button>
           <button type="button" class="primary" onclick="v66ForceRefresh()">♻️ إعادة تحميل المنصة</button>
         </div>
         <div class="muted" style="margin-top:9px">تفاصيل Supabase: ${esc(msg)}</div>
       </div>`;
-      subArea.innerHTML=`<div class="v66-setup-card"><h4>📤 التسليمات</h4><div>ستظهر التسليمات بعد ظهور جدول المختبرات في Supabase REST.</div></div>`;
+      subArea.innerHTML=`<div class="v66-setup-card"><h4>📤 التسليمات</h4><div>ستظهر التسليمات بعد ظهور جدول التمرينات في Supabase REST.</div></div>`;
       return;
     }
-    area.innerHTML=`<div class="bad">❌ تعذر تحميل مركز المختبرات.<br><small>${esc(msg)}</small></div>`;
+    area.innerHTML=`<div class="bad">❌ تعذر تحميل مركز التمرينات.<br><small>${esc(msg)}</small></div>`;
     return;
   }
 
@@ -1118,7 +1192,7 @@ async function v66RenderTrainerLabs(){
   const ids=[...new Set((sr.data||[]).map(x=>x.student_id))];
   const pr=ids.length?await db.from('profiles').select('id,full_name,student_id,group_name').in('id',ids):{data:[],error:null};
   const pm=new Map((pr.data||[]).map(x=>[x.id,x]));
-  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>المختبر</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>Lab ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
+  subArea.innerHTML=(sr.data||[]).length?`<table><tr><th>التاريخ</th><th>المتدرب</th><th>التمرين</th><th>الحالة</th><th>الدرجة</th><th>الإجراء</th></tr>${(sr.data||[]).map(s=>{const l=labMap.get(s.lab_id)||{},p=pm.get(s.student_id)||{};return `<tr><td>${s.submitted_at?new Date(s.submitted_at).toLocaleString('ar-SA'):'—'}</td><td>${esc(p.full_name||p.student_id||s.student_id)}</td><td>تمرين ${Number(l.lab_no||0)} — ${esc(l.title||'')}</td><td>${esc(v66StatusLabel(s.status))}</td><td>${s.score!=null?Number(s.score)+' / '+Number(l.max_score||0):'—'}</td><td><button class="primary" onclick="v66ReviewSubmission('${s.id}',${Number(l.max_score||20)})">📝 مراجعة</button> <button class="primary purple" onclick="v66DownloadSubmission('${s.file_path}')">📥 الملف</button></td></tr>`;}).join('')}</table>`:'لا توجد تسليمات بعد.';
 }
 
 function v66ForceRefresh(){
@@ -1132,7 +1206,7 @@ function v66ForceRefresh(){
 async function v66UploadStarter(labId){
  const f=$(`v66starter_${labId}`)?.files?.[0];if(!f){alert('اختر ملف PKT أو PKA.');return;}if(f.size>30*1024*1024){alert('حجم ملف البداية يجب ألا يتجاوز 30MB.');return;}
  const path=`starter/${labId}/${v66SafeFileName(f.name)}`,up=await db.storage.from('packet-tracer').upload(path,f,{upsert:true});if(up.error){alert('تعذر رفع ملف البداية: '+up.error.message);return;}
- const r=await db.from('packet_tracer_labs').update({starter_path:up.data.path,updated_at:new Date().toISOString()}).eq('id',labId);if(r.error){alert('تم رفع الملف لكن تعذر ربطه بالمختبر: '+r.error.message);return;}alert('✅ تم ربط ملف البداية بالمختبر.');await v66RenderTrainerLabs();
+ const r=await db.from('packet_tracer_labs').update({starter_path:up.data.path,updated_at:new Date().toISOString()}).eq('id',labId);if(r.error){alert('تم رفع الملف لكن تعذر ربطه بالتمرين: '+r.error.message);return;}alert('✅ تم ربط ملف البداية بالتمرين.');await v66RenderTrainerLabs();
 }
 async function v66DownloadSubmission(path){
  const s=await db.storage.from('packet-tracer').createSignedUrl(path,3600);if(s.error){alert('تعذر إنشاء الرابط: '+s.error.message);return;}window.open(s.data.signedUrl,'_blank','noopener');
@@ -1141,7 +1215,7 @@ async function v66ReviewSubmission(id,maxScore){
  const r=await db.from('packet_tracer_submissions').select('score,feedback,status').eq('id',id).single();if(r.error){alert('تعذر فتح التسليم: '+r.error.message);return;}
  const score=prompt(`أدخل الدرجة من 0 إلى ${maxScore}:`,r.data.score==null?'':String(r.data.score));if(score===null)return;const num=Number(score);if(!Number.isFinite(num)||num<0||num>maxScore){alert('الدرجة غير صحيحة.');return;}
  const feedback=prompt('ملاحظات المدرب:',r.data.feedback||'')||'',status=num===0?'requires_revision':'reviewed';
- const u=await db.from('packet_tracer_submissions').update({score:num,feedback,status,reviewed_at:new Date().toISOString(),reviewed_by:user.id}).eq('id',id);if(u.error){alert('تعذر حفظ المراجعة: '+u.error.message);return;}alert('✅ تم حفظ تقييم المختبر.');await v66RenderTrainerLabs();
+ const u=await db.from('packet_tracer_submissions').update({score:num,feedback,status,reviewed_at:new Date().toISOString(),reviewed_by:user.id}).eq('id',id);if(u.error){alert('تعذر حفظ المراجعة: '+u.error.message);return;}alert('✅ تم حفظ تقييم التمرين.');await v66RenderTrainerLabs();
 }
 
 function resetHomeView(){
@@ -1324,7 +1398,7 @@ function runVisualLabFromInputs(){
 }
 function v51Demo(ipValue,prefix){v51RenderBoard(ipValue,prefix);}
 async function saveVisualLabSession(){
-  const msg=$('v51SaveMsg'); if(msg)msg.innerHTML='<div class="muted">⏳ جارٍ حفظ جلسة المختبر...</div>';
+  const msg=$('v51SaveMsg'); if(msg)msg.innerHTML='<div class="muted">⏳ جارٍ حفظ جلسة التمرين...</div>';
   try{
     if(!user){if(msg)msg.innerHTML='<div class="bad">سجّل الدخول أولًا لحفظ جلسة التدريب.</div>';return;}
     const ipValue=$('v51Ip')?.value?.trim()||'192.168.10.130'; const prefix=Number($('v51Prefix')?.value||26); const parts=v51IpParts(ipValue);
@@ -1333,7 +1407,7 @@ async function saveVisualLabSession(){
     const payload={student_id:user.id,score:10,is_correct:true,prefix_answer:String(prefix),subnet_mask_answer:mask,created_at:new Date().toISOString()};
     const r=await db.from('exercise_attempts').insert(payload);
     if(r.error) throw r.error;
-    if(msg)msg.innerHTML='<div class="good">✅ تم تسجيل جلسة المختبر ضمن تقدمك.</div>';
+    if(msg)msg.innerHTML='<div class="good">✅ تم تسجيل جلسة التمرين ضمن تقدمك.</div>';
     updatePracticeStats();
   }catch(e){console.warn('V51 save',e); if(msg)msg.innerHTML='<div class="bad">تعذر الحفظ الآن. يمكنك متابعة التدريب بشكل طبيعي.</div>';}
 }
@@ -1936,7 +2010,7 @@ function renderV57AchievementsLastKnown(){
 let v56ReviewState={questions:[],answers:{},feedback:{},index:0,score:0,submitted:false,topics:[],weakTopic:null,sessionId:null};
 function v56LabelTopic(t){return ({'Binary Conversion':'Decimal ↔ Binary','IPv4':'أساسيات IPv4','Subnetting':'Subnetting / Prefix','FLSM':'FLSM','VLSM':'VLSM'}[t]||t||'مهارات متنوعة');}
 function v56DifficultyLabel(d){return ({easy:'سهل',medium:'متوسط',hard:'متقدم'}[d]||d||'عام');}
-function v56TopicLessonHint(topic){return ({'Binary Conversion':'راجع درس التحويل بين Decimal وBinary ثم طبّق المختبر.','IPv4':'راجع أساسيات IPv4، الـ Octets، والـ 32 Bits.','Subnetting':'راجع Subnet Mask وPrefix وNetwork/Host.','FLSM':'راجع FLSM وحساب عدد الشبكات وحجم الـ Block.','VLSM':'راجع توزيع أحجام الشبكات قبل البدء بمسائل VLSM.'}[topic]||'راجع الدرس المرتبط بهذه المهارة ثم أعد المحاولة.');}
+function v56TopicLessonHint(topic){return ({'Binary Conversion':'راجع درس التحويل بين Decimal وBinary ثم طبّق التمرين.','IPv4':'راجع أساسيات IPv4، الـ Octets، والـ 32 Bits.','Subnetting':'راجع Subnet Mask وPrefix وNetwork/Host.','FLSM':'راجع FLSM وحساب عدد الشبكات وحجم الـ Block.','VLSM':'راجع توزيع أحجام الشبكات قبل البدء بمسائل VLSM.'}[topic]||'راجع الدرس المرتبط بهذه المهارة ثم أعد المحاولة.');}
 function v56ReviewStorageKey(){return `ipv4_v56_review_${user?.id||'guest'}`;}
 function v56SaveLastSession(summary){try{localStorage.setItem(v56ReviewStorageKey(),JSON.stringify(summary));}catch(_e){}}
 function v56LoadLastSession(){try{return JSON.parse(localStorage.getItem(v56ReviewStorageKey())||'null');}catch(_e){return null;}}
@@ -3741,7 +3815,7 @@ const lesson7Detailed=`
 <li>حساب Magic Number وتحديد بداية كل Subnet.</li>
 <li>كتابة Network وFirst Host وLast Host وBroadcast لكل شبكة.</li>
 </ul>
-<h3>📚 فكرة المختبر</h3>
+<h3>📚 فكرة التمرين</h3>
 <p>لدينا الشبكة <b>192.168.50.0/24</b> والمطلوب تقسيمها إلى <b>4 شبكات متساوية</b>. في FLSM يجب أن تستخدم الشبكات الأربع نفس القناع ونفس حجم العناوين.</p>
 <h3>🧮 الحل خطوة بخطوة</h3>
 <ol>
@@ -4231,7 +4305,7 @@ function v52Level(overall){
   if(overall<60)return {key:'basic',label:'أساسيات جيدة مع حاجة للتثبيت',lesson:2,desc:'ابدأ من Prefix وSubnet Mask مع مراجعة Binary قبل Subnetting.'};
   if(overall<75)return {key:'intermediate',label:'مستوى متوسط',lesson:3,desc:'يمكنك البدء في Borrowed Bits ثم Magic Number مع تمارين موجهة.'};
   if(overall<90)return {key:'advanced',label:'متقدم في الأساسيات',lesson:5,desc:'ابدأ من Network/Broadcast وFLSM ثم انتقل إلى الاختبارات.'};
-  return {key:'challenge',label:'جاهز لمسار متقدم',lesson:7,desc:'ابدأ بالمختبر العملي والتحديات ثم الاختبار النهائي.'};
+  return {key:'challenge',label:'جاهز لمسار متقدم',lesson:7,desc:'ابدأ بالتمرين العملي والتحديات ثم الاختبار النهائي.'};
 }
 function finishV52Placement(){
   const scored=v52State.questions.map(q=>({q,correct:v52IsCorrect(q,v52State.answers[q.id]||'')}));
