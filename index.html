@@ -1050,6 +1050,27 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 </style>
 
+
+<style id="v66_16_assistant_css">
+.v66-box-head.teal{
+  background:linear-gradient(90deg,#eafaf8 0%,#fbfffe 100%) !important;
+  color:#13786f !important;
+}
+.v66-box-head.teal .box-icon{
+  border-color:#c8e7e2 !important;
+  color:#13786f !important;
+}
+.v66-assistant-box{border-color:#d2ebe7 !important}
+.v66-assistant-intro{background:#f7fcfb;border:1px solid #dceeea;border-radius:9px;padding:8px 10px;color:#526f6b;font-size:12px;line-height:1.7}
+.v66-assistant-title{font-size:14px;font-weight:900;color:#13786f;margin:11px 0 6px;padding-right:2px}
+.v66-assistant-title.cmd{color:#245d86}
+.v66-assistant-checks{list-style:none;padding:0;margin:0}
+.v66-assistant-checks li{position:relative;padding:7px 30px 7px 6px;margin:5px 0;background:#fbfefd;border:1px solid #e0efec;border-radius:8px;font-size:13px;line-height:1.6;color:#35575a}
+.v66-assistant-checks li::before{content:"✓";position:absolute;right:8px;top:50%;transform:translateY(-50%);width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#1f9d85;color:#fff;font-size:11px;font-weight:900}
+.v66-command-list{display:flex;gap:6px;flex-wrap:wrap}
+.v66-command-list code{direction:ltr;unicode-bidi:isolate;background:#f1f7fa;border:1px solid #d6e5ec;color:#244d6b;border-radius:7px;padding:6px 8px;font-size:11px;white-space:nowrap}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1719,6 +1740,35 @@ function v66RenderAddressTable(no,l){
   </section>`;
 }
 
+
+const v66ExerciseAssist={
+  1:{checks:["الأجهزة الثلاثة موصولة بالمبدل","استخدم كابلات مناسبة","تحقق من ظهور الروابط باللون الأخضر","احفظ ملف Packet Tracer"],commands:["ping 192.168.1.2","ping 192.168.1.3"]},
+  2:{checks:["افتح CLI على Switch1","جرّب أوضاع EXEC المختلفة","استخدم ? للمساعدة","تدرب على التنقل بين الأوضاع"],commands:["enable","configure terminal","end"]},
+  3:{checks:["استخدم Tab لإكمال الأوامر","استخدم ? لعرض المساعدة","جرّب سجل الأوامر","استخدم Ctrl+C وCtrl+Z عند الحاجة"],commands:["?","show ?","show running-config"]},
+  4:{checks:["اضبط hostname","أمّن EXEC وconsole","اضبط VTY","احفظ running-config"],commands:["show running-config","copy running-config startup-config"]},
+  5:{checks:["تأكد من عنوان IP","تأكد من Subnet Mask","تأكد من Default Gateway","تحقق من الإعدادات على كل جهاز"],commands:["ipconfig","ping 192.168.10.1"]},
+  6:{checks:["تحقق من التوصيلات","راجع عناوين IPv4","اختبر ping بين الأجهزة","عالج أي فشل اتصال قبل التسليم"],commands:["ipconfig","ping 192.168.1.11","ping 192.168.1.12"]},
+  7:{checks:["اضبط اسم R1","أمّن الوصول الأساسي","اضبط VTY وBanner","احفظ الإعدادات"],commands:["show running-config","copy running-config startup-config"]},
+  8:{checks:["ادخل لكل Interface صحيحة","اضبط IP وMask","نفّذ no shutdown","تحقق من الحالة"],commands:["show ip interface brief","show interfaces"]},
+  9:{checks:["راجع حالة الواجهات","راجع جدول التوجيه","افحص الإحصاءات","فسّر أي حالة غير متوقعة"],commands:["show ip interface brief","show ip route","show interfaces"]},
+  10:{checks:["راجع شبكة كل طرف","اضبط Default Gateway","تأكد من عنوان واجهة R1","اختبر الوصول إلى الشبكة الأخرى"],commands:["show ip interface brief","ping 192.168.20.10","show ip route"]},
+  11:{checks:["ابدأ باختبار ping","اعزل نقطة الفشل","راجع IP/Mask/Gateway","تحقق بعد الإصلاح","وثّق سبب المشكلة"],commands:["ping","show ip interface brief","show ip route"]},
+  12:{checks:["راجع الـTopology كاملة","تحقق من جميع العناوين","تحقق من الواجهات والبوابات","اختبر الاتصال","نفّذ Troubleshooting","احفظ الملف والتقرير"],commands:["show ip interface brief","show ip route","ping","copy running-config startup-config"]}
+};
+function v66RenderExerciseAssistant(no){
+ const d=v66ExerciseAssist[Number(no)]||v66ExerciseAssist[1];
+ return `<section class="v66-section-box v66-assistant-box">
+   <div class="v66-box-head teal"><span class="box-icon">💡</span>مساعد التمرين</div>
+   <div class="v66-box-body">
+     <div class="v66-assistant-intro">قبل التسليم، استخدم هذه القائمة كمراجعة سريعة.</div>
+     <div class="v66-assistant-title">✅ تأكد من</div>
+     <ul class="v66-assistant-checks">${d.checks.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+     <div class="v66-assistant-title cmd">⌨️ أوامر سريعة</div>
+     <div class="v66-command-list">${d.commands.map(c=>`<code>${esc(c)}</code>`).join('')}</div>
+   </div>
+ </section>`;
+}
+
 function v66BuildExercisePanel(l, s){
   const obj=Array.isArray(l.objectives)?l.objectives:JSON.parse(l.objectives||'[]');
   const tasks=Array.isArray(l.tasks)?l.tasks:JSON.parse(l.tasks||'[]');
@@ -1773,6 +1823,7 @@ function v66BuildExercisePanel(l, s){
           <div class="v66-box-head purple"><span class="box-icon">☆</span>معايير التقييم (Rubric)</div>
           <div class="v66-box-body"><p style="margin:0 0 8px;color:#6a4b8f">سيتم تقييم التمرين حسب المعايير التالية:</p><div class="v66-rubric-exact">${rubric.map(x=>`<div>${esc(x.criterion||'')}</div><div>${Number(x.points||0)} درجة</div>`).join('')}</div></div>
         </section>
+        ${v66RenderExerciseAssistant(l.lab_no)}
       </div>
     </div>
   </article>`;
