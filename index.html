@@ -1521,6 +1521,16 @@ html,body{max-width:100%;overflow-x:hidden}
 </style>
 
 <link rel="stylesheet" href="v66_28_cli_black.css">
+
+<style id="v66_29_cli_functional_css">
+.v66-ios-simulator .v66-ios-terminal-card,
+.v66-ios-simulator .v66-ios-terminal,
+.v66-ios-simulator .v66-ios-command-line,
+.v66-ios-simulator .v66-ios-quickbar{position:relative;z-index:2}
+.v66-ios-simulator button{pointer-events:auto!important}
+.v66-ios-simulator input{pointer-events:auto!important}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1562,21 +1572,21 @@ html,body{max-width:100%;overflow-x:hidden}
       <div class="v66-ios-command-line">
         <span id="v66IosPrompt" class="v66-ios-prompt">Switch&gt;</span>
         <input id="v66IosInput" autocomplete="off" spellcheck="false" placeholder="اكتب أمر Cisco IOS ثم Enter">
-        <button id="v66IosRunBtn">↵ تنفيذ</button>
+        <button type="button" id="v66IosRunBtn">↵ تنفيذ</button>
       </div>
       <div class="v66-ios-quickbar">
-        <button data-cmd="enable">enable</button>
-        <button data-cmd="configure terminal">configure terminal</button>
-        <button data-cmd="show running-config">show running-config</button>
-        <button data-cmd="show ip interface brief">show ip interface brief</button>
-        <button id="v66IosResetBtn">↻ إعادة</button>
+        <button type="button" data-cmd="enable">enable</button>
+        <button type="button" data-cmd="configure terminal">configure terminal</button>
+        <button type="button" data-cmd="show running-config">show running-config</button>
+        <button type="button" data-cmd="show ip interface brief">show ip interface brief</button>
+        <button type="button" id="v66IosResetBtn">↻ إعادة</button>
       </div>
     </div>
     <div class="v66-ios-side">
       <section class="v66-ios-card"><div class="v66-ios-card-head blue">🎯 المهمة الحالية</div><div class="v66-ios-card-body">
         <div id="v66IosChallengeTitle" class="v66-ios-challenge-title"></div><div id="v66IosChallengeText" class="v66-ios-challenge-text"></div>
         <div id="v66IosChallengeHint" class="v66-ios-hint"></div><div id="v66IosChallengeStatus" class="v66-ios-challenge-status"></div>
-        <button id="v66IosNextChallenge" class="v66-ios-next">التالي ←</button>
+        <button type="button" id="v66IosNextChallenge" class="v66-ios-next">التالي ←</button>
       </div></section>
       <section class="v66-ios-card"><div class="v66-ios-card-head green">✅ حالة السويتش</div><div class="v66-ios-card-body" id="v66IosState"></div></section>
       <section class="v66-ios-card"><div class="v66-ios-card-head orange">💡 تلميح</div><div class="v66-ios-card-body">ابدأ بالأمر <code>enable</code> للانتقال إلى وضع EXEC ذي الامتيازات.</div></section>
@@ -5990,5 +6000,100 @@ window.addEventListener("DOMContentLoaded",async()=>{
 </script>
 
 
-<script src="v66_26_ios_simulator.js"></script>
+<script id="v66_29_ios_simulator_inline">
+(function(){
+"use strict";
+var root=document.getElementById("iosSimulator");if(!root)return;
+var term=document.getElementById("v66IosTerminal"),input=document.getElementById("v66IosInput");
+var promptEl=document.getElementById("v66IosPrompt"),promptLabel=document.getElementById("v66IosPromptLabel");
+var stateEl=document.getElementById("v66IosState"),ct=document.getElementById("v66IosChallengeTitle"),cx=document.getElementById("v66IosChallengeText");
+var ch=document.getElementById("v66IosChallengeHint"),cs=document.getElementById("v66IosChallengeStatus"),next=document.getElementById("v66IosNextChallenge");
+var mode="learn",testIndex=0,testScore=0;
+var S={mode:"user",modeName:"User EXEC",hostname:"Switch",enableSecret:false,console:false,vty:false,vlanIp:"unassigned",vlanMask:"unset",saved:false,history:[],challenge:0};
+var C=[
+["1 — EXEC ذي الامتيازات","أنت على السويتش الجديد. انتقل من Switch> إلى Switch#.","الأمر: enable."],
+["2 — Global Configuration","انتقل من Switch# إلى وضع التكوين العام.","الأمر: configure terminal."],
+["3 — اسم السويتش","غيّر اسم السويتش إلى SW1.","الأمر: hostname SW1."],
+["4 — Enable Secret","أنشئ enable secret بقيمة class.","الأمر: enable secret class."],
+["5 — Console","ادخل إلى line console 0، ثم password cisco وlogin.","تأكد أنك في config-line."],
+["6 — VTY","ادخل إلى line vty 0 4، ثم password cisco وlogin.","الوحدة 2 تعرض 0 15 والوحدة 10 تعرض 0 4."],
+["7 — عنوان VLAN 1","اضبط 192.168.1.2 مع 255.255.255.0 على VLAN 1.","استخدم interface vlan 1 ثم ip address."],
+["8 — التحقق","استخدم show ip interface brief.","الأمر موجود في الوحدة 2 والوحدة 10."],
+["9 — الحفظ","احفظ running-config إلى startup-config.","استخدم copy running-config startup-config."]
+];
+var G={
+"الوحدة 2 — التنقل":["enable","disable","configure terminal","exit","end","line console 0","line vty 0 15"],
+"الوحدة 2 — التكوين والحفظ":["hostname","no hostname","password","login","service password-encryption","banner motd","copy running-config startup-config","show running-config","reload","erase startup-config"],
+"الوحدة 2 — الاختبار والمساعدة":["ping","traceroute","?","show ?","show ip int brief"],
+"الوحدة 10 — إعداد الموجّه":["hostname","enable secret","line console 0","line vty 0 4","transport input ssh telnet","service password encryption","banner motd","end","copy running-config startup-config"],
+"الوحدة 10 — الواجهات":["interface gigabitethernet 0/0/0","description","ip address","ipv6 address","no shutdown","exit"],
+"الوحدة 10 — التحقق والبوابة":["show ip interface brief","show ipv6 interface brief","show ip route","show ipv6 route","show interfaces","show ip interface","show ipv6 interface","ip default-gateway"]
+};
+var T=[
+["أنت في Switch>، ما الأمر الذي ينقلك إلى Switch#؟","enable"],
+["ما الأمر للدخول إلى Global Configuration؟","configure terminal"],
+["غيّر اسم السويتش إلى SW1.","hostname SW1"],
+["ما الأمر لحفظ running-config؟","copy running-config startup-config"],
+["ما الأمر لعرض حالة الواجهات وعناوين IPv4؟","show ip interface brief"],
+["ما الأمر للدخول إلى G0/0/0؟","interface gigabitethernet 0/0/0"],
+["ما الأمر لتعيين IPv4 وSubnet Mask؟","ip address 192.168.10.1 255.255.255.0"],
+["ما الأمر لتنشيط الواجهة؟","no shutdown"],
+["ما الأمر لعرض جدول التوجيه IPv4؟","show ip route"],
+["ما الأمر لتكوين العبارة الافتراضية على السويتش؟","ip default-gateway 192.168.1.1"]
+];
+function P(){return S.mode==="user"?S.hostname+">":S.mode==="privileged"?S.hostname+"#":S.mode==="global"?S.hostname+"(config)#":S.mode==="line"?S.hostname+"(config-line)#":S.hostname+"(config-if)#";}
+function say(k,t){var d=document.createElement("div");d.className="v66-ios-line "+k;d.textContent=t;term.appendChild(d);term.scrollTop=term.scrollHeight;}
+function refresh(){var q=P();promptEl.textContent=q;promptLabel.textContent=q;var R=[["Hostname",S.hostname],["الوضع",S.modeName],["Enable Secret",S.enableSecret?"مُضبط":"غير مضبوط"],["Console",S.console?"مُضبط":"غير مضبوط"],["VTY",S.vty?"مُضبط":"غير مضبوط"],["VLAN 1 IP",S.vlanIp],["VLAN 1 Mask",S.vlanMask],["Saved",S.saved?"نعم":"لا"]];stateEl.innerHTML="<div class='v66-ios-state'>"+R.map(function(r){return"<div class='v66-ios-state-row'><b>"+r[0]+"</b><span>"+r[1]+"</span></div>";}).join("")+"</div>";}
+function run(raw){
+var c=raw.toLowerCase();say("cmd",P()+" "+raw);S.history.push(raw);
+if(c==="?"){say("out","enable  disable  configure  show  ping  traceroute");return;}
+if(c==="show ?"){say("out","interfaces  ip  ipv6  running-config  version");return;}
+if(c==="enable"){S.mode="privileged";S.modeName="Privileged EXEC";refresh();return;}
+if(c==="disable"){S.mode="user";S.modeName="User EXEC";refresh();return;}
+if(c==="configure terminal"||c==="conf t"){if(S.mode!=="privileged"){say("err","% Invalid input.");return;}S.mode="global";S.modeName="Global Configuration";refresh();return;}
+if(c==="end"||c==="ctrl-z"){S.mode="privileged";S.modeName="Privileged EXEC";refresh();return;}
+if(c==="exit"){if(S.mode==="global"){S.mode="privileged";S.modeName="Privileged EXEC";}else if(S.mode==="line"||S.mode==="interface"){S.mode="global";S.modeName="Global Configuration";}else if(S.mode==="privileged"){S.mode="user";S.modeName="User EXEC";}refresh();return;}
+if(c==="line console 0"){if(S.mode!=="global"){say("err","% Invalid input.");return;}S.mode="line";S.modeName="Line Configuration";refresh();return;}
+if(c==="line vty 0 15"||c==="line vty 0 4"){if(S.mode!=="global"){say("err","% Invalid input.");return;}S.mode="line";S.modeName="Line Configuration";S.vty=true;refresh();return;}
+if(c.indexOf("hostname ")===0){if(S.mode!=="global"){say("err","% Invalid input.");return;}S.hostname=raw.substring(9).trim()||"Switch";refresh();return;}
+if(c==="no hostname"){if(S.mode!=="global"){say("err","% Invalid input.");return;}S.hostname="Switch";refresh();return;}
+if(c.indexOf("enable secret ")===0){if(S.mode!=="global"){say("err","% Invalid input.");return;}S.enableSecret=true;say("ok","Enable secret configured.");refresh();return;}
+if(c.indexOf("password ")===0){if(S.mode!=="line"){say("err","% Invalid input.");return;}S.console=true;say("ok","Password configured.");refresh();return;}
+if(c==="login"){if(S.mode!=="line"){say("err","% Invalid input.");return;}S.console=true;say("ok","Login enabled.");refresh();return;}
+if(c.indexOf("transport input ")===0){if(S.mode!=="line"){say("err","% Invalid input.");return;}S.vty=true;say("ok","Transport input configured.");refresh();return;}
+if(c==="service password-encryption"||c==="service password encryption"){if(S.mode!=="global"){say("err","% Invalid input.");return;}say("ok","Passwords encrypted.");return;}
+if(c.indexOf("banner motd")===0){if(S.mode!=="global"){say("err","% Invalid input.");return;}say("ok","Banner configured.");return;}
+if(c==="copy running-config startup-config"){if(S.mode!=="privileged"){say("err","% Invalid input.");return;}S.saved=true;say("ok","[OK] Configuration saved to startup-config.");refresh();return;}
+if(c==="show running-config"){if(S.mode!=="privileged"){say("err","% Invalid input.");return;}say("out","hostname "+S.hostname+"\\n! basic configuration simulated for stage one\\n"+(S.enableSecret?"enable secret <configured>\\n":""));return;}
+if(c==="interface vlan 1"||c.indexOf("interface gigabitethernet ")===0){if(S.mode!=="global"){say("err","% Invalid input.");return;}S.mode="interface";S.modeName="Interface Configuration";refresh();return;}
+if(c.indexOf("description ")===0){if(S.mode!=="interface"){say("err","% Invalid input.");return;}say("ok","Description configured.");return;}
+if(c.indexOf("ip address ")===0){if(S.mode!=="interface"){say("err","% Invalid input.");return;}var a=raw.split(/\\s+/);if(a.length>=4){S.vlanIp=a[2];S.vlanMask=a[3];say("ok","IPv4 address configured.");refresh();return;}}
+if(c.indexOf("ipv6 address ")===0){if(S.mode!=="interface"){say("err","% Invalid input.");return;}say("ok","IPv6 address configured.");return;}
+if(c==="no shutdown"){if(S.mode!=="interface"){say("err","% Invalid input.");return;}say("ok","Interface enabled.");return;}
+if(c.indexOf("ip default-gateway")===0){if(S.mode!=="global"){say("err","% Invalid input.");return;}say("ok","Default gateway configured.");return;}
+if(c==="show ip interface brief"||c==="show ip int brief"){if(S.mode==="user"){say("err","% Invalid input.");return;}say("out","Interface              IP-Address      OK? Method Status                Protocol\\nVlan1                  "+S.vlanIp+"   YES manual "+(S.vlanIp==="unassigned"?"administratively down":"up")+"              "+(S.vlanIp==="unassigned"?"down":"up"));return;}
+if(c==="show ipv6 interface brief"){say("out","Vlan1 [administratively down/down]\\nNo IPv6 address configured in this stage.");return;}
+if(c==="show ip route"){say("out","Gateway of last resort is not set\\nNo dynamic routes in this stage.");return;}
+if(c==="show ipv6 route"){say("out","No IPv6 routes in this stage.");return;}
+if(c==="show interfaces"||c.indexOf("show interfaces ")===0){say("out","Interface statistics are simulated for stage one.");return;}
+if(c==="show ip interface"||c.indexOf("show ip interface ")===0){say("out","IPv4 interface details are simulated for stage one.");return;}
+if(c==="show ipv6 interface"||c.indexOf("show ipv6 interface ")===0){say("out","IPv6 interface details are simulated for stage one.");return;}
+if(c.indexOf("ping ")===0){say("out","Type escape sequence to abort.\\n!!!!!\\nSuccess rate is 100 percent (5/5)");return;}
+if(c.indexOf("traceroute ")===0){say("out","Tracing the route to "+raw.substring(11).trim()+"\\n  1  192.168.1.1  1 msec");return;}
+say("err","% Invalid input detected.");
+}
+function renderChallenge(){if(mode==="test"){renderTest();return;}if(mode==="commands"){ct.textContent="📚 دليل الأوامر";cx.textContent="الأوامر مأخوذة من الوحدة 2 والوحدة 10 المرفوعتين.";ch.textContent="💡 استخدمها في التدريب.";cs.textContent="";next.style.display="none";return;}if(mode==="free"){ct.textContent="⌨️ التدريب الحر";cx.textContent="نفّذ أي أمر من دليل الأوامر واستكشف استجابة السويتش.";ch.textContent="💡 هذا الوضع للتدريب دون درجة.";cs.textContent="";next.style.display="none";return;}var a=C[S.challenge];ct.textContent=a[0];cx.textContent=a[1];ch.textContent="💡 "+a[2];cs.textContent="";next.style.display="inline-block";}
+function learnPass(){var a=[S.mode==="privileged",S.mode==="global",S.hostname==="SW1",S.enableSecret,S.console,S.vty,S.vlanIp==="192.168.1.2"&&S.vlanMask==="255.255.255.0",S.history.some(function(v){return v.toLowerCase().indexOf("show ip interface brief")===0;}),S.saved];return !!a[S.challenge];}
+function renderTest(){if(testIndex>=T.length){ct.textContent="🏁 انتهى الاختبار";cx.textContent="نتيجتك: "+testScore+" / "+T.length;ch.textContent="أعد الاختبار من تبويب اختبار المحاكاة.";cs.textContent=testScore>=7?"✅ اجتزت الاختبار.":"🟡 تحتاج إلى مزيد من التدريب.";next.style.display="none";return;}ct.textContent="اختبار محاكاة — سؤال "+(testIndex+1)+" من "+T.length;cx.textContent=T[testIndex][0];ch.textContent="💡 اكتب الأمر في نافذة CLI.";cs.textContent="النتيجة الحالية: "+testScore+" / "+T.length;next.style.display="none";}
+function setMode(m){mode=m;document.querySelectorAll(".v66-ios-tab").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-mode")===m);});if(m==="test"){testIndex=0;testScore=0;}renderChallenge();}
+function reset(){S={mode:"user",modeName:"User EXEC",hostname:"Switch",enableSecret:false,console:false,vty:false,vlanIp:"unassigned",vlanMask:"unset",saved:false,history:[],challenge:0};mode="learn";testIndex=0;testScore=0;term.innerHTML="";say("out","Cisco IOS Simulator — المرحلة الأولى");say("out","السويتش جاهز. ابدأ بـ enable.");refresh();renderChallenge();renderBook();}
+function renderBook(){var h="";Object.keys(G).forEach(function(k){h+="<div class='v66-ios-command-group'><h4>"+k+"</h4>";G[k].forEach(function(c){h+="<code class='v66-ios-command-chip'>"+c+"</code>";});h+="</div>";});document.getElementById("v66IosCommandBook").innerHTML="<div class='v66-ios-command-grid'>"+h+"</div>";}
+function doInput(){var raw=input.value.trim();if(!raw)return;input.value="";if(mode==="test"){say("cmd",P()+" "+raw);if(raw.toLowerCase()===T[testIndex][1].toLowerCase()){testScore++;say("ok","✅ إجابة صحيحة.");}else say("err","❌ إجابة غير صحيحة.");testIndex++;renderTest();return;}run(raw);}
+root.querySelectorAll(".v66-ios-tab").forEach(function(b){b.addEventListener("click",function(){setMode(b.getAttribute("data-mode"));});});
+root.querySelectorAll(".v66-ios-quickbar [data-cmd]").forEach(function(b){b.addEventListener("click",function(){input.value=b.getAttribute("data-cmd");doInput();});});
+document.getElementById("v66IosRunBtn").addEventListener("click",doInput);document.getElementById("v66IosResetBtn").addEventListener("click",reset);input.addEventListener("keydown",function(e){if(e.key==="Enter")doInput();});
+next.addEventListener("click",function(){if(mode!=="learn")return;if(learnPass()){say("ok","✅ ممتاز، نفذت المطلوب.");if(S.challenge<C.length-1)S.challenge++;renderChallenge();}else cs.textContent="🟡 لم يتحقق الشرط بعد. نفّذ المطلوب ثم اضغط التالي.";});
+reset();
+})();
+</script>
 </body></html>
