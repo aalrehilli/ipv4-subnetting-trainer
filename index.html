@@ -1657,7 +1657,7 @@ html,body{max-width:100%;overflow-x:hidden}
     <div id="v66IosProGuideGrid" class="v66-ios-pro-guide-grid"></div>
   </section>
 
-  <div class="v66-ios-pro-footer"><span>V66.32 • محاكي IOS</span><span>لا يحتاج Packet Tracer أثناء التدريب الأولي</span></div>
+  <div class="v66-ios-pro-footer"><span>V66.34 • محاكي IOS</span><span>لا يحتاج Packet Tracer أثناء التدريب الأولي</span></div>
 </section>
 <section id="home" class="v64-home">
   <div class="v64-hero">
@@ -3833,6 +3833,380 @@ function v59ReportRows(){
 }
 function exportTrainerReportCSV(){const rows=v59ReportRows();const csv='\ufeff'+rows.map(r=>r.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='ipv4_trainer_report.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function printTrainerReport(){const area=$("trainerReportsArea");if(!area)return;const w=window.open('','_blank','width=1200,height=900');if(!w)return;w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>تقرير IPv4 Subnetting</title><style>body{font-family:Tahoma,Arial;padding:24px;color:#17324d}h1,h2,h3{color:#0759a5}.card{border:1px solid #dce8f2;border-radius:12px;padding:14px;margin:10px 0}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{border:1px solid #cfdbe5;padding:7px;text-align:center}th{background:#0759a5;color:#fff}.muted{color:#65788a;font-size:12px}.trainer-report-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.trainer-report-kpi{border:1px solid #dce8f2;border-radius:10px;padding:10px;text-align:center}.trainer-report-kpi .num{font-size:24px;font-weight:bold;color:#0759a5}.trainer-report-kpi .lbl{font-size:12px;color:#65788a}.trainer-report-columns{display:grid;grid-template-columns:1fr 1fr;gap:12px}.trainer-report-panel{border:1px solid #dce8f2;border-radius:10px;padding:12px;margin-top:10px}@media print{body{padding:8px}.trainer-report-actions{display:none}}</style></head><body><h1>📑 تقرير منصة IPv4 Subnetting</h1><div class="muted">تاريخ التقرير: ${new Date().toLocaleString('ar-SA')}</div>${area.innerHTML}<script>window.onload=()=>window.print();<\/script>
+
+<script id="v66_34_standalone_ios_engine">
+(function(){
+  "use strict";
+  var root=document.getElementById("iosSimulator");
+  if(!root){return;}
+
+  var terminal=document.getElementById("v66IosProTerminal");
+  var input=document.getElementById("v66IosProInput");
+  var promptEl=document.getElementById("v66IosProPrompt");
+  var promptLabel=document.getElementById("v66IosProPromptLabel");
+  var stateEl=document.getElementById("v66IosProState");
+  var learnPanel=document.getElementById("v66IosProLearnPanel");
+  var freePanel=document.getElementById("v66IosProFreePanel");
+  var testPanel=document.getElementById("v66IosProTestPanel");
+  var guide=document.getElementById("v66IosProGuide");
+  var guideGrid=document.getElementById("v66IosProGuideGrid");
+  var taskTitle=document.getElementById("v66IosProTaskTitle");
+  var taskText=document.getElementById("v66IosProTaskText");
+  var taskHint=document.getElementById("v66IosProTaskHint");
+  var taskStatus=document.getElementById("v66IosProTaskStatus");
+  var stepEl=document.getElementById("v66IosProStep");
+  var testQ=document.getElementById("v66IosProTestQuestion");
+  var testStatus=document.getElementById("v66IosProTestStatus");
+  var testCounter=document.getElementById("v66IosProTestCounter");
+  var scoreEl=document.getElementById("v66IosProScore");
+  var mode="learn",testIndex=0,testScore=0;
+  var S={mode:"user",modeName:"User EXEC",hostname:"Switch",enableSecret:false,console:false,vty:false,vlanIp:"unassigned",vlanMask:"unset",saved:false,history:[],challenge:0};
+
+  var tasks=[
+    ["الخطوة 1 — EXEC ذي الامتيازات","أنت على السويتش الجديد. انتقل من Switch> إلى Switch#.","استخدم enable."],
+    ["الخطوة 2 — Global Configuration","انتقل من Switch# إلى وضع التكوين العام.","استخدم configure terminal."],
+    ["الخطوة 3 — اسم السويتش","غيّر اسم السويتش إلى SW1.","استخدم hostname SW1 من وضع التكوين العام."],
+    ["الخطوة 4 — Enable Secret","أنشئ enable secret بقيمة class.","استخدم enable secret class."],
+    ["الخطوة 5 — Console","ادخل إلى line console 0 ثم اضبط password cisco وlogin.","نفّذ الأوامر داخل config-line."],
+    ["الخطوة 6 — VTY","ادخل إلى line vty 0 4 ثم اضبط password cisco وlogin.","الوحدة 2 تعرض 0 15 والوحدة 10 تعرض 0 4."],
+    ["الخطوة 7 — عنوان VLAN 1","اضبط 192.168.1.2 مع 255.255.255.0 على VLAN 1.","استخدم interface vlan 1 ثم ip address."],
+    ["الخطوة 8 — التحقق","استخدم show ip interface brief.","تحقق من حالة الواجهة وعنوانها."],
+    ["الخطوة 9 — الحفظ","احفظ running-config إلى startup-config.","استخدم copy running-config startup-config."]
+  ];
+
+  var commands={
+    "الوحدة 2 — التنقل":["enable","disable","configure terminal","exit","end","line console 0","line vty 0 15"],
+    "الوحدة 2 — التكوين والحفظ":["hostname","no hostname","password","login","service password-encryption","banner motd","copy running-config startup-config","show running-config","reload","erase startup-config"],
+    "الوحدة 2 — الاختبار والمساعدة":["ping","traceroute","?","show ?","show ip int brief"],
+    "الوحدة 10 — إعداد الموجّه":["hostname","enable secret","line console 0","line vty 0 4","transport input ssh telnet","service password-encryption","banner motd","end","copy running-config startup-config"],
+    "الوحدة 10 — الواجهات":["interface gigabitEthernet 0/0/0","description","ip address","ipv6 address","no shutdown","exit"],
+    "الوحدة 10 — التحقق والبوابة":["show ip interface brief","show ipv6 interface brief","show ip route","show ipv6 route","show interfaces","show ip interface","show ipv6 interface","ip default-gateway"]
+  };
+
+  var tests=[
+    ["ما الأمر الذي ينقلك من Switch> إلى Switch#؟","enable"],
+    ["ما الأمر للدخول إلى Global Configuration؟","configure terminal"],
+    ["غيّر اسم السويتش إلى SW1.","hostname SW1"],
+    ["ما الأمر لحفظ running-config إلى startup-config؟","copy running-config startup-config"],
+    ["ما الأمر لعرض حالة الواجهات وعناوين IPv4؟","show ip interface brief"],
+    ["ما الأمر للدخول إلى G0/0/0؟","interface gigabitethernet 0/0/0"],
+    ["ما الأمر لتعيين IPv4 وSubnet Mask؟","ip address 192.168.10.1 255.255.255.0"],
+    ["ما الأمر لتنشيط الواجهة؟","no shutdown"],
+    ["ما الأمر لعرض جدول التوجيه IPv4؟","show ip route"],
+    ["ما الأمر لتكوين البوابة الافتراضية على السويتش؟","ip default-gateway 192.168.1.1"]
+  ];
+
+  function prompt(){
+    if(S.mode==="user"){return S.hostname+">";}
+    if(S.mode==="privileged"){return S.hostname+"#";}
+    if(S.mode==="global"){return S.hostname+"(config)#";}
+    if(S.mode==="line"){return S.hostname+"(config-line)#";}
+    return S.hostname+"(config-if)#";
+  }
+  function say(kind,text){
+    if(!terminal)return;
+    var d=document.createElement("div");
+    d.className="v66-ios-pro-line "+kind;
+    d.textContent=text;
+    terminal.appendChild(d);
+    terminal.scrollTop=terminal.scrollHeight;
+  }
+  function refreshState(){
+    var p=prompt();
+    if(promptEl){promptEl.textContent=p;}
+    if(promptLabel){promptLabel.textContent=p;}
+    if(stateEl){
+      var rows=[
+        ["Hostname",S.hostname],
+        ["الوضع",S.modeName],
+        ["Enable Secret",S.enableSecret?"مُضبط":"غير مضبوط"],
+        ["Console",S.console?"مُضبط":"غير مكتمل"],
+        ["VTY",S.vty?"مُضبط":"غير مضبوط"],
+        ["VLAN 1 IP",S.vlanIp],
+        ["VLAN 1 Mask",S.vlanMask],
+        ["Saved",S.saved?"نعم":"لا"]
+      ];
+      var box=document.createElement("div");
+      box.className="v66-ios-pro-state";
+      rows.forEach(function(r){
+        var line=document.createElement("div");
+        line.className="v66-ios-pro-state-row";
+        line.innerHTML="<b>"+r[0]+"</b><span>"+r[1]+"</span>";
+        box.appendChild(line);
+      });
+      stateEl.replaceChildren(box);
+    }
+  }
+  function showRunning(){
+    var a=[];
+    a.push("hostname "+S.hostname);
+    if(S.enableSecret){a.push("enable secret <configured>");}
+    a.push("line console 0");
+    if(S.console){a.push(" password <configured>"," login");}
+    a.push("line vty 0 4");
+    if(S.vty){a.push(" password <configured>"," login");}
+    if(S.vlanIp!=="unassigned"){a.push("interface vlan 1"," ip address "+S.vlanIp+" "+S.vlanMask);}
+    return a.join("\n");
+  }
+  function run(raw){
+    var c=(raw||"").trim().toLowerCase();
+    if(!c){return;}
+    say("cmd",prompt()+" "+raw);
+    S.history.push(raw);
+
+    if(c==="?"){say("out","enable  disable  configure  show  ping  traceroute");return;}
+    if(c==="show ?"){say("out","interfaces  ip  ipv6  running-config  version");return;}
+    if(c==="enable"){S.mode="privileged";S.modeName="Privileged EXEC";refreshState();return;}
+    if(c==="disable"){S.mode="user";S.modeName="User EXEC";refreshState();return;}
+    if(c==="configure terminal"||c==="conf t"){
+      if(S.mode!=="privileged"){say("err","% Invalid input detected.");return;}
+      S.mode="global";S.modeName="Global Configuration";refreshState();return;
+    }
+    if(c==="end"||c==="ctrl-z"){S.mode="privileged";S.modeName="Privileged EXEC";refreshState();return;}
+    if(c==="exit"){
+      if(S.mode==="global"){S.mode="privileged";S.modeName="Privileged EXEC";}
+      else if(S.mode==="line"||S.mode==="interface"){S.mode="global";S.modeName="Global Configuration";}
+      else if(S.mode==="privileged"){S.mode="user";S.modeName="User EXEC";}
+      refreshState();return;
+    }
+    if(c==="line console 0"){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      S.mode="line";S.modeName="Line Configuration";refreshState();return;
+    }
+    if(c==="line vty 0 15"||c==="line vty 0 4"){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      S.vty=true;S.mode="line";S.modeName="Line Configuration";refreshState();return;
+    }
+    if(c.indexOf("hostname ")===0){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      S.hostname=raw.substring(9).trim()||"Switch";refreshState();return;
+    }
+    if(c==="no hostname"){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      S.hostname="Switch";refreshState();return;
+    }
+    if(c.indexOf("enable secret ")===0){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      S.enableSecret=true;say("ok","Enable secret configured.");refreshState();return;
+    }
+    if(c.indexOf("password ")===0){
+      if(S.mode!=="line"){say("err","% Invalid input detected.");return;}
+      S.console=true;say("ok","Password configured.");refreshState();return;
+    }
+    if(c==="login"){
+      if(S.mode!=="line"){say("err","% Invalid input detected.");return;}
+      S.console=true;say("ok","Login enabled.");refreshState();return;
+    }
+    if(c.indexOf("transport input ")===0){
+      if(S.mode!=="line"){say("err","% Invalid input detected.");return;}
+      S.vty=true;say("ok","Transport input configured.");refreshState();return;
+    }
+    if(c==="service password-encryption"||c==="service password encryption"){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      say("ok","Passwords encrypted.");return;
+    }
+    if(c.indexOf("banner motd")===0){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      say("ok","Banner configured.");return;
+    }
+    if(c==="copy running-config startup-config"){
+      if(S.mode!=="privileged"){say("err","% Invalid input detected.");return;}
+      S.saved=true;say("ok","[OK] Configuration saved to startup-config.");refreshState();return;
+    }
+    if(c==="show running-config"){
+      if(S.mode!=="privileged"){say("err","% Invalid input detected.");return;}
+      say("out",showRunning());return;
+    }
+    if(c==="interface vlan 1"||c.indexOf("interface gigabitethernet ")===0){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      S.mode="interface";S.modeName="Interface Configuration";refreshState();return;
+    }
+    if(c.indexOf("description ")===0){
+      if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}
+      say("ok","Description configured.");return;
+    }
+    if(c.indexOf("ip address ")===0){
+      if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}
+      var a=raw.split(/\s+/);
+      if(a.length>=4){S.vlanIp=a[2];S.vlanMask=a[3];say("ok","IPv4 address configured.");refreshState();return;}
+    }
+    if(c.indexOf("ipv6 address ")===0){
+      if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}
+      say("ok","IPv6 address configured.");return;
+    }
+    if(c==="no shutdown"){
+      if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}
+      say("ok","Interface enabled.");return;
+    }
+    if(c.indexOf("ip default-gateway")===0){
+      if(S.mode!=="global"){say("err","% Invalid input detected.");return;}
+      say("ok","Default gateway configured.");return;
+    }
+    if(c==="show ip interface brief"||c==="show ip int brief"){
+      if(S.mode==="user"){say("err","% Invalid input detected.");return;}
+      say("out","Interface              IP-Address      OK? Method Status                Protocol\nVlan1                  "+S.vlanIp+"   YES manual "+(S.vlanIp==="unassigned"?"administratively down":"up")+"              "+(S.vlanIp==="unassigned"?"down":"up"));
+      return;
+    }
+    if(c==="show ipv6 interface brief"){say("out","Vlan1 [administratively down/down]\nNo IPv6 address configured in this stage.");return;}
+    if(c==="show ip route"){say("out","Gateway of last resort is not set\nNo dynamic routes in this stage.");return;}
+    if(c==="show ipv6 route"){say("out","No IPv6 routes in this stage.");return;}
+    if(c==="show interfaces"){say("out","Interface statistics are simulated in this stage.");return;}
+    if(c==="show ip interface"){say("out","IPv4 interface details are simulated in this stage.");return;}
+    if(c==="show ipv6 interface"){say("out","IPv6 interface details are simulated in this stage.");return;}
+    if(c.indexOf("ping ")===0){say("out","Type escape sequence to abort.\n!!!!!\nSuccess rate is 100 percent (5/5)");return;}
+    if(c.indexOf("traceroute ")===0){say("out","Tracing the route to "+raw.substring(11).trim()+"\n  1  192.168.1.1  1 msec");return;}
+    say("err","% Invalid input detected.");
+  }
+
+  function taskPass(){
+    var list=[
+      S.mode==="privileged",
+      S.mode==="global",
+      S.hostname==="SW1",
+      S.enableSecret,
+      S.console,
+      S.vty,
+      S.vlanIp==="192.168.1.2"&&S.vlanMask==="255.255.255.0",
+      S.history.some(function(x){return x.toLowerCase().indexOf("show ip interface brief")===0;}),
+      S.saved
+    ];
+    return !!list[S.challenge];
+  }
+  function renderTask(){
+    var a=tasks[S.challenge];
+    if(!a){return;}
+    taskTitle.textContent=a[0];
+    taskText.textContent=a[1];
+    taskHint.textContent="💡 "+a[2];
+    taskStatus.textContent="";
+    stepEl.textContent=(S.challenge+1)+" / "+tasks.length;
+  }
+  function renderTest(){
+    if(testIndex>=tests.length){
+      testCounter.textContent="اكتمل الاختبار";
+      scoreEl.textContent=testScore+" / "+tests.length;
+      testQ.textContent="🏁 انتهى الاختبار. نتيجتك النهائية: "+testScore+" / "+tests.length;
+      testStatus.textContent=testScore>=7?"✅ اجتزت الاختبار.":"🟡 تحتاج إلى مزيد من التدريب.";
+      return;
+    }
+    testCounter.textContent="سؤال "+(testIndex+1)+" / "+tests.length;
+    scoreEl.textContent=testScore+" / "+tests.length;
+    testQ.textContent=tests[testIndex][0];
+    testStatus.textContent="";
+  }
+  function renderGuide(){
+    guideGrid.replaceChildren();
+    Object.keys(commands).forEach(function(group){
+      var card=document.createElement("div");
+      card.className="v66-ios-pro-guide-group";
+      var h=document.createElement("h4");
+      h.textContent=group;
+      card.appendChild(h);
+      commands[group].forEach(function(cmd){
+        var b=document.createElement("button");
+        b.type="button";
+        b.className="v66-ios-pro-guide-command";
+        b.textContent=cmd;
+        b.setAttribute("data-v66-guide-command",cmd);
+        card.appendChild(b);
+      });
+      guideGrid.appendChild(card);
+    });
+  }
+  function clearScreen(){
+    terminal.replaceChildren();
+    say("out","Cisco IOS Simulator — الشاشة جاهزة");
+    say("out","السويتش جاهز. ابدأ بالأمر enable.");
+  }
+  function reset(){
+    S={mode:"user",modeName:"User EXEC",hostname:"Switch",enableSecret:false,console:false,vty:false,vlanIp:"unassigned",vlanMask:"unset",saved:false,history:[],challenge:0};
+    mode="learn";testIndex=0;testScore=0;
+    learnPanel.hidden=false;freePanel.hidden=true;testPanel.hidden=true;guide.hidden=true;
+    clearScreen();refreshState();renderTask();renderTest();renderGuide();
+  }
+  function setTab(m){
+    mode=m;
+    root.querySelectorAll(".v66-ios-pro-tab").forEach(function(b){
+      b.classList.toggle("active",b.getAttribute("data-mode")===m);
+    });
+    learnPanel.hidden=m!=="learn";
+    freePanel.hidden=m!=="free";
+    testPanel.hidden=m!=="test";
+    guide.hidden=m!=="commands";
+    if(m==="learn"){renderTask();}
+    if(m==="test"){testIndex=0;testScore=0;renderTest();}
+    if(m==="commands"){renderGuide();}
+    return false;
+  }
+  function runInput(){
+    var raw=input.value.trim();
+    if(!raw){return false;}
+    input.value="";
+    if(mode==="test"){
+      say("cmd",prompt()+" "+raw);
+      if(testIndex<tests.length && raw.toLowerCase()===tests[testIndex][1].toLowerCase()){
+        testScore++;say("ok","✅ إجابة صحيحة.");
+      }else{
+        say("err","❌ إجابة غير صحيحة.");
+      }
+      testIndex++;renderTest();return false;
+    }
+    run(raw);return false;
+  }
+  function nextTask(){
+    if(mode!=="learn"){return false;}
+    if(taskPass()){
+      taskStatus.textContent="✅ ممتاز، تم تنفيذ الخطوة بنجاح.";
+      if(S.challenge<tasks.length-1){S.challenge++;setTimeout(renderTask,120);}
+    }else{
+      taskStatus.textContent="🟡 لم يتحقق الشرط بعد. نفّذ المطلوب أولًا.";
+    }
+    return false;
+  }
+
+  window.v66IosSetTab=setTab;
+  window.v66IosRun=runInput;
+  window.v66IosNextTask=nextTask;
+  window.v66IosStartTest=function(){setTab("test");};
+  window.v66IosReset=reset;
+  window.v66IosClearScreen=clearScreen;
+
+  root.querySelectorAll(".v66-ios-pro-quickbar [data-cmd]").forEach(function(b){
+    b.addEventListener("click",function(){input.value=b.getAttribute("data-cmd");runInput();});
+  });
+  root.querySelectorAll(".v66-ios-pro-tab").forEach(function(b){
+    b.addEventListener("click",function(){setTab(b.getAttribute("data-mode"));});
+  });
+  guideGrid.addEventListener("click",function(e){
+    var b=e.target.closest("[data-v66-guide-command]");
+    if(!b){return;}
+    input.value=b.getAttribute("data-v66-guide-command");
+    setTab("free");
+    runInput();
+  });
+  input.addEventListener("keydown",function(e){if(e.key==="Enter"){runInput();}});
+  root.querySelector(".v66-ios-pro-terminal-tools button:first-child")?.addEventListener("click",clearScreen);
+  root.querySelector(".v66-ios-pro-terminal-tools button:last-child")?.addEventListener("click",reset);
+  root.querySelector(".v66-ios-pro-next")?.addEventListener("click",nextTask);
+  root.querySelector(".v66-ios-pro-test-restart")?.addEventListener("click",function(){setTab("test");});
+
+  // Repair page navigation so the IOS engine re-renders whenever the page is opened.
+  if(typeof window.page==="function" && !window.__v66_34_ios_wrapped){
+    var oldPage=window.page;
+    window.page=function(id,button){
+      var result=oldPage.apply(this,arguments);
+      if(id==="iosSimulator"){
+        setTimeout(function(){reset();},20);
+      }
+      return result;
+    };
+    window.__v66_34_ios_wrapped=true;
+  }
+
+  reset();
+})();
+</script>
+
 </body></html>`);w.document.close()}
 
 function trainerTab(tab,btn){
