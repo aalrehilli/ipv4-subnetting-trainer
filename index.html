@@ -1554,6 +1554,16 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(max-width:900px){.v66c-grid{grid-template-columns:1fr}.v66c-list{order:2}.v66c-levels{grid-template-columns:1fr}}@media(max-width:620px){.v66c-head{flex-direction:column;align-items:flex-start}.v66c-metrics{grid-template-columns:repeat(2,1fr)}.v66c-result{grid-template-columns:38px 1fr}}
 </style>
 
+
+<style id="v66_40_ios_direct_css">
+#v66IosChallenges[hidden]{display:none!important}
+.v66-ios-pro-tab[data-mode="challenge"]{cursor:pointer}
+.v66c-item{width:100%;display:grid;grid-template-columns:25px 1fr;gap:6px;text-align:right;border:1px solid #e1e9ed;background:#fff;border-radius:8px;padding:7px;cursor:pointer}
+.v66c-item.active{background:#f2f8fb;border-color:#bdd8e4}
+.v66c-item span{width:23px;height:23px;display:grid;place-items:center;background:#eef5f8;border-radius:6px;font-size:9px}
+.v66c-item b{font-size:9px;color:#3e5d6e}.v66c-item small{display:block;font-size:8px;color:#89979f}
+</style>
+
 </head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
@@ -1594,7 +1604,7 @@ html,body{max-width:100%;overflow-x:hidden}
     <button type="button" class="v66-ios-pro-tab" data-mode="free" onclick="return window.v66IosSetTab('free')">⌨️ التدريب الحر</button>
     <button type="button" class="v66-ios-pro-tab" data-mode="test" onclick="return window.v66IosSetTab('test')">📝 اختبار المحاكاة</button>
     <button type="button" class="v66-ios-pro-tab" data-mode="commands" onclick="return window.v66IosSetTab('commands')">📚 دليل الأوامر</button>
-    <button type="button" class="v66-ios-pro-tab v66-ios-challenge-tab" data-mode="challenge">🏆 تحديات IOS</button>
+    <button type="button" class="v66-ios-pro-tab v66-ios-challenge-tab" data-mode="challenge" onclick="return window.v66IosOpenChallenges()">🏆 تحديات IOS</button>
   </div>
 
   <div class="v66-ios-pro-layout">
@@ -1655,7 +1665,7 @@ html,body{max-width:100%;overflow-x:hidden}
   
   <section id="v66IosChallenges" class="v66-ios-challenges" dir="rtl" hidden aria-label="تحديات Cisco IOS">
     <div class="v66c-head">
-      <div><span class="v66c-kicker">V66.39 • IOS Challenge Engine</span><h2>🏆 تحديات Cisco IOS</h2><p>لا يظهر لك تسلسل الأوامر. اقرأ الهدف ونفّذ الحل بنفسك داخل شاشة الـCLI.</p></div>
+      <div><span class="v66c-kicker">V66.40 • IOS Challenge Engine</span><h2>🏆 تحديات Cisco IOS</h2><p>لا يظهر لك تسلسل الأوامر. اقرأ الهدف ونفّذ الحل بنفسك داخل شاشة الـCLI.</p></div>
       <div class="v66c-best"><b id="v66cBest">0</b><small>أفضل نتيجة</small></div>
     </div>
     <div class="v66c-levels">
@@ -6215,16 +6225,22 @@ window.addEventListener("DOMContentLoaded",async()=>{
 })();
 </script>
 
-<script id="v66_39_challenge_engine">
+
+
+
+<script id="v66_40_ios_challenge_direct_engine">
 (function(){
 "use strict";
-var root=document.getElementById("iosSimulator");if(!root)return;
+var root=document.getElementById("iosSimulator");
+if(!root)return;
 var panel=document.getElementById("v66IosChallenges");
 var tab=root.querySelector('.v66-ios-pro-tab[data-mode="challenge"]');
-if(!panel||!tab)return;
 var input=document.getElementById("v66IosProInput");
-var originalRun=window.v66IosRun;
-var normalTabs=Array.prototype.slice.call(root.querySelectorAll('.v66-ios-pro-tab:not([data-mode="challenge"])'));
+var terminal=document.getElementById("v66IosProTerminal");
+var oldRun=window.v66IosRun;
+if(!panel||!tab||!input)return;
+
+var normalIds=["v66IosProLearnPanel","v66IosProFreePanel","v66IosProTestPanel","v66IosProGuide"];
 var levels={
 beginner:{label:"مبتدئ",items:[
 {title:"تهيئة السويتش وتسميته",objective:"انتقل إلى privileged EXEC، ثم Global Configuration، وغيّر الاسم إلى SW1، وأنشئ Enable Secret ثم احفظ.",steps:[["enable"],["configure terminal","conf t"],["hostname SW1"],["enable secret class"],["end","exit"],["copy running-config startup-config"]]},
@@ -6232,16 +6248,17 @@ beginner:{label:"مبتدئ",items:[
 {title:"إعداد VTY",objective:"اضبط VTY 0 إلى 4 بكلمة مرور cisco وفعّل login.",steps:[["enable"],["configure terminal","conf t"],["line vty 0 4","line vty 0 15"],["password cisco"],["login"],["end","exit"]]}
 ]},
 intermediate:{label:"متوسط",items:[
-{title:"عنوان VLAN 1",objective:"اضبط 192.168.1.2 مع 255.255.255.0 على VLAN 1 ثم تحقّق من الحالة واحفظ.",steps:[["enable"],["configure terminal","conf t"],["interface vlan 1"],["ip address 192.168.1.2 255.255.255.0"],["no shutdown"],["end"],["show ip interface brief","show ip int brief"],["copy running-config startup-config"]]},
+{title:"عنوان VLAN 1",objective:"اضبط 192.168.1.2 مع 255.255.255.0 على VLAN 1 ثم تحقّق واحفظ.",steps:[["enable"],["configure terminal","conf t"],["interface vlan 1"],["ip address 192.168.1.2 255.255.255.0"],["no shutdown"],["end"],["show ip interface brief","show ip int brief"],["copy running-config startup-config"]]},
 {title:"التحقق من الإعدادات",objective:"اعرض running-config ثم اعرض حالة الواجهات.",steps:[["enable"],["show running-config","show run"],["show ip interface brief","show ip int brief"]]},
 {title:"البوابة الافتراضية",objective:"اضبط 192.168.1.1 كبوابة افتراضية ثم اعرض التكوين واحفظ.",steps:[["enable"],["configure terminal","conf t"],["ip default-gateway 192.168.1.1"],["end"],["show running-config","show run"],["copy running-config startup-config"]]}
 ]},
 advanced:{label:"متقدم",items:[
 {title:"إعداد واجهة الموجّه",objective:"اضبط G0/0/0 بعنوان 192.168.10.1/24 ووصف LAN ثم فعّل الواجهة وتحقق منها.",steps:[["enable"],["configure terminal","conf t"],["interface gigabitethernet 0/0/0","interface gigabitEthernet 0/0/0"],["description LAN"],["ip address 192.168.10.1 255.255.255.0"],["no shutdown"],["exit"],["end"],["show ip interface brief","show ip int brief"]]},
-{title:"تأمين الوصول",objective:"فعّل تشفير كلمات المرور، اضبط MOTD، ثم جهّز VTY للوصول عبر SSH أو Telnet واحفظ.",steps:[["enable"],["configure terminal","conf t"],["service password-encryption","service password encryption"],["banner motd #AUTHORIZED ACCESS ONLY#"],["line vty 0 4","line vty 0 15"],["transport input ssh telnet"],["login"],["end"],["copy running-config startup-config"]]}
+{title:"تأمين الوصول والإعلانات",objective:"فعّل تشفير كلمات المرور، اضبط MOTD، ثم جهّز VTY للوصول عبر SSH أو Telnet واحفظ.",steps:[["enable"],["configure terminal","conf t"],["service password-encryption","service password encryption"],["banner motd #AUTHORIZED ACCESS ONLY#"],["line vty 0 4","line vty 0 15"],["transport input ssh telnet"],["login"],["end"],["copy running-config startup-config"]]}
 ]}
 };
-var st={level:"beginner",index:0,running:false,score:100,errors:0,start:0,elapsed:0,history:[],completed:{beginner:[],intermediate:[],advanced:[]}};
+
+var st={level:"beginner",index:0,running:false,score:100,errors:0,start:0,elapsed:0,history:[]};
 var q={
 best:document.getElementById("v66cBest"),count:document.getElementById("v66cCount"),list:document.getElementById("v66cList"),
 title:document.getElementById("v66cTitle"),obj:document.getElementById("v66cObjective"),score:document.getElementById("v66cScore"),
@@ -6250,77 +6267,108 @@ bar:document.getElementById("v66cProgress"),feedback:document.getElementById("v6
 history:document.getElementById("v66cHistory"),result:document.getElementById("v66cResult"),resultTitle:document.getElementById("v66cResultTitle"),
 resultText:document.getElementById("v66cResultText"),resultScore:document.getElementById("v66cResultScore")
 };
-function ch(){return levels[st.level].items[st.index];}
-function n(s){return String(s||"").trim().toLowerCase().replace(/\s+/g," ");}
-function fmt(v){v=Math.max(0,Math.floor(v));return String(Math.floor(v/60)).padStart(2,"0")+":"+String(v%60).padStart(2,"0");}
-function best(){try{return Number(localStorage.getItem("v66c_best")||0);}catch(e){return 0;}}
-function save(){try{localStorage.setItem("v66c_done",JSON.stringify(st.completed));if(st.score>best())localStorage.setItem("v66c_best",String(st.score));}catch(e){}q.best.textContent=String(best());}
-function load(){try{var x=JSON.parse(localStorage.getItem("v66c_done")||"null");if(x)st.completed=x;}catch(e){}}
-function timer(){if(!st.running)return;st.elapsed=(performance.now()-st.start)/1000;q.time.textContent=fmt(st.elapsed);requestAnimationFrame(timer);}
-function renderList(){
-var p=levels[st.level];q.count.textContent=(st.index+1)+" / "+p.items.length;q.list.replaceChildren();
-p.items.forEach(function(item,i){
-var b=document.createElement("button");b.type="button";b.className=(i===st.index?"active ":"")+(st.completed[st.level].indexOf(i)>=0?"done ":"");
-var s=document.createElement("span");s.textContent=String(i+1);var box=document.createElement("div");var t=document.createElement("b");t.textContent=item.title;var sm=document.createElement("small");sm.textContent=st.completed[st.level].indexOf(i)>=0?"✅ مكتمل":"لم يبدأ";box.appendChild(t);box.appendChild(sm);b.appendChild(s);b.appendChild(box);
-b.addEventListener("click",function(){st.index=i;resetAttempt();renderList();renderActive();});q.list.appendChild(b);
-});
+
+function current(){return levels[st.level].items[st.index];}
+function norm(v){return String(v||"").trim().toLowerCase().replace(/\s+/g," ");}
+function fmt(s){s=Math.max(0,Math.floor(s));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
+function best(){try{return Number(localStorage.getItem("v66_40_ios_best")||0);}catch(e){return 0;}}
+function save(){
+try{
+ localStorage.setItem("v66_40_ios_completed",JSON.stringify(JSON.parse(localStorage.getItem("v66_40_ios_completed")||"{}")));
+ if(st.score>best())localStorage.setItem("v66_40_ios_best",String(st.score));
+}catch(e){}
+if(q.best)q.best.textContent=String(best());
 }
-function renderActive(){
-var c=ch(),ok=st.history.filter(function(x){return x.ok;}).length,pct=Math.round(ok/c.steps.length*100);
-q.title.textContent=c.title;q.obj.textContent=c.objective;q.score.textContent=String(st.score);q.errors.textContent=String(st.errors);
-q.pct.textContent=pct+"%";q.bar.style.width=pct+"%";renderHistory();
+function hideNormal(){
+normalIds.forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true;});
+}
+function openChallenges(){
+hideNormal();
+panel.hidden=false;
+root.querySelectorAll(".v66-ios-pro-tab").forEach(function(b){b.classList.toggle("active",b===tab);});
+renderList();renderActive();if(q.best)q.best.textContent=String(best());
+return false;
+}
+function closeChallenges(){panel.hidden=true;return false;}
+function renderList(){
+var pack=levels[st.level];q.count.textContent=(st.index+1)+" / "+pack.items.length;q.list.replaceChildren();
+pack.items.forEach(function(item,i){
+var b=document.createElement("button");b.type="button";b.className="v66c-item"+(i===st.index?" active":"");
+var n=document.createElement("span");n.textContent=String(i+1);
+var c=document.createElement("div");var t=document.createElement("b");t.textContent=item.title;var s=document.createElement("small");s.textContent="جاهز للتدريب";c.appendChild(t);c.appendChild(s);b.appendChild(n);b.appendChild(c);
+b.addEventListener("click",function(){st.index=i;resetAttempt();renderList();renderActive();});
+q.list.appendChild(b);
+});
 }
 function renderHistory(){
-q.history.replaceChildren();st.history.slice(-12).forEach(function(x){
-var d=document.createElement("div");d.className="v66c-history-row";var c=document.createElement("code");c.textContent=x.command;var s=document.createElement("span");s.textContent=x.ok?"✅ صحيح":"❌ خطأ";d.appendChild(c);d.appendChild(s);q.history.appendChild(d);
-});
+q.history.replaceChildren();
+st.history.slice(-12).forEach(function(x){var d=document.createElement("div");d.className="v66c-history-row";var c=document.createElement("code");c.textContent=x.command;var s=document.createElement("span");s.textContent=x.ok?"✅ صحيح":"❌ خطأ";d.appendChild(c);d.appendChild(s);q.history.appendChild(d);});
+}
+function renderActive(){
+var c=current(),ok=st.history.filter(function(x){return x.ok;}).length,pct=Math.round(ok/c.steps.length*100);
+q.title.textContent=c.title;q.obj.textContent=c.objective;q.score.textContent=String(st.score);q.errors.textContent=String(st.errors);q.pct.textContent=pct+"%";q.bar.style.width=pct+"%";renderHistory();
 }
 function resetAttempt(){
-st.running=false;st.score=100;st.errors=0;st.start=0;st.elapsed=0;st.history=[];q.time.textContent="00:00";q.status.textContent="جديد";q.status.className="";q.feedback.className="v66c-feedback";q.feedback.textContent="اضغط «ابدأ التحدي» ثم نفّذ المطلوب في الـCLI.";q.result.hidden=true;renderActive();
+st.running=false;st.score=100;st.errors=0;st.elapsed=0;st.start=0;st.history=[];
+q.time.textContent="00:00";q.status.textContent="جديد";q.status.className="";
+q.feedback.className="v66c-feedback";q.feedback.textContent="اضغط «ابدأ التحدي» ثم نفّذ المطلوب في الـCLI.";q.result.hidden=true;renderActive();
 }
 function startAttempt(){
-st.running=true;st.score=100;st.errors=0;st.history=[];st.start=performance.now();q.result.hidden=true;q.status.textContent="جاري";q.status.className="run";q.feedback.className="v66c-feedback ok";q.feedback.textContent="🚀 بدأ التحدي. نفّذ أول خطوة في الـCLI.";
-if(typeof window.v66IosReset==="function")window.v66IosReset();renderActive();input.focus();timer();
+st.running=true;st.score=100;st.errors=0;st.elapsed=0;st.start=performance.now();st.history=[];
+q.result.hidden=true;q.status.textContent="جاري";q.status.className="run";q.feedback.className="v66c-feedback ok";q.feedback.textContent="🚀 بدأ التحدي. نفّذ أول خطوة في الـCLI.";
+if(typeof oldRun==="function"){try{oldRun.call(window);}catch(e){}}
+if(typeof window.v66IosClearScreen==="function"){try{window.v66IosClearScreen();}catch(e){}}
+renderActive();input.focus();timer();
+}
+function timer(){
+if(!st.running)return;
+st.elapsed=(performance.now()-st.start)/1000;q.time.textContent=fmt(st.elapsed);
+requestAnimationFrame(timer);
 }
 function grade(raw){
 if(!st.running)return;
-var c=ch(),ok=st.history.filter(function(x){return x.ok;}).length,expected=c.steps[ok]||[],good=expected.some(function(v){return n(v)===n(raw);});
+var c=current(),ok=st.history.filter(function(x){return x.ok;}).length,next=c.steps[ok]||[];
+var good=next.some(function(v){return norm(v)===norm(raw);});
 st.history.push({command:raw,ok:good});
-if(good){q.feedback.className="v66c-feedback ok";q.feedback.textContent="✅ صحيح. انتقل إلى الخطوة التالية.";}else{st.errors++;st.score=Math.max(0,st.score-5);q.feedback.className="v66c-feedback bad";q.feedback.textContent="❌ الأمر غير صحيح أو خارج الترتيب. حاول مرة أخرى.";}
+if(good){q.feedback.className="v66c-feedback ok";q.feedback.textContent="✅ صحيح. انتقل إلى الخطوة التالية.";}
+else{st.errors++;st.score=Math.max(0,st.score-5);q.feedback.className="v66c-feedback bad";q.feedback.textContent="❌ الأمر غير صحيح أو خارج الترتيب. حاول مرة أخرى.";}
 renderActive();
 if(good&&ok+1>=c.steps.length)complete();
 }
 function complete(){
-st.running=false;st.score=Math.max(0,100-st.errors*5);if(st.completed[st.level].indexOf(st.index)<0)st.completed[st.level].push(st.index);save();
-q.status.textContent="مكتمل";q.status.className="done";q.feedback.className="v66c-feedback ok";q.feedback.textContent="✅ تم إكمال التحدي بنجاح.";
-q.resultTitle.textContent=ch().title;q.resultText.textContent="الزمن "+fmt(st.elapsed)+" — الأخطاء "+st.errors;q.resultScore.textContent=String(st.score);q.result.hidden=false;renderList();renderActive();
+st.running=false;st.score=Math.max(0,100-st.errors*5);q.status.textContent="مكتمل";q.status.className="done";
+q.feedback.className="v66c-feedback ok";q.feedback.textContent="✅ تم إكمال التحدي بنجاح.";
+q.resultTitle.textContent=current().title;q.resultText.textContent="الزمن "+fmt(st.elapsed)+" — الأخطاء "+st.errors;q.resultScore.textContent=String(st.score);q.result.hidden=false;save();
 }
-function showChallenge(){
-normalTabs.forEach(function(b){b.classList.remove("active");});
-tab.classList.add("active");
-panel.hidden=false;
-if(typeof window.v66IosSetTab==="function")window.v66IosSetTab("learn");
-panel.hidden=false;
-renderList();renderActive();q.best.textContent=String(best());
-}
-function hideChallenge(){panel.hidden=true;}
-if(tab)tab.addEventListener("click",showChallenge);
-normalTabs.forEach(function(b){b.addEventListener("click",hideChallenge,true);});
-root.querySelectorAll(".v66c-levels button").forEach(function(b){b.addEventListener("click",function(){st.level=b.dataset.v66cLevel;st.index=0;resetAttempt();renderList();renderActive();});});
-document.getElementById("v66cStart").addEventListener("click",startAttempt);
-document.getElementById("v66cReset").addEventListener("click",resetAttempt);
-document.getElementById("v66cHint").addEventListener("click",function(){q.feedback.className="v66c-feedback";q.feedback.textContent="💡 تلميح: راجع وضع IOS الحالي ثم نفّذ الأمر المرتبط بالهدف التالي.";});
-document.getElementById("v66cNext").addEventListener("click",function(){var p=levels[st.level],order=["beginner","intermediate","advanced"],i=order.indexOf(st.level);if(st.index<p.items.length-1){st.index++;startAttempt();renderList();renderActive();}else if(i<2){st.level=order[i+1];st.index=0;startAttempt();renderList();renderActive();root.querySelectorAll(".v66c-levels button").forEach(function(b){b.classList.toggle("active",b.dataset.v66cLevel===st.level);});}});
-if(typeof originalRun==="function"){
-window.v66cOriginalRun=originalRun;
+window.v66IosOpenChallenges=openChallenges;
+window.v66IosChallengeReset=resetAttempt;
+window.v66IosChallengeStart=startAttempt;
+window.v66IosChallengeNext=function(){var p=levels[st.level],order=["beginner","intermediate","advanced"],i=order.indexOf(st.level);if(st.index<p.items.length-1){st.index++;startAttempt();renderList();return;}if(i<2){st.level=order[i+1];st.index=0;startAttempt();renderList();renderActive();}};
+if(typeof oldRun==="function"){
 window.v66IosRun=function(){
 var raw=input.value.trim();
-var result=originalRun.apply(this,arguments);
-if(st.running&&raw)grade(raw);
-return result;
+if(!raw)return false;
+var r=oldRun.apply(this,arguments);
+grade(raw);
+return r;
 };
 }
-load();q.best.textContent=String(best());renderList();renderActive();
+tab.addEventListener("click",function(e){e.preventDefault();return openChallenges();});
+normalIds.forEach(function(id){
+var panelEl=document.getElementById(id);
+if(panelEl) {
+ var prior=panelEl.querySelectorAll("button");
+ Array.prototype.forEach.call(prior,function(){});
+}
+});
+root.querySelectorAll(".v66c-levels button").forEach(function(b){
+b.addEventListener("click",function(){st.level=b.getAttribute("data-v66c-level")||"beginner";st.index=0;resetAttempt();renderList();renderActive();root.querySelectorAll(".v66c-levels button").forEach(function(x){x.classList.toggle("active",x===b);});});
+});
+document.getElementById("v66cStart").addEventListener("click",startAttempt);
+document.getElementById("v66cReset").addEventListener("click",resetAttempt);
+document.getElementById("v66cHint").addEventListener("click",function(){q.feedback.className="v66c-feedback";q.feedback.textContent="💡 تلميح: تأكد من وضع IOS الحالي ثم نفّذ أمرًا مرتبطًا بالمهمة.";});
+document.getElementById("v66cNext").addEventListener("click",window.v66IosChallengeNext);
+renderList();renderActive();q.best.textContent=String(best());
 })();
 </script>
 
