@@ -88,6 +88,11 @@ function applyTrainerFilters(){
   });
 }
 
+function vlsmAction(button){
+  const result=handleVlsmAction(button);
+  if(result?.rerender)render();
+}
+
 function flsmAction(button){
   const result=handleFlsmAction(button);
   if(result?.rerender)render();
