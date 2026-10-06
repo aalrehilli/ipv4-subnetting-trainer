@@ -4703,6 +4703,7 @@ function v6644FilterStudentResults(studentId){
     input.value=p?.student_id||p?.full_name||"";
   }
   trainerTab("overview");
+  v6644FilterResults();
   setTimeout(()=>{$("trainerTable")?.scrollIntoView({behavior:"smooth",block:"start"});},60);
 }
 
