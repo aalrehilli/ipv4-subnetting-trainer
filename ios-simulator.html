@@ -1028,6 +1028,7 @@ document.querySelectorAll(".level").forEach(function(b){b.addEventListener("clic
         s.servicePasswordEncryption===true,
         String(s.bannerMotd||"").indexOf("AUTHORIZED ACCESS ONLY")>-1,
         s.mode==="line"&&String(s.modeName||"").indexOf("Line VTY")===0,
+        s.vtyPassword==="cisco",
         v6633HasHistory(s,function(cmd){return cmd.indexOf("transport input ssh telnet")===0;}),
         s.vtyPassword==="cisco"&&s.vtyLogin===true,
         v6633Mode(s,"privileged"),
@@ -1056,7 +1057,7 @@ document.querySelectorAll(".level").forEach(function(b){b.addEventListener("clic
     }else if(challengeState.level==="advanced"&&challengeState.index===0){
       text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","ادخل إلى G0/0/0.","أضف الوصف LAN.","اضبط 192.168.10.1/24.","نفّذ no shutdown.","اخرج إلى Global Configuration.","ثم عد إلى privileged EXEC.","تحقق باستخدام show ip interface brief."][step]||text;
     }else if(challengeState.level==="advanced"&&challengeState.index===1){
-      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","فعّل تشفير كلمات المرور.","اكتب MOTD المطلوب.","ادخل إلى VTY 0 إلى 4.","اضبط transport input ssh telnet.","بعد ضبط كلمة المرور فعّل login.","ارجع إلى privileged EXEC.","احفظ الإعدادات."][step]||text;
+      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","فعّل تشفير كلمات المرور.","اكتب MOTD المطلوب.","ادخل إلى VTY 0 إلى 4.","اضبط كلمة المرور cisco.","اضبط transport input ssh telnet.","فعّل login بعد ضبط كلمة المرور.","ارجع إلى privileged EXEC.","احفظ الإعدادات."][step]||text;
     }
     var commandHint=alts.length?(" — الأمر المتوقع: "+alts.join(" أو ")):("");
     return "💡 "+text+commandHint+(s&&s.modeName?(" | الوضع الحالي: "+s.modeName):"");
