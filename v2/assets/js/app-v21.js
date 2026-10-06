@@ -2,6 +2,7 @@ import {studentPage,studentState,handleStudentAction,resetDemoData} from "./stud
 import {getTrainerView} from "./trainer-v22.js";
 import {handleExamAction} from "./exam-v23.js";
 import {handleQuestionBankAction,updateFilter,questionBankView} from "./question-bank-v24.js";
+import {handleLabAction} from "./subnet-lab-v25.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
@@ -52,6 +53,9 @@ function bind(){
   document.getElementById("qbank-difficulty")?.addEventListener("change",e=>{updateFilter("difficulty",e.target.value);render()});
   document.getElementById("start-smart-review")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("start-smart-review"));state.page="practice";render()});
   document.getElementById("restart-practice")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("restart-practice"));state.page="practice";render()});
+  document.getElementById("check-subnet-lab")?.addEventListener("click",()=>labAction(document.getElementById("check-subnet-lab")));
+  document.getElementById("show-subnet-solution")?.addEventListener("click",()=>labAction(document.getElementById("show-subnet-solution")));
+  document.getElementById("new-subnet-challenge")?.addEventListener("click",()=>labAction(document.getElementById("new-subnet-challenge")));
   document.getElementById("trainer-search")?.addEventListener("input",applyTrainerFilters);
   document.getElementById("trainer-risk")?.addEventListener("change",applyTrainerFilters);
   document.getElementById("trainer-group")?.addEventListener("change",applyTrainerFilters);
@@ -73,6 +77,11 @@ function applyTrainerFilters(){
     const okGroup=!group||text.includes(group);
     row.style.display=okText&&okRisk&&okGroup?"":"none";
   });
+}
+
+function labAction(button){
+  const result=handleLabAction(button);
+  if(result?.rerender)render();
 }
 
 function questionBankAction(button){
