@@ -39,6 +39,11 @@ button,input{font:inherit}
 @media(max-width:900px){.layout,.challenge-wrap{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(2,1fr)}.guide-grid{grid-template-columns:1fr}.terminal{height:380px}}
 @media(max-width:560px){.hero{flex-direction:column;align-items:flex-start}.tabs{grid-template-columns:1fr}.command-row{grid-template-columns:1fr}.run{width:100%}}
 </style>
+
+<style id="v66_42_qa_css">
+.qa-card{margin-top:12px;border:1px solid #dce7ec;border-radius:13px;background:#fff;overflow:hidden}.qa-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#f6fafb;border-bottom:1px solid #e2eaee}.qa-head b{display:block;color:#456676;font-size:11px}.qa-head small{display:block;color:#8a989f;font-size:8px;margin-top:2px}.qa-head button{border:1px solid #c6dce6;background:#edf6fa;color:#1a607f;border-radius:8px;padding:7px 10px;font-size:9px;font-weight:900;cursor:pointer}.qa-summary{padding:9px 12px;color:#6e808a;font-size:9px}.qa-results{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:0 12px 12px}.qa-result{border:1px solid #e1e9ed;border-radius:8px;background:#fbfdfe;padding:7px;text-align:center}.qa-result b{display:block;font-size:15px}.qa-result small{display:block;color:#7d8e97;font-size:8px;margin-top:2px}.qa-result.pass b{color:#2f7959}.qa-result.fail b{color:#a45a61}.qa-results:empty{display:none}@media(max-width:800px){.qa-results{grid-template-columns:repeat(2,1fr)}}
+</style>
+
 </head>
 <body>
 <div class="page">
@@ -49,7 +54,7 @@ button,input{font:inherit}
 
   <section class="hero">
     <div>
-      <span class="badge">V66.41 • صفحة مستقلة</span>
+      <span class="badge">V66.42 • نسخة مستقرة</span>
       <h1>محاكي <strong>Cisco IOS</strong></h1>
       <p>محاكي تدريبي مستقل لأوامر السويتش والموجّه من الوحدة 2 والوحدة 10، مصمم للتدريب داخل المتصفح دون التأثير على بقية المنصة.</p>
     </div>
@@ -139,7 +144,7 @@ button,input{font:inherit}
     </aside>
   </div>
 
-  <div class="footer">V66.41 • محاكي Cisco IOS مستقل • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
+  <div class="footer">V66.42 • محاكي Cisco IOS مستقل • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
 </div>
 
 <script>
@@ -362,5 +367,46 @@ document.querySelectorAll(".level").forEach(function(b){b.addEventListener("clic
 resetDevice();renderTask();renderTest();renderGuide();cRenderList();cRender();
 })();
 </script>
+
+<script id="v66_42_qa_engine">
+(function(){
+"use strict";
+var runBtn=document.getElementById("qaRun");
+var summary=document.getElementById("qaSummary");
+var results=document.getElementById("qaResults");
+if(!runBtn||!summary||!results)return;
+
+function add(name,ok){
+ var d=document.createElement("div");d.className="qa-result "+(ok?"pass":"fail");
+ var b=document.createElement("b");b.textContent=ok?"✅":"❌";
+ var s=document.createElement("small");s.textContent=name;
+ d.appendChild(b);d.appendChild(s);results.appendChild(d);
+ return ok;
+}
+function runQa(){
+ results.replaceChildren();
+ var checks=[];
+ try{
+   resetDevice();
+   checks.push(add("Switch>",prompt()==="Switch>"));
+   runCommand("enable");
+   checks.push(add("enable",prompt()==="Switch#"));
+   runCommand("configure terminal");
+   checks.push(add("configure",prompt()==="Switch(config)#"));
+   runCommand("hostname QA1");
+   checks.push(add("hostname",prompt()==="QA1(config)#"));
+   resetDevice();
+   checks.push(add("إعادة الجهاز",prompt()==="Switch>"));
+ }catch(e){
+   console.error("V66.42 QA error",e);
+   checks.push(add("تشغيل المحرك",false));
+ }
+ var passed=checks.filter(Boolean).length;
+ summary.textContent="نتيجة الفحص: "+passed+" / "+checks.length+" — "+(passed===checks.length?"✅ جميع فحوص CLI الأساسية ناجحة.":"⚠️ يوجد فحص يحتاج مراجعة.");
+}
+runBtn.addEventListener("click",runQa);
+})();
+</script>
+
 </body>
 </html>
