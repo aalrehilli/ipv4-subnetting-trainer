@@ -227,3 +227,48 @@ select
   round(avg(case when pa.is_correct then 100 else 0 end)::numeric,2) as accuracy
 from academy_v2.practice_attempts pa
 group by 1;
+
+
+-- Create a V2 profile automatically for every new Auth user.
+-- Role is intentionally always student here; trainer/admin elevation is administrative only.
+create or replace function academy_v2.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = academy_v2, public
+as $$
+begin
+  insert into academy_v2.profiles(id,full_name,role)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'full_name', split_part(coalesce(new.email,'متدرب'), '@', 1), 'متدرب'),
+    'student'
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created_v2 on auth.users;
+create trigger on_auth_user_created_v2
+after insert on auth.users
+for each row execute procedure academy_v2.handle_new_user();
+
+grant usage on schema academy_v2 to anon, authenticated;
+grant select on academy_v2.courses,
+              academy_v2.lessons,
+              academy_v2.questions,
+              academy_v2.exams,
+              academy_v2.exam_questions,
+              academy_v2.achievements to anon, authenticated;
+
+grant select on academy_v2.profiles,
+              academy_v2.attempts,
+              academy_v2.attempt_answers,
+              academy_v2.practice_attempts,
+              academy_v2.student_progress,
+              academy_v2.notifications,
+              academy_v2.student_achievements to authenticated;
+
+-- PostgREST must expose academy_v2 in Supabase Dashboard:
+-- Settings → API → Exposed schemas → add academy_v2.
