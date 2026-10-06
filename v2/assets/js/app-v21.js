@@ -1,5 +1,6 @@
 import {studentPage,studentState,handleStudentAction,resetDemoData} from "./student.js";
 import {getTrainerView} from "./trainer-v22.js";
+import {handleExamAction} from "./exam-v23.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
@@ -37,6 +38,13 @@ function bind(){
   document.getElementById("reset-demo")?.addEventListener("click",()=>{resetDemoData();state.role="student";state.page="home";render()});
   document.querySelectorAll("[data-lesson]").forEach(b=>b.addEventListener("click",()=>{handleStudentAction(b);state.page="practice";studentState.page="practice";render()}));
   document.querySelectorAll("[data-answer]").forEach(b=>b.addEventListener("click",()=>answer(b)));
+  document.querySelectorAll("[data-exam-answer]").forEach(b=>b.addEventListener("click",()=>examAction(b)));
+  document.querySelectorAll("[data-exam-jump]").forEach(b=>b.addEventListener("click",()=>examAction(b)));
+  document.getElementById("start-exam")?.addEventListener("click",()=>examAction(document.getElementById("start-exam")));
+  document.getElementById("exam-prev")?.addEventListener("click",()=>examAction(document.getElementById("exam-prev")));
+  document.getElementById("exam-next")?.addEventListener("click",()=>examAction(document.getElementById("exam-next")));
+  document.getElementById("submit-exam")?.addEventListener("click",()=>examAction(document.getElementById("submit-exam")));
+  document.querySelectorAll("[data-exam-action]").forEach(b=>b.addEventListener("click",()=>examAction(b)));
   document.getElementById("start-smart-review")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("start-smart-review"));state.page="practice";render()});
   document.getElementById("restart-practice")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("restart-practice"));state.page="practice";render()});
   document.getElementById("trainer-search")?.addEventListener("input",applyTrainerFilters);
@@ -60,6 +68,22 @@ function applyTrainerFilters(){
     const okGroup=!group||text.includes(group);
     row.style.display=okText&&okRisk&&okGroup?"":"none";
   });
+}
+
+function examAction(button){
+  const result=handleExamAction(button);
+  if(!result)return;
+  if(result.openSubmit){
+    const submit={id:"submit-exam",dataset:{}};
+    handleExamAction(submit);
+    render();
+    return;
+  }
+  if(result.review){
+    state.role="student";state.page="review";studentState.page="review";render();
+    return;
+  }
+  if(result.rerender){render()}
 }
 
 function answer(button){
