@@ -135,6 +135,24 @@ body{
 @media(max-width:600px){.page{padding:10px}.topbar{flex-direction:column;align-items:stretch}.back{width:100%}.hero{padding:18px}.hero h1{font-size:27px}.meta{max-width:none;justify-content:flex-start}.tabs{grid-template-columns:1fr}.state{grid-template-columns:1fr}.command-row{grid-template-columns:1fr}.prompt{order:0}.run{width:100%}.terminal{height:340px}.levels{grid-template-columns:1fr}.challenge-metrics{grid-template-columns:repeat(2,1fr)}}
 </style>
 
+<style id="v66_36_ios_roadmap_css">
+.ios-roadmap{display:grid;gap:12px}
+.ios-roadmap-hero{padding:13px 14px;border:1px solid #cfe0e8;border-radius:12px;background:linear-gradient(135deg,#f3fbfe,#fff)}
+.ios-roadmap-hero h2{margin:7px 0 4px;font-size:18px;color:#1e536b}
+.ios-roadmap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ios-roadmap-step{border:1px solid #dce7ec;border-radius:11px;background:#fff;padding:10px}
+.ios-roadmap-step.done{background:#f0faf4;border-color:#b9dec8}.ios-roadmap-step.current{background:#f3f8fb;border-color:#bcd8e4}
+.ios-roadmap-step .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.ios-roadmap-step b{font-size:10px;color:#355f70}.ios-roadmap-step small{display:block;color:#7b8c95;font-size:9px;line-height:1.6;margin-top:4px}
+.ios-roadmap-progress{height:10px;border-radius:99px;background:#e7eef2;overflow:hidden}.ios-roadmap-progress span{display:block;height:100%;background:#0b6f91;border-radius:99px}
+.ios-final{display:grid;gap:10px}.ios-final-card{border:1px solid #d7e4ea;border-radius:12px;background:#fff;padding:12px}
+.ios-final-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.ios-final-head h2{margin:0;color:#24566b;font-size:17px}
+.ios-final-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.ios-final-metric{border:1px solid #dfe9ed;border-radius:9px;padding:8px;text-align:center;background:#fbfdfe}.ios-final-metric b{display:block;font-size:15px;color:#2d6379}.ios-final-metric small{font-size:8px;color:#80909a}
+.ios-final-step{padding:9px 10px;border:1px solid #e2eaee;border-radius:9px;background:#fbfdfe;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.ios-final-step.ok{background:#f0faf4;border-color:#b9dec8}.ios-final-step.fail{background:#fff6f4;border-color:#ebc7bf}.ios-final-step .cmd{font:10px Consolas,monospace;direction:ltr;color:#2e5e73}.ios-final-actions{display:flex;gap:7px;flex-wrap:wrap}.ios-final-actions button{border:1px solid #cfe0e8;background:#fff;color:#486b79;border-radius:8px;padding:8px 10px;font-size:9px;font-weight:900;cursor:pointer}.ios-final-actions button.primary{background:#edf7fb;color:#1a607d}
+@media(max-width:900px){.ios-roadmap-grid{grid-template-columns:1fr 1fr}.ios-final-metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.ios-roadmap-grid{grid-template-columns:1fr}.ios-final-metrics{grid-template-columns:1fr 1fr}}
+</style>
 </head>
 <body>
 <div class="page">
@@ -145,7 +163,7 @@ body{
 
   <section class="hero">
     <div>
-      <span class="badge">V66.43 • V66.35 نظام إتقان IOS</span>
+      <span class="badge">V66.43 • V66.36 مسار IOS واختبار نهائي</span>
       <h1>محاكي <strong>Cisco IOS</strong></h1>
       <p>محاكي تدريبي مستقل لأوامر السويتش والموجّه من الوحدة 2 والوحدة 10، مصمم للتدريب داخل المتصفح دون التأثير على بقية المنصة.</p>
     </div>
@@ -153,11 +171,13 @@ body{
   </section>
 
   <div class="tabs" role="tablist">
-    <button type="button" class="tab active" data-tab="learn">🎓 التدريب الموجّه</button>
+    <button type="button" class="tab active" data-tab="roadmap">🗺️ مسار IOS</button>
+    <button type="button" class="tab" data-tab="learn">🎓 التدريب الموجّه</button>
     <button type="button" class="tab" data-tab="free">⌨️ التدريب الحر</button>
     <button type="button" class="tab" data-tab="test">📝 اختبار المحاكاة</button>
     <button type="button" class="tab" data-tab="guide">📚 دليل الأوامر</button>
     <button type="button" class="tab" data-tab="challenge">🏆 التحديات</button>
+    <button type="button" class="tab" data-tab="final">🏁 الاختبار النهائي</button>
   </div>
 
   <div class="layout">
@@ -184,7 +204,11 @@ body{
       <section class="card">
         <div class="card-head">🎯 المهمة الحالية</div>
         <div class="card-body">
-          <div id="taskPanel" class="panel active">
+          <div id="roadmapPanel" class="panel active">
+            <div id="iosRoadmap"></div>
+          </div>
+          <div id="taskPanel" class="panel">
+
             <div id="taskTitle" class="task-title"></div>
             <div id="taskText" class="task-text"></div>
             <div id="taskHint" class="hint"></div>
@@ -201,6 +225,9 @@ body{
           </div>
           <div id="guidePanel" class="panel">
             <div class="guide-info">اضغط على أي أمر ليتم إدخاله مباشرة في سطر أوامر الـCLI.</div>
+          </div>
+          <div id="finalPanel" class="panel">
+            <div id="finalExamHost"></div>
           </div>
           <div id="challengePanel" class="panel">
             <div class="challenge-wrap">
@@ -235,7 +262,7 @@ body{
     </aside>
   </div>
 
-  <div class="footer">V66.43 UI • V66.33 تحديات IOS • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
+  <div class="footer">V66.36 • مسار IOS + اختبار نهائي • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
 </div>
 
 <script>
@@ -1382,6 +1409,190 @@ runBtn.addEventListener("click",runQa);
   };
 
   render();
+})();
+</script>
+
+
+<script id="v66_36_ios_roadmap_engine">
+(function(){
+  "use strict";
+
+  var v6636Final={
+    running:false,step:0,score:100,errors:0,start:0,elapsed:0,history:[],
+    steps:[
+      {title:"الدخول إلى privileged EXEC",cmd:"enable"},
+      {title:"الدخول إلى Global Configuration",cmd:"configure terminal"},
+      {title:"تسمية الجهاز",cmd:"hostname FINAL-SW"},
+      {title:"إنشاء Enable Secret",cmd:"enable secret finalclass"},
+      {title:"ضبط VLAN 1",cmd:"interface vlan 1"},
+      {title:"عنوان VLAN 1",cmd:"ip address 10.10.10.1 255.255.255.0"},
+      {title:"تفعيل VLAN 1",cmd:"no shutdown"},
+      {title:"العودة إلى privileged EXEC",cmd:"end"},
+      {title:"ضبط البوابة الافتراضية",cmd:"configure terminal"},
+      {title:"Default Gateway",cmd:"ip default-gateway 10.10.10.254"},
+      {title:"تشفير كلمات المرور",cmd:"service password-encryption"},
+      {title:"MOTD",cmd:"banner motd #FINAL IOS EXAM#"},
+      {title:"إعداد VTY",cmd:"line vty 0 4"},
+      {title:"كلمة مرور VTY",cmd:"password cisco"},
+      {title:"تفعيل login",cmd:"login"},
+      {title:"الوصول SSH/Telnet",cmd:"transport input ssh telnet"},
+      {title:"العودة إلى privileged EXEC",cmd:"end"},
+      {title:"التحقق",cmd:"show ip interface brief"},
+      {title:"حفظ الإعدادات",cmd:"copy running-config startup-config"}
+    ]
+  };
+
+  function v6636State(){try{return window.v6632GetState();}catch(e){return null;}}
+  function v6636Done(){
+    try{return JSON.parse(localStorage.getItem("v66_36_ios_final")||"null");}catch(e){return null;}
+  }
+  function v6636SaveResult(){
+    var old=v6636Done()||{};
+    var out={
+      passed:v6636Final.step>=v6636Final.steps.length && v6636Final.score>=80,
+      score:v6636Final.score,
+      errors:v6636Final.errors,
+      time:v6636Final.elapsed,
+      attempts:Number(old.attempts||0)+1,
+      bestScore:Math.max(Number(old.bestScore||0),v6636Final.score),
+      bestTime:old.bestTime?Math.min(Number(old.bestTime),v6636Final.elapsed):v6636Final.elapsed,
+      completedAt:new Date().toISOString()
+    };
+    try{localStorage.setItem("v66_36_ios_final",JSON.stringify(out));}catch(e){}
+    return out;
+  }
+
+  function v6636Check(n){
+    var s=v6636State(); if(!s)return false;
+    var checks=[
+      s.mode==="privileged",
+      s.mode==="global",
+      s.hostname==="FINAL-SW",
+      s.enableSecret==="finalclass",
+      s.mode==="interface"&&s.currentInterface==="Vlan1",
+      s.vlanIp==="10.10.10.1"&&s.vlanMask==="255.255.255.0",
+      s.vlanUp===true,
+      s.mode==="privileged",
+      s.mode==="global",
+      s.defaultGateway==="10.10.10.254",
+      s.servicePasswordEncryption===true,
+      String(s.bannerMotd||"").indexOf("FINAL IOS EXAM")>-1,
+      s.mode==="line"&&String(s.modeName||"").indexOf("Line VTY")===0,
+      s.vtyPassword==="cisco",
+      s.vtyPassword==="cisco"&&s.vtyLogin===true,
+      s.history.some(function(x){return x.ok&&String(x.command).trim().toLowerCase()==="transport input ssh telnet";}),
+      s.mode==="privileged",
+      s.history.some(function(x){return x.ok&&(String(x.command).trim().toLowerCase()==="show ip interface brief"||String(x.command).trim().toLowerCase()==="show ip int brief");}),
+      s.saved===true
+    ];
+    return checks[n]===true;
+  }
+
+  function v6636RenderRoadmap(){
+    var host=document.getElementById("iosRoadmap");if(!host)return;
+    var data;
+    try{data=JSON.parse(localStorage.getItem("v66_33_ios_challenges")||"{}")||{};}catch(e){data={};}
+    var final=v6636Done();
+    var items=[
+      ["1","الأساسيات","User EXEC وPrivileged EXEC",data["beginner:0"]?.completed],
+      ["2","الحماية","Console وVTY",data["beginner:1"]?.completed&&data["beginner:2"]?.completed],
+      ["3","إعداد VLAN","عنوان VLAN 1 والتحقق",data["intermediate:0"]?.completed],
+      ["4","التحقق والإدارة","Show وDefault Gateway",data["intermediate:1"]?.completed&&data["intermediate:2"]?.completed],
+      ["5","الموجّه المتقدم","Interface + Security",data["advanced:0"]?.completed&&data["advanced:1"]?.completed],
+      ["6","الاختبار النهائي","اجتياز اختبار IOS النهائي",!!final?.passed]
+    ];
+    var done=items.filter(function(x){return !!x[3]}).length,pct=Math.round(done*100/items.length);
+    host.innerHTML='<div class="ios-roadmap">'+
+      '<div class="ios-roadmap-hero"><span class="badge">🗺️ V66.36 — مسار IOS</span><h2>من أساسيات CLI إلى إتقان الاختبار النهائي</h2><div class="muted">أكمل المراحل بالتدرج. المرحلة الأخيرة لا تعتمد على الحفظ؛ بل على حالة الجهاز الفعلية.</div><div style="margin-top:10px" class="ios-roadmap-progress"><span style="width:'+pct+'%"></span></div><div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#71858f"><span>التقدم</span><b>'+done+' / 6 • '+pct+'%</b></div></div>'+
+      '<div class="ios-roadmap-grid">'+items.map(function(x){return '<div class="ios-roadmap-step '+(x[3]?'done':'current')+'"><div class="top"><b>'+x[0]+'. '+x[1]+'</b><span>'+(x[3]?'✅':'🔹')+'</span></div><small>'+x[2]+'</small></div>';}).join('')+'</div>'+
+      '<div class="ios-final-actions"><button type="button" class="primary" onclick="setTab(\'challenge\')">🏆 فتح التحديات</button><button type="button" class="primary" onclick="setTab(\'final\')">🏁 الذهاب للاختبار النهائي</button></div>'+
+    '</div>';
+  }
+
+  function v6636RenderFinal(){
+    var host=document.getElementById("finalExamHost");if(!host)return;
+    var saved=v6636Done();
+    var current=v6636Final.steps[v6636Final.step];
+    var pct=Math.round(v6636Final.step*100/v6636Final.steps.length);
+    var status=v6636Final.running?"جاري":(saved?.passed?"✅ ناجح سابقًا":"جاهز");
+    var rows=v6636Final.steps.map(function(s,i){
+      var ok=i<v6636Final.step;
+      return '<div class="ios-final-step '+(ok?'ok':'')+'"><span>'+(ok?'✅':'○')+' '+s.title+'</span><code class="cmd">'+s.cmd+'</code></div>';
+    }).join('');
+    host.innerHTML='<div class="ios-final">'+
+      '<div class="ios-final-card"><div class="ios-final-head"><div><span class="badge">🏁 V66.36 — الاختبار النهائي</span><h2>'+status+'</h2><div class="muted">19 مهمة عملية. لا تُحتسب المهمة إلا عندما تتحقق حالة الجهاز المطلوبة.</div></div><div style="font-size:22px;font-weight:900;color:#0759a5">'+v6636Final.score+' / 100</div></div></div>'+
+      '<div class="ios-final-metrics"><div class="ios-final-metric"><b>'+v6636Final.score+'</b><small>النتيجة</small></div><div class="ios-final-metric"><b>'+v6636Final.errors+'</b><small>الأخطاء</small></div><div class="ios-final-metric"><b>'+v6636Final.step+'/'+v6636Final.steps.length+'</b><small>المهام</small></div><div class="ios-final-metric"><b>'+fmtTime(v6636Final.elapsed||0)+'</b><small>الوقت</small></div></div>'+
+      '<div class="ios-final-card"><div style="height:10px;background:#e8eef2;border-radius:99px;overflow:hidden"><span style="display:block;width:'+pct+'%;height:100%;background:#0b6f91"></span></div><div style="margin-top:8px;font-size:10px;color:#71858f">'+(current?'الخطوة الحالية: '+current.title:'تمت جميع المهام')+'</div></div>'+
+      '<div class="ios-final-card"><div style="display:grid;gap:6px">'+rows+'</div></div>'+
+      '<div class="ios-final-actions"><button type="button" class="primary" id="v6636Start">'+(saved?.passed?'🔄 إعادة الاختبار':'🚀 ابدأ الاختبار')+'</button><button type="button" id="v6636Reset">↻ إعادة</button></div>'+
+      (saved?'<div class="'+(saved.passed?'status ok':'status bad')+'">'+(saved.passed?'🏆 آخر محاولة ناجحة • أفضل نتيجة '+saved.bestScore+'/100':'❌ آخر محاولة لم تصل إلى 80% • أفضل نتيجة '+saved.bestScore+'/100')+'</div>':'')+
+      '</div>';
+    document.getElementById("v6636Start")?.addEventListener("click",v6636Start);
+    document.getElementById("v6636Reset")?.addEventListener("click",v6636Reset);
+  }
+
+  function v6636Start(){
+    v6636Final.running=true;v6636Final.step=0;v6636Final.score=100;v6636Final.errors=0;v6636Final.elapsed=0;v6636Final.history=[];v6636Final.start=performance.now();
+    resetDevice();setTab("final");input.focus();v6636Tick();v6636RenderFinal();
+  }
+  function v6636Reset(){
+    v6636Final.running=false;v6636Final.step=0;v6636Final.score=100;v6636Final.errors=0;v6636Final.elapsed=0;v6636Final.history=[];v6636RenderFinal();v6636RenderRoadmap();
+  }
+  function v6636Tick(){
+    if(!v6636Final.running)return;
+    v6636Final.elapsed=(performance.now()-v6636Final.start)/1000;
+    var el=document.getElementById("finalPanel");if(el&&!el.classList.contains("active"))return;
+    requestAnimationFrame(v6636Tick);v6636RenderFinal();
+  }
+
+  var originalRunInput=runInput;
+  runInput=function(){
+    var raw=input.value.trim();if(!raw)return;
+    if(activeTab==="final"&&v6636Final.running){
+      input.value="";
+      var executed=runCommand(raw);
+      var good=executed&&v6636Check(v6636Final.step);
+      v6636Final.history.push({command:raw,ok:good,step:v6636Final.step+1});
+      if(good){
+        v6636Final.step++;
+        document.getElementById("cFeedback")?.replaceChildren();
+        if(v6636Final.step>=v6636Final.steps.length){
+          v6636Final.elapsed=(performance.now()-v6636Final.start)/1000;
+          v6636Final.running=false;
+          var result=v6636SaveResult();
+          v6636RenderFinal();v6636RenderRoadmap();
+          say("ok",result.passed?"🏆 نجحت في الاختبار النهائي بنسبة "+result.score+"%.":"❌ اكتملت المهام لكن النتيجة أقل من حد النجاح.");
+        }else{
+          v6636RenderFinal();
+        }
+      }else{
+        v6636Final.errors++;v6636Final.score=Math.max(0,v6636Final.score-(executed?5:3));
+        v6636RenderFinal();
+      }
+      return;
+    }
+    originalRunInput();
+  };
+
+  var previousSetTab=setTab;
+  setTab=function(name){
+    previousSetTab(name==="roadmap"?"learn":name==="final"?"learn":name);
+    document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("active",b.dataset.tab===name);});
+    ["roadmap","learn","free","test","guide","challenge","final"].forEach(function(n){
+      var id=n==="roadmap"?"roadmapPanel":n==="learn"?"taskPanel":n==="free"?"freePanel":n==="test"?"testPanel":n==="guide"?"guidePanel":n==="challenge"?"challengePanel":"finalPanel";
+      var el=document.getElementById(id);if(el)el.classList.toggle("active",n===name);
+    });
+    if(name==="roadmap")v6636RenderRoadmap();
+    if(name==="final")v6636RenderFinal();
+  };
+
+  var oldChallengeRender=cRender;
+  cRender=function(){oldChallengeRender();v6636RenderRoadmap();};
+
+  window.v6636GetFinal=function(){return v6636Done();};
+  window.v6636GetRoadmap=function(){v6636RenderRoadmap();};
+
+  setTimeout(function(){v6636RenderRoadmap();v6636RenderFinal();setTab("roadmap");},0);
 })();
 </script>
 
