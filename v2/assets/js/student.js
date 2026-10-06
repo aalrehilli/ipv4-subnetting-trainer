@@ -29,72 +29,57 @@ function pathHtml(){
 }
 
 function home(){
+  const snapshot=getLearningSnapshot();
+  const recommendation=getSmartRecommendation();
+  const ready=recommendation.topic||snapshot.weak[0]?.topic||"Binary";
   const next=lessons.find(l=>l.status==="current")||lessons[0];
-  const ready=student.reviewTopics[0]||"Binary";
   return `
   <section class="student-hero home-hero">
     <div class="student-hero-copy">
-      <span class="eyebrow">رحلتك التعليمية • Demo</span>
+      <span class="eyebrow">رحلتك التعليمية • Smart Engine</span>
       <h1>أهلًا ${esc(student.name)} 👋</h1>
-      <p>المنصة رتبت لك الطريق. ابدأ من مستواك، ثم انتقل مباشرة إلى التدريب المناسب لك.</p>
+      <p>المنصة حللت أداءك وتقترح الآن: <strong>${esc(recommendation.title)}</strong>.</p>
       <div class="hero-actions">
-        <button class="btn btn-white" data-page="level">🎯 اختبار تحديد المستوى</button>
-        <button class="btn btn-outline-white" data-page="review">✦ المراجعة الذكية</button>
+        <button class="btn btn-white" data-page="review">✦ ابدأ الخطوة المقترحة</button>
+        <button class="btn btn-outline-white" data-page="level">🎯 إعادة تحديد المستوى</button>
       </div>
     </div>
     <div class="student-hero-side">
-      <div class="hero-mini-label">مستواك الحالي</div>
-      <div class="hero-level">${student.level}</div>
-      <div class="progress hero-progress"><span style="width:${student.progress}%"></span></div>
-      <div class="hero-progress-row"><span>${student.progress}% من المسار</span><span>${student.xp} XP</span></div>
+      <div class="hero-mini-label">إتقانك الحالي</div>
+      <div class="hero-level">${snapshot.scores[ready]??0}%</div>
+      <div class="progress hero-progress"><span style="width:${snapshot.scores[ready]??0}%"></span></div>
+      <div class="hero-progress-row"><span>${esc(ready)}</span><span>${student.xp} XP</span></div>
     </div>
   </section>
 
   <div class="student-grid-4 home-kpis">
     ${statCard("تقدم المقرر",student.progress+"%","+6% هذا الأسبوع")}
-    ${statCard("متوسط الأداء",student.avgScore+"%","آخر المحاولات")}
+    ${statCard("إتقان عام",Math.round(Object.values(snapshot.scores).reduce((a,b)=>a+b,0)/Object.keys(snapshot.scores).length)+"%","محرك التعلم")}
     ${statCard("سلسلة التعلم",student.streak+" أيام","استمر غدًا")}
     ${statCard("نقاط الخبرة",student.xp+" XP","الهدف التالي 500")}
   </div>
 
-  <div class="section-title"><h3>ابدأ من هنا</h3><span class="badge orange">3 خطوات فقط</span></div>
-  <div class="home-start-grid">
-    <div class="start-card level-start">
-      <div class="start-icon">🎯</div>
-      <div class="start-body">
-        <span class="eyebrow orange">الخطوة 1</span>
-        <h3>اختبار تحديد المستوى</h3>
-        <p>اعرف مستواك الحقيقي في IPv4 وBinary وSubnetting.</p>
-      </div>
-      <button class="btn btn-orange" data-page="level">ابدأ الآن</button>
-    </div>
-    <div class="start-card review-start">
-      <div class="start-icon purple">✦</div>
-      <div class="start-body">
-        <span class="eyebrow purple">الخطوة 2</span>
-        <h3>المراجعة الذكية</h3>
-        <p>راجع ${esc(ready)} وأهم النقاط التي تحتاج إلى تحسين.</p>
-      </div>
-      <button class="btn btn-purple" data-page="review">راجع الآن</button>
-    </div>
-    <div class="start-card course-start">
-      <div class="start-icon">▶</div>
-      <div class="start-body">
-        <span class="eyebrow blue">الخطوة 3</span>
-        <h3>تابع المقرر</h3>
-        <p>أكمل من ${esc(next.title)} دون العودة إلى قوائم كثيرة.</p>
-      </div>
-      <button class="btn btn-primary" data-page="course">متابعة</button>
-    </div>
+  <div class="section-title"><h3>خطوتك المقترحة الآن</h3><span class="badge purple">Smart Learning</span></div>
+  <div class="smart-next-card card">
+    <div class="smart-next-icon">✦</div>
+    <div><span class="eyebrow purple">توصية شخصية</span><h3>${esc(recommendation.title)}</h3><p class="muted">${esc(recommendation.reason)}</p></div>
+    <button class="btn btn-purple" data-page="${recommendation.page}">ابدأ الآن</button>
   </div>
 
-  <div class="section-title"><h3>مسار تعلمك</h3><button class="link-btn" data-page="progress">عرض التقدم الكامل</button></div>
+  <div class="section-title"><h3>ابدأ من هنا</h3><span class="badge orange">المسار الذكي</span></div>
+  <div class="home-start-grid">
+    <div class="start-card level-start"><div class="start-icon">🎯</div><div class="start-body"><span class="eyebrow orange">التشخيص</span><h3>اختبار تحديد المستوى</h3><p>استخدمه عند بداية المقرر أو عندما تريد إعادة قياس مستواك.</p></div><button class="btn btn-orange" data-page="level">ابدأ</button></div>
+    <div class="start-card review-start"><div class="start-icon purple">✦</div><div class="start-body"><span class="eyebrow purple">التحسين</span><h3>المراجعة الذكية</h3><p>ركز على ${esc(ready)} بدل إعادة كل المحتوى.</p></div><button class="btn btn-purple" data-page="review">راجع</button></div>
+    <div class="start-card course-start"><div class="start-icon">▶</div><div class="start-body"><span class="eyebrow blue">التعلم</span><h3>${esc(next.title)}</h3><p>استمر في المسار بعد معالجة نقطة الضعف الحالية.</p></div><button class="btn btn-primary" data-page="course">متابعة</button></div>
+  </div>
+
+  <div class="section-title"><h3>خريطة الإتقان</h3><button class="link-btn" data-page="progress">التفاصيل</button></div>
+  <div class="card mastery-grid">${snapshot.ranked.map(x=>`<div class="mastery-item"><div><strong>${x.topic}</strong><span class="badge ${x.score<50?"red":x.score<70?"orange":"green"}">${x.score}%</span></div><div class="progress"><span style="width:${x.score}%"></span></div><small>${x.level}</small></div>`).join("")}</div>
+
+  <div class="section-title"><h3>مسار تعلمك</h3></div>
   <div class="card">${pathHtml()}</div>
 
-  <div class="section-title"><h3>آخر نشاط</h3><button class="link-btn" data-page="progress">السجل الكامل</button></div>
-  <div class="card activity-list">${defaultActivity.map(a=>`<div class="activity-item"><div class="activity-dot"></div><div class="activity-main"><strong>${a.title}</strong><span class="muted">${a.type} • ${a.time}</span></div><span class="badge ${a.status.includes("%")?"":"green"}">${a.status}</span></div>`).join("")}</div>
-
-  <div class="home-note"><strong>💡 نصيحة اليوم</strong><span>في Subnetting لا تحفظ النتائج فقط؛ اربط دائمًا بين Prefix وSubnet Mask وMagic Number.</span></div>
+  <div class="home-note"><strong>💡 لماذا هذه التوصية؟</strong><span>${esc(recommendation.reason)}</span></div>
   `
 }
 function levelPage(){
@@ -157,23 +142,26 @@ function labsPage(){
 }
 
 function progressPage(){
+ const snapshot=getLearningSnapshot();
  const completed=lessons.filter(l=>l.progress===100).length;
+ const overall=Math.round(Object.values(snapshot.scores).reduce((a,b)=>a+b,0)/Object.keys(snapshot.scores).length);
  return `
- <div class="page-intro"><span class="eyebrow blue">07 • التقدم</span><h2>تقدمك من صفحة واحدة</h2><p>نقيس التعلم، التطبيق، والاختبارات معًا.</p></div>
- <div class="student-grid-4">${statCard("إكمال المقرر",student.progress+"%",completed+" من "+lessons.length+" وحدات")}${statCard("متوسط الدرجات",student.avgScore+"%","آخر 3 محاولات")}${statCard("سلسلة التعلم",student.streak+" أيام","أفضل سلسلة 7")}${statCard("XP",student.xp,"الهدف التالي 500")}</div>
- <div class="section-title"><h3>المسار</h3></div><div class="card">${pathHtml()}</div>
- <div class="grid-2" style="margin-top:14px"><div class="card"><h3>الأداء حسب الموضوع</h3>${[["IPv4",84],["Binary",72],["Prefix",58],["Subnet Mask",46]].map(x=>`<div class="stat-row"><span>${x[0]}</span><strong>${x[1]}%</strong></div>`).join("")}</div><div class="card"><h3>النشاط الأسبوعي</h3><div class="weekly-bars">${[35,55,40,75,50,88,62].map((v,i)=>`<div><span style="height:${v}%"></span><small>${["أ","ح","ن","ث","ر","خ","ج"][i]}</small></div>`).join("")}</div></div></div>`
+ <div class="page-intro"><span class="eyebrow blue">07 • التقدم</span><h2>لوحة إتقانك</h2><p>التقدم هنا لا يعتمد على إكمال الدروس فقط؛ بل على مستوى الإتقان الفعلي.</p></div>
+ <div class="student-grid-4">${statCard("إكمال المقرر",student.progress+"%",completed+" من "+lessons.length+" وحدات")}${statCard("الإتقان العام",overall+"%","Smart Engine")}${statCard("سلسلة التعلم",student.streak+" أيام","أفضل سلسلة 7")}${statCard("XP",student.xp,"الهدف التالي 500")}</div>
+ <div class="section-title"><h3>الإتقان حسب الموضوع</h3><span class="badge purple">يُحدّث تلقائيًا</span></div>
+ <div class="card mastery-grid large">${snapshot.ranked.map(x=>`<div class="mastery-item"><div><strong>${x.topic}</strong><span class="badge ${x.score<50?"red":x.score<70?"orange":"green"}">${x.score}%</span></div><div class="progress"><span style="width:${x.score}%"></span></div><small>${x.level}</small></div>`).join("")}</div>
+ <div class="section-title"><h3>مسار التعلم</h3></div><div class="card">${pathHtml()}</div>
+ <div class="grid-2" style="margin-top:14px"><div class="card"><h3>أعلى نقاط القوة</h3>${snapshot.strong.slice(0,3).map(x=>`<div class="stat-row"><span>${x.topic}</span><strong>${x.score}%</strong></div>`).join("")||'<div class="empty">سيظهر هنا أعلى أداء بعد تسجيل المحاولات.</div>'}</div><div class="card"><h3>أولوية التحسين</h3>${snapshot.weak.map(x=>`<div class="stat-row"><span>${x.topic}</span><strong>${x.score}%</strong></div>`).join("")||'<div class="empty">لا توجد نقاط ضعف حرجة حاليًا.</div>'}</div></div>`
 }
-
 function reviewPage(){
- const examWeak=getLastWeakTopics();
- const topics=examWeak.length?examWeak:student.reviewTopics;
- const scoreHints=topics.map((t,i)=>({Binary:72,Prefix:58,"Subnet Mask":46,FLSM:61,VLSM:42,IPv4:84}[t]??55));
+ const snapshot=getLearningSnapshot();
+ const topics=snapshot.weak.length?snapshot.weak.map(x=>x.topic):getWeakTopics();
+ const focus=topics[0]||"Binary";
  return `
- <div class="page-intro"><span class="eyebrow purple">05 • المراجعة الذكية</span><h2>مراجعة مبنية على نتيجتك</h2><p>${examWeak.length?"تم تحديث الأولويات اعتمادًا على آخر اختبار قمت به.":"نركز على ما يحتاجه مستواك الآن، ثم نقيس التحسن."}</p></div>
- <div class="review-focus card"><div class="review-score"><strong>${topics.length}</strong><span>موضوعات الأولوية</span></div><div><h3>أولوية اليوم</h3><p class="muted">ابدأ بـ <strong>${topics[0]||"Binary"}</strong> ثم انتقل إلى الموضوع التالي.</p></div><button class="btn btn-purple" id="start-smart-review">ابدأ التدريب المستهدف</button></div>
- <div class="grid-3" style="margin-top:14px">${topics.map((t,i)=>`<div class="card review-topic"><div class="review-num">${i+1}</div><h3>${t}</h3><div class="progress"><span style="width:${scoreHints[i]}%"></span></div><p class="muted">آخر مستوى مقاس: ${scoreHints[i]}%</p><button class="btn btn-soft" data-review-topic="${t}">تدريب مخصص</button></div>`).join("")}</div>
- <div class="card smart-rule"><strong>كيف نقرر نقطة الضعف؟</strong><p class="muted">تجمع المنصة بين نتائج الاختبارات، أخطاء الأسئلة، ودقة التدريب. عندما تتحسن النتيجة، تتغير الأولوية تلقائيًا.</p></div>`
+ <div class="page-intro"><span class="eyebrow purple">05 • المراجعة الذكية</span><h2>مراجعة مبنية على أدائك</h2><p>المحرك جمع نتائج التدريب والاختبارات والمختبرات ورتب لك أهم نقاط الضعف.</p></div>
+ <div class="review-focus card"><div class="review-score"><strong>${topics.length}</strong><span>أولويات</span></div><div><h3>ابدأ بـ ${esc(focus)}</h3><p class="muted">أداؤك الحالي في هذا الموضوع ${snapshot.scores[focus]}%، لذلك وضعه المحرك في أعلى القائمة.</p></div><button class="btn btn-purple" id="start-smart-review">ابدأ التدريب المستهدف</button></div>
+ <div class="grid-3" style="margin-top:14px">${snapshot.ranked.slice(0,3).map((x,i)=>`<div class="card review-topic"><div class="review-num">${i+1}</div><h3>${esc(x.topic)}</h3><div class="progress"><span style="width:${x.score}%"></span></div><p class="muted">الإتقان الحالي: ${x.score}%</p><span class="badge ${x.score<50?"red":x.score<70?"orange":"green"}">${x.level}</span></div>`).join("")}</div>
+ <div class="card smart-rule"><strong>المحرك الذكي</strong><p class="muted">كل نتيجة جديدة تعيد ترتيب الأولويات. عندما يرتفع إتقان موضوع، تنتقل التوصية تلقائيًا إلى الموضوع التالي.</p></div>`
 }
 function achievementsPage(){
  const all=["أول خطوة","4 أيام متتالية","إكمال وحدتين","500 XP","80% في اختبار","إتقان Binary","خبير Subnetting"];
