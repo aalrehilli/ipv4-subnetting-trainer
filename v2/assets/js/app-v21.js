@@ -3,6 +3,7 @@ import {getTrainerView} from "./trainer-v22.js";
 import {handleExamAction} from "./exam-v23.js";
 import {handleQuestionBankAction,updateFilter,questionBankView} from "./question-bank-v24.js";
 import {handleLabAction} from "./subnet-lab-v25.js";
+import {handleFlsmAction} from "./flsm-v26.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
@@ -56,6 +57,10 @@ function bind(){
   document.getElementById("check-subnet-lab")?.addEventListener("click",()=>labAction(document.getElementById("check-subnet-lab")));
   document.getElementById("show-subnet-solution")?.addEventListener("click",()=>labAction(document.getElementById("show-subnet-solution")));
   document.getElementById("new-subnet-challenge")?.addEventListener("click",()=>labAction(document.getElementById("new-subnet-challenge")));
+  document.querySelectorAll("[data-lab-page]").forEach(b=>b.addEventListener("click",()=>{studentState.page=b.dataset.labPage==="subnet"?"subnet-lab":"flsm";state.page=studentState.page;render()}));
+  document.getElementById("check-flsm")?.addEventListener("click",()=>flsmAction(document.getElementById("check-flsm")));
+  document.getElementById("show-flsm-solution")?.addEventListener("click",()=>flsmAction(document.getElementById("show-flsm-solution")));
+  document.getElementById("new-flsm")?.addEventListener("click",()=>flsmAction(document.getElementById("new-flsm")));
   document.getElementById("trainer-search")?.addEventListener("input",applyTrainerFilters);
   document.getElementById("trainer-risk")?.addEventListener("change",applyTrainerFilters);
   document.getElementById("trainer-group")?.addEventListener("change",applyTrainerFilters);
@@ -77,6 +82,11 @@ function applyTrainerFilters(){
     const okGroup=!group||text.includes(group);
     row.style.display=okText&&okRisk&&okGroup?"":"none";
   });
+}
+
+function flsmAction(button){
+  const result=handleFlsmAction(button);
+  if(result?.rerender)render();
 }
 
 function labAction(button){
