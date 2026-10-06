@@ -198,8 +198,8 @@ export function handleStudentAction(target){
   if(target.dataset.answer!==undefined) return answerQuestion(Number(target.dataset.answer));
   if(target.id==="restart-practice"){studentState.practice={ids:questions.map(q=>q.id),index:0,score:0,done:false,review:false};return {rerender:true}}
   if(target.id==="start-smart-review"){
-    const topics=getLastWeakTopics();
-    const ids=topics.length?questions.filter(q=>topics.includes(q.topic)).map(q=>q.id):[5,3,8,9,4];
+    const topics=getWeakTopics();
+    const ids=topics.length?questions.filter(q=>topics.includes(q.topic)).map(q=>q.id):questions.slice(0,5).map(q=>q.id);
     studentState.practice={ids,index:0,score:0,done:false,review:true};
     studentState.page="practice";
     return {rerender:true}
