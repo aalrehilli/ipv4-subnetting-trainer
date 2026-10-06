@@ -1,4 +1,4 @@
-const state={role:"student",page:"home"};
+const state={role:"student",page:"home",filter:"",studentId:null};
 
 const studentNav=[
   ["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],
@@ -101,29 +101,29 @@ async function loadPage(){
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
-      var learning=await import("./course-learning-v38.js?v=408");
+      var learning=await import("./course-learning-v38.js?v=409");
       if(state.page==="course") return learning.courseLearningPage();
       if(state.page==="lesson-assessment") return learning.assessmentView();
       return learning.lessonLearningPage();
     }
 
     if(state.page==="notifications"){
-      var notifications=await import("./notifications-v30.js?v=408");
+      var notifications=await import("./notifications-v30.js?v=409");
       return notifications.notificationsPage(state.role);
     }
 
     if(state.role==="trainer" && state.page==="interventions"){
-      var interventions=await import("./intervention-v31.js?v=408");
+      var interventions=await import("./intervention-v31.js?v=409");
       return interventions.interventionCenterView();
     }
 
-    if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=408");
-      return trainer.getTrainerView(state.page);
+    if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
+      var trainer=await import("./trainer-v22.js?v=409");
+      return trainer.getTrainerView(state.page,state.filter||"",state.studentId);
     }
 
     if(state.role==="student"){
-      var student=await import("./student.js?v=408");
+      var student=await import("./student.js?v=409");
       student.studentState.page=state.page;
       return student.studentPage();
     }
@@ -164,16 +164,37 @@ function bind(){
   if(sw) sw.addEventListener("click",function(){
     state.role=state.role==="student"?"trainer":"student";
     state.page=state.role==="student"?"home":"tdash";
+    state.filter="";
+    state.studentId=null;
     render();
   });
 
   var refresh=document.getElementById("hard-refresh");
   if(refresh) refresh.addEventListener("click",function(){ location.reload(); });
 
+  document.querySelectorAll("[data-trainer-page]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      state.role="trainer";
+      state.page=btn.getAttribute("data-trainer-page")||"tdash";
+      state.filter=btn.getAttribute("data-risk")||"";
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-student-id]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      state.role="trainer";
+      state.page="student360";
+      state.studentId=Number(btn.getAttribute("data-student-id")||0)||null;
+      state.filter="";
+      render();
+    });
+  });
+
   document.querySelectorAll("[data-course-action],[data-course-editor-action],[data-lesson-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-manager-v36.js?v=408");
+        var m=await import("./course-manager-v36.js?v=409");
         var result;
         if(btn.hasAttribute("data-course-action")) result=m.handleCourseAction(btn);
         else if(btn.hasAttribute("data-course-editor-action")) result=m.handleCourseEditorAction(btn);
