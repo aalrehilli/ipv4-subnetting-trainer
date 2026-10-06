@@ -227,7 +227,7 @@ function bind(){
   document.querySelectorAll("[data-360-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./student360-v29.js?v=412");
+        var m=await import("./student360-v29.js?v=413");
         var result=m.handleStudent360Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
@@ -239,7 +239,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=412");
+        var m=await import("./intervention-v31.js?v=413");
         var result=m.handleInterventionAction(btn);
         if(result&&result.studentId){
           state.role="trainer";
@@ -257,7 +257,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-filter]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=412");
+        var m=await import("./intervention-v31.js?v=413");
         m.setInterventionFilter(btn.getAttribute("data-intervention-filter")||"open");
         await render();
       }catch(error){
