@@ -1,5 +1,6 @@
 import {getTrainerExamSummary} from "./exam-v23.js";
 import {questionBankView} from "./question-bank-v24.js";
+import {student360View} from "./student360-v29.js";
 
 const students=[
   {id:1,name:"أحمد محمد",group:"1",progress:84,avg:88,last:"اليوم",risk:"منخفض",topic:"VLSM",weakness:64,activity:"نشط",trend:"+8%"},
@@ -89,20 +90,7 @@ function studentsPage(filter=""){
   </tbody></table></div>`;
 }
 
-function student360(id){
-  const s=students.find(x=>x.id===Number(id))||students[0];
-  const topics=[["IPv4",91],["Binary",72],["Prefix",58],["Subnet Mask",s.weakness],["FLSM",66],["VLSM",42]];
-  return `
-  <div class="page-intro with-action"><div><span class="eyebrow purple">Student 360</span><h2>${s.name}</h2><p>المجموعة ${s.group} • آخر نشاط ${s.last}</p></div><button class="btn btn-soft" data-trainer-page="students">رجوع للمتدربين</button></div>
-  <div class="student360-head card"><div class="student360-avatar">${s.name.slice(0,1)}</div><div class="student360-main"><h3>${s.name}</h3><div class="muted">التقدم ${s.progress}% • متوسط الأداء ${s.avg}% • الاتجاه ${s.trend}</div><div class="progress" style="margin-top:10px"><span style="width:${s.progress}%"></span></div></div><div><span class="badge ${fmtRisk(s.risk)}">${s.risk}</span><div class="muted" style="margin-top:8px">أولوية: ${s.topic}</div></div></div>
-  <div class="student-grid-4">${stat("التقدم",s.progress+"%","من المقرر")}${stat("المتوسط",s.avg+"%","آخر المحاولات")}${stat("نقطة الضعف",s.weakness+"%",s.topic)}${stat("النشاط",s.activity,"آخر: "+s.last)}</div>
-  <div class="grid-2" style="margin-top:14px">
-    <div class="card"><h3>خريطة الإتقان</h3>${topics.map(x=>`<div class="topic-bar"><div><span>${x[0]}</span><b>${x[1]}%</b></div><div class="progress"><span style="width:${x[1]}%"></span></div></div>`).join("")}</div>
-    <div class="card"><h3>التحليل</h3><div class="analysis-box"><strong>المشكلة الرئيسية</strong><p class="muted">${s.topic==="—"?"لا توجد نقطة ضعف حرجة حاليًا.":"أداء "+s.topic+" أقل من المستوى المطلوب ويظهر كموضوع متكرر في الأخطاء."}</p></div><div class="analysis-box"><strong>الإجراء المقترح</strong><p class="muted">${s.risk==="مرتفع"?actions.high:s.risk==="متوسط"?actions.medium:actions.low}</p></div><button class="btn btn-purple" data-demo-action="assign-review">تعيين مراجعة ذكية</button> <button class="btn btn-soft" data-demo-action="add-note">إضافة ملاحظة</button></div>
-  </div>
-  <div class="card intervention-log"><h3>آخر الأحداث</h3><div class="stat-row"><span>حل Binary Practice</span><b>80%</b></div><div class="stat-row"><span>اختبار Prefix</span><b>58%</b></div><div class="stat-row"><span>درس Subnet Mask</span><b>مكتمل</b></div></div>
-  `;
-}
+function student360(id){ return student360View(id); }
 
 export function getTrainerView(page="tdash",filter="",id=null){
   if(page==="students")return studentsPage(filter);
