@@ -26,6 +26,7 @@ export const qbankState={
   topic:"",
   difficulty:"",
   modal:null,
+  previewEditor:false,
   editingId:null,
   previewId:null
 };
@@ -70,6 +71,7 @@ export function questionBankView(){
   const rows=filtered();
   if(qbankState.modal==="editor")return editorView();
   if(qbankState.modal==="preview")return previewView();
+  if(qbankState.modal==="editor-preview")return previewEditorState();
 
   return `
   <div class="page-intro with-action">
@@ -145,8 +147,9 @@ export function handleQuestionBankAction(target){
   if(act==="new"){qbankState.modal="editor";qbankState.editingId=null;return {rerender:true}}
   if(act==="edit"){qbankState.modal="editor";qbankState.editingId=target.dataset.qId;return {rerender:true}}
   if(act==="preview"){qbankState.modal="preview";qbankState.previewId=target.dataset.qId;return {rerender:true}}
-  if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;return {rerender:true}}
-  if(act==="preview-edit"){return {previewData:readEditor(),rerenderPreview:true}}
+  if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;qbankState.previewEditor=false;return {rerender:true}}
+  if(act==="back-editor"){qbankState.modal="editor";return {rerender:true}}
+  if(act==="preview-edit"){qbankState.modal="editor-preview";return {rerender:true}}
   if(act==="save"){saveEditor();qbankState.modal=null;qbankState.editingId=null;return {rerender:true}}
   return null;
 }
