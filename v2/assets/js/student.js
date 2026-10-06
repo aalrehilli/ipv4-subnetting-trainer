@@ -1,6 +1,7 @@
 import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent,resetDemo,loadPractice,savePractice} from "./demo-data.js";
 import {examPage,getLastWeakTopics} from "./exam-v23.js";
 import {labPage} from "./subnet-lab-v25.js";
+import {flsmPage} from "./flsm-v26.js";
 
 let student=loadStudent();
 
@@ -140,7 +141,18 @@ function practicePage(review=false){
 }
 
 function examsPage(){ return examPage(); }
-function labsPage(){ return labPage(); }
+function labsPage(){
+ return `
+ <div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>انتقل من المفهوم إلى الحل العملي، وكل مختبر يبني مهارة مختلفة.</p></div>
+ <div class="lab-hub-grid">
+   <div class="hub-card hub-primary"><div class="hub-icon">⌘</div><span class="badge green">متاح الآن</span><h3>Subnetting Challenge</h3><p>حل شبكة واحدة وحدد Network وHosts وBroadcast وSubnet Mask.</p><div class="hub-meta"><span>6 عناصر</span><span>متوسط</span></div><button class="btn btn-green" data-lab-page="subnet">فتح المختبر</button></div>
+   <div class="hub-card hub-purple"><div class="hub-icon">4</div><span class="badge purple">V2.6</span><h3>FLSM Challenge</h3><p>قسّم شبكة /24 إلى 4 أو 8 شبكات متساوية ثم احسب بيانات كل Subnet.</p><div class="hub-meta"><span>4–8 Subnets</span><span>متوسط</span></div><button class="btn btn-purple" data-lab-page="flsm">ابدأ التحدي</button></div>
+   <div class="hub-card"><div class="hub-icon orange">01</div><span class="badge orange">قريبًا</span><h3>Binary Speed Lab</h3><p>تدريب سريع على التحويل بين Binary وDecimal وربط البتات بالـPrefix.</p><div class="hub-meta"><span>سرعة</span><span>مبتدئ</span></div><button class="btn btn-soft" disabled>قريبًا</button></div>
+   <div class="hub-card"><div class="hub-icon green">↗</div><span class="badge">المرحلة التالية</span><h3>Packet Tracer</h3><p>سيناريوهات شبكات عملية تتدرج من IPv4 إلى Routing وSwitching.</p><div class="hub-meta"><span>عملي</span><span>متقدم</span></div><button class="btn btn-soft" disabled>لاحقًا</button></div>
+ </div>
+ <div class="lab-hub-note"><strong>منهج المختبرات:</strong><span>كل مختبر يعطي نتيجة، ويحفظ المحاولة، ويغذي التقدم والمراجعة الذكية في النسخة النهائية.</span></div>`
+}
+
 function progressPage(){
  const completed=lessons.filter(l=>l.progress===100).length;
  return `
@@ -177,6 +189,8 @@ export function studentPage(){
   if(studentState.page==="level") return levelPage();
   if(studentState.page==="course") return coursePage();
   if(studentState.page==="practice") return practicePage(false);
+  if(studentState.page==="subnet-lab") return labPage();
+  if(studentState.page==="flsm") return flsmPage();
   if(studentState.page==="review") return reviewPage();
   if(studentState.page==="exams") return examsPage();
   if(studentState.page==="labs") return labsPage();
