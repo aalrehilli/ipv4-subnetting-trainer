@@ -2,6 +2,7 @@ import {getTrainerExamSummary} from "./exam-v23.js";
 import {questionBankView} from "./question-bank-v24.js";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage} from "./notifications-v30.js";
+import {interventionCenterView} from "./intervention-v31.js";
 
 const students=[
   {id:1,name:"أحمد محمد",group:"1",progress:84,avg:88,last:"اليوم",risk:"منخفض",topic:"VLSM",weakness:64,activity:"نشط",trend:"+8%"},
@@ -95,6 +96,7 @@ function student360(id){ return student360View(id); }
 
 export function getTrainerView(page="tdash",filter="",id=null){
   if(page==="students")return studentsPage(filter);
+  if(page==="interventions")return interventionCenterView();
   if(page==="notifications")return notificationsPage("trainer");
   if(page==="student360")return student360(id);
   if(page==="groups")return `
