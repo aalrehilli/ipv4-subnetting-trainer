@@ -3,6 +3,7 @@ import {questionBankView} from "./question-bank-v24.js";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
+import {courseManagerView} from "./course-manager-v34.js";
 
 const students=[
   {id:1,name:"أحمد محمد",group:"1",progress:84,avg:88,last:"اليوم",risk:"منخفض",topic:"VLSM",weakness:64,activity:"نشط",trend:"+8%"},
@@ -103,7 +104,7 @@ export function getTrainerView(page="tdash",filter="",id=null){
     <div class="page-intro"><span class="eyebrow blue">02 • المجموعات</span><h2>المجموعات</h2><p>قارن الأداء قبل اتخاذ تدخل جماعي.</p></div>
     <div class="grid-3"><div class="card"><h3>المجموعة 1</h3><div class="kpi-value">77%</div><div class="muted">21 متدرب • 4 يحتاج متابعة</div></div><div class="card"><h3>المجموعة 2</h3><div class="kpi-value">84%</div><div class="muted">16 متدرب • أداء مستقر</div></div><div class="card"><h3>المجموعة 3</h3><div class="kpi-value">69%</div><div class="muted">5 متدربين • 2 يحتاج متابعة</div></div></div>
     <div class="card" style="margin-top:14px"><h3>أبرز الفروقات</h3><div class="stat-row"><span>أفضل مجموعة</span><b>المجموعة 2 • 84%</b></div><div class="stat-row"><span>أعلى مخاطرة</span><b>المجموعة 3</b></div></div>`;
-  if(page==="courses")return '<div class="page-intro"><span class="eyebrow blue">03 • المقررات</span><h2>إدارة المحتوى</h2><p>محتوى متصل بمسار الطالب.</p></div><div class="grid-2"><div class="card"><h3>IPv4 Fundamentals</h3><p class="muted">6 وحدات • 40+ سؤالًا</p><span class="badge green">منشور</span></div><div class="card"><h3>Subnetting Mastery</h3><p class="muted">8 وحدات • 60 سؤالًا</p><span class="badge orange">مسودة</span></div></div>';
+  if(page==="courses")return courseManagerView();
   if(page==="questions")return questionBankView();
   if(page==="exams"){
     const r=getTrainerExamSummary();
