@@ -5,6 +5,7 @@ import {handleQuestionBankAction,updateFilter,questionBankView} from "./question
 import {handleLabAction} from "./subnet-lab-v25.js";
 import {handleFlsmAction} from "./flsm-v26.js";
 import {handleVlsmAction} from "./vlsm-v27.js";
+import {handleStudent360Action} from "./student360-v29.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
@@ -38,6 +39,7 @@ function bind(){
   document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>{state.page=b.dataset.page;render()}));
   document.querySelectorAll("[data-trainer-page]").forEach(b=>b.addEventListener("click",()=>{state.page=b.dataset.trainerPage;render()}));
   document.querySelectorAll("[data-student-id]").forEach(b=>b.addEventListener("click",()=>{state.page="student360";b.dataset.page="student360";renderStudent360(b.dataset.studentId)}));
+  document.querySelectorAll("[data-360-action]").forEach(b=>b.addEventListener("click",()=>student360Action(b)));
   document.getElementById("switch-role")?.addEventListener("click",()=>{state.role=state.role==="student"?"trainer":"student";state.page=state.role==="student"?"home":"tdash";render()});
   document.getElementById("reset-demo")?.addEventListener("click",()=>{resetDemoData();state.role="student";state.page="home";render()});
   document.querySelectorAll("[data-lesson]").forEach(b=>b.addEventListener("click",()=>{handleStudentAction(b);state.page="practice";studentState.page="practice";render()}));
@@ -69,6 +71,13 @@ function bind(){
   document.getElementById("trainer-risk")?.addEventListener("change",applyTrainerFilters);
   document.getElementById("trainer-group")?.addEventListener("change",applyTrainerFilters);
 }
+function student360Action(button){
+  const result=handleStudent360Action(button);
+  if(result?.rerender){
+    renderStudent360(button.dataset.studentId);
+  }
+}
+
 function renderStudent360(id){
   const view=getTrainerView("student360","",id);
   document.getElementById("app").innerHTML='<div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • Demo Preview</small></div></div><nav class="nav">'+nav(trainerNav)+'</nav><div class="sidebar-footer">Trainer Command Center • V2.2</div></aside><main class="main"><header class="topbar"><div class="topbar-title">مركز المدرب <span class="badge" style="margin-right:8px">وضع تجريبي</span></div><div class="topbar-actions"><button class="btn btn-soft" id="switch-role">عرض المتدرب</button><button class="btn btn-ghost" id="reset-demo">إعادة التجربة</button><div class="avatar">د</div></div></header><div class="container">'+view+'</div></main></div>';
