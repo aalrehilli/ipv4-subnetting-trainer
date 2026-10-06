@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>محاكي Cisco IOS | IPv4 Subnetting Trainer</title>
+<style>
+:root{
+  --bg:#eef4f8;--card:#fff;--line:#d9e5eb;--ink:#2f5062;--muted:#738691;
+  --brand:#12638e;--brand-soft:#eef7fb;--ok:#2f7a5a;--warn:#9a6b2d;--danger:#a4575e;
+  --cli:#050708;--cli2:#11181d;--cli-line:#28353d;--cli-text:#d9e8ed;--cli-green:#a9f2bd;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
+button,input{font:inherit}
+.page{max-width:1280px;margin:0 auto;padding:20px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--line);background:#f9fcfd;border-radius:14px;margin-bottom:12px}
+.brand{font-size:15px;font-weight:900;color:#165d82}.back{border:1px solid #cddfe7;background:#fff;color:#496b7a;border-radius:8px;padding:8px 12px;font-size:11px;font-weight:900;cursor:pointer}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;padding:20px 22px;background:linear-gradient(110deg,#f7fbfd,#edf7fb);border:1px solid var(--line);border-radius:18px}
+.hero h1{margin:0 0 5px;font-size:28px;color:#145b84}.hero p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}.badge{display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;background:#eef5f9;border:1px solid #d9e7ed;color:#55717f;font-size:9px;font-weight:900}
+.meta{display:flex;flex-wrap:wrap;gap:7px}.meta span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:9px;color:#5d7480}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}.tab{border:1px solid var(--line);background:#fff;color:#526d7a;border-radius:10px;padding:10px 8px;cursor:pointer;font-weight:900;font-size:11px}.tab.active{background:#eaf4f9;border-color:#b9d7e4;color:#155e85;box-shadow:inset 0 -2px 0 #2b80aa}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.8fr);gap:12px;align-items:start}
+.cli{background:var(--cli);border:1px solid #1e2a31;border-radius:14px;overflow:hidden;box-shadow:0 12px 28px rgba(13,34,44,.13)}
+.cli-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#151c21;border-bottom:1px solid var(--cli-line);color:#edf5f7}.device{display:flex;align-items:center;gap:8px}.dot{width:9px;height:9px;background:#45c978;border-radius:50%;box-shadow:0 0 8px rgba(69,201,120,.35)}.device b{display:block;font-size:12px}.device small{display:block;color:#a5b7be;font:11px Consolas,monospace;direction:ltr}
+.cli-tools{display:flex;gap:5px}.cli-tools button{border:1px solid #34444d;background:#202d34;color:#c6d3d8;border-radius:7px;padding:6px 8px;font-size:9px;cursor:pointer}
+.terminal{height:470px;padding:14px;background:var(--cli);color:var(--cli-text);overflow:auto;font:14px/1.7 Consolas,"Courier New",monospace;direction:ltr;text-align:left;white-space:pre-wrap}.line.cmd{color:#ecf5f7}.line.out{color:#bad1d9}.line.ok{color:var(--cli-green)}.line.err{color:#ffadad}
+.command-row{display:grid;grid-template-columns:auto minmax(0,1fr) 72px;gap:7px;padding:10px;background:var(--cli2);border-top:1px solid var(--cli-line);align-items:center}.prompt{color:var(--cli-green);font:700 14px Consolas,monospace;direction:ltr}.command-row input{width:100%;border:1px solid #364850;background:#080b0d;color:#f2fbfd;border-radius:8px;padding:9px;direction:ltr;font:14px Consolas,monospace;outline:none}.command-row input:focus{border-color:#5e7c89}.run{border:1px solid #2f86ad;background:#1f6e92;color:#fff;border-radius:8px;padding:9px;cursor:pointer;font-weight:900}
+.quick{display:flex;flex-wrap:wrap;gap:6px;padding:9px;background:#0e1519}.quick button{border:1px solid #35464f;background:#18252c;color:#bfd0d6;border-radius:7px;padding:6px 8px;font:10px Consolas,monospace;cursor:pointer}
+.side{display:grid;gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden}.card-head{padding:10px 12px;background:#f6fafb;border-bottom:1px solid #e0eaee;font-weight:900;font-size:12px;color:#486577}.card-body{padding:11px}
+.task-title{font-size:17px;color:#2d596d;font-weight:900}.task-text{font-size:12px;line-height:1.85;color:#637883;margin-top:5px}.hint{margin-top:8px;padding:8px;border:1px dashed #cfdfe6;background:#fbfdfe;border-radius:8px;color:#7a8b94;font-size:10px}.status{min-height:22px;margin-top:8px;font-size:10px;font-weight:900}.status.ok{color:var(--ok)}.status.bad{color:var(--danger)}.next{margin-top:8px;border:1px solid #cfe0e8;background:#f5fafc;color:#466876;border-radius:8px;padding:8px 10px;cursor:pointer;font-size:10px;font-weight:900}
+.state{display:grid;gap:6px}.state-row{display:flex;justify-content:space-between;gap:8px;border:1px solid #e3eaee;background:#fbfdfe;border-radius:8px;padding:7px 8px;font-size:10px}.state-row span{direction:ltr;font-family:Consolas,monospace;color:#2c6177}.state-row b{color:#5c7380}
+.panel{display:none}.panel.active{display:block}
+.free-info,.test-info,.guide-info,.challenge-info{padding:12px;background:#fbfdfe;border:1px dashed #d6e3e9;border-radius:9px;color:#637984;font-size:11px;line-height:1.8}
+.test-question{font-size:15px;color:#2e5c72;font-weight:900;line-height:1.8}.test-meta{display:flex;justify-content:space-between;margin-top:8px;font-size:9px;color:#7c8d96}.test-controls{display:flex;gap:7px;margin-top:10px}.test-controls button{border:1px solid #cddfe7;background:#fff;color:#456979;border-radius:8px;padding:8px 10px;font-size:10px;font-weight:900;cursor:pointer}
+.guide-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.guide-group{border:1px solid #dfe8ec;background:#fbfdfe;border-radius:10px;padding:9px}.guide-group h3{margin:0 0 7px;font-size:11px;color:#4e6a78}.cmd-chip{display:inline-flex;direction:ltr;border:1px solid #d6e3e9;background:#fff;color:#2e5d73;border-radius:7px;padding:5px 7px;margin:3px;font:10px Consolas,monospace;cursor:pointer}
+.challenge-wrap{display:grid;grid-template-columns:250px minmax(0,1fr);gap:10px}.levels{display:grid;gap:6px}.level{border:1px solid #dfe8ed;background:#fff;border-radius:9px;padding:8px;text-align:right;cursor:pointer;color:#526e7b}.level.active{background:#eef7fb;border-color:#bdd9e5}.level b{display:block;font-size:10px}.level small{color:#8a969d;font-size:8px}.challenge-list{display:grid;gap:6px;margin-top:8px}.challenge-item{border:1px solid #e1e9ed;background:#fff;border-radius:8px;padding:8px;display:grid;grid-template-columns:24px 1fr;gap:6px;text-align:right;cursor:pointer}.challenge-item.active{background:#f2f8fb;border-color:#bdd9e5}.challenge-item span{width:22px;height:22px;display:grid;place-items:center;background:#eef5f8;border-radius:6px;font-size:9px}.challenge-item b{font-size:9px;color:#3e5d6e}.challenge-item small{display:block;color:#8a969d;font-size:8px}.challenge-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:7px}.metric{border:1px solid #dfe8ed;background:#fff;border-radius:8px;text-align:center;padding:8px}.metric b{display:block;color:#2d6177;font-size:15px}.metric small{font-size:8px;color:#81909a}.challenge-card h2{font-size:17px;margin:0;color:#2e596e}.challenge-card .objective{padding:12px;font-size:11px;line-height:1.8;color:#607782}.challenge-actions{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px}.challenge-actions button{border:1px solid #d7e4e9;background:#fff;color:#56727e;border-radius:8px;padding:7px 9px;font-size:9px;font-weight:900;cursor:pointer}.challenge-actions button:first-child{background:#edf6fa;color:#1b607f;border-color:#c2dbe6}.challenge-history{margin-top:8px;border:1px solid #dfe8ed;border-radius:10px;overflow:hidden;background:#fff}.history-head{padding:8px 10px;background:#f6fafb;border-bottom:1px solid #e1e9ed;font-size:10px;font-weight:900;color:#4e6a78}.history-body{max-height:120px;overflow:auto}.history-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #edf1f3;font-size:9px}.history-row code{font:9px Consolas,monospace;direction:ltr;color:#345f74}
+.footer{margin-top:12px;color:#84929a;font-size:9px;text-align:center}
+@media(max-width:900px){.layout,.challenge-wrap{grid-template-columns:1fr}.tabs{grid-template-columns:repeat(2,1fr)}.guide-grid{grid-template-columns:1fr}.terminal{height:380px}}
+@media(max-width:560px){.hero{flex-direction:column;align-items:flex-start}.tabs{grid-template-columns:1fr}.command-row{grid-template-columns:1fr}.run{width:100%}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="brand">IPv4 Subnetting Trainer • 🖥️ محاكي Cisco IOS</div>
+    <button type="button" class="back" onclick="location.href='index.html'">← العودة إلى المنصة</button>
+  </div>
+
+  <section class="hero">
+    <div>
+      <span class="badge">V66.41 • صفحة مستقلة</span>
+      <h1>محاكي <strong>Cisco IOS</strong></h1>
+      <p>محاكي تدريبي مستقل لأوامر السويتش والموجّه من الوحدة 2 والوحدة 10، مصمم للتدريب داخل المتصفح دون التأثير على بقية المنصة.</p>
+    </div>
+    <div class="meta"><span>📘 الوحدة 2</span><span>🌐 الوحدة 10</span><span>⌨️ CLI</span><span>✅ جاهز</span></div>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab active" data-tab="learn">🎓 التدريب الموجّه</button>
+    <button type="button" class="tab" data-tab="free">⌨️ التدريب الحر</button>
+    <button type="button" class="tab" data-tab="test">📝 اختبار المحاكاة</button>
+    <button type="button" class="tab" data-tab="guide">📚 دليل الأوامر</button>
+    <button type="button" class="tab" data-tab="challenge">🏆 التحديات</button>
+  </div>
+
+  <div class="layout">
+    <section class="cli">
+      <div class="cli-head">
+        <div class="device"><span class="dot"></span><div><b>السويتش</b><small id="promptLabel">Switch&gt;</small></div></div>
+        <div class="cli-tools"><button type="button" id="clearBtn">⌫ مسح</button><button type="button" id="resetBtn">↻ إعادة</button></div>
+      </div>
+      <div id="terminal" class="terminal" aria-live="polite"></div>
+      <div class="command-row">
+        <span id="prompt" class="prompt">Switch&gt;</span>
+        <input id="cmdInput" autocomplete="off" spellcheck="false" placeholder="اكتب أمر Cisco IOS ثم اضغط Enter">
+        <button type="button" id="runBtn" class="run">↵ تنفيذ</button>
+      </div>
+      <div class="quick" id="quickCommands">
+        <button type="button" data-cmd="enable">enable</button>
+        <button type="button" data-cmd="configure terminal">configure terminal</button>
+        <button type="button" data-cmd="show running-config">show running-config</button>
+        <button type="button" data-cmd="show ip interface brief">show ip interface brief</button>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="card">
+        <div class="card-head">🎯 المهمة الحالية</div>
+        <div class="card-body">
+          <div id="taskPanel" class="panel active">
+            <div id="taskTitle" class="task-title"></div>
+            <div id="taskText" class="task-text"></div>
+            <div id="taskHint" class="hint"></div>
+            <div id="taskStatus" class="status"></div>
+            <button type="button" id="taskNext" class="next">التالي ←</button>
+          </div>
+          <div id="freePanel" class="panel">
+            <div class="free-info">هذا الوضع مفتوح للتجربة. استخدم أي أمر من دليل الأوامر واستكشف استجابة السويتش.</div>
+          </div>
+          <div id="testPanel" class="panel">
+            <div class="test-question" id="testQuestion"></div>
+            <div class="test-meta"><span id="testCounter">سؤال 1 / 10</span><span>النتيجة: <b id="testScore">0</b></span></div>
+            <div class="test-controls"><button type="button" id="testRestart">↻ إعادة الاختبار</button></div>
+          </div>
+          <div id="guidePanel" class="panel">
+            <div class="guide-info">اضغط على أي أمر ليتم إدخاله مباشرة في سطر أوامر الـCLI.</div>
+          </div>
+          <div id="challengePanel" class="panel">
+            <div class="challenge-wrap">
+              <div>
+                <div class="levels">
+                  <button type="button" class="level active" data-level="beginner"><b>🟢 مبتدئ</b><small>أساسيات IOS</small></button>
+                  <button type="button" class="level" data-level="intermediate"><b>🟡 متوسط</b><small>إعداد والتحقق</small></button>
+                  <button type="button" class="level" data-level="advanced"><b>🔴 متقدم</b><small>سيناريوهات</small></button>
+                </div>
+                <div id="challengeList" class="challenge-list"></div>
+              </div>
+              <div>
+                <div class="challenge-metrics"><div class="metric"><b id="cScore">100</b><small>النقاط</small></div><div class="metric"><b id="cErrors">0</b><small>الأخطاء</small></div><div class="metric"><b id="cTime">00:00</b><small>الوقت</small></div><div class="metric"><b id="cPct">0%</b><small>التقدم</small></div></div>
+                <section class="card challenge-card">
+                  <div class="card-head" style="display:flex;justify-content:space-between"><span id="cStatus">جديد</span><span>🏆 تحدي IOS</span></div>
+                  <div class="objective"><h2 id="cTitle"></h2><div id="cObjective"></div></div>
+                  <div id="cFeedback" class="status">ابدأ التحدي ثم نفّذ المطلوب في الـCLI.</div>
+                  <div style="height:6px;background:#e9f0f3;border-radius:99px;overflow:hidden;margin:8px 12px"><i id="cBar" style="display:block;height:100%;width:0;background:#418aad;border-radius:99px"></i></div>
+                  <div class="challenge-actions"><button type="button" id="cStart">🚀 ابدأ</button><button type="button" id="cHint">💡 تلميح</button><button type="button" id="cReset">↻ إعادة</button></div>
+                </section>
+                <div class="challenge-history"><div class="history-head">📜 سجل أوامر التحدي</div><div class="history-body" id="cHistory"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">✅ حالة السويتش</div>
+        <div class="card-body" id="state"></div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="footer">V66.41 • محاكي Cisco IOS مستقل • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var terminal=document.getElementById("terminal");
+var input=document.getElementById("cmdInput");
+var promptEl=document.getElementById("prompt");
+var promptLabel=document.getElementById("promptLabel");
+var stateEl=document.getElementById("state");
+var oldRun=null;
+
+var S={mode:"user",modeName:"User EXEC",hostname:"Switch",enableSecret:false,console:false,vty:false,vlanIp:"unassigned",vlanMask:"unset",saved:false,history:[]};
+
+var tasks=[
+["1 — EXEC ذي الامتيازات","انتقل من Switch> إلى Switch#.","الأمر المطلوب مرتبط بالدخول إلى privileged EXEC."],
+["2 — Global Configuration","انتقل إلى وضع Global Configuration.","نفّذ الأمر من Switch#."],
+["3 — اسم السويتش","غيّر اسم السويتش إلى SW1.","نفّذ hostname داخل Global Configuration."],
+["4 — Enable Secret","أنشئ Enable Secret بقيمة class.","نفّذ الأمر داخل Global Configuration."],
+["5 — Console","أمّن Console بكلمة مرور cisco ثم فعّل login.","ادخل أولًا إلى line console 0."],
+["6 — VTY","أمّن VTY 0 إلى 4 بكلمة مرور cisco ثم فعّل login.","يمكن استخدام line vty 0 4."],
+["7 — عنوان VLAN 1","اضبط 192.168.1.2 مع 255.255.255.0 على VLAN 1.","استخدم interface vlan 1."],
+["8 — التحقق","اعرض حالة الواجهات باستخدام show ip interface brief.","نفّذ أمر show المناسب."],
+["9 — الحفظ","احفظ running-config إلى startup-config.","نفّذ أمر الحفظ من privileged EXEC."]
+];
+
+var tests=[
+["ما الأمر الذي ينقلك من Switch> إلى Switch#؟","enable"],
+["ما الأمر للدخول إلى Global Configuration؟","configure terminal"],
+["غيّر اسم السويتش إلى SW1.","hostname SW1"],
+["ما الأمر لإنشاء Enable Secret بقيمة class؟","enable secret class"],
+["ما الأمر للدخول إلى line console 0؟","line console 0"],
+["ما الأمر لتأمين VTY 0 إلى 4 بكلمة مرور cisco؟","password cisco"],
+["ما الأمر لتعيين عنوان IPv4 مع Subnet Mask؟","ip address 192.168.10.1 255.255.255.0"],
+["ما الأمر لتنشيط الواجهة؟","no shutdown"],
+["ما الأمر لعرض حالة الواجهات وعناوين IPv4؟","show ip interface brief"],
+["ما الأمر لحفظ running-config؟","copy running-config startup-config"]
+];
+
+var guide={
+"الوحدة 2 — التنقل":["enable","disable","configure terminal","exit","end","line console 0","line vty 0 15"],
+"الوحدة 2 — التكوين والحفظ":["hostname","no hostname","password","login","service password-encryption","banner motd","copy running-config startup-config","show running-config","reload","erase startup-config"],
+"الوحدة 2 — الاختبار والمساعدة":["ping","traceroute","?","show ?","show ip interface brief"],
+"الوحدة 10 — الموجّه والواجهات":["hostname","enable secret","line console 0","line vty 0 4","transport input ssh telnet","interface gigabitethernet 0/0/0","description","ip address","ipv6 address","no shutdown"],
+"الوحدة 10 — التحقق والبوابة":["show ip interface brief","show ipv6 interface brief","show ip route","show ipv6 route","show interfaces","show ip interface","show ipv6 interface","ip default-gateway"]
+};
+
+var challenges={
+beginner:[
+{title:"تهيئة السويتش وتسميته",objective:"انتقل إلى privileged EXEC، ثم Global Configuration، غيّر الاسم إلى SW1، وأنشئ Enable Secret ثم احفظ.",steps:[["enable"],["configure terminal","conf t"],["hostname SW1"],["enable secret class"],["end","exit"],["copy running-config startup-config"]]},
+{title:"تأمين Console",objective:"أمّن Console بكلمة مرور cisco وفعّل login.",steps:[["enable"],["configure terminal","conf t"],["line console 0"],["password cisco"],["login"],["end","exit"]]},
+{title:"إعداد VTY",objective:"اضبط VTY 0 إلى 4 بكلمة مرور cisco وفعّل login.",steps:[["enable"],["configure terminal","conf t"],["line vty 0 4"],["password cisco"],["login"],["end","exit"]]}
+],
+intermediate:[
+{title:"عنوان VLAN 1",objective:"اضبط 192.168.1.2 مع 255.255.255.0 على VLAN 1 ثم تحقّق واحفظ.",steps:[["enable"],["configure terminal","conf t"],["interface vlan 1"],["ip address 192.168.1.2 255.255.255.0"],["no shutdown"],["end"],["show ip interface brief"],["copy running-config startup-config"]]},
+{title:"التحقق من الإعدادات",objective:"اعرض running-config ثم اعرض حالة الواجهات.",steps:[["enable"],["show running-config"],["show ip interface brief"]]},
+{title:"البوابة الافتراضية",objective:"اضبط البوابة الافتراضية 192.168.1.1 ثم اعرض التكوين واحفظ.",steps:[["enable"],["configure terminal","conf t"],["ip default-gateway 192.168.1.1"],["end"],["show running-config"],["copy running-config startup-config"]]}
+],
+advanced:[
+{title:"إعداد واجهة الموجّه",objective:"اضبط G0/0/0 بعنوان 192.168.10.1/24 ووصف LAN ثم فعّل الواجهة وتحقق.",steps:[["enable"],["configure terminal","conf t"],["interface gigabitethernet 0/0/0"],["description LAN"],["ip address 192.168.10.1 255.255.255.0"],["no shutdown"],["exit"],["end"],["show ip interface brief"]]},
+{title:"تأمين الوصول والإعلانات",objective:"فعّل تشفير كلمات المرور، اضبط MOTD، ثم جهّز VTY للوصول عبر SSH أو Telnet واحفظ.",steps:[["enable"],["configure terminal","conf t"],["service password-encryption"],["banner motd #AUTHORIZED ACCESS ONLY#"],["line vty 0 4"],["transport input ssh telnet"],["login"],["end"],["copy running-config startup-config"]]}
+]};
+
+var activeTab="learn",taskIndex=0,testIndex=0,testScore=0;
+var challengeState={level:"beginner",index:0,running:false,score:100,errors:0,start:0,history:[]};
+
+function prompt(){return S.mode==="user"?S.hostname+">":S.mode==="privileged"?S.hostname+"#":S.mode==="global"?S.hostname+"(config)#":S.mode==="line"?S.hostname+"(config-line)#":S.hostname+"(config-if)#";}
+function normalize(v){return String(v||"").trim().toLowerCase().replace(/\\s+/g," ");}
+function say(cls,text){var d=document.createElement("div");d.className="line "+cls;d.textContent=text;terminal.appendChild(d);terminal.scrollTop=terminal.scrollHeight;}
+function refresh(){
+  var p=prompt();promptEl.textContent=p;promptLabel.textContent=p;
+  var rows=[["Hostname",S.hostname],["الوضع",S.modeName],["Enable Secret",S.enableSecret?"مُضبط":"غير مضبوط"],["Console",S.console?"مُضبط":"غير مضبوط"],["VTY",S.vty?"مُضبط":"غير مضبوط"],["VLAN 1 IP",S.vlanIp],["VLAN 1 Mask",S.vlanMask],["Saved",S.saved?"نعم":"لا"]];
+  stateEl.replaceChildren();
+  rows.forEach(function(r){var d=document.createElement("div");d.className="state-row";var b=document.createElement("b");b.textContent=r[0];var s=document.createElement("span");s.textContent=r[1];d.appendChild(b);d.appendChild(s);stateEl.appendChild(d);});
+}
+function writeRunning(){
+  var a=["hostname "+S.hostname];
+  if(S.enableSecret)a.push("enable secret <configured>");
+  a.push("line console 0");if(S.console)a.push(" password <configured>"," login");
+  a.push("line vty 0 4");if(S.vty)a.push(" password <configured>"," login");
+  if(S.vlanIp!=="unassigned")a.push("interface vlan 1"," ip address "+S.vlanIp+" "+S.vlanMask);
+  return a.join("\\n");
+}
+function runCommand(raw){
+  var c=normalize(raw);if(!c)return;
+  say("cmd",prompt()+" "+raw);S.history.push(raw);
+  if(c==="?"){say("out","enable  disable  configure  show  ping  traceroute");refresh();return;}
+  if(c==="show ?"){say("out","interfaces  ip  ipv6  running-config  version");refresh();return;}
+  if(c==="enable"){S.mode="privileged";S.modeName="Privileged EXEC";refresh();return;}
+  if(c==="disable"){S.mode="user";S.modeName="User EXEC";refresh();return;}
+  if(c==="configure terminal"||c==="conf t"){if(S.mode!=="privileged"){say("err","% Invalid input detected.");return;}S.mode="global";S.modeName="Global Configuration";refresh();return;}
+  if(c==="end"||c==="ctrl-z"){S.mode="privileged";S.modeName="Privileged EXEC";refresh();return;}
+  if(c==="exit"){if(S.mode==="global"){S.mode="privileged";S.modeName="Privileged EXEC";}else if(S.mode==="line"||S.mode==="interface"){S.mode="global";S.modeName="Global Configuration";}else if(S.mode==="privileged"){S.mode="user";S.modeName="User EXEC";}refresh();return;}
+  if(c==="line console 0"){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}S.mode="line";S.modeName="Line Configuration";refresh();return;}
+  if(c==="line vty 0 4"||c==="line vty 0 15"){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}S.mode="line";S.modeName="Line Configuration";S.vty=true;refresh();return;}
+  if(c.indexOf("hostname ")===0){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}S.hostname=raw.substring(9).trim()||"Switch";refresh();return;}
+  if(c==="no hostname"){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}S.hostname="Switch";refresh();return;}
+  if(c.indexOf("enable secret ")===0){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}S.enableSecret=true;say("ok","Enable secret configured.");refresh();return;}
+  if(c.indexOf("password ")===0){if(S.mode!=="line"){say("err","% Invalid input detected.");return;}S.console=true;say("ok","Password configured.");refresh();return;}
+  if(c==="login"){if(S.mode!=="line"){say("err","% Invalid input detected.");return;}S.console=true;say("ok","Login enabled.");refresh();return;}
+  if(c.indexOf("transport input ")===0){if(S.mode!=="line"){say("err","% Invalid input detected.");return;}S.vty=true;say("ok","Transport input configured.");refresh();return;}
+  if(c==="service password-encryption"||c==="service password encryption"){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}say("ok","Passwords encrypted.");refresh();return;}
+  if(c.indexOf("banner motd")===0){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}say("ok","Banner configured.");refresh();return;}
+  if(c==="copy running-config startup-config"){if(S.mode!=="privileged"){say("err","% Invalid input detected.");return;}S.saved=true;say("ok","[OK] Configuration saved to startup-config.");refresh();return;}
+  if(c==="show running-config"){if(S.mode!=="privileged"){say("err","% Invalid input detected.");return;}say("out",writeRunning());refresh();return;}
+  if(c==="interface vlan 1"||c==="interface gigabitethernet 0/0/0"){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}S.mode="interface";S.modeName="Interface Configuration";refresh();return;}
+  if(c.indexOf("description ")===0){if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}say("ok","Description configured.");return;}
+  if(c.indexOf("ip address ")===0){if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}var a=raw.split(/\\s+/);if(a.length>=4){S.vlanIp=a[2];S.vlanMask=a[3];say("ok","IPv4 address configured.");refresh();return;}}
+  if(c.indexOf("ipv6 address ")===0){if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}say("ok","IPv6 address configured.");return;}
+  if(c==="no shutdown"){if(S.mode!=="interface"){say("err","% Invalid input detected.");return;}say("ok","Interface enabled.");return;}
+  if(c.indexOf("ip default-gateway ")===0){if(S.mode!=="global"){say("err","% Invalid input detected.");return;}say("ok","Default gateway configured.");return;}
+  if(c==="show ip interface brief"||c==="show ip int brief"){if(S.mode==="user"){say("err","% Invalid input detected.");return;}say("out","Interface              IP-Address      OK? Method Status                Protocol\\nVlan1                  "+S.vlanIp+"   YES manual "+(S.vlanIp==="unassigned"?"administratively down":"up")+"              "+(S.vlanIp==="unassigned"?"down":"up"));refresh();return;}
+  if(c==="show ipv6 interface brief"){say("out","Vlan1 [administratively down/down]\\nNo IPv6 address configured in this stage.");refresh();return;}
+  if(c==="show ip route"){say("out","Gateway of last resort is not set\\nNo dynamic routes in this stage.");refresh();return;}
+  if(c==="show ipv6 route"){say("out","No IPv6 routes in this stage.");refresh();return;}
+  if(c==="show interfaces"){say("out","Interface statistics are simulated for this training stage.");refresh();return;}
+  if(c==="show ip interface"){say("out","IPv4 interface details are simulated for this training stage.");refresh();return;}
+  if(c==="show ipv6 interface"){say("out","IPv6 interface details are simulated for this training stage.");refresh();return;}
+  if(c.indexOf("ping ")===0){say("out","Type escape sequence to abort.\\n!!!!!\\nSuccess rate is 100 percent (5/5)");refresh();return;}
+  if(c.indexOf("traceroute ")===0){say("out","Tracing the route to "+raw.substring(11).trim()+"\\n  1  192.168.1.1  1 msec");refresh();return;}
+  say("err","% Invalid input detected.");
+}
+function resetDevice(){S={mode:"user",modeName:"User EXEC",hostname:"Switch",enableSecret:false,console:false,vty:false,vlanIp:"unassigned",vlanMask:"unset",saved:false,history:[]};terminal.replaceChildren();say("out","Cisco IOS Simulator — جاهز");say("out","السويتش جاهز. ابدأ بالأمر enable.");refresh();}
+function setTab(name){
+  activeTab=name;
+  document.querySelectorAll(".tab").forEach(function(b){b.classList.toggle("active",b.dataset.tab===name);});
+  ["taskPanel","freePanel","testPanel","guidePanel","challengePanel"].forEach(function(id){document.getElementById(id).classList.remove("active");});
+  if(name==="learn"){document.getElementById("taskPanel").classList.add("active");renderTask();}
+  if(name==="free"){document.getElementById("freePanel").classList.add("active");}
+  if(name==="test"){document.getElementById("testPanel").classList.add("active");testIndex=0;testScore=0;renderTest();}
+  if(name==="guide"){document.getElementById("guidePanel").classList.add("active");renderGuide();}
+  if(name==="challenge"){document.getElementById("challengePanel").classList.add("active");renderChallenges();}
+}
+function renderTask(){var a=tasks[taskIndex];document.getElementById("taskTitle").textContent=a[0];document.getElementById("taskText").textContent=a[1];document.getElementById("taskHint").textContent="💡 "+a[2];document.getElementById("taskStatus").textContent="";document.getElementById("taskNext").textContent=taskIndex<tasks.length-1?"التالي ←":"إنهاء ✓";}
+function taskPass(){
+  var c=[
+    S.mode==="privileged",
+    S.mode==="global",
+    S.hostname==="SW1",
+    S.enableSecret,
+    S.console,
+    S.vty,
+    S.vlanIp==="192.168.1.2"&&S.vlanMask==="255.255.255.0",
+    S.history.some(function(x){return normalize(x).indexOf("show ip interface brief")===0;}),
+    S.saved
+  ]; return !!c[taskIndex];
+}
+function renderTest(){
+  var q=tests[testIndex];
+  document.getElementById("testQuestion").textContent=testIndex<tests.length?q[0]:"🏁 انتهى الاختبار — النتيجة "+testScore+" / "+tests.length;
+  document.getElementById("testCounter").textContent=testIndex<tests.length?"سؤال "+(testIndex+1)+" / "+tests.length:"اكتمل";
+  document.getElementById("testScore").textContent=testScore;
+}
+function renderGuide(){
+  var host=document.querySelector("#guidePanel .guide-info");
+  host.innerHTML="";
+  var grid=document.createElement("div");grid.className="guide-grid";
+  Object.keys(guide).forEach(function(group){
+    var card=document.createElement("div");card.className="guide-group";var h=document.createElement("h3");h.textContent=group;card.appendChild(h);
+    guide[group].forEach(function(cmd){var b=document.createElement("button");b.type="button";b.className="cmd-chip";b.textContent=cmd;b.addEventListener("click",function(){setTab("free");input.value=cmd;runInput();});card.appendChild(b);});
+    grid.appendChild(card);
+  });
+  host.appendChild(grid);
+}
+var cLevels={beginner:"مبتدئ",intermediate:"متوسط",advanced:"متقدم"};
+function cCurrent(){return challenges[challengeState.level][challengeState.index];}
+function cRenderList(){
+  var pack=challenges[challengeState.level],host=document.getElementById("challengeList");host.replaceChildren();
+  pack.forEach(function(item,i){var b=document.createElement("button");b.type="button";b.className="challenge-item"+(i===challengeState.index?" active":"");var n=document.createElement("span");n.textContent=i+1;var c=document.createElement("div");var t=document.createElement("b");t.textContent=item.title;var s=document.createElement("small");s.textContent="جاهز للتدريب";c.appendChild(t);c.appendChild(s);b.appendChild(n);b.appendChild(c);b.addEventListener("click",function(){challengeState.index=i;cReset();cRenderList();cRender();});host.appendChild(b);});
+}
+function cRenderHistory(){
+  var host=document.getElementById("cHistory");host.replaceChildren();challengeState.history.slice(-12).forEach(function(x){var d=document.createElement("div");d.className="history-row";var c=document.createElement("code");c.textContent=x.command;var s=document.createElement("span");s.textContent=x.ok?"✅ صحيح":"❌ خطأ";d.appendChild(c);d.appendChild(s);host.appendChild(d);});
+}
+function cRender(){
+  var c=cCurrent(),ok=challengeState.history.filter(function(x){return x.ok;}).length,p=Math.round(ok/c.steps.length*100);
+  document.getElementById("cTitle").textContent=c.title;document.getElementById("cObjective").textContent=c.objective;document.getElementById("cScore").textContent=challengeState.score;document.getElementById("cErrors").textContent=challengeState.errors;document.getElementById("cTime").textContent=fmtTime(challengeState.elapsed||0);document.getElementById("cPct").textContent=p+"%";document.getElementById("cBar").style.width=p+"%";cRenderHistory();
+}
+function cReset(){
+  challengeState.running=false;challengeState.score=100;challengeState.errors=0;challengeState.start=0;challengeState.elapsed=0;challengeState.history=[];document.getElementById("cStatus").textContent="جديد";document.getElementById("cStatus").className="";document.getElementById("cFeedback").className="status";document.getElementById("cFeedback").textContent="ابدأ التحدي ثم نفّذ المطلوب في الـCLI.";cRender();
+}
+function cStart(){
+  challengeState.running=true;challengeState.score=100;challengeState.errors=0;challengeState.history=[];challengeState.elapsed=0;challengeState.start=performance.now();document.getElementById("cStatus").textContent="جاري";document.getElementById("cFeedback").className="status ok";document.getElementById("cFeedback").textContent="🚀 بدأ التحدي. نفّذ أول خطوة في الـCLI.";resetDevice();input.focus();cRender();cTimer();
+}
+function fmtTime(v){v=Math.max(0,Math.floor(v));return String(Math.floor(v/60)).padStart(2,"0")+":"+String(v%60).padStart(2,"0");}
+function cTimer(){if(!challengeState.running)return;challengeState.elapsed=(performance.now()-challengeState.start)/1000;document.getElementById("cTime").textContent=fmtTime(challengeState.elapsed);requestAnimationFrame(cTimer);}
+function cGrade(raw){
+  if(!challengeState.running)return;
+  var c=cCurrent(),ok=challengeState.history.filter(function(x){return x.ok;}).length,expected=c.steps[ok]||[],good=expected.some(function(x){return normalize(x)===normalize(raw);});
+  challengeState.history.push({command:raw,ok:good});
+  if(good){document.getElementById("cFeedback").className="status ok";document.getElementById("cFeedback").textContent="✅ صحيح. انتقل إلى الخطوة التالية.";}
+  else{challengeState.errors++;challengeState.score=Math.max(0,challengeState.score-5);document.getElementById("cFeedback").className="status bad";document.getElementById("cFeedback").textContent="❌ الأمر غير صحيح أو في ترتيب غير صحيح.";}
+  cRender();
+  if(good&&ok+1>=c.steps.length){challengeState.running=false;document.getElementById("cStatus").textContent="مكتمل";document.getElementById("cFeedback").className="status ok";document.getElementById("cFeedback").textContent="🏆 اكتمل التحدي بنجاح.";try{localStorage.setItem("v66_41_ios_best",String(Math.max(Number(localStorage.getItem("v66_41_ios_best")||0),challengeState.score)));}catch(e){}}
+}
+function runInput(){
+  var raw=input.value.trim();if(!raw)return;
+  input.value="";
+  if(activeTab==="test"){
+    var q=tests[testIndex];
+    say("cmd",prompt()+" "+raw);
+    if(testIndex<tests.length && normalize(raw)===normalize(q[1])){testScore++;say("ok","✅ إجابة صحيحة.");}else{say("err","❌ إجابة غير صحيحة.");}
+    testIndex++;renderTest();return;
+  }
+  runCommand(raw);
+  if(activeTab==="challenge"){cGrade(raw);}
+}
+document.querySelectorAll(".tab").forEach(function(b){b.addEventListener("click",function(){setTab(b.dataset.tab);});});
+document.getElementById("runBtn").addEventListener("click",runInput);
+input.addEventListener("keydown",function(e){if(e.key==="Enter")runInput();});
+document.getElementById("resetBtn").addEventListener("click",function(){resetDevice();if(activeTab==="challenge")cReset();});
+document.getElementById("clearBtn").addEventListener("click",function(){terminal.replaceChildren();});
+document.querySelectorAll("#quickCommands [data-cmd]").forEach(function(b){b.addEventListener("click",function(){input.value=b.dataset.cmd;runInput();});});
+document.getElementById("taskNext").addEventListener("click",function(){if(taskPass()){document.getElementById("taskStatus").textContent="✅ ممتاز، تم تنفيذ الخطوة.";document.getElementById("taskStatus").className="status ok";if(taskIndex<tasks.length-1){taskIndex++;setTimeout(renderTask,100);}}else{document.getElementById("taskStatus").textContent="🟡 لم يتحقق الشرط بعد. نفّذ المطلوب أولًا.";document.getElementById("taskStatus").className="status bad";}});
+document.getElementById("testRestart").addEventListener("click",function(){testIndex=0;testScore=0;renderTest();});
+document.getElementById("cStart").addEventListener("click",cStart);
+document.getElementById("cReset").addEventListener("click",function(){cReset();});
+document.getElementById("cHint").addEventListener("click",function(){document.getElementById("cFeedback").className="status";document.getElementById("cFeedback").textContent="💡 تلميح: راجع وضع IOS الحالي ثم نفّذ الأمر المرتبط بالمهمة التالية.";});
+document.querySelectorAll(".level").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll(".level").forEach(function(x){x.classList.remove("active");});b.classList.add("active");challengeState.level=b.dataset.level;challengeState.index=0;cReset();cRenderList();});});
+resetDevice();renderTask();renderTest();renderGuide();cRenderList();cRender();
+})();
+</script>
+</body>
+</html>
