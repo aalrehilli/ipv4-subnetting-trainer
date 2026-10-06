@@ -151,3 +151,28 @@
 .course-editor-kpis{margin-top:14px}
 @media(max-width:900px){.course-manager-list{grid-template-columns:1fr}.course-builder-steps{grid-template-columns:1fr 1fr}.course-unit-row{grid-template-columns:40px 1fr}.course-unit-row .btn{grid-column:2;justify-self:start}}
 @media(max-width:600px){.course-manager-stats{grid-template-columns:1fr 1fr}.course-builder-steps{grid-template-columns:1fr}.course-editor-hero{display:grid}.course-editor-hero .btn{width:100%}}
+
+/* V3.5 Actual Course Units & Lessons */
+.unit-row-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.unit-editor-summary{margin-top:14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.unit-editor-summary>div:first-child{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.unit-editor-form-wrap{margin-top:12px}
+.unit-editor-form{display:grid;gap:10px}
+.course-lessons-list{display:grid;gap:9px;margin-top:12px}
+.course-lesson-row{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:12px 13px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.lesson-grip{width:30px;height:30px;border-radius:9px;background:#f4f7f9;color:var(--muted);display:grid;place-items:center;font-size:15px}
+.lesson-main{min-width:0}
+.lesson-main>div{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.lesson-main strong{color:var(--primary-2)}
+.lesson-main p{margin:5px 0 0;font-size:11px}
+.lesson-type{font-size:10px;padding:4px 7px;border-radius:999px;background:#f5f7fa;color:var(--muted)}
+.lesson-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.course-lesson-form-card{margin-top:12px;border-right:4px solid var(--purple)}
+.course-lesson-form{display:grid;gap:12px}
+.lesson-form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.lesson-form-grid label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--primary-2)}
+.lesson-form-grid input,.lesson-form-grid select,.lesson-form-grid textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px;background:#fff;font-family:inherit}
+.lesson-form-grid textarea{resize:vertical;line-height:1.8}
+.lesson-form-grid .span-2{grid-column:1/-1}
+.course-empty{margin-top:12px;text-align:center;padding:34px}
+@media(max-width:850px){.course-lesson-row{grid-template-columns:1fr}.lesson-actions{justify-content:flex-start}.unit-editor-summary{display:grid}.lesson-form-grid{grid-template-columns:1fr}.lesson-form-grid .span-2{grid-column:auto}}
