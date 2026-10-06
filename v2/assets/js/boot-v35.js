@@ -144,17 +144,10 @@ function bind(){
   document.querySelectorAll("[data-lab-page]").forEach(btn=>btn.addEventListener("click",async()=>{state.page=btn.dataset.labPage==="subnet"?"subnet-lab":btn.dataset.labPage==="flsm"?"flsm":"vlsm";await render()}));
 
   document.querySelectorAll("[data-student-id]").forEach(btn=>btn.addEventListener("click",async()=>{state.role="trainer";state.page="student360";await render()}));
-  document.querySelectorAll("[data-course-editor-action]").forEach(btn=>btn.addEventListener("click",()=>{
-    const existing=document.querySelector(".course-unit-detail");
-    existing?.remove();
-    const row=btn.closest(".course-unit-row");
-    const title=row?.querySelector("strong")?.textContent||"الوحدة";
-    const detail=document.createElement("div");
-    detail.className="card course-unit-detail";
-    detail.innerHTML='<div class="section-title"><h3>إدارة '+title+'</h3><span class="badge purple">V3.5</span></div><div class="unit-detail-grid"><div><strong>المحتوى</strong><span>إضافة الدروس والشرح والملفات</span></div><div><strong>التقييم</strong><span>ربط أسئلة بنك الأسئلة</span></div><div><strong>المختبر</strong><span>ربط Subnetting أو FLSM أو VLSM</span></div><div><strong>النشر</strong><span>حالة الوحدة: مسودة حتى اكتمال المحتوى</span></div></div>';
-    document.querySelector(".course-unit-list")?.insertAdjacentElement("afterend",detail);
-  }));
-
+  document.querySelectorAll("[data-course-editor-action]").forEach(btn=>btn.addEventListener("click",async()=>{try{const m=await import("./course-manager-v35.js?v=402");const result=m.handleCourseEditorAction(btn);if(result?.rerender)await render()}catch(error){showError(error)}}));
+  document.querySelectorAll("[data-lesson-action]").forEach(btn=>btn.addEventListener("click",async()=>{try{const m=await import("./course-manager-v35.js?v=402");const result=m.handleLessonAction(btn);if(result?.rerender)await render()}catch(error){showError(error)}}));
+  document.querySelectorAll("[data-unit-form]").forEach(form=>form.addEventListener("submit",async event=>{event.preventDefault();try{const m=await import("./course-manager-v35.js?v=402");const result=m.handleUnitForm(event.currentTarget);const msg=form.querySelector("[data-unit-form-msg]");if(!result.ok){if(msg)msg.textContent=result.message;return;}if(result.rerender)await render()}catch(error){showError(error)}}));
+  document.querySelectorAll("[data-lesson-form]").forEach(form=>form.addEventListener("submit",async event=>{event.preventDefault();try{const m=await import("./course-manager-v35.js?v=402");const result=m.handleLessonForm(event.currentTarget);const msg=form.querySelector("[data-lesson-form-msg]");if(!result.ok){if(msg)msg.textContent=result.message;return;}if(result.rerender)await render()}catch(error){showError(error)}}));
   document.querySelectorAll("[data-360-action]").forEach(btn=>btn.addEventListener("click",async()=>{try{const m=await import("./student360-v29.js?v=401");const result=m.handleStudent360Action(btn);if(result?.rerender)await render()}catch(error){showError(error)}}));
   document.querySelectorAll("[data-intervention-action]").forEach(btn=>btn.addEventListener("click",async()=>{try{const m=await import("./intervention-v31.js?v=401");const result=m.handleInterventionAction(btn);if(result?.studentId){state.role="trainer";state.page="student360"}if(result?.rerender)await render()}catch(error){showError(error)}}));
   document.querySelectorAll("[data-notification-action]").forEach(btn=>btn.addEventListener("click",async()=>{try{const m=await import("./notifications-v30.js?v=401");const result=m.handleNotificationAction(btn,state.role);state.page=btn.dataset.notificationPage||result?.page||"notifications";await render()}catch(error){showError(error)}}));
