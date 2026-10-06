@@ -4,7 +4,7 @@ import {labPage} from "./subnet-lab-v25.js";
 import {flsmPage} from "./flsm-v26.js";
 import {vlsmPage} from "./vlsm-v27.js";
 import {getLearningSnapshot,getSmartRecommendation,getWeakTopics} from "./smart-engine-v28.js";
-import {notificationsPage} from "./notifications-v30.js";
+import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 
 let student=loadStudent();
 
@@ -53,7 +53,7 @@ function home(){
     </div>
   </section>
 
-  <div class="student-grid-4 home-kpis">
+  <div class="home-utility-grid"><div class="card home-utility-card notification-utility"><div class="home-utility-icon">🔔</div><div><span class="eyebrow purple">مركز المتابعة</span><h3>مركز الإشعارات الذكي</h3><p class="muted">لديك <strong>${getUnreadCount("student")}</strong> إشعارًا يحتاج انتباهك أو يقودك للخطوة التالية.</p></div><button class="btn btn-purple" data-page="notifications">فتح الإشعارات</button></div><div class="card home-utility-card"><div class="home-utility-icon green">✓</div><div><span class="eyebrow green">تعلم → ممارسة</span><h3>الخطوة التالية</h3><p class="muted">${esc(recommendation.title)}</p></div><button class="btn btn-green" data-page="${recommendation.page}">ابدأ الآن</button></div></div>\n\n  <div class="student-grid-4 home-kpis">
     ${statCard("تقدم المقرر",student.progress+"%","+6% هذا الأسبوع")}
     ${statCard("إتقان عام",Math.round(Object.values(snapshot.scores).reduce((a,b)=>a+b,0)/Object.keys(snapshot.scores).length)+"%","محرك التعلم")}
     ${statCard("سلسلة التعلم",student.streak+" أيام","استمر غدًا")}
