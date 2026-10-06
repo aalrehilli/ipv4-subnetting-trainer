@@ -6083,6 +6083,154 @@ async function loadCertificate(){
 
 
 
+
+/* ==================== V66.38 — Central IOS Certificate Registry ==================== */
+let v6638ServerCertificate=null;
+function v6638NormalizeServer(x){
+  if(!x)return null;
+  return {
+    certificate_no:String(x.certificate_no||''),
+    name:String(x.student_name||x.name||'المتدرب'),
+    score:Number(x.final_score??x.score??0),
+    bestScore:Number(x.best_score??x.bestScore??0),
+    bestTime:Number(x.best_time??x.bestTime??0),
+    tier:String(x.mastery_level||x.tier||'مبتدئ IOS'),
+    xp:Number(x.xp||0),
+    issued_at:x.issued_at||new Date().toISOString(),
+    final_completed_at:x.final_completed_at||null,
+    central:true
+  };
+}
+function v6638SaveLocal(cert){
+  if(!cert)return;
+  try{localStorage.setItem('v66_37_ios_certificate',JSON.stringify(cert));}catch(e){}
+}
+async function v6638GetServerCertificate(){
+  try{
+    if(!db&&!initSupabase())return null;
+    const r=await db.rpc('get_ios_certificate');
+    if(r.error){console.warn('V66.38 get_ios_certificate:',r.error.message);return null;}
+    const x=Array.isArray(r.data)?r.data[0]:r.data;
+    const cert=v6638NormalizeServer(x);
+    v6638ServerCertificate=cert;
+    return cert;
+  }catch(e){console.warn('V66.38 server certificate read:',e);return null;}
+}
+function v6638CentralNote(){
+  const note=document.querySelector('.v66-ios-cert-note');
+  if(note)note.textContent='✅ الشهادة مسجلة مركزيًا في Supabase. يمكن التحقق منها من أي جهاز باستخدام رقم الشهادة أو رمز QR.';
+}
+function v6638ShowLocalFallback(message){
+  const host=$('v66IosCertificate');
+  if(!host)return;
+  const node=document.createElement('div');
+  node.className='bad';
+  node.style.marginTop='12px';
+  node.textContent=message;
+  host.prepend(node);
+}
+async function v6638Issue(){
+  const candidate=typeof v6637BuildCandidate==='function'?v6637BuildCandidate():null;
+  if(!candidate){alert('❌ لا يمكن إصدار الشهادة قبل النجاح في الاختبار النهائي.');return;}
+  if(!confirm('هل تريد إصدار شهادة إتقان Cisco IOS وحفظها مركزيًا؟'))return;
+
+  const existing=await v6638GetServerCertificate();
+  if(existing){
+    v6638SaveLocal(existing);
+    v6637RenderCertificate(existing);
+    v6638CentralNote();
+    return;
+  }
+
+  try{
+    if(!db&&!initSupabase())throw new Error('تعذر تهيئة اتصال Supabase');
+    const payload={
+      p_name:candidate.name,
+      p_score:Number(candidate.score||0),
+      p_best_score:Number(candidate.bestScore||0),
+      p_best_time:Number(candidate.bestTime||0),
+      p_tier:candidate.tier,
+      p_xp:Number(candidate.xp||0),
+      p_final_completed_at:candidate.final_completed_at||null
+    };
+    const r=await db.rpc('issue_ios_certificate',payload);
+    if(r.error)throw new Error(r.error.message||'RPC error');
+    const x=Array.isArray(r.data)?r.data[0]:r.data;
+    const cert=v6638NormalizeServer(x);
+    if(!cert?.certificate_no)throw new Error('لم تُرجع قاعدة البيانات رقم شهادة');
+    v6638ServerCertificate=cert;
+    v6638SaveLocal(cert);
+    v6637RenderCertificate(cert);
+    v6638CentralNote();
+  }catch(e){
+    console.warn('V66.38 central issue failed:',e);
+    try{localStorage.setItem('v66_37_ios_certificate',JSON.stringify(candidate));}catch(_){}
+    v6637RenderCertificate(candidate);
+    v6638ShowLocalFallback('⚠️ تعذر الوصول إلى التسجيل المركزي الآن، لذلك تم عرض الشهادة المحلية فقط. بعد تفعيل SQL الخاص بـ V66.38 وإعادة المحاولة ستصبح الشهادة مركزية.');
+  }
+}
+window.v6637Issue=v6638Issue;
+
+const v6638OriginalLoadCertificate=window.loadCertificate;
+window.loadCertificate=async function(){
+  if(typeof v6638OriginalLoadCertificate==='function'){
+    await v6638OriginalLoadCertificate();
+  }
+  const central=await v6638GetServerCertificate();
+  if(central){
+    v6638SaveLocal(central);
+    v6637RenderCertificate(central);
+    v6638CentralNote();
+  }
+};
+
+async function v6638VerifyCentral(code){
+  const body=$('v6637VerifyBody');
+  if(!body)return;
+  try{
+    if(!db&&!initSupabase())throw new Error('تعذر تهيئة Supabase');
+    const r=await db.rpc('verify_ios_certificate',{p_certificate_no:code});
+    if(r.error)throw new Error(r.error.message||'RPC error');
+    const x=Array.isArray(r.data)?r.data[0]:r.data;
+    const cert=v6638NormalizeServer(x);
+    if(!cert?.certificate_no){
+      body.innerHTML='<div class="bad">❌ رقم الشهادة غير موجود في السجل المركزي.</div><div class="muted" style="margin-top:10px">تأكد من كتابة رقم الشهادة كما هو ظاهر في الوثيقة.</div>';
+      return;
+    }
+    body.innerHTML='<div class="good">✅ الشهادة صحيحة ومسجلة مركزيًا في Supabase.</div>'+
+      '<div class="certificate" style="margin-top:14px"><span class="badge">V66.38 • VERIFIED</span><h1>شهادة إتقان Cisco IOS</h1>'+
+      '<div class="name">'+esc(cert.name)+'</div>'+
+      '<p>رقم الشهادة: <b>'+esc(cert.certificate_no)+'</b></p>'+
+      '<p>النتيجة النهائية: <b>'+cert.score+'/100</b> • أفضل نتيجة: <b>'+cert.bestScore+'/100</b></p>'+
+      '<p>مستوى الإتقان: <b>'+esc(cert.tier)+'</b> • XP: <b>'+cert.xp+'</b></p>'+
+      '<p>تاريخ الإصدار: <b>'+new Date(cert.issued_at).toLocaleDateString('ar-SA')+'</b></p>'+
+      '<p class="muted">✅ تم التحقق من السجل المركزي، وليس من بيانات المتصفح المحلي.</p></div>';
+  }catch(e){
+    const local=v6637ReadIssued();
+    if(local?.certificate_no===code){
+      body.innerHTML='<div class="good">⚠️ تم العثور على الشهادة محليًا، لكن تعذر الوصول إلى السجل المركزي الآن.</div>'+
+        '<div class="certificate" style="margin-top:14px"><h1>شهادة إتقان Cisco IOS</h1><div class="name">'+esc(local.name)+'</div>'+
+        '<p>رقم الشهادة: <b>'+esc(local.certificate_no)+'</b></p><p>النتيجة: <b>'+local.score+'/100</b> • مستوى الإتقان: <b>'+esc(local.tier)+'</b></p>'+
+        '<p class="muted">هذا تحقق احتياطي من الجهاز الحالي فقط، وليس توثيقًا مركزيًا.</p></div>';
+    }else{
+      body.innerHTML='<div class="bad">❌ تعذر التحقق من الشهادة مركزيًا.</div><div class="muted" style="margin-top:10px">'+esc(e.message||'خطأ في الاتصال')+'</div>';
+    }
+  }
+}
+window.v6637HandleVerify=function(){
+  const params=new URLSearchParams(location.search),code=params.get('ios_verify');if(!code)return false;
+  document.querySelectorAll('body > *').forEach(el=>el.classList.add('hidden'));
+  let box=document.getElementById('verifyCertificate');
+  if(!box){
+    box=document.createElement('section');box.id='verifyCertificate';box.style.cssText='max-width:900px;margin:40px auto;padding:20px;display:block';
+    box.innerHTML='<div class="card hero"><span class="badge">V66.38 • IOS VERIFICATION</span><h2>🔳 التحقق المركزي من شهادة Cisco IOS</h2><div id="v6637VerifyBody"><div class="muted">⏳ جارٍ التحقق من السجل المركزي...</div></div></div>';
+    document.body.appendChild(box);
+  }
+  box.classList.remove('hidden');
+  v6638VerifyCentral(code);
+  return true;
+};
+
 /* ==================== V54 — Smart Analytics Center ==================== */
 let v54StudentCharts={};
 let v54TrainerCharts={};
