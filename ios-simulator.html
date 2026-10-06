@@ -1565,7 +1565,7 @@ runBtn.addEventListener("click",runQa);
           v6636Final.running=false;
           var result=v6636SaveResult();
           v6636RenderFinal();v6636RenderRoadmap();
-          if(window.v6639SubmitFinal)window.v6639SubmitFinal(result);
+          if(!window.v6640CentralActive&&window.v6639SubmitFinal)window.v6639SubmitFinal(result);
           say("ok",result.passed?"🏆 نجحت في الاختبار النهائي بنسبة "+result.score+"%.":"❌ اكتملت المهام لكن النتيجة أقل من حد النجاح.");
         }else{
           v6636RenderFinal();
@@ -1596,6 +1596,29 @@ runBtn.addEventListener("click",runQa);
 
   window.v6636GetFinal=function(){return v6636Done();};
   window.v6636GetRoadmap=function(){v6636RenderRoadmap();};
+  window.v6636CentralAccept=function(raw,serverResult){
+    try{
+      var executed=runCommand(raw);
+      var correct=!!serverResult?.correct;
+      v6636Final.history.push({command:raw,ok:correct,step:Number(serverResult?.next_step||v6636Final.step)+(correct?0:1)});
+      v6636Final.score=Number(serverResult?.score??v6636Final.score);
+      v6636Final.errors=Number(serverResult?.errors??v6636Final.errors);
+      v6636Final.step=Math.max(0,Math.min(v6636Final.steps.length,Number(serverResult?.next_step??v6636Final.step)));
+      if(serverResult?.completed){
+        v6636Final.elapsed=Number(serverResult?.duration_seconds||v6636Final.elapsed);
+        v6636Final.running=false;
+        var localResult=v6636SaveResult();
+        v6636RenderFinal();v6636RenderRoadmap();
+        say("ok",serverResult?.passed?"🏆 تم اعتماد الاختبار مركزيًا بنتيجة "+serverResult.score+"%.":"❌ انتهى الاختبار مركزيًا دون حد النجاح.");
+        return localResult;
+      }
+      v6636RenderFinal();
+      return {score:v6636Final.score,errors:v6636Final.errors,step:v6636Final.step,executed:executed};
+    }catch(e){
+      console.error("V66.40 local mirror error",e);
+      return null;
+    }
+  };
 
   setTimeout(function(){v6636RenderRoadmap();v6636RenderFinal();setTab("roadmap");},0);
 })();
