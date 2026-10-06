@@ -1565,7 +1565,7 @@ runBtn.addEventListener("click",runQa);
           v6636Final.running=false;
           var result=v6636SaveResult();
           v6636RenderFinal();v6636RenderRoadmap();
-          if(window.v6639SubmitFinal)window.v6639SubmitFinal(result);
+          if(!window.v6640CentralActive&&window.v6639SubmitFinal)window.v6639SubmitFinal(result);
           say("ok",result.passed?"🏆 نجحت في الاختبار النهائي بنسبة "+result.score+"%.":"❌ اكتملت المهام لكن النتيجة أقل من حد النجاح.");
         }else{
           v6636RenderFinal();
@@ -1596,6 +1596,29 @@ runBtn.addEventListener("click",runQa);
 
   window.v6636GetFinal=function(){return v6636Done();};
   window.v6636GetRoadmap=function(){v6636RenderRoadmap();};
+  window.v6636CentralAccept=function(raw,serverResult){
+    try{
+      var executed=runCommand(raw);
+      var correct=!!serverResult?.correct;
+      v6636Final.history.push({command:raw,ok:correct,step:Number(serverResult?.next_step||v6636Final.step)+(correct?0:1)});
+      v6636Final.score=Number(serverResult?.score??v6636Final.score);
+      v6636Final.errors=Number(serverResult?.errors??v6636Final.errors);
+      v6636Final.step=Math.max(0,Math.min(v6636Final.steps.length,Number(serverResult?.next_step??v6636Final.step)));
+      if(serverResult?.completed){
+        v6636Final.elapsed=Number(serverResult?.duration_seconds||v6636Final.elapsed);
+        v6636Final.running=false;
+        var localResult=v6636SaveResult();
+        v6636RenderFinal();v6636RenderRoadmap();
+        say("ok",serverResult?.passed?"🏆 تم اعتماد الاختبار مركزيًا بنتيجة "+serverResult.score+"%.":"❌ انتهى الاختبار مركزيًا دون حد النجاح.");
+        return localResult;
+      }
+      v6636RenderFinal();
+      return {score:v6636Final.score,errors:v6636Final.errors,step:v6636Final.step,executed:executed};
+    }catch(e){
+      console.error("V66.40 local mirror error",e);
+      return null;
+    }
+  };
 
   setTimeout(function(){v6636RenderRoadmap();v6636RenderFinal();setTab("roadmap");},0);
 })();
@@ -1698,6 +1721,178 @@ runBtn.addEventListener("click",runQa);
   window.v6639GetCentralBest=function(){return centralBest;};
 
   setTimeout(function(){refreshCentralBest();},500);
+})();
+</script>
+
+
+<script id="v66_40_ios_server_exam">
+(function(){
+  "use strict";
+
+  var SUPABASE_URL="https://cvakitsdwxkksxemdhxj.supabase.co";
+  var SUPABASE_KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA";
+  var client=null;
+  var sessionId=null;
+  var starting=false;
+
+  window.v6640CentralActive=false;
+
+  function setStatus(html,good){
+    var el=document.getElementById("v6639CentralStatus");
+    if(!el)return;
+    el.className="status "+(good?"ok":"bad");
+    el.innerHTML=html;
+  }
+
+  function ensureClient(){
+    if(window.supabase?.createClient){
+      if(!client)client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+      return Promise.resolve(client);
+    }
+    return new Promise(function(resolve,reject){
+      var existing=document.querySelector('script[data-v6640-supabase]');
+      if(existing){
+        existing.addEventListener("load",function(){
+          try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);resolve(client);}catch(e){reject(e);}
+        },{once:true});
+        existing.addEventListener("error",function(){reject(new Error("تعذر تحميل Supabase"));},{once:true});
+        return;
+      }
+      var s=document.createElement("script");
+      s.dataset.v6640Supabase="1";
+      s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+      s.onload=function(){
+        try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);resolve(client);}catch(e){reject(e);}
+      };
+      s.onerror=function(){reject(new Error("تعذر تحميل Supabase"));};
+      document.head.appendChild(s);
+    });
+  }
+
+  async function startSession(){
+    starting=true;
+    sessionId=null;
+    setTimeout(function(){setStatus("☁️ جارٍ إنشاء جلسة اختبار مركزية آمنة...",true);},30);
+    try{
+      var db=await ensureClient();
+      var user=await db.auth.getUser();
+      if(user.error)throw user.error;
+      if(!user.data?.user)throw new Error("لا توجد جلسة دخول");
+      var r=await db.rpc("start_ios_final_session");
+      if(r.error)throw r.error;
+      var x=Array.isArray(r.data)?(r.data[0]||null):(r.data||null);
+      if(!x?.session_id)throw new Error("لم تُنشأ جلسة اختبار");
+      sessionId=x.session_id;
+      starting=false;
+      window.v6640CentralActive=true;
+      setStatus("🔐 الاختبار يعمل بجلسة مركزية. الخادم يتحقق من كل خطوة ويحسب النتيجة.",true);
+      return true;
+    }catch(e){
+      console.warn("V66.40 start session:",e);
+      sessionId=null;
+      starting=false;
+      window.v6640CentralActive=false;
+      setStatus("⚠️ تعذر إنشاء الجلسة المركزية؛ سيستمر الاختبار بالوضع المحلي.",false);
+      return false;
+    }
+  }
+
+  async function submitCentral(raw){
+    try{
+      var db=await ensureClient();
+      var r=await db.rpc("submit_ios_final_step",{
+        p_session_id:sessionId,
+        p_command:raw
+      });
+      if(r.error)throw r.error;
+      var x=Array.isArray(r.data)?(r.data[0]||null):(r.data||null);
+      if(!x)throw new Error("لم تُرجع الجلسة نتيجة الخطوة");
+      return x;
+    }catch(e){
+      console.warn("V66.40 submit step:",e);
+      throw e;
+    }
+  }
+
+  async function secureRunInput(){
+    var raw=input.value.trim();
+    if(!raw)return;
+
+    if(starting){
+      setStatus("⏳ انتظر لحظة حتى يتم إنشاء جلسة الاختبار المركزية.",false);
+      return;
+    }
+
+    if(!sessionId){
+      window.v6640CentralActive=false;
+      input.value=raw;
+      if(typeof window.v6639SubmitFinal==="function")setStatus("⚠️ العمل بوضع محلي مؤقت.",false);
+      else setStatus("⚠️ تعذر إنشاء جلسة الاختبار.",false);
+      return originalRunInputV40();
+    }
+
+    input.value="";
+    try{
+      setStatus("☁️ جارٍ التحقق من الأمر لدى الخادم...",true);
+      var result=await submitCentral(raw);
+      var local=window.v6636CentralAccept?window.v6636CentralAccept(raw,result):null;
+      setStatus(
+        result.completed
+          ? (result.passed
+              ? "✅ تم اعتماد الاختبار مركزيًا. النتيجة "+result.score+"/100."
+              : "❌ اكتمل الاختبار مركزيًا دون حد النجاح.")
+          : (result.correct
+              ? "✅ الخطوة مقبولة مركزيًا — التقدم "+result.next_step+"/19."
+              : "❌ الأمر غير صحيح لهذه الخطوة — تم احتساب خطأ مركزيًا."),
+        !!result.correct
+      );
+      if(result.completed){
+        window.v6640CentralActive=false;
+        sessionId=null;
+        setTimeout(function(){setStatus(result.passed?"🏆 تم اعتماد النجاح مركزيًا. يمكن الآن إصدار الشهادة الرسمية.":"⚠️ النتيجة المركزية لم تصل إلى 80/100.",!!result.passed);},50);
+      }
+      return local;
+    }catch(e){
+      window.v6640CentralActive=false;
+      sessionId=null;
+      input.value=raw;
+      setStatus("⚠️ تعذر الاتصال بالخادم أثناء هذه الخطوة. عاد المحاكي للوضع المحلي ولم تُحسب هذه الخطوة مركزيًا.",false);
+      return originalRunInputV40();
+    }
+  }
+
+  var originalRunInputV40=window.runInput;
+  window.runInput=function(){
+    if(typeof activeTab!=="undefined" && activeTab==="final" && (window.v6640CentralActive||starting)){
+      secureRunInput();
+      return;
+    }
+    return originalRunInputV40();
+  };
+
+  document.addEventListener("click",function(e){
+    var start=e.target?.closest?.("#v6636Start");
+    if(start){
+      window.v6640CentralActive=true;
+      sessionId=null;
+      starting=true;
+      startSession();
+      return;
+    }
+    var reset=e.target?.closest?.("#v6636Reset");
+    if(reset){
+      window.v6640CentralActive=false;
+      sessionId=null;
+      starting=false;
+      setTimeout(function(){
+        if(document.getElementById("v6639CentralStatus"))setStatus("☁️ بانتظار بدء جلسة اختبار مركزية جديدة.",true);
+      },30);
+    }
+  },true);
+
+  setTimeout(function(){
+    if(window.v6636CentralAccept){} 
+  },300);
 })();
 </script>
 
