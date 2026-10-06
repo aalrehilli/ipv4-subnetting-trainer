@@ -1,4 +1,5 @@
 import {studentPage,studentState,handleStudentAction,resetDemoData} from "./student.js";
+import {getTrainerView} from "./trainer-v22.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
@@ -10,17 +11,7 @@ function nav(items){
   return items.map(([id,label])=>'<button class="'+(state.page===id?"active":"")+'" data-page="'+id+'">'+label+'</button>').join("");
 }
 
-function trainerPage(){
-  const p=state.page;
-  if(p==="students")return '<div class="page-intro"><span class="eyebrow blue">01 • الطلاب</span><h2>المتدربون</h2><p>نسخة تجريبية قبل الربط بالحسابات الحقيقية.</p></div><div class="student-grid-4"><div class="card student-stat"><div class="muted">الإجمالي</div><div class="kpi-value">42</div></div><div class="card student-stat"><div class="muted">نشطون</div><div class="kpi-value">31</div></div><div class="card student-stat"><div class="muted">متوسط التقدم</div><div class="kpi-value">71%</div></div><div class="card student-stat"><div class="muted">يحتاج متابعة</div><div class="kpi-value">7</div></div></div><div class="card" style="margin-top:14px"><table class="table"><thead><tr><th>المتدرب</th><th>المجموعة</th><th>التقدم</th><th>الحالة</th></tr></thead><tbody><tr><td>أحمد</td><td>1</td><td>84%</td><td><span class="badge green">مستقر</span></td></tr><tr><td>محمد</td><td>1</td><td>62%</td><td><span class="badge orange">يحتاج متابعة</span></td></tr><tr><td>سارة</td><td>2</td><td>91%</td><td><span class="badge green">ممتاز</span></td></tr><tr><td>خالد</td><td>3</td><td>47%</td><td><span class="badge red">عالي المخاطر</span></td></tr></tbody></table></div>';
-  if(p==="groups")return '<div class="page-intro"><span class="eyebrow blue">02 • المجموعات</span><h2>المجموعات</h2><p>مقارنة سريعة بين مجموعات التدريب.</p></div><div class="grid-3"><div class="card"><h3>المجموعة 1</h3><div class="kpi-value">77%</div><div class="muted">21 متدرب</div></div><div class="card"><h3>المجموعة 2</h3><div class="kpi-value">84%</div><div class="muted">16 متدرب</div></div><div class="card"><h3>المجموعة 3</h3><div class="kpi-value">69%</div><div class="muted">5 متدربين</div></div></div>';
-  if(p==="courses")return '<div class="page-intro"><span class="eyebrow blue">03 • المقررات</span><h2>إدارة المحتوى</h2><p>المحتوى في V2 مرتبط بمسار التعلم.</p></div><div class="grid-2"><div class="card"><h3>IPv4 Fundamentals</h3><p class="muted">6 وحدات • 40+ سؤالًا</p><span class="badge green">منشور</span></div><div class="card"><h3>Subnetting Mastery</h3><p class="muted">8 وحدات • 60 سؤالًا</p><span class="badge orange">مسودة</span></div></div>';
-  if(p==="questions")return '<div class="page-intro"><span class="eyebrow purple">04 • بنك الأسئلة</span><h2>بنك الأسئلة</h2><p>النسخة القادمة ستربط كل سؤال بالموضوع والصعوبة ونتائج الطلاب.</p></div><div class="student-grid-4"><div class="card student-stat"><div class="muted">IPv4</div><div class="kpi-value">20</div></div><div class="card student-stat"><div class="muted">Binary</div><div class="kpi-value">28</div></div><div class="card student-stat"><div class="muted">Prefix</div><div class="kpi-value">21</div></div><div class="card student-stat"><div class="muted">VLSM</div><div class="kpi-value">22</div></div></div>';
-  if(p==="exams")return '<div class="page-intro"><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات</h2><p>هنا ستظهر الجدولة والمحاولات والتصحيح.</p></div><div class="card"><table class="table"><thead><tr><th>الاختبار</th><th>الحالة</th><th>المحاولات</th><th>متوسط</th></tr></thead><tbody><tr><td>IPv4 الأساسي</td><td><span class="badge green">مفتوح</span></td><td>66</td><td>76%</td></tr><tr><td>Binary & Prefix</td><td><span class="badge orange">مجدول</span></td><td>41</td><td>71%</td></tr></tbody></table></div>';
-  if(p==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>لوحة موحدة للمحاكيات والمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
-  if(p==="analytics")return '<div class="page-intro"><span class="eyebrow purple">07 • التحليلات</span><h2>Trainer Command Center</h2><p>من يحتاج المساعدة؟ في ماذا؟ وما التدخل المناسب؟</p></div><div class="student-grid-4"><div class="card student-stat"><div class="muted">النشطون</div><div class="kpi-value">31</div></div><div class="card student-stat"><div class="muted">المحاولات</div><div class="kpi-value">186</div></div><div class="card student-stat"><div class="muted">نسبة النجاح</div><div class="kpi-value">78%</div></div><div class="card student-stat"><div class="muted">عالي المخاطر</div><div class="kpi-value">7</div></div></div><div class="grid-2" style="margin-top:14px"><div class="card"><h3>الموضوعات الأضعف</h3><div class="stat-row"><span>VLSM</span><b>48%</b></div><div class="stat-row"><span>Subnet Mask</span><b>56%</b></div><div class="stat-row"><span>Prefix</span><b>61%</b></div><div class="stat-row"><span>Binary</span><b>72%</b></div></div><div class="card"><h3>أولوية التدخل</h3><div class="stat-row"><span>4 متدربين</span><b>علاج VLSM</b></div><div class="stat-row"><span>3 متدربين</span><b>مراجعة Prefix</b></div><div class="stat-row"><span>7 متدربين</span><b>متابعة</b></div></div></div>';
-  return '<div class="student-hero trainer-hero"><div class="student-hero-copy"><span class="eyebrow">Trainer Command Center</span><h1>صورة واحدة لاتخاذ القرار</h1><p>هذه بداية لوحة المدرب V2. سنضيف Student 360 والتحليلات الحقيقية بعد اعتماد تجربة الواجهة.</p><div class="hero-actions"><button class="btn btn-white" data-page="students">إدارة المتدربين</button><button class="btn btn-outline-white" data-page="analytics">فتح التحليلات</button></div></div><div class="student-hero-side"><div class="hero-mini-label">الأولوية</div><div class="hero-level">7</div><p>متدربون يحتاجون تدخلًا</p></div></div><div class="section-title"><h3>مؤشرات اليوم</h3></div><div class="student-grid-4"><div class="card student-stat"><div class="muted">المتدربون</div><div class="kpi-value">42</div></div><div class="card student-stat"><div class="muted">النشطون</div><div class="kpi-value">31</div></div><div class="card student-stat"><div class="muted">النجاح</div><div class="kpi-value">78%</div></div><div class="card student-stat"><div class="muted">تحتاج متابعة</div><div class="kpi-value">7</div></div></div><div class="section-title"><h3>مركز العمل</h3></div><div class="action-grid"><div class="action-card"><strong>المتدربون</strong><span class="muted">بحث ومجموعات وحالة</span><button class="btn btn-primary" data-page="students">فتح</button></div><div class="action-card"><strong>بنك الأسئلة</strong><span class="muted">جودة وتصنيف</span><button class="btn btn-purple" data-page="questions">فتح</button></div><div class="action-card"><strong>الاختبارات</strong><span class="muted">إنشاء وجدولة</span><button class="btn btn-orange" data-page="exams">فتح</button></div><div class="action-card"><strong>التحليلات</strong><span class="muted">أداء ومخاطر</span><button class="btn btn-green" data-page="analytics">فتح</button></div></div>';
-}
+function trainerPage(){ return getTrainerView(state.page); }
 
 function viewToHtml(view){
   if(view===null||view===undefined) return "";
@@ -40,12 +31,35 @@ function render(){
 
 function bind(){
   document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>{state.page=b.dataset.page;render()}));
+  document.querySelectorAll("[data-trainer-page]").forEach(b=>b.addEventListener("click",()=>{state.page=b.dataset.trainerPage;render()}));
+  document.querySelectorAll("[data-student-id]").forEach(b=>b.addEventListener("click",()=>{state.page="student360";b.dataset.page="student360";renderStudent360(b.dataset.studentId)}));
   document.getElementById("switch-role")?.addEventListener("click",()=>{state.role=state.role==="student"?"trainer":"student";state.page=state.role==="student"?"home":"tdash";render()});
   document.getElementById("reset-demo")?.addEventListener("click",()=>{resetDemoData();state.role="student";state.page="home";render()});
   document.querySelectorAll("[data-lesson]").forEach(b=>b.addEventListener("click",()=>{handleStudentAction(b);state.page="practice";studentState.page="practice";render()}));
   document.querySelectorAll("[data-answer]").forEach(b=>b.addEventListener("click",()=>answer(b)));
   document.getElementById("start-smart-review")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("start-smart-review"));state.page="practice";render()});
   document.getElementById("restart-practice")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("restart-practice"));state.page="practice";render()});
+  document.getElementById("trainer-search")?.addEventListener("input",applyTrainerFilters);
+  document.getElementById("trainer-risk")?.addEventListener("change",applyTrainerFilters);
+  document.getElementById("trainer-group")?.addEventListener("change",applyTrainerFilters);
+}
+function renderStudent360(id){
+  const view=getTrainerView("student360","",id);
+  document.getElementById("app").innerHTML='<div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • Demo Preview</small></div></div><nav class="nav">'+nav(trainerNav)+'</nav><div class="sidebar-footer">Trainer Command Center • V2.2</div></aside><main class="main"><header class="topbar"><div class="topbar-title">مركز المدرب <span class="badge" style="margin-right:8px">وضع تجريبي</span></div><div class="topbar-actions"><button class="btn btn-soft" id="switch-role">عرض المتدرب</button><button class="btn btn-ghost" id="reset-demo">إعادة التجربة</button><div class="avatar">د</div></div></header><div class="container">'+view+'</div></main></div>';
+  bind();
+}
+function applyTrainerFilters(){
+  const q=(document.getElementById("trainer-search")?.value||"").trim();
+  const risk=document.getElementById("trainer-risk")?.value||"";
+  const group=document.getElementById("trainer-group")?.value||"";
+  const rows=document.querySelectorAll(".trainer-table tbody tr");
+  rows.forEach(row=>{
+    const text=row.innerText||"";
+    const okText=!q||text.includes(q);
+    const okRisk=!risk||text.includes(risk);
+    const okGroup=!group||text.includes(group);
+    row.style.display=okText&&okRisk&&okGroup?"":"none";
+  });
 }
 
 function answer(button){
