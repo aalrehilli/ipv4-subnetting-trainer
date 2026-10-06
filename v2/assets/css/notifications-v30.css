@@ -84,3 +84,15 @@
   .intervention-head{display:block}
   .intervention-head>div:last-child{margin-top:7px}
 }
+
+/* V3.2 Always-visible quick access */
+.home-utility-grid,.trainer-utility-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:14px 0}
+.home-utility-card,.trainer-utility-card{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:15px;border-top:3px solid var(--purple)}
+.trainer-utility-card{border-top-color:var(--orange)}
+.intervention-utility{border-top-color:var(--red)}
+.home-utility-card h3,.trainer-utility-card h3{margin:2px 0 5px}
+.home-utility-card p,.trainer-utility-card p{margin:0;line-height:1.8;font-size:12px}
+.home-utility-icon{width:44px;height:44px;border-radius:13px;background:#f2edfa;color:var(--purple);display:grid;place-items:center;font-weight:900;font-size:19px}
+.home-utility-icon.green{background:#eaf8ef;color:var(--green)}
+.home-utility-icon.red{background:#fff0ef;color:var(--red)}
+@media(max-width:820px){.home-utility-grid,.trainer-utility-grid{grid-template-columns:1fr}.home-utility-card,.trainer-utility-card{grid-template-columns:auto 1fr}.home-utility-card .btn,.trainer-utility-card .btn{grid-column:1/-1;width:100%}}
