@@ -49,3 +49,38 @@
   .notification-top{display:block}
   .notification-top small{display:block;margin-top:5px}
 }
+
+
+/* V3.1 Trainer Intervention Center */
+.intervention-kpis{margin-top:14px}
+.intervention-workflow{margin-top:14px;display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:10px;padding:14px;background:#f9fbfd}
+.intervention-workflow>div:not(.workflow-arrow){display:grid;justify-items:center;gap:6px;padding:10px;border:1px solid var(--line);border-radius:13px;background:#fff}
+.intervention-workflow b{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#edf5fb;color:var(--primary)}
+.intervention-workflow span{font-size:12px;font-weight:800;color:var(--primary-2)}
+.workflow-arrow{font-size:18px;color:var(--muted);text-align:center}
+.intervention-list{display:grid;gap:11px}
+.intervention-item{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:15px;border:1px solid var(--line);border-right:4px solid var(--orange);border-radius:16px;background:#fff;box-shadow:var(--shadow)}
+.intervention-item.assigned{border-right-color:var(--purple)}
+.intervention-item.done{border-right-color:var(--green);opacity:.82}
+.intervention-priority{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:16px;font-weight:900}
+.intervention-priority.red{background:#fff0ef;color:var(--red)}
+.intervention-priority.orange{background:#fff4e8;color:#a56416}
+.intervention-priority.green{background:#eaf8ef;color:var(--green)}
+.intervention-main{min-width:0}
+.intervention-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.intervention-head>div:first-child{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.intervention-head strong{font-size:15px;color:var(--primary-2)}
+.intervention-facts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.intervention-facts>span{font-size:11px;background:#f6f8fa;padding:7px 9px;border-radius:9px;color:var(--muted)}
+.intervention-facts em{font-style:normal;margin-right:3px}
+.intervention-main>p{font-size:13px;line-height:1.8;margin:11px 0;color:var(--text)}
+.intervention-recommendation{display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding:10px 11px;background:#f8fbff;border:1px solid #e0ecf6;border-radius:11px;font-size:12px}
+.intervention-recommendation strong{color:var(--primary-2)}
+.intervention-recommendation span{color:var(--muted)}
+.intervention-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+@media(max-width:700px){
+  .intervention-workflow{grid-template-columns:1fr}
+  .workflow-arrow{transform:rotate(-90deg)}
+  .intervention-head{display:block}
+  .intervention-head>div:last-child{margin-top:7px}
+}
