@@ -931,7 +931,10 @@ document.querySelectorAll(".level").forEach(function(b){b.addEventListener("clic
       lastScore:Number(score||0),
       lastTime:Number(time||0),
       lastErrors:Number(errors||0),
-      completedAt:new Date().toISOString()
+      completedAt:new Date().toISOString(),
+      stepsCompleted:v6636Final.step,
+      totalSteps:v6636Final.steps.length,
+      commandHistory:v6636Final.history.slice()
     };
     v6633Save();
   }
@@ -1525,6 +1528,7 @@ runBtn.addEventListener("click",runQa);
       '<div class="ios-final-card"><div style="height:10px;background:#e8eef2;border-radius:99px;overflow:hidden"><span style="display:block;width:'+pct+'%;height:100%;background:#0b6f91"></span></div><div style="margin-top:8px;font-size:10px;color:#71858f">'+(current?'الخطوة الحالية: '+current.title:'تمت جميع المهام')+'</div></div>'+
       '<div class="ios-final-card"><div style="display:grid;gap:6px">'+rows+'</div></div>'+
       '<div class="ios-final-actions"><button type="button" class="primary" id="v6636Start">'+(saved?.passed?'🔄 إعادة الاختبار':'🚀 ابدأ الاختبار')+'</button><button type="button" id="v6636Reset">↻ إعادة</button></div>'+
+      '<div id="v6639CentralStatus" class="status" style="margin-top:10px">☁️ حالة المزامنة المركزية: جارٍ الفحص...</div>'+
       (saved?'<div class="'+(saved.passed?'status ok':'status bad')+'">'+(saved.passed?'🏆 آخر محاولة ناجحة • أفضل نتيجة '+saved.bestScore+'/100':'❌ آخر محاولة لم تصل إلى 80% • أفضل نتيجة '+saved.bestScore+'/100')+'</div>':'')+
       '</div>';
     document.getElementById("v6636Start")?.addEventListener("click",v6636Start);
@@ -1561,6 +1565,7 @@ runBtn.addEventListener("click",runQa);
           v6636Final.running=false;
           var result=v6636SaveResult();
           v6636RenderFinal();v6636RenderRoadmap();
+          if(window.v6639SubmitFinal)window.v6639SubmitFinal(result);
           say("ok",result.passed?"🏆 نجحت في الاختبار النهائي بنسبة "+result.score+"%.":"❌ اكتملت المهام لكن النتيجة أقل من حد النجاح.");
         }else{
           v6636RenderFinal();
@@ -1593,6 +1598,106 @@ runBtn.addEventListener("click",runQa);
   window.v6636GetRoadmap=function(){v6636RenderRoadmap();};
 
   setTimeout(function(){v6636RenderRoadmap();v6636RenderFinal();setTab("roadmap");},0);
+})();
+</script>
+
+
+<script id="v66_39_ios_central_attempts">
+(function(){
+  "use strict";
+
+  var SUPABASE_URL="https://cvakitsdwxkksxemdhxj.supabase.co";
+  var SUPABASE_KEY="sb_publishable_cyC7CVFX7pMpnPA69mjNoQ_xxr3eeZA";
+  var sbPromise=null;
+  var centralBest=null;
+
+  function setStatus(html,good){
+    var el=document.getElementById("v6639CentralStatus");
+    if(!el)return;
+    el.className="status "+(good?"ok":"bad");
+    el.innerHTML=html;
+  }
+
+  function ensureSupabase(){
+    if(window.supabase?.createClient)return Promise.resolve(window.supabase);
+    if(sbPromise)return sbPromise;
+    sbPromise=new Promise(function(resolve,reject){
+      var s=document.createElement("script");
+      s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+      s.onload=function(){window.supabase?.createClient?resolve(window.supabase):reject(new Error("تعذر تحميل Supabase"));};
+      s.onerror=function(){reject(new Error("تعذر تحميل مكتبة Supabase"));};
+      document.head.appendChild(s);
+    });
+    return sbPromise;
+  }
+
+  async function getClient(){
+    var lib=await ensureSupabase();
+    if(!window.v6639Supabase)window.v6639Supabase=lib.createClient(SUPABASE_URL,SUPABASE_KEY);
+    return window.v6639Supabase;
+  }
+
+  async function getUser(){
+    var client=await getClient();
+    var r=await client.auth.getUser();
+    if(r.error)throw r.error;
+    return r.data?.user||null;
+  }
+
+  async function refreshCentralBest(){
+    try{
+      var client=await getClient();
+      var user=await getUser();
+      if(!user){centralBest=null;setStatus("☁️ لم يتم العثور على جلسة دخول. سيتم حفظ النتيجة محليًا فقط.",false);return null;}
+      var r=await client.rpc("get_ios_final_best");
+      if(r.error)throw r.error;
+      centralBest=Array.isArray(r.data)?(r.data[0]||null):(r.data||null);
+      if(centralBest){
+        setStatus("☁️ محفوظ مركزيًا: أفضل نتيجة "+Number(centralBest.score||0)+"/100 • "+(centralBest.passed?"✅ ناجح":"غير ناجح"),!!centralBest.passed);
+      }else{
+        setStatus("☁️ الحساب متصل، ولم تُسجّل محاولة IOS مركزية بعد.",true);
+      }
+      return centralBest;
+    }catch(e){
+      console.warn("V66.39 central best:",e);
+      setStatus("⚠️ تعذر الاتصال بسجل IOS المركزي. الاختبار المحلي ما زال يعمل.",false);
+      return null;
+    }
+  }
+
+  window.v6639SubmitFinal=async function(result){
+    if(!result)return;
+    try{
+      setStatus("☁️ جارٍ حفظ نتيجة الاختبار مركزيًا...",true);
+      var client=await getClient();
+      var user=await getUser();
+      if(!user){
+        setStatus("⚠️ لا توجد جلسة دخول؛ تم حفظ النتيجة محليًا فقط.",false);
+        return;
+      }
+      var r=await client.rpc("save_ios_final_attempt",{
+        p_score:Number(result.score||0),
+        p_errors:Number(result.errors||0),
+        p_duration_seconds:Math.round(Number(result.time||0)),
+        p_steps_completed:Number(result.stepsCompleted||0),
+        p_command_history:Array.isArray(result.commandHistory)?result.commandHistory:[],
+        p_completed_at:result.completedAt||new Date().toISOString()
+      });
+      if(r.error)throw r.error;
+      var saved=Array.isArray(r.data)?(r.data[0]||null):(r.data||null);
+      centralBest=saved||result;
+      setStatus(saved?.passed
+        ?"✅ تم حفظ محاولة الاختبار مركزيًا ونجحت النتيجة. إصدار الشهادة أصبح مرتبطًا بالسجل المركزي."
+        :"✅ تم حفظ محاولة الاختبار مركزيًا.",!!saved?.passed);
+    }catch(e){
+      console.warn("V66.39 submit final:",e);
+      setStatus("⚠️ تعذر حفظ المحاولة مركزيًا. لن تضيع النتيجة المحلية.",false);
+    }
+  };
+
+  window.v6639GetCentralBest=function(){return centralBest;};
+
+  setTimeout(function(){refreshCentralBest();},500);
 })();
 </script>
 
