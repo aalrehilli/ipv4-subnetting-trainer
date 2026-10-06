@@ -163,19 +163,80 @@ function trainerDashboard(){
   `;
 }
 function studentsPage(filter=""){
+  const total=students.length;
+  const high=students.filter(s=>s.risk==="مرتفع").length;
+  const medium=students.filter(s=>s.risk==="متوسط").length;
+  const low=students.filter(s=>s.risk==="منخفض").length;
+  const active=students.filter(s=>s.activity==="نشط").length;
   let rows=filter?students.filter(s=>s.risk===filter):students;
-  return `
-  <div class="page-intro with-action"><div><span class="eyebrow blue">01 • المتدربون</span><h2>إدارة المتدربين</h2><p>ابحث، صفِّ، ثم افتح ملف المتدرب لاتخاذ الإجراء.</p></div><span class="badge">${rows.length} معروض</span></div>
-  <div class="card trainer-filters">
-    <input id="trainer-search" placeholder="ابحث باسم المتدرب..." aria-label="بحث">
-    <select id="trainer-risk"><option value="">كل الحالات</option><option value="مرتفع" ${filter==="مرتفع"?"selected":""}>مرتفع</option><option value="متوسط" ${filter==="متوسط"?"selected":""}>متوسط</option><option value="منخفض" ${filter==="منخفض"?"selected":""}>منخفض</option></select>
-    <select id="trainer-group"><option value="">كل المجموعات</option><option>1</option><option>2</option><option>3</option></select>
-  </div>
-  <div class="card" style="padding:10px"><table class="table trainer-table"><thead><tr><th>المتدرب</th><th>المجموعة</th><th>التقدم</th><th>المتوسط</th><th>نقطة الضعف</th><th>الحالة</th><th></th></tr></thead><tbody>
-    ${rows.map(s=>`<tr><td><strong>${s.name}</strong><div class="muted">${s.activity}</div></td><td>${s.group}</td><td><div class="progress table-progress"><span style="width:${s.progress}%"></span></div><small>${s.progress}%</small></td><td><strong>${s.avg}%</strong></td><td><span class="badge ${s.topic==="—"?"green":"orange"}">${s.topic}</span></td><td><span class="badge ${fmtRisk(s.risk)}">${s.risk}</span></td><td><button class="btn btn-soft mini-btn" data-student-id="${s.id}">360</button></td></tr>`).join("")}
-  </tbody></table></div>`;
-}
 
+  return `
+  <div class="page-intro with-action">
+    <div><span class="eyebrow blue">01 • المتدربون</span><h2>إدارة المتدربين</h2><p>ابحث وصفِّ المتدربين ثم افتح ملف Student 360 لاتخاذ قرار واضح.</p></div>
+    <div class="trainer-students-header-actions">
+      <span class="badge">${rows.length} معروض</span>
+      <button class="btn btn-primary" data-trainer-page="tdash">لوحة المدرب</button>
+    </div>
+  </div>
+
+  <div class="trainer-students-summary">
+    <div class="card trainer-student-stat"><span>إجمالي المتدربين</span><strong>${total}</strong><small>كل السجلات</small></div>
+    <div class="card trainer-student-stat"><span>نشطون اليوم</span><strong>${active}</strong><small>نشاط حديث</small></div>
+    <div class="card trainer-student-stat danger"><span>عالي الخطورة</span><strong>${high}</strong><small>تدخل مباشر</small></div>
+    <div class="card trainer-student-stat warning"><span>متوسط الخطورة</span><strong>${medium}</strong><small>متابعة</small></div>
+    <div class="card trainer-student-stat success"><span>منخفض الخطورة</span><strong>${low}</strong><small>جاهزون غالبًا</small></div>
+  </div>
+
+  <div class="card trainer-student-toolbar">
+    <div class="trainer-student-search">
+      <label>بحث سريع</label>
+      <input id="trainer-search" placeholder="اكتب اسم المتدرب أو الموضوع..." aria-label="بحث المتدربين">
+    </div>
+    <div>
+      <label>الحالة</label>
+      <select id="trainer-risk"><option value="">كل الحالات</option><option value="مرتفع" ${filter==="مرتفع"?"selected":""}>مرتفع</option><option value="متوسط" ${filter==="متوسط"?"selected":""}>متوسط</option><option value="منخفض" ${filter==="منخفض"?"selected":""}>منخفض</option></select>
+    </div>
+    <div>
+      <label>المجموعة</label>
+      <select id="trainer-group"><option value="">كل المجموعات</option><option value="1">المجموعة 1</option><option value="2">المجموعة 2</option><option value="3">المجموعة 3</option></select>
+    </div>
+    <div class="trainer-filter-actions">
+      <button class="filter-chip ${filter==="مرتفع"?"active":""}" data-trainer-risk-chip="مرتفع">عالي الخطورة</button>
+      <button class="filter-chip ${filter==="متوسط"?"active":""}" data-trainer-risk-chip="متوسط">متوسط</button>
+      <button class="filter-chip ${filter==="منخفض"?"active":""}" data-trainer-risk-chip="منخفض">جاهزون</button>
+      <button class="filter-chip ${!filter?"active":""}" data-trainer-risk-chip="">الكل</button>
+    </div>
+  </div>
+
+  <div class="card trainer-student-table-card">
+    <div class="trainer-table-head">
+      <div><strong>قائمة المتدربين</strong><span class="muted">بيانات العرض التجريبي</span></div>
+      <span class="badge green">${rows.length} نتيجة</span>
+    </div>
+    <div class="table-scroll"><table class="table trainer-table"><thead><tr><th>المتدرب</th><th>المجموعة</th><th>التقدم</th><th>المتوسط</th><th>نقطة الضعف</th><th>الحالة</th><th>آخر نشاط</th><th>الإجراء</th></tr></thead><tbody>
+      ${rows.map(s=>`<tr>
+        <td><div class="trainer-student-name"><div class="student-mini-avatar">${s.name.slice(0,1)}</div><div><strong>${s.name}</strong><small>${s.activity}</small></div></div></td>
+        <td><span class="badge">${s.group}</span></td>
+        <td><div class="trainer-progress-cell"><div class="progress"><span style="width:${s.progress}%"></span></div><small>${s.progress}%</small></div></td>
+        <td><strong>${s.avg}%</strong></td>
+        <td><span class="badge ${s.topic==="—"?"green":"orange"}">${s.topic}</span></td>
+        <td><span class="badge ${fmtRisk(s.risk)}">${s.risk}</span></td>
+        <td><small class="muted">${s.last}</small></td>
+        <td><button class="btn btn-soft mini-btn" data-student-id="${s.id}">فتح الملف 360</button></td>
+      </tr>`).join("")}
+    </tbody></table></div>
+    ${rows.length===0?'<div class="empty">لا توجد نتائج مطابقة للفلاتر الحالية.</div>':""}
+  </div>
+
+  <div class="section-title"><h3>إجراءات سريعة للمدرب</h3></div>
+  <div class="trainer-student-actions-grid">
+    <button class="action-card" data-trainer-page="students" data-risk="مرتفع"><strong>متابعة عالية الأولوية</strong><span class="muted">${high} متدربين يحتاجون تدخلًا</span></button>
+    <button class="action-card" data-trainer-page="interventions"><strong>مركز التدخل</strong><span class="muted">حوّل التنبيهات إلى إجراءات</span></button>
+    <button class="action-card" data-trainer-page="analytics"><strong>تحليلات الأداء</strong><span class="muted">اعرف أكثر الموضوعات ضعفًا</span></button>
+    <button class="action-card" data-trainer-page="groups"><strong>مقارنة المجموعات</strong><span class="muted">قارن الأداء قبل التدخل الجماعي</span></button>
+  </div>
+  `;
+}
 function student360(id){ return student360View(id); }
 
 export function getTrainerView(page="tdash",filter="",id=null){
