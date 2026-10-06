@@ -6,10 +6,11 @@ import {handleLabAction} from "./subnet-lab-v25.js";
 import {handleFlsmAction} from "./flsm-v26.js";
 import {handleVlsmAction} from "./vlsm-v27.js";
 import {handleStudent360Action} from "./student360-v29.js";
+import {notificationBell,handleNotificationAction} from "./notifications-v30.js";
 
 const state={role:"student",page:"home"};
-const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
-const trainerNav=[["tdash","الرئيسية"],["students","المتدربون"],["groups","المجموعات"],["courses","المقررات"],["questions","بنك الأسئلة"],["exams","الاختبارات"],["labs","المختبرات"],["analytics","التحليلات"]];
+const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["notifications","الإشعارات"],["achievements","الإنجازات"],["certificate","الشهادة"]];
+const trainerNav=[["tdash","الرئيسية"],["students","المتدربون"],["groups","المجموعات"],["courses","المقررات"],["questions","بنك الأسئلة"],["exams","الاختبارات"],["labs","المختبرات"],["analytics","التحليلات"],["notifications","الإشعارات"]];
 
 const esc=(v)=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 
@@ -31,7 +32,7 @@ function render(){
   if(state.role==="student")studentState.page=state.page;
   const view=state.role==="student"?studentPage():trainerPage();
   const app=document.getElementById("app");
-  app.innerHTML='<div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • Demo Preview</small></div></div><nav class="nav">'+nav(state.role==="student"?studentNav:trainerNav)+'</nav><div class="sidebar-footer">Learn → Practice → Assess → Analyze → Improve</div></aside><main class="main"><header class="topbar"><div class="topbar-title">'+(state.role==="student"?"مساحة المتدرب":"مركز المدرب")+' <span class="badge" style="margin-right:8px">وضع تجريبي</span></div><div class="topbar-actions"><button class="btn btn-soft" id="switch-role">عرض '+(state.role==="student"?"المدرب":"المتدرب")+'</button><button class="btn btn-ghost" id="reset-demo">إعادة التجربة</button><div class="avatar">'+(state.role==="student"?"م":"د")+'</div></div></header><div class="container">'+viewToHtml(view)+'</div></main></div>';
+  app.innerHTML='<div class="app-shell"><aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • Demo Preview</small></div></div><nav class="nav">'+nav(state.role==="student"?studentNav:trainerNav)+'</nav><div class="sidebar-footer">Learn → Practice → Assess → Analyze → Improve</div></aside><main class="main"><header class="topbar"><div class="topbar-title">'+(state.role==="student"?"مساحة المتدرب":"مركز المدرب")+' <span class="badge" style="margin-right:8px">وضع تجريبي</span></div><div class="topbar-actions">${notificationBell(state.role)}<button class="btn btn-soft" id="switch-role">عرض '+(state.role==="student"?"المدرب":"المتدرب")+'</button><button class="btn btn-ghost" id="reset-demo">إعادة التجربة</button><div class="avatar">'+(state.role==="student"?"م":"د")+'</div></div></header><div class="container">'+viewToHtml(view)+'</div></main></div>';
   bind();
 }
 
@@ -40,6 +41,8 @@ function bind(){
   document.querySelectorAll("[data-trainer-page]").forEach(b=>b.addEventListener("click",()=>{state.page=b.dataset.trainerPage;render()}));
   document.querySelectorAll("[data-student-id]").forEach(b=>b.addEventListener("click",()=>{state.page="student360";b.dataset.page="student360";renderStudent360(b.dataset.studentId)}));
   document.querySelectorAll("[data-360-action]").forEach(b=>b.addEventListener("click",()=>student360Action(b)));
+  document.getElementById("notification-bell")?.addEventListener("click",e=>{e.stopPropagation();document.getElementById("notification-popover")?.classList.toggle("open")});
+  document.querySelectorAll("[data-notification-action]").forEach(b=>b.addEventListener("click",()=>{const result=handleNotificationAction(b,state.role);const next=b.dataset.notificationPage||result?.page;if(next)state.page=next;render()}));
   document.getElementById("switch-role")?.addEventListener("click",()=>{state.role=state.role==="student"?"trainer":"student";state.page=state.role==="student"?"home":"tdash";render()});
   document.getElementById("reset-demo")?.addEventListener("click",()=>{resetDemoData();state.role="student";state.page="home";render()});
   document.querySelectorAll("[data-lesson]").forEach(b=>b.addEventListener("click",()=>{handleStudentAction(b);state.page="practice";studentState.page="practice";render()}));
