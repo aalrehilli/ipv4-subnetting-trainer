@@ -94,7 +94,7 @@ function bind(){
 
   document.querySelectorAll("[data-course-action]").forEach(btn=>btn.addEventListener("click",async()=>{
     try{
-      const m=await import("./course-manager-v35.js?v=401");
+      const m=await import("./course-manager-v35.js?v=402");
       const action=btn.dataset.courseAction;
       if(action==="new"){
         const form=document.getElementById("course-builder");
@@ -113,7 +113,7 @@ function bind(){
   document.getElementById("new-course-form")?.addEventListener("submit",async event=>{
     event.preventDefault();
     try{
-      const m=await import("./course-manager-v34.js?v=401");
+      const m=await import("./course-manager-v35.js?v=402");
       const result=m.handleCourseForm(event.currentTarget);
       const msg=document.getElementById("course-form-msg");
       if(!result.ok){
