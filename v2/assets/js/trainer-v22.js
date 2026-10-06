@@ -32,53 +32,136 @@ function riskStudents(){
 
 function trainerDashboard(){
   const risk=riskStudents();
+  const total=students.length;
+  const avgProgress=Math.round(students.reduce((a,s)=>a+s.progress,0)/total);
+  const active=students.filter(s=>s.activity==="نشط").length;
+  const high=risk.filter(s=>s.risk==="مرتفع").length;
+  const medium=risk.filter(s=>s.risk==="متوسط").length;
+  const topStudent=[...students].sort((a,b)=>b.progress-a.progress)[0];
+  const focus=[["VLSM",48,"مرتفع"],["Subnet Mask",56,"مرتفع"],["Prefix",61,"متوسط"],["Binary",72,"جيد"]];
+
   return `
-  <div class="trainer-command-hero">
-    <div><span class="eyebrow">Trainer Command Center • V2.2</span><h1>اتخذ القرار من شاشة واحدة</h1>
-      <p>بدل البحث داخل التقارير، ابدأ بالطلاب الذين يحتاجون تدخلاً، ثم نفّذ الإجراء المناسب مباشرة.</p>
+  <div class="trainer-v311-hero">
+    <div class="trainer-v311-hero-main">
+      <span class="eyebrow">مركز قيادة المدرب • V3.11</span>
+      <h1>صورة واضحة لما يحتاج قرارًا الآن</h1>
+      <p>ابدأ بالأولوية، افتح المتدرب، ثم انتقل مباشرة إلى الإجراء المناسب.</p>
+      <div class="trainer-v311-actions">
+        <button class="btn btn-white" data-trainer-page="students" data-risk="مرتفع">طلاب عالي الخطورة</button>
+        <button class="btn btn-outline-white" data-trainer-page="courses">إدارة المقرر</button>
+        <button class="btn btn-outline-white" data-trainer-page="exams">متابعة الاختبارات</button>
+      </div>
     </div>
-    <div class="command-priority"><span>أولوية اليوم</span><strong>${risk.length}</strong><small>متدربين يحتاجون متابعة</small><button class="btn btn-white mini-btn" data-trainer-page="interventions" style="margin-top:8px">فتح مركز التدخل</button></div>
+    <div class="trainer-v311-priority">
+      <span>أولوية اليوم</span>
+      <strong>${risk.length}</strong>
+      <small>${high} مرتفع • ${medium} متوسط</small>
+      <button class="btn btn-white mini-btn" data-trainer-page="interventions">فتح مركز التدخل</button>
+    </div>
   </div>
 
-  <div class="trainer-utility-grid"><div class="card trainer-utility-card notification-utility"><div class="home-utility-icon">🔔</div><div><span class="eyebrow orange">مركز المتابعة</span><h3>مركز الإشعارات الذكي</h3><p class="muted">هناك <strong>${getUnreadCount("trainer")}</strong> تنبيهات مرتبطة بطلاب أو موضوعات تحتاج قرارًا.</p></div><button class="btn btn-orange" data-trainer-page="notifications">فتح الإشعارات</button></div><div class="card trainer-utility-card intervention-utility"><div class="home-utility-icon red">!</div><div><span class="eyebrow red">إجراء مباشر</span><h3>مركز التدخل</h3><p class="muted">يوجد <strong>${getOpenInterventions().length}</strong> تدخلات بانتظار قرار أو متابعة.</p></div><button class="btn btn-danger" data-trainer-page="interventions">فتح مركز التدخل</button></div></div>\n\n  <div class="student-grid-4 trainer-kpis">
-    ${stat("إجمالي المتدربين","42","6 مجموعات")}
-    ${stat("النشطون اليوم","31","74% من الإجمالي")}
-    ${stat("نسبة النجاح","78%","+4% عن الأسبوع الماضي")}
-    ${stat("عالي المخاطر","7","يحتاجون تدخلًا")}
+  <div class="trainer-v311-summary">
+    <div class="card trainer-v311-summary-card">
+      <div class="summary-icon">👥</div>
+      <div><span class="muted">المتدربون</span><strong>${total}</strong><small>${active} نشط اليوم</small></div>
+    </div>
+    <div class="card trainer-v311-summary-card">
+      <div class="summary-icon green">↗</div>
+      <div><span class="muted">متوسط التقدم</span><strong>${avgProgress}%</strong><small>الاتجاه العام مستقر</small></div>
+    </div>
+    <div class="card trainer-v311-summary-card">
+      <div class="summary-icon orange">⚠</div>
+      <div><span class="muted">عالي الخطورة</span><strong>${high}</strong><small>يحتاج تدخلًا مباشرًا</small></div>
+    </div>
+    <div class="card trainer-v311-summary-card">
+      <div class="summary-icon purple">★</div>
+      <div><span class="muted">الأفضل حاليًا</span><strong>${topStudent.name}</strong><small>${topStudent.progress}% تقدم</small></div>
+    </div>
   </div>
 
-  <div class="section-title"><h3>ماذا يحتاج انتباهك الآن؟</h3><span class="badge red">أولوية</span></div>
-  <div class="intervention-grid">
-    <div class="card intervention-card urgent"><div class="intervention-icon">!</div><div><strong>4 متدربين</strong><h3>ضعف في Subnet Mask / Magic Number</h3><p class="muted">متوسط الإتقان أقل من 50% في المجموعة المعنية.</p></div><button class="btn btn-danger" data-trainer-page="students" data-risk="مرتفع">عرض الطلاب</button></div>
-    <div class="card intervention-card"><div class="intervention-icon purple">✦</div><div><strong>3 متدربين</strong><h3>يحتاجون مراجعة Prefix</h3><p class="muted">الأخطاء تتكرر رغم إكمال الدروس الأساسية.</p></div><button class="btn btn-purple" data-trainer-page="students" data-risk="متوسط">عرض الطلاب</button></div>
-    <div class="card intervention-card"><div class="intervention-icon green">✓</div><div><strong>5 متدربين</strong><h3>جاهزون للانتقال إلى FLSM</h3><p class="muted">حققوا مستوى إتقان يسمح بالانتقال للموضوع التالي.</p></div><button class="btn btn-green" data-trainer-page="students" data-risk="منخفض">عرض الطلاب</button></div>
+  <div class="trainer-utility-grid">
+    <div class="card trainer-utility-card notification-utility">
+      <div class="home-utility-icon">🔔</div>
+      <div><span class="eyebrow orange">مركز المتابعة</span><h3>الإشعارات والتحديثات</h3><p class="muted">تابع ما تغير منذ آخر دخول للوحة المدرب.</p></div>
+      <button class="btn btn-orange" data-trainer-page="notifications">فتح الإشعارات</button>
+    </div>
+    <div class="card trainer-utility-card intervention-utility">
+      <div class="home-utility-icon red">!</div>
+      <div><span class="eyebrow red">إجراء مباشر</span><h3>مركز التدخل</h3><p class="muted">هناك <strong>${getOpenInterventions().length}</strong> تدخلات تحتاج قرارًا أو متابعة.</p></div>
+      <button class="btn btn-danger" data-trainer-page="interventions">فتح مركز التدخل</button>
+    </div>
   </div>
 
-  <div class="section-title"><h3>قائمة المتابعة</h3><button class="link-btn" data-trainer-page="students">عرض جميع المتدربين</button></div>
-  <div class="card risk-list">
-    ${risk.slice(0,4).map((s,i)=>`
+  <div class="section-title"><h3>القرار التالي</h3><span class="badge red">أولوية</span></div>
+  <div class="trainer-v311-focus-grid">
+    <div class="card trainer-focus-card urgent">
+      <div class="focus-head"><span class="badge red">تدخل الآن</span><strong>4 متدربين</strong></div>
+      <h3>Subnet Mask وMagic Number</h3>
+      <p class="muted">المتوسط أقل من 50% مع تكرار الأخطاء.</p>
+      <div class="focus-metric"><span>الإتقان</span><strong>46%</strong></div>
+      <button class="btn btn-danger" data-trainer-page="students" data-risk="مرتفع">عرض الطلاب</button>
+    </div>
+    <div class="card trainer-focus-card">
+      <div class="focus-head"><span class="badge orange">مراجعة</span><strong>3 متدربين</strong></div>
+      <h3>Prefix</h3>
+      <p class="muted">يحتاجون تدريبًا موجّهًا قبل الانتقال.</p>
+      <div class="focus-metric"><span>الإتقان</span><strong>61%</strong></div>
+      <button class="btn btn-orange" data-trainer-page="students" data-risk="متوسط">فتح قائمة المتابعة</button>
+    </div>
+    <div class="card trainer-focus-card success">
+      <div class="focus-head"><span class="badge green">جاهزون</span><strong>12 متدربًا</strong></div>
+      <h3>الانتقال إلى FLSM</h3>
+      <p class="muted">حققوا مستوى يسمح بالانتقال للمحور التالي.</p>
+      <div class="focus-metric"><span>الجاهزية</span><strong>≥ 70%</strong></div>
+      <button class="btn btn-green" data-trainer-page="students" data-risk="منخفض">عرض الجاهزين</button>
+    </div>
+  </div>
+
+  <div class="section-title"><h3>المقرر والاختبارات</h3></div>
+  <div class="grid-2">
+    <div class="card trainer-v311-module-card">
+      <div class="module-card-head"><div><span class="eyebrow blue">المقرر الحالي</span><h3>IPv4 Fundamentals</h3></div><span class="badge green">منشور</span></div>
+      <div class="module-progress"><div><span>تقدم الطلاب</span><strong>68%</strong></div><div class="progress"><span style="width:68%"></span></div></div>
+      <div class="module-stats"><span><b>3</b> وحدات</span><span><b>12</b> درسًا</span><span><b>24</b> نشاطًا</span><span><b>78%</b> نجاح</span></div>
+      <div class="module-actions"><button class="btn btn-primary" data-trainer-page="courses">فتح المقرر</button><button class="btn btn-soft" data-trainer-page="questions">بنك الأسئلة</button></div>
+    </div>
+    <div class="card trainer-v311-module-card">
+      <div class="module-card-head"><div><span class="eyebrow orange">الاختبار التالي</span><h3>IPv4 & Binary</h3></div><span class="badge orange">جاهز</span></div>
+      <div class="exam-mini"><div><span>الأسئلة</span><strong>10</strong></div><div><span>المدة</span><strong>5 د</strong></div><div><span>النجاح</span><strong>60%</strong></div></div>
+      <div class="exam-status"><span>آخر متوسط</span><strong>78%</strong><span class="muted">لا توجد مشكلة تشغيلية</span></div>
+      <div class="module-actions"><button class="btn btn-orange" data-trainer-page="exams">فتح إدارة الاختبار</button><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
+    </div>
+  </div>
+
+  <div class="section-title"><h3>لوحة نقاط الضعف</h3><button class="link-btn" data-trainer-page="analytics">عرض التحليلات</button></div>
+  <div class="card trainer-v311-weakness">
+    ${focus.map(x=>`<div class="weakness-row"><div class="weakness-name"><strong>${x[0]}</strong><span class="badge ${x[2]==="مرتفع"?"red":x[2]==="متوسط"?"orange":"green"}">${x[2]}</span></div><div class="progress"><span style="width:${x[1]}%"></span></div><strong class="weakness-percent">${x[1]}%</strong></div>`).join("")}
+  </div>
+
+  <div class="section-title"><h3>أهم المتدربين للمتابعة</h3><button class="link-btn" data-trainer-page="students">جميع المتدربين</button></div>
+  <div class="card risk-list trainer-v311-risk-list">
+    ${risk.slice(0,5).map((s,i)=>`
       <div class="risk-row">
         <div class="risk-rank">${i+1}</div>
-        <div class="risk-person"><strong>${s.name}</strong><span class="muted">المجموعة ${s.group} • آخر نشاط: ${s.last}</span></div>
+        <div class="risk-person"><strong>${s.name}</strong><span class="muted">المجموعة ${s.group} • ${s.last}</span></div>
         <span class="badge ${fmtRisk(s.risk)}">${s.risk}</span>
         <div class="risk-topic"><strong>${s.topic}</strong><span class="muted">إتقان ${s.weakness}%</span></div>
         <button class="btn btn-soft mini-btn" data-student-id="${s.id}">Student 360</button>
       </div>`).join("")}
   </div>
 
-  <div class="section-title"><h3>مؤشرات المقرر</h3></div>
+  <div class="section-title"><h3>النشاط الأسبوعي</h3></div>
   <div class="grid-2">
     <div class="card"><h3>أداء الموضوعات</h3>
       ${[["IPv4",84],["Binary",72],["Prefix",61],["Subnet Mask",56],["FLSM",69],["VLSM",48]].map(x=>`<div class="topic-bar"><div><span>${x[0]}</span><b>${x[1]}%</b></div><div class="progress"><span style="width:${x[1]}%"></span></div></div>`).join("")}
     </div>
     <div class="card"><h3>النشاط خلال الأسبوع</h3>
       <div class="weekly-bars trainer-bars">${[42,58,51,70,63,88,76].map((v,i)=>`<div><span style="height:${v}%"></span><small>${["أ","ح","ن","ث","ر","خ","ج"][i]}</small></div>`).join("")}</div>
-      <div class="muted" style="margin-top:8px">أفضل يوم: الخميس</div>
+      <div class="muted" style="margin-top:8px">أفضل يوم: الخميس • أعلى نشاط: 88%</div>
     </div>
   </div>
   `;
 }
-
 function studentsPage(filter=""){
   let rows=filter?students.filter(s=>s.risk===filter):students;
   return `
