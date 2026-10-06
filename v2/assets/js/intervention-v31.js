@@ -16,6 +16,9 @@ function read(){
 function write(list){localStorage.setItem(KEY,JSON.stringify(list));return list}
 function esc(v){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
 function riskTone(v){return v==="مرتفع"?"red":v==="متوسط"?"orange":"green"}
+const FILTER_KEY="ipv4AcademyV31InterventionFilter";
+function getFilter(){return localStorage.getItem(FILTER_KEY)||"open"}
+export function setInterventionFilter(filter){localStorage.setItem(FILTER_KEY,filter||"open")}
 
 export function getInterventions(){
   const list=read();
@@ -30,6 +33,7 @@ export function getOpenInterventions(){
 export function handleInterventionAction(target){
   const id=target.dataset.interventionId;
   const action=target.dataset.interventionAction;
+  if(action==="filter"){setInterventionFilter(target.dataset.interventionFilter||"open");return {rerender:true}}
   const list=getInterventions();
   const item=list.find(x=>x.id===id);
   if(!item)return {rerender:true};
@@ -66,7 +70,9 @@ function row(item){
 }
 
 export function interventionCenterView(){
-  const list=getInterventions();
+  const all=getInterventions();
+  const filter=getFilter();
+  const list=filter==="all"?all:all.filter(x=>x.status===filter);
   const open=list.filter(x=>x.status==="open").length;
   const assigned=list.filter(x=>x.status==="assigned").length;
   const done=list.filter(x=>x.status==="done").length;
@@ -78,6 +84,10 @@ export function interventionCenterView(){
       '<div class="card trainer-kpi"><div class="muted">المنهج</div><div class="kpi-value" style="font-size:20px">تنبيه → إجراء</div><div class="muted">→ متابعة → إغلاق</div></div>'+
     '</div>'+
     '<div class="card intervention-workflow"><div><b>1</b><span>اكتشاف</span></div><div class="workflow-arrow">←</div><div><b>2</b><span>قرار</span></div><div class="workflow-arrow">←</div><div><b>3</b><span>متابعة</span></div><div class="workflow-arrow">←</div><div><b>4</b><span>إغلاق</span></div></div>'+
-    '<div class="section-title"><h3>قائمة التدخلات</h3><span class="badge">الأعلى أولوية أولًا</span></div>'+
+    '<div class="section-title"><h3>قائمة التدخلات</h3><div class="filter-chips">'+
+'<button class="filter-chip '+(filter==="open"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="open">مفتوحة</button>'+
+'<button class="filter-chip '+(filter==="assigned"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="assigned">قيد المتابعة</button>'+
+'<button class="filter-chip '+(filter==="done"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="done">مغلقة</button>'+
+'<button class="filter-chip '+(filter==="all"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="all">الكل</button></div></div>'+
     '<div class="intervention-list">'+list.map(row).join("")+'</div>';
 }
