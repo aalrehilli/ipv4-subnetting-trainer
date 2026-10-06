@@ -3663,9 +3663,9 @@ async function v6643LoadIOSCentralStatus(){
     const certState=cert?.certificate_no?'<span class="v6643-ios-badge">🏆 شهادة مركزية صادرة</span>':'<span class="v6643-ios-badge">📜 الشهادة غير صادرة</span>';
     const button=best?.passed
       ? (cert?.certificate_no
-        ? '<button class="primary purple" onclick="page(\\'certificate\\')">📜 عرض الشهادة</button>'
+        ? '<button class="primary purple" onclick="page(\'certificate\')">📜 عرض الشهادة</button>'
         : '<button class="primary green" onclick="v6637Issue()">🏆 إصدار الشهادة المركزية</button>')
-      : '<button class="primary orange" onclick="window.location.href=\\'ios-simulator.html#final\\'">🏁 متابعة الاختبار النهائي</button>';
+      : '<button class="primary orange" onclick="window.location.href=\'ios-simulator.html#final\'">🏁 متابعة الاختبار النهائي</button>';
     host.innerHTML=
       '<div class="v6643-ios-central">'+
         '<div class="v6643-ios-head"><div><span class="v6643-ios-badge">☁️ V66.43 • IOS Cloud Sync</span><h3 style="margin:8px 0 4px;color:#0759a5">'+centralState+'</h3>'+
