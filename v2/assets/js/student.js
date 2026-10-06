@@ -1,4 +1,5 @@
 import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent,resetDemo,loadPractice,savePractice} from "./demo-data.js";
+import {examPage} from "./exam-v23.js";
 
 let student=loadStudent();
 
@@ -137,17 +138,7 @@ function practicePage(review=false){
   `
 }
 
-function examsPage(){
- return `
- <div class="page-intro"><span class="eyebrow blue">04 • الاختبارات</span><h2>اختبر إتقانك</h2><p>الاختبار يأتي بعد التدريب ليقيس ما فهمته فعلاً.</p></div>
- <div class="grid-3 exam-grid">
-  <div class="card exam-card featured"><span class="badge orange">الاختبار القادم</span><h3>IPv4 & Binary</h3><p class="muted">20 سؤالًا • 20 دقيقة</p><div class="exam-meta"><span>محاولة تجريبية</span><span>نجاح من 60%</span></div><button class="btn btn-primary" data-page="practice">بدء الاختبار التجريبي</button></div>
-  <div class="card exam-card"><span class="badge green">متاح</span><h3>Prefix & Subnet Mask</h3><p class="muted">15 سؤالًا • 15 دقيقة</p><div class="exam-meta"><span>متوسطك السابق 72%</span><span>محاولة 1/2</span></div><button class="btn btn-soft" data-page="practice">تدريب قبل الاختبار</button></div>
-  <div class="card exam-card"><span class="badge">قادم</span><h3>FLSM & VLSM</h3><p class="muted">25 سؤالًا • 25 دقيقة</p><div class="exam-meta"><span>يُفتح بعد إكمال الوحدات</span><span>0%</span></div><button class="btn btn-soft" disabled>مقفل</button></div>
- </div>
- <div class="section-title"><h3>آخر نتيجة</h3></div><div class="card result-row"><div><strong>Binary & Prefix — المحاولة التجريبية</strong><div class="muted">قبل يومين</div></div><div class="result-score">76%</div><span class="badge green">ناجح</span></div>`
-}
-
+function examsPage(){ return examPage(); }
 function labsPage(){
  return `
  <div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>حوّل المعرفة إلى تطبيق</h2><p>المختبر ليس صفحة إضافية؛ هو المرحلة التي تثبت فيها أنك تستطيع استخدام ما تعلمته.</p></div>
