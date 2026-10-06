@@ -1,7 +1,8 @@
 import {getTrainerExamSummary} from "./exam-v23.js";
 import {questionBankView} from "./question-bank-v24.js";
 import {student360View} from "./student360-v29.js";
-import {notificationsPage} from "./notifications-v30.js";
+import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
+import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
 import {interventionCenterView} from "./intervention-v31.js";
 
 const students=[
@@ -39,7 +40,7 @@ function trainerDashboard(){
     <div class="command-priority"><span>أولوية اليوم</span><strong>${risk.length}</strong><small>متدربين يحتاجون متابعة</small><button class="btn btn-white mini-btn" data-trainer-page="interventions" style="margin-top:8px">فتح مركز التدخل</button></div>
   </div>
 
-  <div class="student-grid-4 trainer-kpis">
+  <div class="trainer-utility-grid"><div class="card trainer-utility-card notification-utility"><div class="home-utility-icon">🔔</div><div><span class="eyebrow orange">مركز المتابعة</span><h3>مركز الإشعارات الذكي</h3><p class="muted">هناك <strong>${getUnreadCount("trainer")}</strong> تنبيهات مرتبطة بطلاب أو موضوعات تحتاج قرارًا.</p></div><button class="btn btn-orange" data-trainer-page="notifications">فتح الإشعارات</button></div><div class="card trainer-utility-card intervention-utility"><div class="home-utility-icon red">!</div><div><span class="eyebrow red">إجراء مباشر</span><h3>مركز التدخل</h3><p class="muted">يوجد <strong>${getOpenInterventions().length}</strong> تدخلات بانتظار قرار أو متابعة.</p></div><button class="btn btn-danger" data-trainer-page="interventions">فتح مركز التدخل</button></div></div>\n\n  <div class="student-grid-4 trainer-kpis">
     ${stat("إجمالي المتدربين","42","6 مجموعات")}
     ${stat("النشطون اليوم","31","74% من الإجمالي")}
     ${stat("نسبة النجاح","78%","+4% عن الأسبوع الماضي")}
