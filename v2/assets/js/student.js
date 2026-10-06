@@ -192,6 +192,7 @@ export function studentPage(){
   if(studentState.page==="practice") return practicePage(false);
   if(studentState.page==="subnet-lab") return labPage();
   if(studentState.page==="flsm") return flsmPage();
+  if(studentState.page==="vlsm") return vlsmPage();
   if(studentState.page==="review") return reviewPage();
   if(studentState.page==="exams") return examsPage();
   if(studentState.page==="labs") return labsPage();
