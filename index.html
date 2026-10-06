@@ -4563,7 +4563,7 @@ async function loadTrainerOverview(){
   const a=ar.data||[],e=er.data||[],exams=ex.data||[];
   const rows=[
     ...a.map(x=>{const p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",userId:x.student_id,g:p.group_name||"",t:"اختبار",d:x.submitted_at,s:Number(x.percentage||0),z:(x.correct_answers||0)+"/"+(x.total_questions||0)};}),
-    ...e.map(x=>{const p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",userId:x.student_id,g:p.group_name||"",t:"تمرين",d:x.created_at,s:Number(x.score||0),z:x.is_correct?"صحيح":"خطأ"};)
+    ...e.map(x=>{const p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",userId:x.student_id,g:p.group_name||"",t:"تمرين",d:x.created_at,s:Number(x.score||0),z:x.is_correct?"صحيح":"خطأ"};})
   ].sort((a,b)=>new Date(b.d||0)-new Date(a.d||0));
   v6644RenderCenter({rows,profiles,exams});
 }
