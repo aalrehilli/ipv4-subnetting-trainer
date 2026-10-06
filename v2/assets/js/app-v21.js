@@ -63,6 +63,8 @@ function bind(){
   document.getElementById("show-flsm-solution")?.addEventListener("click",()=>flsmAction(document.getElementById("show-flsm-solution")));
   document.getElementById("new-flsm")?.addEventListener("click",()=>flsmAction(document.getElementById("new-flsm")));
   document.getElementById("check-vlsm")?.addEventListener("click",()=>vlsmAction(document.getElementById("check-vlsm")));
+  document.getElementById("show-vlsm-solution")?.addEventListener("click",()=>vlsmAction(document.getElementById("show-vlsm-solution")));
+  document.getElementById("new-vlsm")?.addEventListener("click",()=>vlsmAction(document.getElementById("new-vlsm")));
   document.getElementById("trainer-search")?.addEventListener("input",applyTrainerFilters);
   document.getElementById("trainer-risk")?.addEventListener("change",applyTrainerFilters);
   document.getElementById("trainer-group")?.addEventListener("change",applyTrainerFilters);
