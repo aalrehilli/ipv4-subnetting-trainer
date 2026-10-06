@@ -75,7 +75,7 @@ function kpi(label,value,sub){
 }
 
 function courseCard(c){
-  return '<article class="course-manager-card '+c.status+'">'+
+  return '<article class="course-manager-card '+c.status+'" data-course-item-status="'+c.status+'">'+
     '<div class="course-manager-top"><span class="course-code">'+esc(c.code)+'</span><span class="badge '+statusTone(c.status)+'">'+statusLabel(c.status)+'</span></div>'+
     '<h3>'+esc(c.title)+'</h3>'+
     '<p>'+esc(c.description)+'</p>'+
