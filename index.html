@@ -106,6 +106,39 @@
 /* V66.42 — تحليلات IOS للمدرب */
 
 /* V66.43 — مزامنة IOS المركزية للمتدرب */
+
+/* V66.44 — مركز قيادة المدرب */
+.v6644-trainer-hero{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
+.v6644-trainer-actions{display:flex;gap:8px;flex-wrap:wrap}
+.v6644-trainer-actions button{white-space:nowrap}
+.v6644-center-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:11px;margin:0 0 14px}
+.v6644-center-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:13px;text-align:center;min-height:98px}
+.v6644-center-kpi .icon{font-size:20px}
+.v6644-center-kpi .num{font-size:25px;font-weight:900;color:#0759a5;margin-top:3px}
+.v6644-center-kpi .label{font-size:11px;color:#65788a}
+.v6644-center-main{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
+.v6644-center-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:15px}
+.v6644-center-panel h3{margin:0 0 11px}
+.v6644-attention-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eef3f6}
+.v6644-attention-item:last-child{border-bottom:0}
+.v6644-attention-item strong{display:block;color:#244f67}
+.v6644-attention-item small{color:#738693}
+.v6644-attention-badge{display:inline-block;padding:4px 8px;border-radius:14px;font-size:10px;font-weight:900}
+.v6644-attention-badge.red{background:#ffe8e8;color:#a51f1f}
+.v6644-attention-badge.orange{background:#fff1dc;color:#9a6400}
+.v6644-attention-badge.green{background:#e7f7ed;color:#137b39}
+.v6644-group-row{display:grid;grid-template-columns:minmax(100px,1fr) 70px 90px 70px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #eef3f6;font-size:11px}
+.v6644-group-bar{height:9px;background:#edf2f5;border-radius:999px;overflow:hidden}
+.v6644-group-bar span{display:block;height:100%;background:#0759a5;border-radius:999px}
+.v6644-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}
+.v6644-quick button{border:1px solid #d8e6ef;background:#f8fbfd;color:#245774;border-radius:11px;padding:10px;font-weight:800;cursor:pointer}
+.v6644-quick button:hover{background:#edf6fb}
+.v6644-overview-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 9px}
+.v6644-overview-toolbar input,.v6644-overview-toolbar select{margin:0;flex:1;min-width:180px}
+.v6644-refresh-note{font-size:10px;color:#7b8b95}
+@media(max-width:1050px){.v6644-center-grid{grid-template-columns:repeat(3,1fr)}.v6644-center-main{grid-template-columns:1fr}.v6644-quick{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.v6644-center-grid{grid-template-columns:repeat(2,1fr)}.v6644-quick{grid-template-columns:1fr}.v6644-group-row{grid-template-columns:1fr 55px 70px 55px}}
+
 .v6643-ios-central{margin-top:14px;border:1px solid #cfe0ea;border-radius:15px;padding:15px;background:linear-gradient(135deg,#f7fcff,#fff)}
 .v6643-ios-head{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
 .v6643-ios-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#eaf5fb;color:#0759a5;border:1px solid #cfe2ed;font-weight:900;font-size:11px}
@@ -1911,10 +1944,62 @@ html,body{max-width:100%;overflow-x:hidden}
 </div>
 </section>
 <section id="trainer" class="hidden">
-<div class="card hero"><h2>👨‍🏫 لوحة المدرب</h2><p class="muted">إدارة المتدربين وبنك الأسئلة ومتابعة النتائج من مكان واحد.</p>
-<div id="trainerStats"></div></div>
+<div class="card hero v6644-trainer-hero">
+  <div>
+    <span class="badge">🎓 V66.44 • Trainer Command Center</span>
+    <h2 style="margin:8px 0 4px">👨‍🏫 مركز قيادة المدرب</h2>
+    <p class="muted">ملخص فوري للأداء، الطلاب الذين يحتاجون متابعة، الاختبارات، النشاط اليومي، وأدوات التدريس.</p>
+    <div id="v6644TrainerRefreshNote" class="v6644-refresh-note" style="margin-top:7px">جارٍ تحميل بيانات المركز...</div>
+  </div>
+  <div class="v6644-trainer-actions">
+    <button class="primary" onclick="loadTrainerOverview()">🔄 تحديث المركز</button>
+    <button class="primary green" onclick="trainerTab('exams')">📋 إدارة الاختبارات</button>
+    <button class="primary purple" onclick="trainerTab('students')">👥 المتدربون</button>
+  </div>
+  <div id="trainerStats" style="width:100%"></div>
+</div>
 <div class="card"><div class="trainer-dashboard-tabs" role="tablist" aria-label="أقسام لوحة المدرب"><button class="active" onclick="trainerTab('overview',this)">📊 النتائج</button><button onclick="trainerTab('students',this)">👥 المتدربون</button><button onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button onclick="trainerTab('exams',this)">📋 الاختبارات</button><button onclick="trainerTab('labs',this)">🧪 مختبرات PT</button><button onclick="trainerTab('blueprint',this)">🧩 بناء اختبار</button><button onclick="trainerTab('analytics',this)">📈 التحليلات</button><button onclick="trainerTab('reports',this)">📑 التقارير</button><button onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button onclick="trainerTab('iosFinal',this)">🖥️ اختبار IOS النهائي</button><button class="green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
-<div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
+<div id="trainerOverview">
+  <div id="v6644CommandCenter">
+    <div class="v6644-center-grid">
+      <div class="v6644-center-kpi"><div class="icon">👥</div><div class="num" id="v6644Students">0</div><div class="label">المتدربون</div></div>
+      <div class="v6644-center-kpi"><div class="icon">⚡</div><div class="num" id="v6644Active7">0</div><div class="label">نشطون آخر 7 أيام</div></div>
+      <div class="v6644-center-kpi"><div class="icon">📚</div><div class="num" id="v6644Attempts7">0</div><div class="label">محاولات آخر 7 أيام</div></div>
+      <div class="v6644-center-kpi"><div class="icon">🎯</div><div class="num" id="v6644PassRate">0%</div><div class="label">نسبة النجاح</div></div>
+      <div class="v6644-center-kpi"><div class="icon">⚠️</div><div class="num" id="v6644Attention">0</div><div class="label">يحتاجون متابعة</div></div>
+      <div class="v6644-center-kpi"><div class="icon">🟢</div><div class="num" id="v6644ActiveExams">0</div><div class="label">اختبارات مفعلة</div></div>
+    </div>
+    <div class="v6644-center-main">
+      <div class="v6644-center-panel">
+        <h3>🚨 الطلاب الذين يحتاجون متابعة</h3>
+        <div id="v6644AttentionList"><div class="muted">جارٍ التحليل...</div></div>
+      </div>
+      <div class="v6644-center-panel">
+        <h3>👥 أداء الشعب</h3>
+        <div id="v6644GroupPerformance"><div class="muted">جارٍ التحليل...</div></div>
+      </div>
+    </div>
+    <div class="v6644-center-panel" style="margin-top:14px">
+      <h3>⚡ إجراءات سريعة</h3>
+      <div class="v6644-quick">
+        <button onclick="trainerTab('students')">👥 إدارة المتدربين</button>
+        <button onclick="trainerTab('questions')">📝 بنك الأسئلة</button>
+        <button onclick="trainerTab('blueprint')">🧩 بناء اختبار</button>
+        <button onclick="trainerTab('labs')">🧪 مختبرات Packet Tracer</button>
+        <button onclick="trainerTab('analytics')">📈 تحليلات الاختبارات</button>
+        <button onclick="trainerTab('reports')">📑 التقارير</button>
+        <button onclick="trainerTab('smartFollow')">🎯 المتابعة الذكية</button>
+        <button onclick="trainerTab('iosFinal')">🖥️ تحليل IOS</button>
+      </div>
+    </div>
+  </div>
+  <div class="v6644-overview-toolbar">
+    <input id="v6644ResultSearch" placeholder="🔎 بحث في نتائج المتدربين..." oninput="v6644FilterResults()">
+    <select id="v6644ResultType" onchange="v6644FilterResults()"><option value="">كل الأنشطة</option><option value="اختبار">اختبارات</option><option value="تمرين">تمارين</option></select>
+    <select id="v6644ResultGroup" onchange="v6644FilterResults()"><option value="">كل الشعب</option></select>
+  </div>
+  <div id="trainerTable"></div>
+</div>
 <div id="trainerIosFinal" class="hidden">
   <h3>🖥️ مراجعة الاختبار النهائي لـ Cisco IOS</h3>
   <div class="trainer-report-note">يعرض هذا المركز المحاولات المسجلة مركزيًا من جلسات الاختبار الموثوقة، مع إمكانية فتح سجل أوامر كل محاولة.</div>
@@ -4372,18 +4457,117 @@ function v6641Render(){
   v6642RenderAnalytics();
 }
 
-async function loadTrainerOverview(){
-  const ar=await db.from("attempts").select("*").order("submitted_at",{ascending:false});
-  const er=await db.from("exercise_attempts").select("*").order("created_at",{ascending:false});
-  const pr=await db.from("profiles").select("id,full_name,student_id,group_name,role");
-  const profiles=pr.data||[]; const pm=new Map(profiles.map(x=>[x.id,x]));
-  const a=ar.data||[],e=er.data||[];
-  const r=[...a.map(x=>{let p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",g:p.group_name||"",t:"اختبار",d:x.submitted_at,s:Number(x.percentage||0),z:`${x.correct_answers||0}/${x.total_questions||0}`};}),...e.map(x=>{let p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",g:p.group_name||"",t:"تمرين",d:x.created_at,s:Number(x.score||0),z:x.is_correct?"صحيح":"خطأ"};})];
-  const avg=r.length?Math.round(r.reduce((x,y)=>x+y.s,0)/r.length):0;
-  const activeStudents=profiles.filter(x=>x.role==="student").length;
-  $("trainerStats").innerHTML=`<div class="grid"><div class="card"><div class="muted">إجمالي المحاولات</div><div class="kpi">${r.length}</div></div><div class="card"><div class="muted">متوسط الدرجات</div><div class="kpi">${avg}%</div></div><div class="card"><div class="muted">المتدربون</div><div class="kpi">${activeStudents}</div></div></div>`;
-  $("trainerTable").innerHTML=r.length?`<table><tr><th>المتدرب</th><th>الرقم</th><th>الشعبة</th><th>النوع</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>${r.map(x=>`<tr><td>${esc(x.n)}</td><td>${esc(x.id)}</td><td>${esc(x.g)}</td><td>${x.t}</td><td>${x.d?new Date(x.d).toLocaleString("ar-SA"):"—"}</td><td>${x.s}%</td><td>${esc(x.z)}</td></tr>`).join("")}</table>`:"لا توجد نتائج حتى الآن.";
+let v6644TrainerResults=[];
+let v6644TrainerProfiles=[];
+
+function v6644RenderCenter({rows,profiles,exams}){
+  v6644TrainerResults=rows||[];
+  v6644TrainerProfiles=profiles||[];
+  const students=(profiles||[]).filter(x=>x.role==="student");
+  const now=Date.now(), seven=7*86400000;
+  const recent=rows.filter(x=>x.d && now-new Date(x.d).getTime()<=seven);
+  const activeIds=new Set(recent.map(x=>x.id).filter(Boolean));
+  const examRows=rows.filter(x=>x.t==="اختبار");
+  const passRate=examRows.length?Math.round(examRows.filter(x=>x.s>=60).length*100/examRows.length):0;
+  const attention=new Map();
+  students.forEach(p=>attention.set(p.id,{p,best:0,count:0,last:null}));
+  examRows.forEach(x=>{
+    const o=attention.get(x.id);if(!o)return;
+    o.best=Math.max(o.best,x.s);o.count++;
+    o.last=!o.last||new Date(x.d)>new Date(o.last)?x.d:o.last;
+  });
+  const attentionRows=[...attention.values()]
+    .map(o=>({...o,days:o.last?Math.floor((now-new Date(o.last).getTime())/86400000):999}))
+    .filter(o=>(o.count>0&&o.best<60)||o.days>=14)
+    .sort((a,b)=>b.days-a.days||a.best-b.best)
+    .slice(0,6);
+
+  const groups=new Map();
+  students.forEach(p=>groups.set(p.group_name||"غير محدد",{name:p.group_name||"غير محدد",students:0,attempts:0,sum:0,pass:0}));
+  examRows.forEach(x=>{
+    const g=groups.get(x.g||"غير محدد")||{name:x.g||"غير محدد",students:0,attempts:0,sum:0,pass:0};
+    g.attempts++;g.sum+=x.s;if(x.s>=60)g.pass++;
+    groups.set(x.g||"غير محدد",g);
+  });
+  const groupRows=[...groups.values()].map(g=>({...g,avg:g.attempts?Math.round(g.sum/g.attempts):0,passRate:g.attempts?Math.round(g.pass*100/g.attempts):0})).sort((a,b)=>a.avg-b.avg);
+
+  const activeExams=(exams||[]).filter(e=>e.is_active).length;
+  const todayCount=rows.filter(x=>x.d&&new Date(x.d).toDateString()===new Date().toDateString()).length;
+  const avg=rows.length?Math.round(rows.reduce((s,x)=>s+x.s,0)/rows.length):0;
+
+  if($("trainerStats"))$("trainerStats").innerHTML=
+    '<div class="grid">'+
+      '<div class="card"><div class="muted">📊 إجمالي النشاطات</div><div class="kpi">'+rows.length+'</div></div>'+
+      '<div class="card"><div class="muted">📈 متوسط الأداء</div><div class="kpi">'+avg+'%</div></div>'+
+      '<div class="card"><div class="muted">👥 المتدربون</div><div class="kpi">'+students.length+'</div></div>'+
+    '</div>';
+
+  if($("v6644Students"))$("v6644Students").textContent=students.length;
+  if($("v6644Active7"))$("v6644Active7").textContent=activeIds.size;
+  if($("v6644Attempts7"))$("v6644Attempts7").textContent=recent.length;
+  if($("v6644PassRate"))$("v6644PassRate").textContent=passRate+"%";
+  if($("v6644Attention"))$("v6644Attention").textContent=attentionRows.length;
+  if($("v6644ActiveExams"))$("v6644ActiveExams").textContent=activeExams;
+
+  if($("v6644AttentionList"))$("v6644AttentionList").innerHTML=attentionRows.length?attentionRows.map(o=>{
+    const tag=o.count===0?'لم يبدأ':'أفضل نتيجة '+o.best+'%';
+    const cls=o.days>=14?'red':'orange';
+    return '<div class="v6644-attention-item"><div><strong>'+esc(o.p?.full_name||'متدرب')+'</strong><small>'+esc(o.p?.student_id||'')+' • '+esc(o.p?.group_name||'غير محدد')+' • '+(o.days===999?'لا توجد محاولة':'آخر نشاط منذ '+o.days+' يوم')+'</small></div><span class="v6644-attention-badge '+cls+'">'+tag+'</span></div>';
+  }).join(''):'<div class="v6644-attention-item"><div><strong>✅ لا توجد حالات حرجة</strong><small>لا يوجد متدرب منخفض الأداء أو متوقف لفترة طويلة.</small></div><span class="v6644-attention-badge green">جيد</span></div>';
+
+  if($("v6644GroupPerformance"))$("v6644GroupPerformance").innerHTML=groupRows.length?groupRows.map(g=>
+    '<div class="v6644-group-row"><span>'+esc(g.name)+'</span><b>'+g.avg+'%</b><div class="v6644-group-bar"><span style="width:'+g.avg+'%"></span></div><b>'+g.passRate+'%</b></div>'
+  ).join(''):'<div class="muted">لا توجد بيانات شعب.</div>';
+
+  const groupSel=$("v6644ResultGroup");
+  if(groupSel){
+    const cur=groupSel.value;
+    const groupsList=[...new Set(rows.map(x=>String(x.g||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ar'));
+    groupSel.innerHTML='<option value="">كل الشعب</option>'+groupsList.map(g=>'<option value="'+esc(g)+'">'+esc(g)+'</option>').join('');
+    if(groupsList.includes(cur))groupSel.value=cur;
+  }
+
+  const note=$("v6644TrainerRefreshNote");
+  if(note)note.textContent='آخر تحديث: '+new Date().toLocaleString('ar-SA')+' • نشاط اليوم: '+todayCount;
+  v6644FilterResults();
 }
+
+function v6644FilterResults(){
+  const area=$("trainerTable");if(!area)return;
+  const q=(($("v6644ResultSearch")?.value)||"").trim().toLowerCase();
+  const type=$("v6644ResultType")?.value||"";
+  const group=$("v6644ResultGroup")?.value||"";
+  const rows=v6644TrainerResults.filter(x=>{
+    const hay=[x.n,x.id,x.g,x.t,x.z].map(v=>String(v||'').toLowerCase()).join(' ');
+    return (!q||hay.includes(q))&&(!type||x.t===type)&&(!group||x.g===group);
+  }).slice(0,100);
+  area.innerHTML=rows.length?
+    '<div class="v6644-activity-table"><table><tr><th>المتدرب</th><th>الرقم</th><th>الشعبة</th><th>النوع</th><th>التاريخ</th><th>الدرجة</th><th>التفاصيل</th></tr>'+
+    rows.map(x=>'<tr><td>'+esc(x.n)+'</td><td>'+esc(x.id)+'</td><td>'+esc(x.g)+'</td><td>'+x.t+'</td><td>'+(x.d?new Date(x.d).toLocaleString('ar-SA'):'—')+'</td><td><b>'+x.s+'%</b></td><td>'+esc(x.z)+'</td></tr>').join('')+
+    '</table></div>':'<div class="trainer-report-empty">لا توجد نتائج مطابقة.</div>';
+}
+
+async function loadTrainerOverview(){
+  const [ar,er,pr,ex]=await Promise.all([
+    db.from("attempts").select("*").order("submitted_at",{ascending:false}).limit(500),
+    db.from("exercise_attempts").select("*").order("created_at",{ascending:false}).limit(500),
+    db.from("profiles").select("id,full_name,student_id,group_name,role"),
+    db.from("trainer_exams").select("id,title,is_active,start_at,ends_at,group_name,topic").order("created_at",{ascending:false})
+  ]);
+  if(ar.error)console.warn("Trainer attempts:",ar.error.message);
+  if(er.error)console.warn("Trainer exercises:",er.error.message);
+  if(pr.error)console.warn("Trainer profiles:",pr.error.message);
+  if(ex.error)console.warn("Trainer exams:",ex.error.message);
+  const profiles=pr.data||[];
+  const pm=new Map(profiles.map(x=>[x.id,x]));
+  const a=ar.data||[],e=er.data||[],exams=ex.data||[];
+  const rows=[
+    ...a.map(x=>{const p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",userId:x.student_id,g:p.group_name||"",t:"اختبار",d:x.submitted_at,s:Number(x.percentage||0),z:(x.correct_answers||0)+"/"+(x.total_questions||0)};}),
+    ...e.map(x=>{const p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",userId:x.student_id,g:p.group_name||"",t:"تمرين",d:x.created_at,s:Number(x.score||0),z:x.is_correct?"صحيح":"خطأ"};})
+  ].sort((a,b)=>new Date(b.d||0)-new Date(a.d||0));
+  v6644RenderCenter({rows,profiles,exams});
+}
+
 async function loadTrainerStudents(){
   if(!["trainer","admin"].includes(profile?.role))return;
   const r=await db.from("profiles").select("id,full_name,student_id,group_name,role,created_at").order("created_at",{ascending:false});
