@@ -2,6 +2,7 @@ import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent
 import {examPage,getLastWeakTopics} from "./exam-v23.js";
 import {labPage} from "./subnet-lab-v25.js";
 import {flsmPage} from "./flsm-v26.js";
+import {vlsmPage} from "./vlsm-v27.js";
 
 let student=loadStudent();
 
