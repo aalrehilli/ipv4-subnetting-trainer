@@ -1555,7 +1555,16 @@ html,body{max-width:100%;overflow-x:hidden}
 #iosSimulator{display:none!important}
 </style>
 
-</head><body>
+<style id="v66_37_ios_certificate_css">
+.v66-ios-cert-wrap{border:3px double #0a5f7c;border-radius:16px;padding:26px;background:linear-gradient(135deg,#fff,#f3fbfe);text-align:center}
+.v66-ios-cert-wrap h1{font-size:30px;margin:8px 0;color:#0759a5}.v66-ios-cert-wrap .name{font-size:27px;font-weight:900;margin:14px 0;color:#173b4b}
+.v66-ios-cert-badge{display:inline-block;background:#0a5f7c;color:#fff;border-radius:999px;padding:7px 14px;font-weight:800}
+.v66-ios-cert-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:16px 0}.v66-ios-cert-stat{background:#fff;border:1px solid #d8e6ed;border-radius:10px;padding:10px}.v66-ios-cert-stat b{display:block;color:#0759a5;font-size:18px}.v66-ios-cert-stat small{font-size:10px;color:#71858f}
+.v66-ios-cert-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:right;margin-top:14px}.v66-ios-cert-meta>div{background:#fbfdfe;border:1px solid #dce8ed;border-radius:9px;padding:10px}
+.v66-ios-cert-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+.v66-ios-cert-note{margin-top:12px;padding:10px;border-radius:10px;background:#eef7fb;border:1px solid #cfe0e8;color:#506f7c;font-size:11px;line-height:1.7}
+@media(max-width:750px){.v66-ios-cert-grid{grid-template-columns:1fr 1fr}.v66-ios-cert-meta{grid-template-columns:1fr}}
+</style></head><body>
 <a class="skip-link" href="#mainContent">تخطي إلى المحتوى</a>
 <div id="v63OfflineBanner" class="v63-offline-banner" role="status" aria-live="polite">⚠️ أنت غير متصل بالإنترنت حاليًا. ستبقى بيانات الجلسة المحلية متاحة، بينما تحتاج عمليات Supabase إلى اتصال.</div>
 <header class="v65-header">
@@ -1971,7 +1980,7 @@ html,body{max-width:100%;overflow-x:hidden}
 </div>
 <div class="card" id="certificateCard">
   <div id="certificateDetails"></div>
-  <div id="issuedCertificate" style="margin-top:18px"></div>
+  <div id="issuedCertificate" style="margin-top:18px"></div><div id="v66IosCertificate" style="margin-top:20px"></div>
 </div>
 </section>
 
@@ -5973,6 +5982,94 @@ async function v61CertificateFallback(){
     return {eligible,completed_lessons:completed,total_lessons:total,completed_practices:practices,final_exam_percentage,mastery,certificate_no:null};
   }catch(e){return {eligible:false,completed_lessons:0,total_lessons:0,completed_practices:0,final_exam_percentage:null,mastery:0,certificate_no:null,error:e};}
 }
+function v6637ReadFinal(){
+  try{return JSON.parse(localStorage.getItem('v66_36_ios_final')||'null');}catch(e){return null;}
+}
+function v6637ReadMastery(){
+  try{
+    const d=JSON.parse(localStorage.getItem('v66_33_ios_challenges')||'{}')||{};
+    const levels={beginner:3,intermediate:3,advanced:2};
+    let xp=0,completed=0,bestScore=0,done={beginner:0,intermediate:0,advanced:0};
+    Object.entries(levels).forEach(([level,count])=>{
+      for(let i=0;i<count;i++){const r=d[level+':'+i];if(r?.completed){done[level]++;completed++;const s=Number(r.bestScore||0);bestScore=Math.max(bestScore,s);xp+=(level==='beginner'?100:level==='intermediate'?125:150)+s;}}
+    });
+    if(done.beginner===3)xp+=50;if(done.intermediate===3)xp+=75;if(done.advanced===2)xp+=100;if(completed===8&&bestScore>=95)xp+=100;
+    const tiers=[{min:0,name:'مبتدئ IOS',emoji:'🌱'},{min:200,name:'متدرب IOS',emoji:'🧭'},{min:400,name:'ممارس IOS',emoji:'🛠️'},{min:700,name:'متمكن IOS',emoji:'⚡'},{min:1000,name:'خبير IOS',emoji:'🏆'},{min:1400,name:'سيد Cisco IOS',emoji:'👑'}];
+    let tier=tiers[0];tiers.forEach(t=>{if(xp>=t.min)tier=t;});
+    return {xp,completed,bestScore,tier};
+  }catch(e){return {xp:0,completed:0,bestScore:0,tier:{min:0,name:'مبتدئ IOS',emoji:'🌱'}};}
+}
+function v6637Hash(s){
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+  return ('00000000'+(h>>>0).toString(16).toUpperCase()).slice(-8);
+}
+function v6637ReadIssued(){try{return JSON.parse(localStorage.getItem('v66_37_ios_certificate')||'null');}catch(e){return null;}}
+function v6637BuildCandidate(){
+  const f=v6637ReadFinal(); if(!f?.passed)return null;
+  const mastery=v6637ReadMastery();
+  const name=profile?.full_name||user?.user_metadata?.full_name||user?.email?.split('@')[0]||'المتدرب';
+  const base=(user?.id||'guest')+'|'+name+'|'+f.completedAt+'|'+f.score+'|'+f.bestScore+'|IOS';
+  const code='IOS-'+new Date(f.completedAt||Date.now()).getFullYear()+'-'+v6637Hash(base);
+  return {certificate_no:code,name,score:Number(f.score||0),bestScore:Number(f.bestScore||0),bestTime:Number(f.bestTime||f.time||0),tier:mastery.tier.name,xp:Number(mastery.xp||0),issued_at:new Date().toISOString(),final_completed_at:f.completedAt};
+}
+function v6637Issue(){
+  const candidate=v6637BuildCandidate();
+  if(!candidate){alert('❌ لا يمكن إصدار الشهادة قبل النجاح في الاختبار النهائي.');return;}
+  const old=v6637ReadIssued();
+  if(old){v6637RenderCertificate(old);return;}
+  if(!confirm('هل تريد إصدار شهادة إتقان Cisco IOS؟'))return;
+  try{localStorage.setItem('v66_37_ios_certificate',JSON.stringify(candidate));}catch(e){}
+  v6637RenderCertificate(candidate);
+}
+function v6637RenderCertificate(cert){
+  const host=$('v66IosCertificate');if(!host)return;
+  if(!cert){
+    host.innerHTML='<div class="card"><div class="question"><span class="badge">📜 V66.37 • شهادة إتقان IOS</span><h3>الشهادة غير متاحة بعد</h3><p class="muted">أكمل تحديات IOS واجتز الاختبار النهائي أولًا. بعد النجاح سيظهر زر إصدار الشهادة هنا.</p><button class="primary orange" onclick="window.location.href=\'ios-simulator.html#final\'">🏁 اختبار IOS النهائي</button></div></div>';
+    return;
+  }
+  const verifyUrl=SITE_URL+'?ios_verify='+encodeURIComponent(cert.certificate_no);
+  host.innerHTML='<div class="v66-ios-cert-wrap" id="v66IosCertificatePrint">'+
+    '<span class="v66-ios-cert-badge">🖥️ CISCO IOS MASTERY</span>'+
+    '<h1>شهادة إتقان Cisco IOS</h1>'+
+    '<p>تشهد منصة IPv4 Subnetting Trainer بأن</p>'+
+    '<div class="name">'+esc(cert.name)+'</div>'+
+    '<p>قد اجتاز الاختبار النهائي العملي لمحاكي Cisco IOS بنجاح.</p>'+
+    '<div class="v66-ios-cert-grid">'+
+      '<div class="v66-ios-cert-stat"><b>'+cert.score+'/100</b><small>نتيجة الاختبار النهائي</small></div>'+
+      '<div class="v66-ios-cert-stat"><b>'+cert.bestScore+'/100</b><small>أفضل نتيجة</small></div>'+
+      '<div class="v66-ios-cert-stat"><b>'+cert.xp+'</b><small>XP</small></div>'+
+      '<div class="v66-ios-cert-stat"><b>'+esc(cert.tier)+'</b><small>مستوى الإتقان</small></div>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:center;align-items:center;gap:18px;flex-wrap:wrap;margin:15px 0"><div id="v66IosCertQr" style="background:#fff;padding:8px;border:1px solid #d8e6ed;border-radius:10px"></div><div style="max-width:430px;text-align:right"><b>🔳 رقم التحقق</b><div class="certno" style="margin-top:7px">'+esc(cert.certificate_no)+'</div><div class="muted" style="margin-top:7px">يمكن استخدام QR لفتح صفحة التحقق.</div></div></div>'+
+    '<div class="v66-ios-cert-meta"><div><b>تاريخ الإصدار</b><br><span>'+new Date(cert.issued_at).toLocaleDateString('ar-SA')+'</span></div><div><b>أفضل وقت</b><br><span>'+Math.floor(Number(cert.bestTime||0)/60).toString().padStart(2,'0')+':'+Math.floor(Number(cert.bestTime||0)%60).toString().padStart(2,'0')+'</span></div></div>'+
+    '<div class="v66-ios-cert-actions"><button class="primary purple" onclick="v6637Print()">🖨️ طباعة / PDF</button><button class="primary" onclick="navigator.clipboard?.writeText(\''+encodeURIComponent(verifyUrl)+'\')">🔗 نسخ رابط التحقق</button></div>'+
+    '<div class="v66-ios-cert-note">هذه الشهادة تعتمد على إنجاز الاختبار النهائي المحفوظ على الحساب/المتصفح الحالي. التحقق العام في هذه النسخة يعرض بيانات الشهادة المضمّنة في الرابط؛ للمصادقة المركزية عبر Supabase نضيف سجل شهادات IOS في المرحلة التالية.</div>'+
+  '</div>';
+  if(window.QRCode&&$('v66IosCertQr'))new QRCode($('v66IosCertQr'),{text:verifyUrl,width:128,height:128,colorDark:'#0759a5',colorLight:'#ffffff'});
+}
+function v6637Print(){
+  const el=$('v66IosCertificatePrint');if(!el)return;
+  const w=window.open('','_blank','width=1000,height=750');if(!w)return;
+  w.document.write('<!doctype html><html dir="rtl"><head><meta charset="utf-8"><title>شهادة إتقان Cisco IOS</title><style>body{font-family:Tahoma,Arial;padding:32px;color:#17324d}.cert{border:8px double #0a5f7c;border-radius:18px;padding:45px;text-align:center;min-height:580px}.name{font-size:36px;font-weight:900;margin:28px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{border:1px solid #d8e6ed;padding:12px;border-radius:10px}.stat b{display:block;font-size:20px;color:#0759a5}.badge{display:inline-block;background:#0a5f7c;color:#fff;padding:8px 14px;border-radius:20px}</style></head><body><div class="cert">'+el.innerHTML+'</div></body></html>');
+  w.document.close();w.focus();setTimeout(()=>w.print(),300);
+}
+function v6637HandleVerify(){
+  const params=new URLSearchParams(location.search),code=params.get('ios_verify');if(!code)return false;
+  document.querySelectorAll('body > *').forEach(el=>el.classList.add('hidden'));
+  let box=document.getElementById('verifyCertificate');
+  if(!box){
+    box=document.createElement('section');box.id='verifyCertificate';box.style.cssText='max-width:900px;margin:40px auto;padding:20px;display:block';
+    box.innerHTML='<div class="card hero"><span class="badge">V66.37 • IOS VERIFICATION</span><h2>🔳 التحقق من شهادة Cisco IOS</h2><div id="v6637VerifyBody"></div></div>';
+    document.body.appendChild(box);
+  }
+  box.classList.remove('hidden');
+  const issued=v6637ReadIssued();
+  const body=$('v6637VerifyBody');
+  const ok=issued?.certificate_no===code;
+  body.innerHTML=ok?'<div class="good">✅ تم العثور على الشهادة على هذا الجهاز.</div><div class="certificate" style="margin-top:14px"><h1>شهادة إتقان Cisco IOS</h1><div class="name">'+esc(issued.name)+'</div><p>رقم الشهادة: <b>'+esc(issued.certificate_no)+'</b></p><p>النتيجة: <b>'+issued.score+'/100</b> • مستوى الإتقان: <b>'+esc(issued.tier)+'</b></p><p>تاريخ الإصدار: <b>'+new Date(issued.issued_at).toLocaleDateString('ar-SA')+'</b></p><p class="muted">هذا التحقق محلي في النسخة الحالية.</p></div>':'<div class="bad">❌ لم يتم العثور على هذه الشهادة على هذا الجهاز. ستتوفر المصادقة المركزية في إصدار لاحق.</div>';
+  return true;
+}
 async function loadCertificate(){
   const status=$('certificateStatus'), details=$('certificateDetails'); if(!status||!details)return;
   status.innerHTML='<div class="muted">⏳ جارٍ التحقق من متطلبات الشهادة...</div>'; details.innerHTML='';
@@ -5981,6 +6078,7 @@ async function loadCertificate(){
   if(!x){x=await v61CertificateFallback();}
   v61RenderEligibility(x);
   if(x.certificate_no) renderCertificate(x);
+  v6637RenderCertificate(v6637ReadIssued() || null);
 }
 
 
@@ -6302,6 +6400,7 @@ window.addEventListener('beforeunload',e=>{
   if(currentExamId&&testStartedAt&&!testSubmitted){e.preventDefault();e.returnValue='';}
 });
 window.addEventListener("DOMContentLoaded",async()=>{
+ if(v6637HandleVerify())return;
  v63HardeningInit();
  console.log("V63 Production Release loaded");
  const params=new URLSearchParams(window.location.search);
