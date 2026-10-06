@@ -1,4 +1,5 @@
 const KEY="ipv4AcademyV34Courses";
+const ACTIVE="ipv4AcademyV34ActiveCourse";
 
 const seed=[
   {id:1,title:"IPv4 Fundamentals",code:"IPV4-101",description:"أساسيات IPv4 والعناوين والقواعد اللازمة لفهم Subnetting.",status:"published",units:6,lessons:18,questions:40,progress:84,students:42,updated:"اليوم",owner:"قسم الحاسب"},
@@ -29,6 +30,10 @@ export function handleCourseAction(target){
   const action=target.dataset.courseAction;
   const id=Number(target.dataset.courseId);
   const list=getCourses();
+  if(action==="new")return {rerender:true,newCourse:true};
+  if(action==="close-form")return {rerender:true};
+  if(action==="back"){localStorage.removeItem(ACTIVE);return {rerender:true};}
+  if(action==="edit"){localStorage.setItem(ACTIVE,String(id));return {rerender:true};}
   if(action==="publish"){
     const item=list.find(x=>x.id===id);
     if(item){item.status="published";item.updated="الآن";}
@@ -85,6 +90,26 @@ function courseCard(c){
   '</article>';
 }
 
+function defaultUnits(course){
+  const count=Math.max(1,Number(course.units)||3);
+  const names=["مقدمة ومفاهيم أساسية","IPv4 والعناوين","Binary وPrefix","Subnetting","FLSM","VLSM","Routing Basics","مراجعة وتقييم","مختبر عملي","المشروع الختامي"];
+  const lessons=Math.max(2,Math.round((Number(course.lessons)||count*3)/count));
+  return Array.from({length:count},(_,i)=>({id:i+1,title:names[i]||("الوحدة "+(i+1)),lessons,status:i===0?"published":"draft"}));
+}
+function courseEditor(course){
+  const units=defaultUnits(course);
+  return '<div class="page-intro with-action"><div><span class="eyebrow blue">03 • إدارة المقرر</span><h2>'+esc(course.title)+'</h2><p>'+esc(course.description)+'</p></div><button class="btn btn-soft" data-course-action="back">← العودة إلى المقررات</button></div>'+
+  '<div class="student-grid-4 course-editor-kpis">'+
+  kpi("الوحدات",units.length,"مرتبة داخل المسار")+
+  kpi("الدروس",course.lessons,"إجمالي الدروس")+
+  kpi("الأسئلة",course.questions,"مرتبطة بالتقييم")+
+  kpi("الحالة",statusLabel(course.status),"حالة النشر")+
+  '</div>'+
+  '<div class="card course-editor-hero"><div><span class="eyebrow purple">بناء المسار</span><h3>هيكل المقرر</h3><p class="muted">رتّب الوحدات والدروس، ثم اربط بنك الأسئلة والاختبارات والمختبرات.</p></div><button class="btn btn-primary" data-course-editor-action="add-unit">+ وحدة جديدة</button></div>'+
+  '<div class="course-unit-list">'+units.map((u,i)=>'<article class="course-unit-row"><div class="unit-number">'+(i+1)+'</div><div class="unit-main"><div><strong>'+esc(u.title)+'</strong><span class="badge '+(u.status==="published"?"green":"orange")+'">'+(u.status==="published"?"منشورة":"مسودة")+'</span></div><p class="muted">'+u.lessons+' دروس • '+Math.max(5,Math.round((course.questions||30)/units.length))+' أسئلة تقريبًا</p></div><button class="btn btn-soft mini-btn" data-course-editor-action="open-unit" data-course-unit="'+u.id+'">إدارة الوحدة</button></article>').join("")+'</div>'+
+  '<div class="grid-2"><div class="card"><h3>ربط التقييم</h3><div class="stat-row"><span>بنك الأسئلة</span><b>'+course.questions+' سؤال</b></div><div class="stat-row"><span>الاختبارات</span><b>ربط لاحق</b></div><div class="stat-row"><span>المختبرات</span><b>Subnetting / FLSM / VLSM</b></div></div><div class="card"><h3>جاهزية النشر</h3><div class="progress"><span style="width:'+course.progress+'%"></span></div><p class="muted" style="margin-top:8px">'+course.progress+'% من المحتوى مكتمل.</p><button class="btn btn-green" data-course-action="'+(course.status==="published"?"draft":"publish")+'" data-course-id="'+course.id+'">'+(course.status==="published"?"إرجاع لمسودة":"نشر المقرر")+'</button></div></div>';
+}
+
 function builderPreview(){
   return '<div class="card course-builder-preview"><div class="section-title"><h3>بنية المقرر</h3><span class="badge purple">خطة V3.4</span></div>'+
     '<div class="course-builder-steps">'+
@@ -99,6 +124,9 @@ function builderPreview(){
 
 export function courseManagerView(){
   const courses=getCourses();
+  const activeId=Number(localStorage.getItem(ACTIVE)||0);
+  const active=courses.find(x=>x.id===activeId);
+  if(active)return courseEditor(active);
   const published=courses.filter(x=>x.status==="published").length;
   const drafts=courses.filter(x=>x.status==="draft").length;
   const students=courses.reduce((s,x)=>s+(Number(x.students)||0),0);
