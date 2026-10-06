@@ -110,7 +110,7 @@ function practicePage(review=false){
     const percent=Math.round(studentState.practice.score/total*100);
     return `<div class="result-screen"><div class="result-icon">${percent>=80?"🏆":percent>=60?"✅":"↗"}</div><span class="badge ${percent>=80?"green":percent>=60?"orange":"red"}">اكتمل التدريب</span><h2>${studentState.practice.score} / ${total}</h2><p>نتيجتك ${percent}%. ${percent>=80?"ممتاز، استمر بهذا المستوى.":"النتيجة جيدة، لكن توجد نقاط تستحق المراجعة."}</p><div class="result-actions"><button class="btn btn-primary" id="restart-practice">إعادة التدريب</button><button class="btn btn-purple" data-page="review">المراجعة الذكية</button><button class="btn btn-soft" data-page="progress">عرض التقدم</button></div></div>`
   }
-  const q=questions[studentState.practice.ids[studentState.practice.index]];
+  const q=questions.find(x=>x.id===studentState.practice.ids[studentState.practice.index]);
   const pct=Math.round(studentState.practice.index/studentState.practice.ids.length*100);
   return `
   <div class="practice-top"><div><span class="eyebrow blue">${review?"05 • مراجعة ذكية":"03 • التدريب"}</span><h2>${review?"مراجعة مركزة":"تدريب سريع"}</h2><p>حل السؤال ثم شاهد سبب الإجابة، وليس النتيجة فقط.</p></div><div class="practice-counter">سؤال ${studentState.practice.index+1} / ${studentState.practice.ids.length}</div></div>
@@ -196,7 +196,7 @@ export function handleStudentAction(target){
 
 function answerQuestion(answer){
   const idx=studentState.practice.index;
-  const q=questions[studentState.practice.ids[idx]];
+  const q=questions.find(x=>x.id===studentState.practice.ids[idx]);
   const ok=answer===q.a;
   if(ok) studentState.practice.score++;
   const p=loadPractice();
