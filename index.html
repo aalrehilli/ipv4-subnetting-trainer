@@ -104,6 +104,19 @@
 /* V66.41 — مركز مراجعة الاختبار النهائي لـ IOS */
 
 /* V66.42 — تحليلات IOS للمدرب */
+
+/* V66.43 — مزامنة IOS المركزية للمتدرب */
+.v6643-ios-central{margin-top:14px;border:1px solid #cfe0ea;border-radius:15px;padding:15px;background:linear-gradient(135deg,#f7fcff,#fff)}
+.v6643-ios-head{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.v6643-ios-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#eaf5fb;color:#0759a5;border:1px solid #cfe2ed;font-weight:900;font-size:11px}
+.v6643-ios-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+.v6643-ios-kpi{padding:10px;border:1px solid #dce8f2;background:#fff;border-radius:11px;text-align:center}
+.v6643-ios-kpi b{display:block;font-size:20px;color:#0759a5}
+.v6643-ios-kpi span{font-size:10px;color:#65788a}
+.v6643-ios-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.v6643-ios-note{margin-top:10px;padding:9px 11px;border-radius:9px;background:#f8fbfd;border:1px solid #dce8f2;color:#5d7481;font-size:11px;line-height:1.8}
+@media(max-width:800px){.v6643-ios-kpis{grid-template-columns:repeat(2,1fr)}}
+
 .v6642-ios-analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
 .v6642-ios-analytics-card{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px}
 .v6642-ios-analytics-card .num{font-size:25px;font-weight:900;color:#0759a5}
@@ -3474,6 +3487,7 @@ async function renderDashboard(){
   renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
   v6634RenderIOSProgress();
   v6636RenderIOSFinalStatus();
+  v6643LoadIOSCentralStatus();
 
   renderV56SmartReviewPanel({attempts:a,lessons,lp});
   renderV57Achievements({completed,totalLessons,exerciseAttempts:e,attempts:a,competitions,streak,points});
@@ -3627,6 +3641,50 @@ function v6634RenderIOSProgress(){
   }
 }
 
+
+
+async function v6643LoadIOSCentralStatus(){
+  const host=$('v66IosFinalStatus'); if(!host||!db||!user)return;
+  try{
+    const [bestR,historyR,certR]=await Promise.all([
+      db.rpc('get_ios_final_best'),
+      db.rpc('get_ios_final_history'),
+      db.rpc('get_ios_certificate')
+    ]);
+    if(bestR.error)throw bestR.error;
+    const best=Array.isArray(bestR.data)?(bestR.data[0]||null):(bestR.data||null);
+    const history=historyR.error?[]:(historyR.data||[]);
+    const cert=certR.error?null:(Array.isArray(certR.data)?(certR.data[0]||null):(certR.data||null));
+    const attempts=history.length;
+    const passedCount=history.filter(x=>x.passed).length;
+    const bestScore=Number(best?.score||0);
+    const avg=history.length?Math.round(history.reduce((s,x)=>s+Number(x.score||0),0)/history.length):0;
+    const centralState=best?.passed?'✅ نجاح موثق مركزيًا':history.length?'🟡 توجد محاولات مركزية':'⚪ لم تبدأ محاولة مركزية بعد';
+    const certState=cert?.certificate_no?'<span class="v6643-ios-badge">🏆 شهادة مركزية صادرة</span>':'<span class="v6643-ios-badge">📜 الشهادة غير صادرة</span>';
+    const button=best?.passed
+      ? (cert?.certificate_no
+        ? '<button class="primary purple" onclick="page(\'certificate\')">📜 عرض الشهادة</button>'
+        : '<button class="primary green" onclick="v6637Issue()">🏆 إصدار الشهادة المركزية</button>')
+      : '<button class="primary orange" onclick="window.location.href=\'ios-simulator.html#final\'">🏁 متابعة الاختبار النهائي</button>';
+    host.innerHTML=
+      '<div class="v6643-ios-central">'+
+        '<div class="v6643-ios-head"><div><span class="v6643-ios-badge">☁️ V66.43 • IOS Cloud Sync</span><h3 style="margin:8px 0 4px;color:#0759a5">'+centralState+'</h3>'+
+        '<div class="muted">هذه البيانات مأخوذة مباشرة من سجل الاختبار المركزي في Supabase.</div></div><div>'+certState+'</div></div>'+
+        '<div class="v6643-ios-kpis">'+
+          '<div class="v6643-ios-kpi"><b>'+bestScore+'/100</b><span>أفضل نتيجة مركزية</span></div>'+
+          '<div class="v6643-ios-kpi"><b>'+attempts+'</b><span>المحاولات الأخيرة</span></div>'+
+          '<div class="v6643-ios-kpi"><b>'+passedCount+'</b><span>محاولات ناجحة</span></div>'+
+          '<div class="v6643-ios-kpi"><b>'+avg+'%</b><span>متوسط المحاولات</span></div>'+
+        '</div>'+
+        '<div class="v6643-ios-actions">'+button+
+          '<button class="primary" onclick="v6643LoadIOSCentralStatus()">🔄 تحديث المزامنة</button>'+
+        '</div>'+
+        '<div class="v6643-ios-note">🔐 V66.40 جعل نتيجة الاختبار النهائي مركزية. الشهادة المركزية لا تعتمد على درجة يرسلها المتصفح، بل على محاولة ناجحة مكتملة ومسجلة في Supabase.</div>'+
+      '</div>';
+  }catch(e){
+    console.warn('V66.43 central IOS status:',e);
+  }
+}
 
 function v6636RenderIOSFinalStatus(){
   const host=$('v66IosFinalStatus');if(!host)return;
