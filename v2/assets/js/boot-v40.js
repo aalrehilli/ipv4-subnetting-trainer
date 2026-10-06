@@ -101,29 +101,29 @@ async function loadPage(){
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
-      var learning=await import("./course-learning-v38.js?v=409");
+      var learning=await import("./course-learning-v38.js?v=410");
       if(state.page==="course") return learning.courseLearningPage();
       if(state.page==="lesson-assessment") return learning.assessmentView();
       return learning.lessonLearningPage();
     }
 
     if(state.page==="notifications"){
-      var notifications=await import("./notifications-v30.js?v=409");
+      var notifications=await import("./notifications-v30.js?v=410");
       return notifications.notificationsPage(state.role);
     }
 
     if(state.role==="trainer" && state.page==="interventions"){
-      var interventions=await import("./intervention-v31.js?v=409");
+      var interventions=await import("./intervention-v31.js?v=410");
       return interventions.interventionCenterView();
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=409");
+      var trainer=await import("./trainer-v22.js?v=410");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId);
     }
 
     if(state.role==="student"){
-      var student=await import("./student.js?v=409");
+      var student=await import("./student.js?v=410");
       student.studentState.page=state.page;
       return student.studentPage();
     }
@@ -194,7 +194,7 @@ function bind(){
   document.querySelectorAll("[data-course-action],[data-course-editor-action],[data-lesson-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-manager-v36.js?v=409");
+        var m=await import("./course-manager-v36.js?v=410");
         var result;
         if(btn.hasAttribute("data-course-action")) result=m.handleCourseAction(btn);
         else if(btn.hasAttribute("data-course-editor-action")) result=m.handleCourseEditorAction(btn);
