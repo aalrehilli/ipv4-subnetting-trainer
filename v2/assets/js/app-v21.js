@@ -7,10 +7,11 @@ import {handleFlsmAction} from "./flsm-v26.js";
 import {handleVlsmAction} from "./vlsm-v27.js";
 import {handleStudent360Action} from "./student360-v29.js";
 import {notificationBell,handleNotificationAction} from "./notifications-v30.js";
+import {handleInterventionAction} from "./intervention-v31.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["notifications","الإشعارات"],["achievements","الإنجازات"],["certificate","الشهادة"]];
-const trainerNav=[["tdash","الرئيسية"],["students","المتدربون"],["groups","المجموعات"],["courses","المقررات"],["questions","بنك الأسئلة"],["exams","الاختبارات"],["labs","المختبرات"],["analytics","التحليلات"],["notifications","الإشعارات"]];
+const trainerNav=[["tdash","الرئيسية"],["students","المتدربون"],["groups","المجموعات"],["courses","المقررات"],["questions","بنك الأسئلة"],["exams","الاختبارات"],["labs","المختبرات"],["analytics","التحليلات"],["interventions","مركز التدخل"],["notifications","الإشعارات"]];
 
 const esc=(v)=>String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 
@@ -41,6 +42,7 @@ function bind(){
   document.querySelectorAll("[data-trainer-page]").forEach(b=>b.addEventListener("click",()=>{state.page=b.dataset.trainerPage;render()}));
   document.querySelectorAll("[data-student-id]").forEach(b=>b.addEventListener("click",()=>{state.page="student360";b.dataset.page="student360";renderStudent360(b.dataset.studentId)}));
   document.querySelectorAll("[data-360-action]").forEach(b=>b.addEventListener("click",()=>student360Action(b)));
+  document.querySelectorAll("[data-intervention-action]").forEach(b=>b.addEventListener("click",()=>interventionAction(b)));
   document.getElementById("notification-bell")?.addEventListener("click",e=>{e.stopPropagation();document.getElementById("notification-popover")?.classList.toggle("open")});
   document.querySelectorAll("[data-notification-action]").forEach(b=>b.addEventListener("click",()=>{const result=handleNotificationAction(b,state.role);const next=b.dataset.notificationPage||result?.page;if(next)state.page=next;render()}));
   document.getElementById("switch-role")?.addEventListener("click",()=>{state.role=state.role==="student"?"trainer":"student";state.page=state.role==="student"?"home":"tdash";render()});
@@ -74,7 +76,7 @@ function bind(){
   document.getElementById("trainer-risk")?.addEventListener("change",applyTrainerFilters);
   document.getElementById("trainer-group")?.addEventListener("change",applyTrainerFilters);
 }
-function student360Action(button){
+function interventionAction(button){\n  const result=handleInterventionAction(button);\n  if(result?.studentId){state.role="trainer";state.page="student360";renderStudent360(result.studentId);return}\n  if(result?.rerender)render();\n}\nfunction student360Action(button){
   const result=handleStudent360Action(button);
   if(result?.rerender){
     renderStudent360(button.dataset.studentId);
