@@ -1823,7 +1823,7 @@ html,body{max-width:100%;overflow-x:hidden}
 
   <div id="sdPanel-overview" class="student-dashboard-tab-panel active">
     <div id="studentDashboard"></div>
-    <div id="v52PlacementSummary"></div><div id="v66DashboardLabSummary"></div>
+    <div id="v52PlacementSummary"></div><div id="v66DashboardLabSummary"></div><div id="v66IosDashboardSummary"></div>
   </div>
 
   <div id="sdPanel-progress" class="student-dashboard-tab-panel">
@@ -1842,7 +1842,7 @@ html,body{max-width:100%;overflow-x:hidden}
   </div>
 
   <div id="sdPanel-achievements" class="student-dashboard-tab-panel">
-    <div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div></div>
+    <div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div><div id="v66IosAchievementSummary" style="margin-top:14px"></div></div>
     <div class="card v57-card" id="v57AchievementsPanel"><div class="v57-head"><div><span class="v57-badge">🏅 V57 — مركز الإنجازات</span><h3 style="margin:8px 0 4px">أنجز، أتقن، وافتح شارات جديدة</h3><div class="muted">الإنجازات تُحتسب تلقائيًا من نشاطك الحالي، ولا تحتاج إلى إدخال يدوي.</div></div><button class="primary purple" onclick="renderV57AchievementsLastKnown()">🔄 تحديث الشارات</button></div><div id="v57AchievementsBody"><div class="muted" style="margin-top:12px">جارٍ بناء الإنجازات...</div></div></div>
   </div>
 
@@ -3408,6 +3408,8 @@ async function renderDashboard(){
     <div class="smart-panel"><h3>🕘 آخر نشاط</h3>${last?`<div class="smart-activity"><div class="smart-activity-row"><div class="type">${last.t}</div><div><strong>${esc(last.title)}</strong><div class="muted">النتيجة: ${last.s}${last.t==='منافسة'?' / 1000':last.t==='تمرين'?' / 100':'%' } — ${last.z}</div></div><div class="date">${new Date(last.d).toLocaleDateString('ar-SA')}</div></div></div>`:'<div class="smart-empty">لا يوجد نشاط حتى الآن. ابدأ بأول تمرين 🎯</div>'}</div>
   </div>`;
   renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
+  v6634RenderIOSProgress();
+
   renderV56SmartReviewPanel({attempts:a,lessons,lp});
   renderV57Achievements({completed,totalLessons,exerciseAttempts:e,attempts:a,competitions,streak,points});
   await v66RenderDashboardSummary();
@@ -3420,6 +3422,80 @@ async function renderDashboard(){
   studentDashboardTab(window.v58DashboardTab || "overview");
 }
 
+
+
+function v6634ReadIOS(){
+  try{
+    const raw=localStorage.getItem('v66_33_ios_challenges');
+    const data=raw?JSON.parse(raw):{};
+    const levels={beginner:3,intermediate:3,advanced:2};
+    const labels={beginner:'مبتدئ',intermediate:'متوسط',advanced:'متقدم'};
+    const rows=[];
+    let completed=0,bestScore=0,bestTime=0,totalAttempts=0;
+    Object.entries(levels).forEach(([level,count])=>{
+      let done=0,levelBest=0;
+      for(let i=0;i<count;i++){
+        const x=data[level+':'+i];
+        if(x?.completed){
+          done++;completed++;
+          levelBest=Math.max(levelBest,Number(x.bestScore||0));
+          bestScore=Math.max(bestScore,Number(x.bestScore||0));
+          if(x.bestTime)bestTime=bestTime?Math.min(bestTime,Number(x.bestTime)):Number(x.bestTime);
+          totalAttempts+=Number(x.attempts||0);
+        }
+      }
+      rows.push({level,label:labels[level],done,count,best:levelBest});
+    });
+    return {rows,completed,total:8,bestScore,bestTime,totalAttempts,data};
+  }catch(e){
+    return {rows:[],completed:0,total:8,bestScore:0,bestTime:0,totalAttempts:0,data:{}};
+  }
+}
+function v6634Time(sec){
+  const s=Math.max(0,Math.floor(Number(sec||0)));
+  return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
+function v6634RenderIOSProgress(){
+  const x=v6634ReadIOS();
+  const pct=Math.round(x.completed*100/x.total);
+  const next=x.completed<3?'أكمل جميع تحديات المبتدئ لفتح المستوى المتوسط.':
+    x.completed<6?'أكمل جميع تحديات المتوسط لفتح المستوى المتقدم.':
+    x.completed<8?'أكمل التحديات المتقدمة للحصول على شارة خبير IOS.':'🎉 أكملت جميع تحديات IOS!';
+  const badges=[];
+  if(x.completed>=1)badges.push('🖥️ أول تحدي IOS');
+  if(x.rows[0]?.done===x.rows[0]?.count)badges.push('🟢 IOS مبتدئ كامل');
+  if(x.rows[1]?.done===x.rows[1]?.count)badges.push('🟡 IOS متوسط كامل');
+  if(x.completed===8)badges.push('🏆 خبير Cisco IOS');
+  if(x.bestScore>=90)badges.push('⭐ أداء IOS متميز');
+  const host=$('v66IosDashboardSummary');
+  if(host){
+    host.innerHTML=`<div class="card" style="margin-top:14px;border:1px solid #cfe0eb;background:linear-gradient(135deg,#f6fbfd,#fff)">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+        <div><span class="badge">🖥️ V66.34 — تقدم Cisco IOS</span><h3 style="margin:8px 0 4px;color:#0759a5">تدريبك العملي داخل المحاكي</h3><p class="muted" style="margin:0">${next}</p></div>
+        <button class="primary" onclick="window.location.href='ios-simulator.html'">فتح محاكي IOS ↗</button>
+      </div>
+      <div class="student-home-grid" style="margin-top:14px">
+        <div class="student-kpi"><div class="num">${x.completed}/${x.total}</div><div class="label">التحديات المكتملة</div></div>
+        <div class="student-kpi"><div class="num">${pct}%</div><div class="label">نسبة إنجاز IOS</div></div>
+        <div class="student-kpi"><div class="num">${x.bestScore||0}</div><div class="label">أفضل نتيجة</div></div>
+        <div class="student-kpi"><div class="num">${x.totalAttempts}</div><div class="label">إجمالي المحاولات</div></div>
+      </div>
+      <div style="margin-top:12px;height:10px;background:#e7eef3;border-radius:999px;overflow:hidden"><span style="display:block;width:${pct}%;height:100%;background:#0b6f91;border-radius:999px"></span></div>
+      <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">${badges.length?badges.map(b=>`<span class="badge-achievement">${b}</span>`).join(''):'<span class="muted">ابدأ أول تحدي IOS لفتح أول شارة.</span>'}</div>
+    </div>`;
+  }
+  const ahost=$('v66IosAchievementSummary');
+  if(ahost){
+    ahost.innerHTML=`<div class="card" style="border:1px solid #d5e3eb;background:#fbfdff">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div><h3 style="margin:0;color:#0759a5">🖥️ إنجازات Cisco IOS</h3><div class="muted">يتم احتسابها تلقائيًا من محاكي IOS على نفس الجهاز والمتصفح.</div></div>
+        <button class="primary purple" onclick="window.location.href='ios-simulator.html'">🎯 متابعة التحديات</button>
+      </div>
+      <div class="smart-achievements" style="margin-top:10px">${badges.length?badges.map(b=>`<span class="badge-achievement">${b}</span>`).join(''):'<span class="badge-achievement">🌱 لا توجد شارات IOS بعد</span>'}</div>
+      <div style="margin-top:12px" class="muted">أفضل وقت محفوظ: ${x.bestTime?v6634Time(x.bestTime):'—'} • إجمالي الإنجاز: ${x.completed}/8</div>
+    </div>`;
+  }
+}
 
 function v50DifficultyFromAccuracy(acc){
   if(acc<50) return 'easy';
