@@ -11,6 +11,9 @@ function esc(v){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").
 function icon(type){return type==="danger"?"!":type==="success"?"✓":type==="warning"?"⚠":"✦"}
 function tone(type){return type==="danger"?"red":type==="success"?"green":type==="warning"?"orange":"purple"}
 function pageFor(item){return item.page||""}
+const FILTER_KEY="ipv4AcademyV30NotificationFilter";
+function getFilter(role){return localStorage.getItem(FILTER_KEY+":"+role)||"all"}
+export function setNotificationFilter(role,filter){localStorage.setItem(FILTER_KEY+":"+role,filter||"all")}
 
 export function getNotifications(role="student"){
   const list=read();
@@ -168,6 +171,7 @@ export function markAllNotificationsRead(role){
 export function handleNotificationAction(target,role="student"){
   const action=target.dataset.notificationAction;
   const id=target.dataset.notificationId;
+  if(action==="filter"){setNotificationFilter(role,target.dataset.notificationFilter||"all");return {rerender:true}}
   if(action==="read"&&id)markNotificationRead(id);
   if(action==="all-read")markAllNotificationsRead(role);
   const list=syncSmartNotifications(role);
@@ -192,8 +196,10 @@ function itemHtml(item){
 
 export function notificationsPage(role="student"){
   syncSmartNotifications(role);
-  const list=getNotifications(role);
-  const unread=list.filter(x=>!x.read).length;
+  const all=getNotifications(role);
+  const filter=getFilter(role);
+  const list=filter==="all"?all:filter==="unread"?all.filter(x=>!x.read):all.filter(x=>x.type==="danger"||x.type==="warning");
+  const unread=all.filter(x=>!x.read).length;
   const title=role==="student"?"مركز إشعاراتك":"مركز إشعارات المدرب";
   const desc=role==="student"
     ?"تنبيهات مختصرة مرتبطة بأدائك، نتائجك، والخطوة التعليمية التالية."
@@ -205,7 +211,10 @@ export function notificationsPage(role="student"){
       '<div class="card"><div class="muted">تحتاج إجراء</div><div class="kpi-value">'+unread+'</div><div class="muted">ابدأ بالأعلى أهمية</div></div>'+
       '<div class="card"><div class="muted">الفكرة</div><div class="kpi-value" style="font-size:20px">تنبيه → قرار</div><div class="muted">بدون إزعاج غير ضروري</div></div>'+
     '</div>'+
-    '<div class="section-title"><h3>الأحدث</h3><span class="badge">الأولوية أولًا</span></div>'+
+    '<div class="section-title"><h3>الأحدث</h3><div class="filter-chips">'+
+'<button class="filter-chip '+(filter==="all"?"active":"")+'" data-notification-action="filter" data-notification-filter="all">الكل</button>'+
+'<button class="filter-chip '+(filter==="unread"?"active":"")+'" data-notification-action="filter" data-notification-filter="unread">غير مقروء</button>'+
+'<button class="filter-chip '+(filter==="important"?"active":"")+'" data-notification-action="filter" data-notification-filter="important">مهم</button></div></div>'+
     '<div class="notification-list">'+(list.length?list.map(itemHtml).join(""):emptyState())+'</div>';
 }
 
