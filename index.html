@@ -1823,7 +1823,7 @@ html,body{max-width:100%;overflow-x:hidden}
 
   <div id="sdPanel-overview" class="student-dashboard-tab-panel active">
     <div id="studentDashboard"></div>
-    <div id="v52PlacementSummary"></div><div id="v66DashboardLabSummary"></div><div id="v66IosDashboardSummary"></div><div id="v66IosMasterySummary"></div>
+    <div id="v52PlacementSummary"></div><div id="v66DashboardLabSummary"></div><div id="v66IosDashboardSummary"></div><div id="v66IosMasterySummary"></div><div id="v66IosFinalStatus"></div>
   </div>
 
   <div id="sdPanel-progress" class="student-dashboard-tab-panel">
@@ -3409,6 +3409,7 @@ async function renderDashboard(){
   </div>`;
   renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
   v6634RenderIOSProgress();
+  v6636RenderIOSFinalStatus();
 
   renderV56SmartReviewPanel({attempts:a,lessons,lp});
   renderV57Achievements({completed,totalLessons,exerciseAttempts:e,attempts:a,competitions,streak,points});
@@ -3560,6 +3561,17 @@ function v6634RenderIOSProgress(){
       <div style="margin-top:12px" class="muted">أفضل وقت محفوظ: ${x.bestTime?v6634Time(x.bestTime):'—'} • إجمالي الإنجاز: ${x.completed}/8</div>
     </div>`;
   }
+}
+
+
+function v6636RenderIOSFinalStatus(){
+  const host=$('v66IosFinalStatus');if(!host)return;
+  let f=null;try{f=JSON.parse(localStorage.getItem('v66_36_ios_final')||'null');}catch(e){}
+  let d={};try{d=JSON.parse(localStorage.getItem('v66_33_ios_challenges')||'{}')||{};}catch(e){}
+  const all=["beginner:0","beginner:1","beginner:2","intermediate:0","intermediate:1","intermediate:2","advanced:0","advanced:1"].every(k=>!!d[k]?.completed);
+  const status=f?.passed?'✅ ناجح':all?'🟢 جاهز للاختبار':'🔒 أكمل تحديات IOS أولًا';
+  const note=f?.passed?('أفضل نتيجة: '+f.bestScore+'/100 • أفضل وقت: '+String(Math.floor(Number(f.bestTime||0)/60)).padStart(2,'0')+':'+String(Math.floor(Number(f.bestTime||0)%60)).padStart(2,'0')):(all?'تم فتح الاختبار النهائي العملي.':'يتطلب إكمال التحديات الثمانية قبل فتح الاختبار النهائي.');
+  host.innerHTML='<div class="card" style="margin-top:14px;border:1px solid #d2e1e8;background:linear-gradient(135deg,#fbfdff,#fff)"><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><span class="badge">🏁 V66.36 • الاختبار النهائي</span><h3 style="margin:8px 0 4px;color:#0759a5">'+status+'</h3><div class="muted">'+note+'</div></div><button class="primary '+(f?.passed?'green':'orange')+'" onclick="window.location.href=\"ios-simulator.html#final\"">'+(f?.passed?'📜 عرض الاختبار':'🏁 فتح الاختبار النهائي')+'</button></div></div>';
 }
 
 function v50DifficultyFromAccuracy(acc){
