@@ -1,6 +1,7 @@
 import {studentPage,studentState,handleStudentAction,resetDemoData} from "./student.js";
 import {getTrainerView} from "./trainer-v22.js";
 import {handleExamAction} from "./exam-v23.js";
+import {handleQuestionBankAction,updateFilter,questionBankView} from "./question-bank-v24.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
@@ -45,6 +46,10 @@ function bind(){
   document.getElementById("exam-next")?.addEventListener("click",()=>examAction(document.getElementById("exam-next")));
   document.getElementById("submit-exam")?.addEventListener("click",()=>examAction(document.getElementById("submit-exam")));
   document.querySelectorAll("[data-exam-action]").forEach(b=>b.addEventListener("click",()=>examAction(b)));
+  document.querySelectorAll("[data-q-action]").forEach(b=>b.addEventListener("click",()=>questionBankAction(b)));
+  document.getElementById("qbank-search")?.addEventListener("change",e=>{updateFilter("search",e.target.value.trim());render()});
+  document.getElementById("qbank-topic")?.addEventListener("change",e=>{updateFilter("topic",e.target.value);render()});
+  document.getElementById("qbank-difficulty")?.addEventListener("change",e=>{updateFilter("difficulty",e.target.value);render()});
   document.getElementById("start-smart-review")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("start-smart-review"));state.page="practice";render()});
   document.getElementById("restart-practice")?.addEventListener("click",()=>{handleStudentAction(document.getElementById("restart-practice"));state.page="practice";render()});
   document.getElementById("trainer-search")?.addEventListener("input",applyTrainerFilters);
@@ -68,6 +73,11 @@ function applyTrainerFilters(){
     const okGroup=!group||text.includes(group);
     row.style.display=okText&&okRisk&&okGroup?"":"none";
   });
+}
+
+function questionBankAction(button){
+  const result=handleQuestionBankAction(button);
+  if(result?.rerender){render();return}
 }
 
 function examAction(button){
