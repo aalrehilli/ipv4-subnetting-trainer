@@ -200,3 +200,21 @@
 .lesson-objectives strong{color:var(--primary-2)}
 .lesson-objectives p{margin:5px 0 0}
 .lesson-content-render{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px;line-height:2.05;white-space:pre-wrap;min-height:100px}
+
+/* V3.8 Lesson Assessment */
+.lesson-assessment-banner{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:16px;border-right:4px solid var(--orange);background:#fffaf3}
+.lesson-assessment-banner h3{margin:4px 0}
+.lesson-assessment-form{display:grid;gap:12px;margin-top:14px}
+.assessment-question{padding:18px}
+.assessment-question h3{margin:10px 0 13px;line-height:1.9}
+.assessment-options{display:grid;gap:8px}
+.assessment-options label{display:flex;gap:9px;align-items:flex-start;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;line-height:1.8}
+.assessment-options label:hover{border-color:#b9d7ee;background:#f8fbff}
+.assessment-options input{margin-top:5px;accent-color:var(--primary)}
+.lesson-assessment-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:10px}
+.lesson-assessment-result{margin-top:14px;text-align:center;padding:30px}
+.lesson-assessment-result h2{font-size:42px;margin:12px 0 4px;color:var(--primary-2)}
+.result-topic-list{max-width:560px;margin:18px auto;text-align:right}
+.good-text{color:var(--green)}
+.bad-text{color:var(--red)}
+@media(max-width:760px){.lesson-assessment-banner{display:grid}.lesson-assessment-banner .btn{width:100%}}
