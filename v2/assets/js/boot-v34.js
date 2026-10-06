@@ -92,6 +92,45 @@ function bind(){
   document.getElementById("switch-role")?.addEventListener("click",async()=>{state.role=state.role==="student"?"trainer":"student";state.page=state.role==="student"?"home":"tdash";await render()});
   document.getElementById("hard-refresh")?.addEventListener("click",()=>location.reload());
 
+  document.querySelectorAll("[data-course-action]").forEach(btn=>btn.addEventListener("click",async()=>{
+    try{
+      const m=await import("./course-manager-v34.js?v=370");
+      const action=btn.dataset.courseAction;
+      if(action==="new"){
+        const form=document.getElementById("course-builder");
+        if(form)form.hidden=false;
+        return;
+      }
+      if(action==="close-form"){
+        const form=document.getElementById("course-builder");
+        if(form)form.hidden=true;
+        return;
+      }
+      const result=m.handleCourseAction(btn);
+      if(result?.rerender)await render();
+    }catch(error){showError(error)}
+  }));
+  document.getElementById("new-course-form")?.addEventListener("submit",async event=>{
+    event.preventDefault();
+    try{
+      const m=await import("./course-manager-v34.js?v=370");
+      const result=m.handleCourseForm(event.currentTarget);
+      const msg=document.getElementById("course-form-msg");
+      if(!result.ok){
+        if(msg)msg.textContent=result.message;
+        return;
+      }
+      await render();
+    }catch(error){showError(error)}
+  });
+  document.querySelectorAll("[data-course-status]").forEach(btn=>btn.addEventListener("click",()=>{
+    const status=btn.dataset.courseStatus;
+    document.querySelectorAll("[data-course-status]").forEach(x=>x.classList.toggle("active",x===btn));
+    document.querySelectorAll("[data-course-item-status]").forEach(card=>{
+      card.style.display=status==="all"||card.dataset.courseItemStatus===status?"":"none";
+    });
+  }));
+
   document.querySelectorAll("[data-lesson]").forEach(btn=>btn.addEventListener("click",async()=>{try{const m=await import("./student.js?v=350");m.handleStudentAction(btn);state.page="practice";await render()}catch(error){showError(error)}}));
   document.getElementById("start-smart-review")?.addEventListener("click",async()=>{try{const m=await import("./student.js?v=350");m.handleStudentAction(document.getElementById("start-smart-review"));state.page="practice";await render()}catch(error){showError(error)}});
   document.getElementById("restart-practice")?.addEventListener("click",async()=>{try{const m=await import("./student.js?v=350");m.handleStudentAction(document.getElementById("restart-practice"));state.page="practice";await render()}catch(error){showError(error)}});
