@@ -212,9 +212,9 @@ export function notificationsPage(role="student"){
       '<div class="card"><div class="muted">الفكرة</div><div class="kpi-value" style="font-size:20px">تنبيه → قرار</div><div class="muted">بدون إزعاج غير ضروري</div></div>'+
     '</div>'+
     '<div class="section-title"><h3>الأحدث</h3><div class="filter-chips">'+
-'<button class="filter-chip '+(filter==="all"?"active":"")+'" data-notification-action="filter" data-notification-filter="all">الكل</button>'+
-'<button class="filter-chip '+(filter==="unread"?"active":"")+'" data-notification-action="filter" data-notification-filter="unread">غير مقروء</button>'+
-'<button class="filter-chip '+(filter==="important"?"active":"")+'" data-notification-action="filter" data-notification-filter="important">مهم</button></div></div>'+
+'<button class="filter-chip '+(filter==="all"?"active":"")+'" data-notification-filter="all">الكل</button>'+
+'<button class="filter-chip '+(filter==="unread"?"active":"")+'" data-notification-filter="unread">غير مقروء</button>'+
+'<button class="filter-chip '+(filter==="important"?"active":"")+'" data-notification-filter="important">مهم</button></div></div>'+
     '<div class="notification-list">'+(list.length?list.map(itemHtml).join(""):emptyState())+'</div>';
 }
 
