@@ -145,7 +145,7 @@ body{
 
   <section class="hero">
     <div>
-      <span class="badge">V66.43 • واجهة احترافية + V66.33 تحديات ذكية</span>
+      <span class="badge">V66.43 • V66.35 نظام إتقان IOS</span>
       <h1>محاكي <strong>Cisco IOS</strong></h1>
       <p>محاكي تدريبي مستقل لأوامر السويتش والموجّه من الوحدة 2 والوحدة 10، مصمم للتدريب داخل المتصفح دون التأثير على بقية المنصة.</p>
     </div>
@@ -1295,6 +1295,93 @@ function runQa(){
  summary.textContent="نتيجة الفحص: "+passed+" / "+checks.length+" — "+(passed===checks.length?"✅ جميع فحوص CLI الأساسية ناجحة.":"⚠️ يوجد فحص يحتاج مراجعة.");
 }
 runBtn.addEventListener("click",runQa);
+})();
+</script>
+
+
+<script id="v66_35_ios_mastery">
+(function(){
+  "use strict";
+
+  function read(){
+    let data={};
+    try{data=JSON.parse(localStorage.getItem("v66_33_ios_challenges")||"{}")||{};}catch(e){}
+    const levels={beginner:3,intermediate:3,advanced:2};
+    const weights={beginner:100,intermediate:125,advanced:150};
+    let completed=0,xp=0,bestScore=0;
+    const rows={};
+    Object.keys(levels).forEach(function(level){
+      let done=0;
+      for(let i=0;i<levels[level];i++){
+        const rec=data[level+":"+i];
+        if(rec&&rec.completed){
+          done++;completed++;
+          const score=Number(rec.bestScore||0);
+          bestScore=Math.max(bestScore,score);
+          xp+=(weights[level]||100)+score;
+        }
+      }
+      rows[level]=done;
+    });
+    if(rows.beginner===levels.beginner)xp+=50;
+    if(rows.intermediate===levels.intermediate)xp+=75;
+    if(rows.advanced===levels.advanced)xp+=100;
+    if(completed===8&&bestScore>=95)xp+=100;
+
+    const tiers=[
+      {min:0,name:"مبتدئ IOS",emoji:"🌱",next:200},
+      {min:200,name:"متدرب IOS",emoji:"🧭",next:400},
+      {min:400,name:"ممارس IOS",emoji:"🛠️",next:700},
+      {min:700,name:"متمكن IOS",emoji:"⚡",next:1000},
+      {min:1000,name:"خبير IOS",emoji:"🏆",next:1400},
+      {min:1400,name:"سيد Cisco IOS",emoji:"👑",next:Infinity}
+    ];
+    let tier=tiers[0];
+    tiers.forEach(function(t){if(xp>=t.min)tier=t;});
+    const pct=tier.next===Infinity?100:Math.min(100,Math.round((xp-tier.min)*100/Math.max(1,tier.next-tier.min)));
+    return {xp,completed,bestScore,tier,pct,rows,data};
+  }
+
+  function fmt(sec){
+    const s=Math.max(0,Math.floor(Number(sec||0)));
+    return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+  }
+
+  function render(){
+    let box=document.getElementById("v6635MasteryCard");
+    if(!box){
+      box=document.createElement("section");
+      box.id="v6635MasteryCard";
+      box.style.cssText="margin:12px 0;padding:14px 16px;border:1px solid #c9dce5;border-radius:15px;background:linear-gradient(135deg,#f3fbfe,#fff);box-shadow:0 8px 18px rgba(31,77,103,.04)";
+      const hero=document.querySelector(".hero");
+      if(hero&&hero.parentNode)hero.parentNode.insertBefore(box,hero.nextSibling);
+    }
+    const x=read();
+    const next=x.tier.next===Infinity?"🎉 أعلى مستوى تم فتحه.":"باقي "+Math.max(0,x.tier.next-x.xp)+" XP للمستوى التالي.";
+    box.innerHTML=
+      '<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">'+
+      '<div><span class="badge">⚡ V66.35 • نظام إتقان IOS</span><h3 style="margin:7px 0 3px;color:#0a567d">'+x.tier.emoji+" "+x.tier.name+'</h3><div style="font-size:11px;color:#6c818d">'+next+" • "+x.completed+"/8 تحديات مكتملة"+'</div></div>'+
+      '<div style="font-size:24px;font-weight:900;color:#0759a5">'+x.xp+" XP"+'</div></div>'+
+      '<div style="margin-top:10px;height:10px;background:#e6eef2;border-radius:99px;overflow:hidden"><span style="display:block;width:'+x.pct+'%;height:100%;background:#0b6f91;border-radius:99px"></span></div>'+
+      '<div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#71858f"><span>التقدم للمستوى التالي</span><b>'+x.pct+"%"+'</b></div>'+
+      '<div style="margin-top:8px;font-size:10px;color:#71858f">أفضل نتيجة: '+(x.bestScore||0)+'/100</div>';
+  }
+
+  const original=cGrade;
+  cGrade=function(raw,executed){
+    const before=read().xp;
+    original(raw,executed);
+    render();
+    const after=read().xp;
+    if(after>before){
+      const feedback=document.getElementById("cFeedback");
+      if(feedback){
+        feedback.textContent="✅ اكتمل التحدي! +"+(after-before)+" XP — "+read().tier.emoji+" "+read().tier.name;
+      }
+    }
+  };
+
+  render();
 })();
 </script>
 

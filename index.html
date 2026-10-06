@@ -1823,7 +1823,7 @@ html,body{max-width:100%;overflow-x:hidden}
 
   <div id="sdPanel-overview" class="student-dashboard-tab-panel active">
     <div id="studentDashboard"></div>
-    <div id="v52PlacementSummary"></div><div id="v66DashboardLabSummary"></div><div id="v66IosDashboardSummary"></div>
+    <div id="v52PlacementSummary"></div><div id="v66DashboardLabSummary"></div><div id="v66IosDashboardSummary"></div><div id="v66IosMasterySummary"></div>
   </div>
 
   <div id="sdPanel-progress" class="student-dashboard-tab-panel">
@@ -1842,7 +1842,7 @@ html,body{max-width:100%;overflow-x:hidden}
   </div>
 
   <div id="sdPanel-achievements" class="student-dashboard-tab-panel">
-    <div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div><div id="v66IosAchievementSummary" style="margin-top:14px"></div></div>
+    <div class="card"><h2>🏅 إنجازاتي</h2><div id="studentAchievements"></div><div id="v66IosAchievementSummary" style="margin-top:14px"></div><div id="v66IosMasteryAchievement" style="margin-top:14px"></div></div>
     <div class="card v57-card" id="v57AchievementsPanel"><div class="v57-head"><div><span class="v57-badge">🏅 V57 — مركز الإنجازات</span><h3 style="margin:8px 0 4px">أنجز، أتقن، وافتح شارات جديدة</h3><div class="muted">الإنجازات تُحتسب تلقائيًا من نشاطك الحالي، ولا تحتاج إلى إدخال يدوي.</div></div><button class="primary purple" onclick="renderV57AchievementsLastKnown()">🔄 تحديث الشارات</button></div><div id="v57AchievementsBody"><div class="muted" style="margin-top:12px">جارٍ بناء الإنجازات...</div></div></div>
   </div>
 
@@ -3424,6 +3424,50 @@ async function renderDashboard(){
 
 
 
+
+function v6635ReadMastery(){
+  const x=v6634ReadIOS();
+  const points=(x.rows||[]).reduce((sum,row)=>{
+    const rec=x.data[row.level+':'];
+    return sum;
+  },0);
+  let xp=0,perfect=false;
+  const levelWeights={beginner:100,intermediate:125,advanced:150};
+  Object.entries({beginner:3,intermediate:3,advanced:2}).forEach(([level,count])=>{
+    for(let i=0;i<count;i++){
+      const rec=x.data[level+':'+i];
+      if(rec?.completed){
+        const base=levelWeights[level]||100;
+        xp+=base+Number(rec.bestScore||0);
+      }
+    }
+  });
+  if(x.rows[0]?.done===x.rows[0]?.count)xp+=50;
+  if(x.rows[1]?.done===x.rows[1]?.count)xp+=75;
+  if(x.rows[2]?.done===x.rows[2]?.count)xp+=100;
+  perfect=x.completed===8 && x.bestScore>=95;
+  if(perfect)xp+=100;
+  const tiers=[
+    {min:0,name:'مبتدئ IOS',emoji:'🌱',next:200},
+    {min:200,name:'متدرب IOS',emoji:'🧭',next:400},
+    {min:400,name:'ممارس IOS',emoji:'🛠️',next:700},
+    {min:700,name:'متمكن IOS',emoji:'⚡',next:1000},
+    {min:1000,name:'خبير IOS',emoji:'🏆',next:1400},
+    {min:1400,name:'سيد Cisco IOS',emoji:'👑',next:Infinity}
+  ];
+  let tier=tiers[0];
+  for(const t of tiers){if(xp>=t.min)tier=t;}
+  const pct=tier.next===Infinity?100:Math.min(100,Math.round((xp-tier.min)*100/Math.max(1,tier.next-tier.min)));
+  const badges=[];
+  if(x.completed>=1)badges.push('🖥️ بداية IOS');
+  if(x.rows[0]?.done===x.rows[0]?.count)badges.push('🟢 أساسيات IOS');
+  if(x.rows[1]?.done===x.rows[1]?.count)badges.push('🟡 إعداد IOS');
+  if(x.rows[2]?.done===x.rows[2]?.count)badges.push('🔴 سيناريوهات IOS');
+  if(x.bestScore>=90)badges.push('⭐ أداء ممتاز');
+  if(perfect)badges.push('👑 إتقان IOS');
+  return {xp,tier,pct,badges,perfect,completed:x.completed,total:x.total};
+}
+
 function v6634ReadIOS(){
   try{
     const raw=localStorage.getItem('v66_33_ios_challenges');
@@ -3457,6 +3501,7 @@ function v6634Time(sec){
 }
 function v6634RenderIOSProgress(){
   const x=v6634ReadIOS();
+  const mastery=v6635ReadMastery();
   const pct=Math.round(x.completed*100/x.total);
   const next=x.completed<3?'أكمل جميع تحديات المبتدئ لفتح المستوى المتوسط.':
     x.completed<6?'أكمل جميع تحديات المتوسط لفتح المستوى المتقدم.':
@@ -3484,7 +3529,27 @@ function v6634RenderIOSProgress(){
       <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">${badges.length?badges.map(b=>`<span class="badge-achievement">${b}</span>`).join(''):'<span class="muted">ابدأ أول تحدي IOS لفتح أول شارة.</span>'}</div>
     </div>`;
   }
+
+  const mhost=$('v66IosMasterySummary');
+  if(mhost){
+    const nextText=mastery.tier.next===Infinity?'🎉 وصلت إلى أعلى مستوى في نظام الإتقان.':'تحتاج '+Math.max(0,mastery.tier.next-mastery.xp)+' XP للمستوى التالي.';
+    mhost.innerHTML='<div class="card" style="margin-top:14px;border:1px solid #cbdde7;background:linear-gradient(135deg,#f3fbff,#fff)">'+
+      '<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">'+
+      '<div><span class="badge">⚡ V66.35 — نظام إتقان IOS</span><h3 style="margin:8px 0 4px;color:#0759a5">'+mastery.tier.emoji+' '+mastery.tier.name+'</h3><p class="muted" style="margin:0">'+nextText+'</p></div>'+
+      '<div style="font-size:26px;font-weight:900;color:#0759a5">'+mastery.xp+' XP</div></div>'+
+      '<div style="margin-top:12px;height:12px;background:#e7eef3;border-radius:999px;overflow:hidden"><span style="display:block;width:'+mastery.pct+'%;height:100%;background:#0b6f91;border-radius:999px"></span></div>'+
+      '<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:11px;color:#607786"><span>التقدم للمستوى التالي</span><b>'+mastery.pct+'%</b></div>'+
+      '<div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">'+(mastery.badges.length?mastery.badges.map(b=>'<span class="badge-achievement">'+b+'</span>').join(''):'')+'</div>'+
+      '<div style="margin-top:10px;font-size:11px;color:#718592">ملاحظة: التقدم الحالي محفوظ على هذا الجهاز والمتصفح حتى نضيف مزامنة الحسابات لاحقًا.</div>'+
+      '</div>';
+  }
+
   const ahost=$('v66IosAchievementSummary');
+  const mahost=$('v66IosMasteryAchievement');
+  if(mahost){
+    mahost.innerHTML='<div class="card" style="border:1px solid #d2e1e8;background:#fbfdff"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><h3 style="margin:0;color:#0759a5">⚡ مستوى الإتقان</h3><div class="muted">'+mastery.tier.emoji+' '+mastery.tier.name+' • '+mastery.xp+' XP</div></div><span class="badge-achievement">'+mastery.pct+'% للمستوى التالي</span></div><div style="margin-top:10px;height:9px;background:#e8eef3;border-radius:999px;overflow:hidden"><span style="display:block;width:'+mastery.pct+'%;height:100%;background:#0b6f91"></span></div></div>';
+  }
+
   if(ahost){
     ahost.innerHTML=`<div class="card" style="border:1px solid #d5e3eb;background:#fbfdff">
       <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
