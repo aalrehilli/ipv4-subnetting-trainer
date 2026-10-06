@@ -1,3 +1,5 @@
+import {getTrainerExamSummary} from "./exam-v23.js";
+
 const students=[
   {id:1,name:"أحمد محمد",group:"1",progress:84,avg:88,last:"اليوم",risk:"منخفض",topic:"VLSM",weakness:64,activity:"نشط",trend:"+8%"},
   {id:2,name:"محمد خالد",group:"1",progress:62,avg:58,last:"أمس",risk:"متوسط",topic:"Prefix",weakness:51,activity:"متوسط",trend:"-3%"},
@@ -110,7 +112,23 @@ export function getTrainerView(page="tdash",filter="",id=null){
     <div class="card" style="margin-top:14px"><h3>أبرز الفروقات</h3><div class="stat-row"><span>أفضل مجموعة</span><b>المجموعة 2 • 84%</b></div><div class="stat-row"><span>أعلى مخاطرة</span><b>المجموعة 3</b></div></div>`;
   if(page==="courses")return '<div class="page-intro"><span class="eyebrow blue">03 • المقررات</span><h2>إدارة المحتوى</h2><p>محتوى متصل بمسار الطالب.</p></div><div class="grid-2"><div class="card"><h3>IPv4 Fundamentals</h3><p class="muted">6 وحدات • 40+ سؤالًا</p><span class="badge green">منشور</span></div><div class="card"><h3>Subnetting Mastery</h3><p class="muted">8 وحدات • 60 سؤالًا</p><span class="badge orange">مسودة</span></div></div>';
   if(page==="questions")return '<div class="page-intro"><span class="eyebrow purple">04 • بنك الأسئلة</span><h2>بنك الأسئلة</h2><p>102 سؤالًا مصنفة حسب الموضوع والصعوبة.</p></div><div class="student-grid-4"><div class="card"><div class="muted">IPv4</div><div class="kpi-value">20</div></div><div class="card"><div class="muted">Binary</div><div class="kpi-value">28</div></div><div class="card"><div class="muted">Prefix</div><div class="kpi-value">21</div></div><div class="card"><div class="muted">VLSM</div><div class="kpi-value">22</div></div></div>';
-  if(page==="exams")return '<div class="page-intro"><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات</h2><p>جدولة وتصحيح ومتابعة المحاولات.</p></div><div class="card"><table class="table"><thead><tr><th>الاختبار</th><th>الحالة</th><th>المحاولات</th><th>متوسط</th></tr></thead><tbody><tr><td>IPv4 الأساسي</td><td><span class="badge green">مفتوح</span></td><td>66</td><td>76%</td></tr><tr><td>Binary & Prefix</td><td><span class="badge orange">مجدول</span></td><td>41</td><td>71%</td></tr></tbody></table></div>';
+  if(page==="exams"){
+    const r=getTrainerExamSummary();
+    return `
+    <div class="page-intro with-action"><div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات</h2><p>أنشئ الاختبار، راقب المحاولات، ثم انتقل من النتيجة إلى تحليل الموضوعات.</p></div><span class="badge ${r.attempts?"green":""}">${r.attempts?r.attempts+" محاولة مسجلة":"لا توجد محاولات بعد"}</span></div>
+    <div class="student-grid-4">
+      <div class="card trainer-kpi"><div class="muted">الاختبار</div><div class="kpi-value" style="font-size:19px">IPv4 & Binary</div><div class="muted">10 أسئلة • 5 دقائق Demo</div></div>
+      <div class="card trainer-kpi"><div class="muted">آخر متوسط</div><div class="kpi-value">${r.avg?r.avg+"%":"—"}</div><div class="muted">آخر محاولة</div></div>
+      <div class="card trainer-kpi"><div class="muted">حالة النجاح</div><div class="kpi-value">${r.attempts?(r.lastResult.passed?"✅":"↗"):"—"}</div><div class="muted">${r.attempts?(r.lastResult.passed?"ناجح":"يحتاج مراجعة"):"بانتظار محاولة"}</div></div>
+      <div class="card trainer-kpi"><div class="muted">الحالة</div><div class="kpi-value" style="font-size:20px">${r.attempts?"مُستخدم":"جاهز"}</div><div class="muted">وضع العرض</div></div>
+    </div>
+    <div class="grid-2" style="margin-top:14px">
+      <div class="card"><h3>إعداد الاختبار</h3><div class="stat-row"><span>الأسئلة</span><b>10</b></div><div class="stat-row"><span>المدة</span><b>5 دقائق</b></div><div class="stat-row"><span>النجاح</span><b>60%</b></div><div class="stat-row"><span>التصحيح</span><b>فوري في Demo</b></div><button class="btn btn-primary" data-demo-action="preview-exam" style="margin-top:12px">معاينة الاختبار</button></div>
+      <div class="card"><h3>أداء الموضوعات</h3>${r.lastResult?r.lastResult.topics.map(x=>`<div class="topic-bar"><div><span>${x.topic}</span><b>${x.percent}%</b></div><div class="progress"><span style="width:${x.percent}%"></span></div></div>`).join(""):'<div class="empty">بعد أول محاولة ستظهر هنا خريطة الأداء حسب الموضوع.</div>'}</div>
+    </div>
+    <div class="section-title"><h3>ما الذي سيأتي بعد Demo؟</h3></div>
+    <div class="card"><div class="stat-row"><span>بنك الأسئلة</span><b>سحب عشوائي + تصنيف</b></div><div class="stat-row"><span>المحاولات</span><b>حدود ومحاولات حسب الطالب</b></div><div class="stat-row"><span>التصحيح</span><b>Server-authoritative</b></div><div class="stat-row"><span>التحليل</span><b>Student 360 + Trainer Analytics</b></div></div>`;
+  }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
   if(page==="analytics")return `
     <div class="page-intro"><span class="eyebrow purple">07 • التحليلات</span><h2>التحليلات واتخاذ القرار</h2><p>التحليل ليس أرقامًا فقط؛ كل مؤشر يجب أن يقود إلى إجراء.</p></div>
