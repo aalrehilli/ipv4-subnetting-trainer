@@ -145,7 +145,7 @@ body{
 
   <section class="hero">
     <div>
-      <span class="badge">V66.43 • واجهة احترافية</span>
+      <span class="badge">V66.43 • واجهة احترافية + V66.33 تحديات ذكية</span>
       <h1>محاكي <strong>Cisco IOS</strong></h1>
       <p>محاكي تدريبي مستقل لأوامر السويتش والموجّه من الوحدة 2 والوحدة 10، مصمم للتدريب داخل المتصفح دون التأثير على بقية المنصة.</p>
     </div>
@@ -235,7 +235,7 @@ body{
     </aside>
   </div>
 
-  <div class="footer">V66.43 • محاكي Cisco IOS مستقل • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
+  <div class="footer">V66.43 UI • V66.33 تحديات IOS • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
 </div>
 
 <script>
@@ -874,6 +874,361 @@ document.querySelectorAll(".level").forEach(function(b){b.addEventListener("clic
 
   window.v6632GetState=function(){return JSON.parse(JSON.stringify(S));};
 })();
+
+/* V66.33 — State-driven IOS challenge engine */
+(function(){
+  "use strict";
+
+  function v6633Load(){
+    try{
+      var raw=localStorage.getItem("v66_33_ios_challenges");
+      return raw?JSON.parse(raw):{};
+    }catch(e){return {};}
+  }
+
+  var v6633Results=v6633Load();
+
+  function v6633Save(){
+    try{localStorage.setItem("v66_33_ios_challenges",JSON.stringify(v6633Results));}catch(e){}
+  }
+
+  function v6633Key(level,index){return level+":"+index;}
+
+  function v6633Record(level,index,score,time,errors){
+    var key=v6633Key(level,index),old=v6633Results[key]||{};
+    v6633Results[key]={
+      completed:true,
+      attempts:(old.attempts||0)+1,
+      bestScore:Math.max(Number(old.bestScore||0),Number(score||0)),
+      bestTime:old.bestTime?Math.min(Number(old.bestTime),Number(time||0)):Number(time||0),
+      lastScore:Number(score||0),
+      lastTime:Number(time||0),
+      lastErrors:Number(errors||0),
+      completedAt:new Date().toISOString()
+    };
+    v6633Save();
+  }
+
+  function v6633Completed(level,index){
+    return !!(v6633Results[v6633Key(level,index)]&&v6633Results[v6633Key(level,index)].completed);
+  }
+
+  function v6633All(level){
+    return (challenges[level]||[]).every(function(_,i){return v6633Completed(level,i);});
+  }
+
+  function v6633Unlocked(level){
+    if(level==="beginner")return true;
+    if(level==="intermediate")return v6633All("beginner");
+    if(level==="advanced")return v6633All("intermediate");
+    return false;
+  }
+
+  function v6633State(){
+    try{return window.v6632GetState();}catch(e){return null;}
+  }
+
+  function v6633Norm(v){
+    return String(v||"").trim().toLowerCase().replace(/\s+/g," ");
+  }
+
+  function v6633HasHistory(s,fn){
+    return !!(s&&Array.isArray(s.history)&&s.history.some(function(x){return x&&x.ok&&fn(v6633Norm(x.command));}));
+  }
+
+  function v6633Mode(s,m){return !!s&&s.mode===m;}
+
+  function v6633Check(level,index,step){
+    var s=v6633State();
+    if(!s)return false;
+
+    if(level==="beginner"&&index===0){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633Mode(s,"global"),
+        s.hostname==="SW1",
+        s.enableSecret==="class",
+        v6633Mode(s,"privileged"),
+        s.saved===true
+      ][step]===true;
+    }
+
+    if(level==="beginner"&&index===1){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633Mode(s,"global"),
+        s.mode==="line"&&s.modeName==="Line Console 0",
+        s.consolePassword==="cisco",
+        s.consolePassword==="cisco"&&s.consoleLogin===true,
+        v6633Mode(s,"privileged")
+      ][step]===true;
+    }
+
+    if(level==="beginner"&&index===2){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633Mode(s,"global"),
+        s.mode==="line"&&String(s.modeName||"").indexOf("Line VTY")===0,
+        s.vtyPassword==="cisco",
+        s.vtyPassword==="cisco"&&s.vtyLogin===true,
+        v6633Mode(s,"privileged")
+      ][step]===true;
+    }
+
+    if(level==="intermediate"&&index===0){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633Mode(s,"global"),
+        s.currentInterface==="Vlan1"&&s.mode==="interface",
+        s.vlanIp==="192.168.1.2"&&s.vlanMask==="255.255.255.0",
+        s.vlanUp===true,
+        v6633Mode(s,"privileged"),
+        v6633HasHistory(s,function(cmd){return cmd==="show ip interface brief"||cmd==="show ip int brief";}),
+        s.saved===true
+      ][step]===true;
+    }
+
+    if(level==="intermediate"&&index===1){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633HasHistory(s,function(cmd){return cmd==="show running-config"||cmd==="show run";}),
+        v6633HasHistory(s,function(cmd){return cmd==="show ip interface brief"||cmd==="show ip int brief";})
+      ][step]===true;
+    }
+
+    if(level==="intermediate"&&index===2){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633Mode(s,"global"),
+        s.defaultGateway==="192.168.1.1",
+        v6633Mode(s,"privileged"),
+        v6633HasHistory(s,function(cmd){return cmd==="show running-config"||cmd==="show run";}),
+        s.saved===true
+      ][step]===true;
+    }
+
+    if(level==="advanced"&&index===0){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633Mode(s,"global"),
+        s.currentInterface==="GigabitEthernet0/0/0"&&s.mode==="interface",
+        s.interfaceDescription==="LAN",
+        s.interfaceIp==="192.168.10.1"&&s.interfaceMask==="255.255.255.0",
+        s.interfaceUp===true,
+        v6633Mode(s,"global"),
+        v6633Mode(s,"privileged"),
+        v6633HasHistory(s,function(cmd){return cmd==="show ip interface brief"||cmd==="show ip int brief";})
+      ][step]===true;
+    }
+
+    if(level==="advanced"&&index===1){
+      return [
+        v6633Mode(s,"privileged"),
+        v6633Mode(s,"global"),
+        s.servicePasswordEncryption===true,
+        String(s.bannerMotd||"").indexOf("AUTHORIZED ACCESS ONLY")>-1,
+        s.mode==="line"&&String(s.modeName||"").indexOf("Line VTY")===0,
+        v6633HasHistory(s,function(cmd){return cmd.indexOf("transport input ssh telnet")===0;}),
+        s.vtyPassword==="cisco"&&s.vtyLogin===true,
+        v6633Mode(s,"privileged"),
+        s.saved===true
+      ][step]===true;
+    }
+
+    return false;
+  }
+
+  function v6633Hint(){
+    var c=cCurrent(),step=challengeState.step||0,steps=c.steps||[],alts=steps[step]||[];
+    var s=v6633State(),text="راجع حالة الجهاز ثم نفّذ الخطوة الحالية.";
+    if(challengeState.level==="beginner"&&challengeState.index===0){
+      text=["ابدأ من User EXEC وانتقل إلى privileged EXEC.","أنت بحاجة إلى Global Configuration.","غيّر اسم السويتش إلى SW1.","أنشئ Enable Secret بقيمة class.","أنهِ الإعداد وعد إلى privileged EXEC.","احفظ running-config إلى startup-config."][step]||text;
+    }else if(challengeState.level==="beginner"&&challengeState.index===1){
+      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","اختر line console 0.","عيّن كلمة مرور Console: cisco.","فعّل login بعد ضبط كلمة المرور.","ارجع إلى privileged EXEC."][step]||text;
+    }else if(challengeState.level==="beginner"&&challengeState.index===2){
+      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","اختر VTY 0 إلى 4.","عيّن كلمة مرور VTY: cisco.","فعّل login بعد ضبط كلمة المرور.","ارجع إلى privileged EXEC."][step]||text;
+    }else if(challengeState.level==="intermediate"&&challengeState.index===0){
+      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","ادخل إلى interface vlan 1.","اضبط 192.168.1.2 مع 255.255.255.0.","نفّذ no shutdown.","ارجع إلى privileged EXEC.","تحقق باستخدام show ip interface brief.","احفظ الإعدادات."][step]||text;
+    }else if(challengeState.level==="intermediate"&&challengeState.index===1){
+      text=["تأكد من وجود privileged EXEC.","اعرض running-config.","اعرض حالة الواجهات وعناوين IPv4."][step]||text;
+    }else if(challengeState.level==="intermediate"&&challengeState.index===2){
+      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","اضبط البوابة 192.168.1.1.","ارجع إلى privileged EXEC.","اعرض running-config.","احفظ الإعدادات."][step]||text;
+    }else if(challengeState.level==="advanced"&&challengeState.index===0){
+      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","ادخل إلى G0/0/0.","أضف الوصف LAN.","اضبط 192.168.10.1/24.","نفّذ no shutdown.","اخرج إلى Global Configuration.","ثم عد إلى privileged EXEC.","تحقق باستخدام show ip interface brief."][step]||text;
+    }else if(challengeState.level==="advanced"&&challengeState.index===1){
+      text=["ابدأ بـ enable.","ادخل إلى Global Configuration.","فعّل تشفير كلمات المرور.","اكتب MOTD المطلوب.","ادخل إلى VTY 0 إلى 4.","اضبط transport input ssh telnet.","بعد ضبط كلمة المرور فعّل login.","ارجع إلى privileged EXEC.","احفظ الإعدادات."][step]||text;
+    }
+    var commandHint=alts.length?(" — الأمر المتوقع: "+alts.join(" أو ")):("");
+    return "💡 "+text+commandHint+(s&&s.modeName?(" | الوضع الحالي: "+s.modeName):"");
+  }
+
+  challenges.advanced[1].objective="فعّل تشفير كلمات المرور، اضبط MOTD، ثم جهّز VTY 0 إلى 4 للوصول عبر SSH/Telnet بكلمة مرور cisco وlogin، ثم احفظ الإعدادات.";
+  challenges.advanced[1].steps=[
+    ["enable"],["configure terminal","conf t"],["service password-encryption"],
+    ["banner motd #AUTHORIZED ACCESS ONLY#"],
+    ["line vty 0 4"],["password cisco"],["transport input ssh telnet"],["login"],
+    ["end","exit"],["copy running-config startup-config"]
+  ];
+
+  function v6633RenderList(){
+    var host=document.getElementById("challengeList");if(!host)return;
+    host.replaceChildren();
+    var list=challenges[challengeState.level]||[];
+    list.forEach(function(ch,i){
+      var locked=!v6633Unlocked(challengeState.level);
+      var done=v6633Completed(challengeState.level,i);
+      var rec=v6633Results[v6633Key(challengeState.level,i)]||{};
+      var b=document.createElement("button");b.type="button";b.className="challenge-item"+(i===challengeState.index&&!locked?" active":"");
+      b.disabled=locked;
+      b.style.opacity=locked?".6":"1";
+      var n=document.createElement("span");n.textContent=locked?"🔒":(done?"✓":String(i+1));
+      var c=document.createElement("div");
+      var t=document.createElement("b");t.textContent=ch.title;
+      var sm=document.createElement("small");
+      if(locked)sm.textContent=challengeState.level==="intermediate"?"🔒 أكمل جميع تحديات المبتدئ أولًا":"🔒 أكمل جميع تحديات المستوى المتوسط أولًا";
+      else if(done)sm.textContent="✅ مكتمل • أفضل نتيجة: "+(rec.bestScore||0)+" • المحاولات: "+(rec.attempts||0);
+      else sm.textContent="جاهز للتدريب";
+      c.appendChild(t);c.appendChild(sm);b.appendChild(n);b.appendChild(c);
+      if(!locked)b.addEventListener("click",function(){challengeState.index=i;cReset();v6633RenderList();cRender();});
+      host.appendChild(b);
+    });
+  }
+
+  function v6633Render(){
+    var c=cCurrent(),total=(c.steps||[]).length,done=Math.min(challengeState.step||0,total);
+    var pct=total?Math.round(done/total*100):0;
+    var rec=v6633Results[v6633Key(challengeState.level,challengeState.index)]||{};
+    document.getElementById("cTitle").textContent=c.title;
+    document.getElementById("cObjective").textContent=c.objective;
+    document.getElementById("cScore").textContent=challengeState.score;
+    document.getElementById("cErrors").textContent=challengeState.errors;
+    document.getElementById("cTime").textContent=fmtTime(challengeState.elapsed||0);
+    document.getElementById("cPct").textContent=pct+"%";
+    document.getElementById("cBar").style.width=pct+"%";
+    document.getElementById("cStatus").textContent=challengeState.running?("جاري • الخطوة "+Math.min(done+1,total)+" / "+total):(rec.completed?"✅ مكتمل سابقًا":"جديد");
+    if(!challengeState.running&&rec.completed){
+      document.getElementById("cFeedback").className="status ok";
+      document.getElementById("cFeedback").textContent="🏆 أفضل نتيجة محفوظة: "+rec.bestScore+" نقطة • أفضل وقت: "+fmtTime(rec.bestTime);
+    }
+    cRenderHistory();
+  }
+
+  cRenderList=v6633RenderList;
+  cRender=v6633Render;
+  cReset=function(){
+    challengeState.running=false;
+    challengeState.score=100;
+    challengeState.errors=0;
+    challengeState.start=0;
+    challengeState.elapsed=0;
+    challengeState.step=0;
+    challengeState.history=[];
+    var rec=v6633Results[v6633Key(challengeState.level,challengeState.index)]||{};
+    document.getElementById("cStatus").textContent=rec.completed?"✅ مكتمل سابقًا":"جديد";
+    document.getElementById("cFeedback").className=rec.completed?"status ok":"status";
+    document.getElementById("cFeedback").textContent=rec.completed?("أفضل نتيجة محفوظة: "+rec.bestScore+" نقطة • يمكنك إعادة المحاولة."):("ابدأ التحدي ثم نفّذ المطلوب في الـCLI.");
+    v6633Render();
+  };
+
+  cStart=function(){
+    if(!v6633Unlocked(challengeState.level)){
+      document.getElementById("cFeedback").className="status bad";
+      document.getElementById("cFeedback").textContent="🔒 هذا المستوى مقفل. أكمل جميع تحديات المستوى السابق أولًا.";
+      return;
+    }
+    challengeState.running=true;
+    challengeState.score=100;
+    challengeState.errors=0;
+    challengeState.history=[];
+    challengeState.step=0;
+    challengeState.elapsed=0;
+    challengeState.start=performance.now();
+    document.getElementById("cStatus").textContent="جاري • الخطوة 1 / "+cCurrent().steps.length;
+    document.getElementById("cFeedback").className="status ok";
+    document.getElementById("cFeedback").textContent="🚀 بدأ التحدي. تحقق من حالة الجهاز بعد كل خطوة.";
+    resetDevice();
+    input.focus();
+    v6633Render();
+    cTimer();
+  };
+
+  cGrade=function(raw,executed){
+    if(!challengeState.running)return;
+    var c=cCurrent(),step=challengeState.step||0;
+    var good=v6633Check(challengeState.level,challengeState.index,step);
+    challengeState.history.push({command:raw,ok:good,executed:!!executed,step:step+1});
+    if(good){
+      challengeState.step++;
+      document.getElementById("cFeedback").className="status ok";
+      if(challengeState.step>=c.steps.length){
+        challengeState.running=false;
+        challengeState.elapsed=(performance.now()-challengeState.start)/1000;
+        v6633Record(challengeState.level,challengeState.index,challengeState.score,challengeState.elapsed,challengeState.errors);
+        document.getElementById("cStatus").textContent="🏆 مكتمل";
+        document.getElementById("cFeedback").textContent="✅ ممتاز. تم التحقق من الإعداد الفعلي للجهاز وحُفظ الإنجاز.";
+        v6633RenderList();
+      }else{
+        document.getElementById("cFeedback").textContent="✅ تم التحقق من هذه الخطوة فعليًا. انتقل إلى الخطوة التالية.";
+      }
+    }else{
+      challengeState.errors++;
+      challengeState.score=Math.max(0,challengeState.score-(executed?5:3));
+      document.getElementById("cFeedback").className="status bad";
+      document.getElementById("cFeedback").textContent=executed?"❌ الأمر نُفّذ، لكنه لم يحقق شرط الخطوة الحالية.":"❌ لم يُنفّذ الأمر بنجاح. راجع الوضع الحالي والتلميح.";
+    }
+    v6633Render();
+  };
+
+  runInput=function(){
+    var raw=input.value.trim();if(!raw)return;
+    input.value="";
+    if(activeTab==="test"){
+      var q=tests[testIndex];
+      if(testIndex>=tests.length){renderTest();return;}
+      var accepted=normalize(q[1])===v6632Normalize(raw);
+      var executed=runCommand(raw);
+      if(accepted){testScore++;say("ok","✅ إجابة صحيحة.");}
+      else{say("err","❌ إجابة غير صحيحة. المتوقع: "+q[1]);}
+      if(!executed&&accepted)say("out","ℹ️ الإجابة صحيحة نصيًا، لكن الجهاز يحتاج إلى الوضع الصحيح لتنفيذها.");
+      testIndex++;renderTest();return;
+    }
+    var executed=runCommand(raw);
+    if(activeTab==="challenge")cGrade(raw,executed);
+  };
+
+  document.getElementById("cHint").addEventListener("click",function(e){
+    e.preventDefault();e.stopImmediatePropagation();
+    if(activeTab!=="challenge")return;
+    document.getElementById("cFeedback").className="status";
+    document.getElementById("cFeedback").textContent=v6633Hint();
+  },true);
+
+  document.querySelectorAll(".level").forEach(function(btn){
+    btn.addEventListener("click",function(e){
+      var level=btn.dataset.level;
+      if(!v6633Unlocked(level)){
+        e.preventDefault();e.stopImmediatePropagation();
+        challengeState.level="beginner";
+        challengeState.index=0;
+        cReset();v6633RenderList();cRender();
+        document.getElementById("cFeedback").className="status bad";
+        document.getElementById("cFeedback").textContent="🔒 أكمل جميع تحديات المستوى السابق لفتح هذا المستوى.";
+      }
+    },true);
+  });
+
+  var oldTabSet=setTab;
+  setTab=function(name){
+    oldTabSet(name);
+    if(name==="challenge"){
+      if(!v6633Unlocked(challengeState.level))challengeState.level="beginner";
+      v6633RenderList();cRender();
+    }
+  };
+
+  challengeState.step=0;
+})();
+
 resetDevice();renderTask();renderTest();renderGuide();cRenderList();cRender();
 })();
 </script>
