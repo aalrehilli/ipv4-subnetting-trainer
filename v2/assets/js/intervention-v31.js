@@ -85,9 +85,9 @@ export function interventionCenterView(){
     '</div>'+
     '<div class="card intervention-workflow"><div><b>1</b><span>اكتشاف</span></div><div class="workflow-arrow">←</div><div><b>2</b><span>قرار</span></div><div class="workflow-arrow">←</div><div><b>3</b><span>متابعة</span></div><div class="workflow-arrow">←</div><div><b>4</b><span>إغلاق</span></div></div>'+
     '<div class="section-title"><h3>قائمة التدخلات</h3><div class="filter-chips">'+
-'<button class="filter-chip '+(filter==="open"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="open">مفتوحة</button>'+
-'<button class="filter-chip '+(filter==="assigned"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="assigned">قيد المتابعة</button>'+
-'<button class="filter-chip '+(filter==="done"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="done">مغلقة</button>'+
-'<button class="filter-chip '+(filter==="all"?"active":"")+'" data-intervention-action="filter" data-intervention-filter="all">الكل</button></div></div>'+
+'<button class="filter-chip '+(filter==="open"?"active":"")+'" data-intervention-filter="open">مفتوحة</button>'+
+'<button class="filter-chip '+(filter==="assigned"?"active":"")+'" data-intervention-filter="assigned">قيد المتابعة</button>'+
+'<button class="filter-chip '+(filter==="done"?"active":"")+'" data-intervention-filter="done">مغلقة</button>'+
+'<button class="filter-chip '+(filter==="all"?"active":"")+'" data-intervention-filter="all">الكل</button></div></div>'+
     '<div class="intervention-list">'+list.map(row).join("")+'</div>';
 }
