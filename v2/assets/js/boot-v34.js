@@ -20,7 +20,7 @@ function card(title,value,sub=""){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.2</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.3</small></div></div>'+
     '<nav class="nav">'+items.map(([id,label])=>'<button class="'+(state.page===id?"active":"")+'" data-page="'+id+'">'+label+'</button>').join("")+'</nav>'+
     '<div class="sidebar-footer">Learn → Practice → Assess → Analyze → Improve</div></aside>';
 }
@@ -31,8 +31,8 @@ function topbar(){
 }
 
 function studentHome(){
-  return '<section class="student-hero home-hero"><div class="student-hero-copy"><span class="eyebrow">رحلتك التعليمية • V3.2</span><h1>أهلًا بك في IPv4 Academy 👋</h1><p>منصة تدريب عملية تجمع التعلم والتدريب والاختبارات والتحليل في مسار واحد.</p><div class="hero-actions"><button class="btn btn-white" data-page="review">✦ المراجعة الذكية</button><button class="btn btn-outline-white" data-page="level">🎯 اختبار تحديد المستوى</button></div></div><div class="student-hero-side"><div class="hero-mini-label">الإتقان العام</div><div class="hero-level">65%</div><div class="progress hero-progress"><span style="width:65%"></span></div><div class="hero-progress-row"><span>IPv4 & Subnetting</span><span>320 XP</span></div></div></section>'+
-    '<div class="home-utility-grid"><div class="card home-utility-card notification-utility"><div class="home-utility-icon">🔔</div><div><span class="eyebrow purple">V3.2</span><h3>مركز الإشعارات الذكي</h3><p class="muted">تنبيهات مرتبطة بأدائك والخطوة التالية.</p></div><button class="btn btn-purple" data-page="notifications">فتح الإشعارات</button></div><div class="card home-utility-card"><div class="home-utility-icon green">✓</div><div><span class="eyebrow green">الخطوة التالية</span><h3>راجع VLSM</h3><p class="muted">الموضوع يحتاج تدريبًا إضافيًا قبل الانتقال.</p></div><button class="btn btn-green" data-page="review">ابدأ الآن</button></div></div>'+
+  return '<section class="student-hero home-hero"><div class="student-hero-copy"><span class="eyebrow">رحلتك التعليمية • V3.3</span><h1>أهلًا بك في IPv4 Academy 👋</h1><p>منصة تدريب عملية تجمع التعلم والتدريب والاختبارات والتحليل في مسار واحد.</p><div class="hero-actions"><button class="btn btn-white" data-page="review">✦ المراجعة الذكية</button><button class="btn btn-outline-white" data-page="level">🎯 اختبار تحديد المستوى</button></div></div><div class="student-hero-side"><div class="hero-mini-label">الإتقان العام</div><div class="hero-level">65%</div><div class="progress hero-progress"><span style="width:65%"></span></div><div class="hero-progress-row"><span>IPv4 & Subnetting</span><span>320 XP</span></div></div></section>'+
+    '<div class="home-utility-grid"><div class="card home-utility-card notification-utility"><div class="home-utility-icon">🔔</div><div><span class="eyebrow purple">V3.3</span><h3>مركز الإشعارات الذكي</h3><p class="muted">تنبيهات مرتبطة بأدائك والخطوة التالية.</p></div><button class="btn btn-purple" data-page="notifications">فتح الإشعارات</button></div><div class="card home-utility-card"><div class="home-utility-icon green">✓</div><div><span class="eyebrow green">الخطوة التالية</span><h3>راجع VLSM</h3><p class="muted">الموضوع يحتاج تدريبًا إضافيًا قبل الانتقال.</p></div><button class="btn btn-green" data-page="review">ابدأ الآن</button></div></div>'+
     '<div class="student-grid-4 home-kpis">'+card("تقدم المقرر","68%","+6% هذا الأسبوع")+card("الإتقان العام","65%","Smart Engine")+card("سلسلة التعلم","4 أيام","استمر غدًا")+card("نقاط الخبرة","320 XP","الهدف التالي 500")+'</div>'+
     '<div class="section-title"><h3>خريطة الإتقان</h3><span class="badge purple">Smart Learning</span></div>'+
     '<div class="card mastery-grid">'+["IPv4","Binary","Prefix","Subnet Mask","FLSM","VLSM"].map((x,i)=>{const v=[84,72,58,46,62,42][i];return '<div class="mastery-item"><div><strong>'+x+'</strong><span class="badge '+(v<50?"red":v<70?"orange":"green")+'">'+v+'%</span></div><div class="progress"><span style="width:'+v+'%"></span></div><small>'+ (v<50?"يحتاج تدخل":v<70?"يحتاج تدريب":"جيد") +'</small></div>'}).join("")+'</div>'+
@@ -40,7 +40,7 @@ function studentHome(){
 }
 
 function simplePage(title,eyebrow,desc,actions){
-  return '<div class="page-intro"><span class="eyebrow blue">'+eyebrow+'</span><h2>'+title+'</h2><p>'+desc+'</p></div><div class="card"><div class="section-title"><h3>وضع V3.2</h3></div><p class="muted">هذه الشاشة تعمل الآن كواجهة مستقرة، ويمكن ربطها بالمكونات المتقدمة تدريجيًا.</p><div class="hero-actions" style="margin-top:15px">'+actions.map(x=>'<button class="btn '+(x[1]||"btn-primary")+'" data-page="'+x[0]+'">'+x[2]+'</button>').join("")+'</div></div>';
+  return '<div class="page-intro"><span class="eyebrow blue">'+eyebrow+'</span><h2>'+title+'</h2><p>'+desc+'</p></div><div class="card"><div class="section-title"><h3>وضع V3.3</h3></div><p class="muted">هذه الشاشة تعمل الآن كواجهة مستقرة، ويمكن ربطها بالمكونات المتقدمة تدريجيًا.</p><div class="hero-actions" style="margin-top:15px">'+actions.map(x=>'<button class="btn '+(x[1]||"btn-primary")+'" data-page="'+x[0]+'">'+x[2]+'</button>').join("")+'</div></div>';
 }
 
 async function loadStudentPage(){
@@ -52,19 +52,19 @@ async function loadStudentPage(){
 async function loadAdvanced(page){
   try{
     if(page==="notifications"){
-      const m=await import("./notifications-v30.js?v=340");
+      const m=await import("./notifications-v30.js?v=350");
       return m.notificationsPage(state.role);
     }
     if(page==="interventions"){
-      const m=await import("./intervention-v31.js?v=340");
+      const m=await import("./intervention-v31.js?v=350");
       return m.interventionCenterView();
     }
     if(page==="student360"){
-      const m=await import("./student360-v29.js?v=340");
+      const m=await import("./student360-v29.js?v=350");
       return m.student360View(4);
     }
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash"].includes(page)){
-      const m=await import("./trainer-v22.js?v=340");
+      const m=await import("./trainer-v22.js?v=350");
       return m.getTrainerView(page);
     }
   }catch(error){
