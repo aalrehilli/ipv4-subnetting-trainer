@@ -667,7 +667,7 @@ document.querySelectorAll(".level").forEach(function(b){b.addEventListener("clic
 
     if(c.indexOf("banner motd")===0){
       if(S.mode!=="global")return fail("% Invalid input detected.");
-      var b=original.substring(10).trim();
+      var b=original.substring(11).trim();
       if(b.length<3)return fail("% Incomplete banner command.");
       var delim=b.charAt(0),end=b.charAt(b.length-1),body=b;
       if(delim===end)body=b.slice(1,-1);else body=b;
@@ -862,7 +862,6 @@ document.querySelectorAll(".level").forEach(function(b){b.addEventListener("clic
       var q=tests[testIndex];
       if(testIndex>=tests.length){renderTest();return;}
       var accepted=normalize(q[1])===v6632Normalize(raw);
-      say("cmd",v6632Prompt()+" "+raw);
       var executed=runCommand(raw);
       if(accepted){testScore++;say("ok","✅ إجابة صحيحة.");}
       else{say("err","❌ إجابة غير صحيحة. المتوقع: "+q[1]);}
@@ -906,6 +905,30 @@ function runQa(){
    checks.push(add("configure",prompt()==="Switch(config)#"));
    runCommand("hostname QA1");
    checks.push(add("hostname",prompt()==="QA1(config)#"));
+   runCommand("enable secret class");
+   runCommand("line console 0");
+   runCommand("password cisco");
+   runCommand("login");
+   runCommand("exit");
+   runCommand("line vty 0 4");
+   runCommand("password cisco");
+   runCommand("login");
+   runCommand("end");
+   runCommand("configure terminal");
+   runCommand("interface vlan 1");
+   runCommand("ip address 192.168.1.2 255.255.255.0");
+   runCommand("no shutdown");
+   runCommand("end");
+   runCommand("show ip interface brief");
+   runCommand("copy running-config startup-config");
+   var s=window.v6632GetState();
+   checks.push(add("Enable Secret",s.enableSecret==="class"));
+   checks.push(add("Console",s.consolePassword==="cisco"&&s.consoleLogin));
+   checks.push(add("VTY",s.vtyPassword==="cisco"&&s.vtyLogin));
+   checks.push(add("VLAN1 IP",s.vlanIp==="192.168.1.2"&&s.vlanMask==="255.255.255.0"));
+   checks.push(add("VLAN1 up",s.vlanUp===true));
+   checks.push(add("Saved",s.saved===true));
+   checks.push(add("Show brief",s.history.some(function(x){return x.ok&&String(x.command).toLowerCase()==="show ip interface brief";})));
    resetDevice();
    checks.push(add("إعادة الجهاز",prompt()==="Switch>"));
  }catch(e){
