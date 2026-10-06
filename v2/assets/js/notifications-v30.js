@@ -158,6 +158,8 @@ export function markNotificationRead(id){
   return write(list);
 }
 
+export function resetNotifications(){localStorage.removeItem(KEY)}
+
 export function markAllNotificationsRead(role){
   const list=read().map(x=>x.role===role?{...x,read:true,readAt:now()}:x);
   return write(list);
@@ -184,7 +186,7 @@ function itemHtml(item){
     '<p>'+esc(item.body)+'</p>'+
     '<div class="notification-actions">'+
     '<button class="btn btn-soft mini-btn" data-notification-action="read" data-notification-id="'+esc(item.id)+'">'+(item.read?"✓ تم الاطلاع":"تعليم كمقروء")+'</button>'+
-    (item.page?'<button class="btn btn-primary mini-btn" data-notification-action="read" data-notification-id="'+esc(item.id)+'" data-notification-page="'+esc(item.page)+'">'+esc(item.action||"فتح")+'</button>':"")+
+    (item.page?'<button class="btn btn-primary mini-btn" data-notification-action="read" data-notification-id="'+esc(item.id)+'" data-notification-page="'+esc(item.page)+'" data-notification-student="'+(item.studentId||"") +'">'+esc(item.action||"فتح")+'</button>':"")+
     '</div></div></article>';
 }
 
