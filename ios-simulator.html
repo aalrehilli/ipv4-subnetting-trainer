@@ -44,6 +44,97 @@ button,input{font:inherit}
 .qa-card{margin-top:12px;border:1px solid #dce7ec;border-radius:13px;background:#fff;overflow:hidden}.qa-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#f6fafb;border-bottom:1px solid #e2eaee}.qa-head b{display:block;color:#456676;font-size:11px}.qa-head small{display:block;color:#8a989f;font-size:8px;margin-top:2px}.qa-head button{border:1px solid #c6dce6;background:#edf6fa;color:#1a607f;border-radius:8px;padding:7px 10px;font-size:9px;font-weight:900;cursor:pointer}.qa-summary{padding:9px 12px;color:#6e808a;font-size:9px}.qa-results{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:0 12px 12px}.qa-result{border:1px solid #e1e9ed;border-radius:8px;background:#fbfdfe;padding:7px;text-align:center}.qa-result b{display:block;font-size:15px}.qa-result small{display:block;color:#7d8e97;font-size:8px;margin-top:2px}.qa-result.pass b{color:#2f7959}.qa-result.fail b{color:#a45a61}.qa-results:empty{display:none}@media(max-width:800px){.qa-results{grid-template-columns:repeat(2,1fr)}}
 </style>
 
+
+<style id="v66_43_professional_css">
+/* V66.43 — Professional UI refresh */
+:root{
+  --bg:#f2f6f9;--surface:#ffffff;--surface-soft:#f7fafc;--line:#d7e3ea;
+  --ink:#17384b;--muted:#6f8490;--brand:#0b5f8a;--brand-2:#0a7699;
+  --navy:#0d2738;--navy-2:#112f42;--accent:#2aa6c9;--success:#35c478;
+}
+html{background:var(--bg)}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(42,166,201,.08),transparent 28%),
+    radial-gradient(circle at 5% 14%,rgba(11,95,138,.05),transparent 24%),
+    #f2f6f9;
+  color:var(--ink);
+  letter-spacing:.05px;
+}
+.page{max-width:1400px;margin:0 auto;padding:16px 18px 24px}
+.topbar{
+  min-height:54px;padding:9px 12px 9px 14px;margin-bottom:12px;
+  border:1px solid rgba(13,39,56,.18);border-radius:15px;
+  background:linear-gradient(135deg,#0d2e43,#0f4e6c 68%,#126d8c);
+  box-shadow:0 10px 25px rgba(18,62,82,.10);
+}
+.brand{display:flex;align-items:center;gap:8px;color:#f4fbfd;font-size:14px;font-weight:900}
+.brand:before{content:"⌁";display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);font-size:16px}
+.back{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.09);color:#eefaff;border-radius:9px;padding:8px 12px;font-size:11px}
+.back:hover{background:rgba(255,255,255,.16)}
+.hero{
+  position:relative;overflow:hidden;min-height:122px;align-items:center;padding:22px 24px;
+  background:linear-gradient(135deg,#ffffff 0%,#f4f9fc 55%,#eaf6fa 100%);
+  border:1px solid #d3e1e8;border-radius:20px;
+  box-shadow:0 12px 30px rgba(25,69,91,.06)
+}
+.hero:after{content:"";position:absolute;inset:auto -50px -65px auto;width:210px;height:210px;border-radius:50%;background:rgba(42,166,201,.08);filter:blur(2px)}
+.hero h1{position:relative;z-index:1;margin:7px 0 4px;font-size:31px;letter-spacing:-.3px;color:#0a567d}
+.hero h1 strong{color:#0b79a4}
+.hero p{position:relative;z-index:1;max-width:760px;font-size:12px;line-height:1.9;color:#68808c}
+.badge{background:#eaf7fb;border-color:#cbe4ed;color:#0c668d;padding:6px 10px;font-size:10px}
+.meta{position:relative;z-index:1;display:flex;gap:7px;justify-content:flex-end}
+.meta span{background:rgba(255,255,255,.88);border-color:#d4e3e9;border-radius:9px;padding:8px 10px;font-size:10px;color:#486677;box-shadow:0 4px 12px rgba(41,76,93,.04)}
+.tabs{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:12px 0 14px;padding:5px;
+  border:1px solid #d7e3e9;border-radius:14px;background:rgba(255,255,255,.72);backdrop-filter:blur(5px)
+}
+.tab{border:1px solid transparent;background:transparent;color:#58717e;border-radius:10px;padding:10px 8px;min-height:40px;font-size:11px;transition:.15s ease}
+.tab:hover{background:#f3f8fa;color:#1d607e}
+.tab.active{background:linear-gradient(180deg,#0d698f,#0b5b80);border-color:#095675;color:#fff;box-shadow:0 5px 12px rgba(11,91,128,.20);inset:0 0 0 0}
+.layout{grid-template-columns:minmax(0,1.7fr) minmax(320px,.82fr);gap:16px}
+.cli{border-radius:18px;border:1px solid #183441;box-shadow:0 18px 36px rgba(7,31,43,.16);background:#05090b}
+.cli-head{padding:11px 13px;background:linear-gradient(180deg,#10232e,#0d1c25);border-bottom:1px solid #263a44}
+.device b{font-size:12px;color:#f2fbfd}.device small{font-size:10px;color:#8ca9b5}.dot{width:9px;height:9px;background:#31ca7c;box-shadow:0 0 0 4px rgba(49,202,124,.08),0 0 12px rgba(49,202,124,.48)}
+.cli-tools button{background:#172d39;border-color:#294652;color:#b9cbd2;border-radius:8px;padding:6px 9px}
+.terminal{height:520px;padding:16px 15px;font-size:14px;line-height:1.75;background:#020608;scrollbar-color:#304751 #071015;scrollbar-width:thin}
+.terminal::-webkit-scrollbar{width:8px}.terminal::-webkit-scrollbar-track{background:#071015}.terminal::-webkit-scrollbar-thumb{background:#28424d;border-radius:20px}
+.command-row{grid-template-columns:auto minmax(0,1fr) 84px;padding:11px;background:linear-gradient(180deg,#10212a,#0c171d);border-top:1px solid #2b414c}
+.prompt{font-size:14px;font-weight:800;color:#7df0b0}
+.command-row input{border-color:#34515e;background:#061015;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);padding:10px 11px}
+.command-row input:focus{border-color:#38a8cf;box-shadow:0 0 0 2px rgba(56,168,207,.13)}
+.run{background:linear-gradient(180deg,#2589b1,#196984);border-color:#2d95bb;box-shadow:0 4px 10px rgba(25,105,132,.18)}
+.quick{padding:9px 11px;background:#0a1419;border-top:1px solid #1e313a}
+.quick button{background:#10252f;border-color:#294853;color:#b9d0d8;border-radius:8px;padding:7px 9px}
+.quick button:hover{border-color:#3e7180;background:#17313d;color:#e5f4f8}
+.side{gap:12px}
+.card{border-color:#d4e1e8;border-radius:15px;box-shadow:0 8px 20px rgba(31,77,103,.045)}
+.card-head{padding:11px 13px;background:linear-gradient(180deg,#f8fbfc,#f1f7fa);font-size:12px;color:#2f5c70;border-bottom-color:#dfe9ee}
+.card-body{padding:12px}
+.task-title{font-size:19px;letter-spacing:-.1px;color:#1f5068}
+.task-text{font-size:12px;line-height:1.9;color:#647b87}
+.hint{padding:9px 10px;background:#f6fafc;border-color:#cbdde5;color:#708590}
+.status{font-size:11px}
+.next{background:linear-gradient(180deg,#eff8fb,#e8f4f8);border-color:#c4dce6;color:#24576c;padding:9px 11px}
+.state{grid-template-columns:1fr 1fr;gap:6px}
+.state-row{min-height:35px;padding:7px 8px;background:#fbfdfe;border-color:#e0e8ed}
+.state-row b{font-size:10px}.state-row span{font-size:10px}
+.challenge-wrap{grid-template-columns:1fr;gap:9px}
+.levels{grid-template-columns:repeat(3,1fr)}
+.level{text-align:center;padding:9px 7px}
+.challenge-list{grid-template-columns:1fr}
+.challenge-metrics{grid-template-columns:repeat(4,1fr)}
+.metric{padding:7px;border-color:#dbe6eb}.metric b{font-size:15px}
+.challenge-card .card-head{background:#f6fafb}
+.guide-grid{gap:9px}.guide-group{border-color:#dce7ec;background:#fbfdfe}.cmd-chip{border-color:#d4e2e8}
+.footer{margin-top:14px;padding-top:2px;font-size:9px;color:#8597a0}
+.qa-card{border-radius:15px;box-shadow:0 8px 18px rgba(31,77,103,.04)}
+@media(max-width:1100px){.page{padding:14px}.hero{align-items:flex-start}.meta{max-width:310px;flex-wrap:wrap}.terminal{height:470px}}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.state{grid-template-columns:1fr 1fr}.terminal{height:400px}.tabs{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.page{padding:10px}.topbar{flex-direction:column;align-items:stretch}.back{width:100%}.hero{padding:18px}.hero h1{font-size:27px}.meta{max-width:none;justify-content:flex-start}.tabs{grid-template-columns:1fr}.state{grid-template-columns:1fr}.command-row{grid-template-columns:1fr}.prompt{order:0}.run{width:100%}.terminal{height:340px}.levels{grid-template-columns:1fr}.challenge-metrics{grid-template-columns:repeat(2,1fr)}}
+</style>
+
 </head>
 <body>
 <div class="page">
@@ -54,7 +145,7 @@ button,input{font:inherit}
 
   <section class="hero">
     <div>
-      <span class="badge">V66.42 • نسخة مستقرة</span>
+      <span class="badge">V66.43 • واجهة احترافية</span>
       <h1>محاكي <strong>Cisco IOS</strong></h1>
       <p>محاكي تدريبي مستقل لأوامر السويتش والموجّه من الوحدة 2 والوحدة 10، مصمم للتدريب داخل المتصفح دون التأثير على بقية المنصة.</p>
     </div>
@@ -144,7 +235,7 @@ button,input{font:inherit}
     </aside>
   </div>
 
-  <div class="footer">V66.42 • محاكي Cisco IOS مستقل • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
+  <div class="footer">V66.43 • محاكي Cisco IOS مستقل • يعمل داخل المتصفح ولا يغيّر بيانات Packet Tracer.</div>
 </div>
 
 <script>
