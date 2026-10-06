@@ -190,3 +190,13 @@
 .lesson-preview-mini p{margin:0;line-height:1.9;color:var(--muted);font-size:12px}
 .lesson-description{margin-top:6px;font-size:11px;color:var(--muted);line-height:1.8;white-space:pre-line}
 @media(max-width:900px){.lesson-editor-layout{grid-template-columns:1fr}.lesson-editor-side{position:static}}
+
+/* V3.6 Learner Preview */
+.lesson-preview-render{margin-top:14px;border-right:4px solid var(--primary)}
+.lesson-preview-body{display:grid;gap:12px}
+.lesson-preview-body h2{margin:0;color:var(--primary-2)}
+.lesson-preview-body p{line-height:1.95}
+.lesson-objectives{background:#f4f9fd;border:1px solid #d9e9f4;border-radius:12px;padding:12px}
+.lesson-objectives strong{color:var(--primary-2)}
+.lesson-objectives p{margin:5px 0 0}
+.lesson-content-render{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px;line-height:2.05;white-space:pre-wrap;min-height:100px}
