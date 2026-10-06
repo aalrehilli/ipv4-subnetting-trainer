@@ -108,6 +108,26 @@
 /* V66.43 — مزامنة IOS المركزية للمتدرب */
 
 /* V66.44 — مركز قيادة المدرب */
+
+/* V66.45 — مركز مهام اليوم للمدرب */
+.v6645-daily-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.v6645-daily-card{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px}
+.v6645-daily-card .head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:9px}
+.v6645-daily-card h3{margin:0;font-size:16px}
+.v6645-count{font-size:25px;font-weight:900;color:#0759a5}
+.v6645-task{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #eef3f6}
+.v6645-task:last-child{border-bottom:0}
+.v6645-task strong{display:block;color:#294f65;font-size:12px}
+.v6645-task small{display:block;color:#7a8b96;font-size:10px;margin-top:3px}
+.v6645-priority{padding:4px 7px;border-radius:12px;font-size:9px;font-weight:900;white-space:nowrap}
+.v6645-priority.urgent{background:#ffe8e8;color:#a51f1f}
+.v6645-priority.today{background:#fff1dc;color:#956000}
+.v6645-priority.info{background:#eaf5fb;color:#0759a5}
+.v6645-daily-empty{padding:14px;border-radius:10px;background:#f8fbfd;color:#71828d;text-align:center;font-size:11px}
+.v6645-summary{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.v6645-summary span{padding:6px 9px;border-radius:999px;background:#f5f9fc;border:1px solid #dfe9ef;color:#5a7180;font-size:10px;font-weight:800}
+@media(max-width:950px){.v6645-daily-grid{grid-template-columns:1fr}}
+
 .v6644-trainer-hero{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
 .v6644-trainer-actions{display:flex;gap:8px;flex-wrap:wrap}
 .v6644-trainer-actions button{white-space:nowrap}
@@ -1991,6 +2011,22 @@ html,body{max-width:100%;overflow-x:hidden}
         <button onclick="trainerTab('smartFollow')">🎯 المتابعة الذكية</button>
         <button onclick="trainerTab('iosFinal')">🖥️ تحليل IOS</button>
       </div>
+
+    <div class="v6644-center-panel" style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div>
+          <h3 style="margin-bottom:3px">🗓️ مهام المدرب اليوم</h3>
+          <div class="muted">الأولوية مبنية على بيانات الاختبارات والتسليمات والنشاط الأخير.</div>
+        </div>
+        <button class="primary" onclick="v6645RefreshDaily()">🔄 تحديث المهام</button>
+      </div>
+      <div id="v6645DailySummary" class="v6645-summary"><span>⏳ جارٍ التحليل...</span></div>
+      <div id="v6645DailyGrid" class="v6645-daily-grid">
+        <div class="v6645-daily-card"><div class="head"><h3>🚨 عاجل</h3><span class="v6645-count">0</span></div><div class="v6645-daily-empty">جارٍ التحليل...</div></div>
+        <div class="v6645-daily-card"><div class="head"><h3>📅 اليوم والقريب</h3><span class="v6645-count">0</span></div><div class="v6645-daily-empty">جارٍ التحليل...</div></div>
+        <div class="v6645-daily-card"><div class="head"><h3>📥 جديد</h3><span class="v6645-count">0</span></div><div class="v6645-daily-empty">جارٍ التحليل...</div></div>
+      </div>
+    </div>
     </div>
   </div>
   <div class="v6644-overview-toolbar">
@@ -4547,25 +4583,104 @@ function v6644FilterResults(){
     '</table></div>':'<div class="trainer-report-empty">لا توجد نتائج مطابقة.</div>';
 }
 
+let v6644TrainerResults=[];
+let v6644TrainerProfiles=[];
+let v6645DailyCache={exams:[],labs:[],submissions:[],results:[]};
+
+function v6645FmtWhen(dt){
+  const d=new Date(dt), now=new Date();
+  if(Number.isNaN(d.getTime()))return "—";
+  const diff=Math.round((d-now)/60000);
+  if(Math.abs(diff)<60)return diff>=0?"خلال "+diff+" دقيقة":"منذ "+Math.abs(diff)+" دقيقة";
+  const days=Math.round(diff/1440);
+  if(days===0)return "اليوم";
+  if(days===1)return "غدًا";
+  if(days===-1)return "أمس";
+  return d.toLocaleDateString("ar-SA");
+}
+function v6645EscapeAction(fn){
+  return "javascript:void 0";
+}
+function v6645ActionButton(label,action,cls){
+  return '<button type="button" class="primary '+(cls||'')+'" onclick="'+action+'">'+label+'</button>';
+}
+function v6645RenderTasks(tasks,emptyText){
+  if(!tasks.length)return '<div class="v6645-daily-empty">'+emptyText+'</div>';
+  return tasks.slice(0,6).map(t=>
+    '<div class="v6645-task"><div><strong>'+esc(t.title)+'</strong><small>'+esc(t.meta||"")+'</small></div><div style="display:flex;gap:6px;align-items:center"><span class="v6645-priority '+t.priority+'">'+t.label+'</span>'+t.action+'</div></div>'
+  ).join("");
+}
+function v6645RefreshDaily(data){
+  if(data)v6645DailyCache=data;
+  const cache=v6645DailyCache||{};
+  const now=new Date(), next7=new Date(now.getTime()+7*86400000), yesterday=new Date(now.getTime()-24*3600000);
+  const exams=cache.exams||[],subs=cache.submissions||[],results=cache.results||[];
+  const urgent=[],near=[],fresh=[];
+
+  exams.forEach(e=>{
+    const start=e.start_at?new Date(e.start_at):null,end=e.ends_at?new Date(e.ends_at):null;
+    const title=e.title||"اختبار";
+    if(e.is_active&&start&&start<=now&&(!end||end>=now)){
+      urgent.push({title:"اختبار جارٍ: "+title,meta:(e.group_name?"الشعبة "+e.group_name+" • ":"")+"ينتهي "+(end?v6645FmtWhen(end):"بدون موعد نهاية"),priority:"urgent",label:"جارٍ",action:v6645ActionButton("فتح","trainerTab('exams')","red")});
+    }else if(start&&start>=now&&start<=next7){
+      near.push({title:"اختبار قادم: "+title,meta:(e.group_name?"الشعبة "+e.group_name+" • ":"")+"يبدأ "+v6645FmtWhen(start),priority:"today",label:start.toDateString()===now.toDateString()?"اليوم":"قريب",action:v6645ActionButton("إدارة","trainerTab('exams')","orange")});
+    }
+  });
+
+  subs.filter(s=>String(s.status||"") === "submitted").forEach(s=>{
+    const dt=s.submitted_at?new Date(s.submitted_at):null;
+    const stale=dt&&dt<=yesterday;
+    const name=s._student||s.student_id||"متدرب";
+    const lab="تمرين "+(s._labNo||"");
+    const t={title:"تسليم يحتاج تصحيحًا: "+name,meta:lab+" • "+(s._group||"غير محددة")+" • "+(dt?v6645FmtWhen(dt):"تاريخ غير متاح"),priority:stale?"urgent":"today",label:"تصحيح",action:v6645ActionButton("فتح","trainerTab('labs')","purple")};
+    (stale?urgent:near).push(t);
+  });
+
+  results.filter(r=>r.d&&new Date(r.d)>=yesterday).slice(0,8).forEach(r=>{
+    fresh.push({title:"نتيجة جديدة: "+r.n,meta:r.t+" • "+r.s+"% • "+v6645FmtWhen(r.d),priority:"info",label:"جديد",action:v6645ActionButton("عرض","trainerTab('overview')","")});
+  });
+
+  const summary=$("v6645DailySummary");
+  if(summary)summary.innerHTML='<span>🚨 عاجل: '+urgent.length+'</span><span>📅 قريب: '+near.length+'</span><span>📥 جديد: '+fresh.length+'</span>';
+  const grid=$("v6645DailyGrid");
+  if(grid){
+    const cards=grid.querySelectorAll(".v6645-daily-card");
+    const sets=[urgent,near,fresh];
+    const labels=["عاجل","اليوم والقريب","جديد"];
+    sets.forEach((set,i)=>{
+      const card=cards[i];if(!card)return;
+      const count=card.querySelector(".v6645-count"),body=card.querySelector(".v6645-daily-empty")||card.querySelector("div:last-child");
+      if(count)count.textContent=set.length;
+      const host=card.querySelector(".v6645-daily-empty")?.parentElement;
+      if(host)host.innerHTML='<div class="head"><h3>'+["🚨 عاجل","📅 اليوم والقريب","📥 جديد"][i]+'</h3><span class="v6645-count">'+set.length+'</span></div>'+v6645RenderTasks(set,i===0?"لا توجد مهام عاجلة.":i===1?"لا توجد مهام قريبة.":"لا توجد نتائج جديدة خلال آخر 24 ساعة.");
+    });
+  }
+}
+
 async function loadTrainerOverview(){
-  const [ar,er,pr,ex]=await Promise.all([
+  const [ar,er,pr,ex,lr,sr]=await Promise.all([
     db.from("attempts").select("*").order("submitted_at",{ascending:false}).limit(500),
     db.from("exercise_attempts").select("*").order("created_at",{ascending:false}).limit(500),
     db.from("profiles").select("id,full_name,student_id,group_name,role"),
-    db.from("trainer_exams").select("id,title,is_active,start_at,ends_at,group_name,topic").order("created_at",{ascending:false})
+    db.from("trainer_exams").select("id,title,is_active,start_at,ends_at,group_name,topic").order("created_at",{ascending:false}),
+    db.from("packet_tracer_labs").select("id,lab_no,title,max_score").order("lab_no"),
+    db.from("packet_tracer_submissions").select("id,student_id,lab_id,status,submitted_at,score").order("submitted_at",{ascending:false}).limit(200)
   ]);
-  if(ar.error)console.warn("Trainer attempts:",ar.error.message);
-  if(er.error)console.warn("Trainer exercises:",er.error.message);
-  if(pr.error)console.warn("Trainer profiles:",pr.error.message);
-  if(ex.error)console.warn("Trainer exams:",ex.error.message);
   const profiles=pr.data||[];
   const pm=new Map(profiles.map(x=>[x.id,x]));
   const a=ar.data||[],e=er.data||[],exams=ex.data||[];
+  const labMap=new Map((lr.data||[]).map(x=>[x.id,x]));
+  const submissions=sr.error?[]:(sr.data||[]).map(s=>{
+    const p=pm.get(s.student_id)||{},l=labMap.get(s.lab_id)||{};
+    return {...s,_student:p.full_name||p.student_id||s.student_id,_studentId:p.student_id||"",_group:String(p.group_name||"").trim(),_labNo:Number(l.lab_no||0),_labTitle:l.title||""};
+  });
   const rows=[
     ...a.map(x=>{const p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",userId:x.student_id,g:p.group_name||"",t:"اختبار",d:x.submitted_at,s:Number(x.percentage||0),z:(x.correct_answers||0)+"/"+(x.total_questions||0)};}),
     ...e.map(x=>{const p=pm.get(x.student_id)||{};return {n:p.full_name||"",id:p.student_id||x.student_id||"",userId:x.student_id,g:p.group_name||"",t:"تمرين",d:x.created_at,s:Number(x.score||0),z:x.is_correct?"صحيح":"خطأ"};})
   ].sort((a,b)=>new Date(b.d||0)-new Date(a.d||0));
   v6644RenderCenter({rows,profiles,exams});
+  v6645DailyCache={exams,submissions,results:rows};
+  v6645RefreshDaily();
 }
 
 async function loadTrainerStudents(){
