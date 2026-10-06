@@ -150,6 +150,7 @@ function labsPage(){
    <div class="hub-card hub-purple"><div class="hub-icon">4</div><span class="badge purple">V2.6</span><h3>FLSM Challenge</h3><p>قسّم شبكة /24 إلى 4 أو 8 شبكات متساوية ثم احسب بيانات كل Subnet.</p><div class="hub-meta"><span>4–8 Subnets</span><span>متوسط</span></div><button class="btn btn-purple" data-lab-page="flsm">ابدأ التحدي</button></div>
    <div class="hub-card"><div class="hub-icon orange">01</div><span class="badge orange">قريبًا</span><h3>Binary Speed Lab</h3><p>تدريب سريع على التحويل بين Binary وDecimal وربط البتات بالـPrefix.</p><div class="hub-meta"><span>سرعة</span><span>مبتدئ</span></div><button class="btn btn-soft" disabled>قريبًا</button></div>
    <div class="hub-card"><div class="hub-icon green">↗</div><span class="badge">المرحلة التالية</span><h3>Packet Tracer</h3><p>سيناريوهات شبكات عملية تتدرج من IPv4 إلى Routing وSwitching.</p><div class="hub-meta"><span>عملي</span><span>متقدم</span></div><button class="btn btn-soft" disabled>لاحقًا</button></div>
+ <div class="hub-card hub-vlsm"><div class="hub-icon">V</div><span class="badge purple">V2.7</span><h3>VLSM Challenge</h3><p>وزّع شبكة على أقسام باحتياجات مختلفة من الأكبر إلى الأصغر، بدون تداخل.</p><div class="hub-meta"><span>سيناريو واقعي</span><span>متقدم</span></div><button class="btn btn-purple" data-lab-page="vlsm">ابدأ التحدي</button></div>
  </div>
  <div class="lab-hub-note"><strong>منهج المختبرات:</strong><span>كل مختبر يعطي نتيجة، ويحفظ المحاولة، ويغذي التقدم والمراجعة الذكية في النسخة النهائية.</span></div>`
 }
