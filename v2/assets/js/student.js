@@ -1,5 +1,5 @@
 import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent,resetDemo,loadPractice,savePractice} from "./demo-data.js";
-import {examPage} from "./exam-v23.js";
+import {examPage,getLastWeakTopics} from "./exam-v23.js";
 
 let student=loadStudent();
 
@@ -159,13 +159,15 @@ function progressPage(){
 }
 
 function reviewPage(){
+ const examWeak=getLastWeakTopics();
+ const topics=examWeak.length?examWeak:student.reviewTopics;
+ const scoreHints=topics.map((t,i)=>({Binary:72,Prefix:58,"Subnet Mask":46,FLSM:61,VLSM:42,IPv4:84}[t]??55));
  return `
- <div class="page-intro"><span class="eyebrow purple">05 • المراجعة الذكية</span><h2>لا تراجع كل شيء</h2><p>نركز على ما يحتاجه مستواك الآن، ثم نقيس التحسن.</p></div>
- <div class="review-focus card"><div class="review-score"><strong>3</strong><span>نقاط تحتاج مراجعة</span></div><div><h3>أولوية اليوم</h3><p class="muted">ابدأ بـ <strong>${student.reviewTopics[0]}</strong> ثم انتقل إلى الموضوع التالي.</p></div><button class="btn btn-purple" id="start-smart-review">ابدأ 5 أسئلة</button></div>
- <div class="grid-3" style="margin-top:14px">${student.reviewTopics.map((t,i)=>`<div class="card review-topic"><div class="review-num">${i+1}</div><h3>${t}</h3><div class="progress"><span style="width:${[46,58,63][i]}%"></span></div><p class="muted">المستوى الحالي ${[46,58,63][i]}%</p><button class="btn btn-soft" data-review-topic="${t}">تدريب مخصص</button></div>`).join("")}</div>
- <div class="card smart-rule"><strong>كيف نقرر نقطة الضعف؟</strong><p class="muted">تعتمد النسخة النهائية على نتائج الاختبارات، أخطاء الأسئلة، الوقت المستغرق، ومحاولات التدريب؛ ثم تختار المنصة أقرب تدخل تعليمي مناسب.</p></div>`
+ <div class="page-intro"><span class="eyebrow purple">05 • المراجعة الذكية</span><h2>مراجعة مبنية على نتيجتك</h2><p>${examWeak.length?"تم تحديث الأولويات اعتمادًا على آخر اختبار قمت به.":"نركز على ما يحتاجه مستواك الآن، ثم نقيس التحسن."}</p></div>
+ <div class="review-focus card"><div class="review-score"><strong>${topics.length}</strong><span>موضوعات الأولوية</span></div><div><h3>أولوية اليوم</h3><p class="muted">ابدأ بـ <strong>${topics[0]||"Binary"}</strong> ثم انتقل إلى الموضوع التالي.</p></div><button class="btn btn-purple" id="start-smart-review">ابدأ التدريب المستهدف</button></div>
+ <div class="grid-3" style="margin-top:14px">${topics.map((t,i)=>`<div class="card review-topic"><div class="review-num">${i+1}</div><h3>${t}</h3><div class="progress"><span style="width:${scoreHints[i]}%"></span></div><p class="muted">آخر مستوى مقاس: ${scoreHints[i]}%</p><button class="btn btn-soft" data-review-topic="${t}">تدريب مخصص</button></div>`).join("")}</div>
+ <div class="card smart-rule"><strong>كيف نقرر نقطة الضعف؟</strong><p class="muted">تجمع المنصة بين نتائج الاختبارات، أخطاء الأسئلة، ودقة التدريب. عندما تتحسن النتيجة، تتغير الأولوية تلقائيًا.</p></div>`
 }
-
 function achievementsPage(){
  const all=["أول خطوة","4 أيام متتالية","إكمال وحدتين","500 XP","80% في اختبار","إتقان Binary","خبير Subnetting"];
  return `
@@ -197,7 +199,13 @@ export function refreshStudent(){student=loadStudent();return student}
 export function handleStudentAction(target){
   if(target.dataset.answer!==undefined) return answerQuestion(Number(target.dataset.answer));
   if(target.id==="restart-practice"){studentState.practice={ids:questions.map(q=>q.id),index:0,score:0,done:false,review:false};return {rerender:true}}
-  if(target.id==="start-smart-review"){studentState.practice={ids:[5,3,8,9,4],index:0,score:0,done:false,review:true};studentState.page="practice";return {rerender:true}}
+  if(target.id==="start-smart-review"){
+    const topics=getLastWeakTopics();
+    const ids=topics.length?questions.filter(q=>topics.includes(q.topic)).map(q=>q.id):[5,3,8,9,4];
+    studentState.practice={ids,index:0,score:0,done:false,review:true};
+    studentState.page="practice";
+    return {rerender:true}
+  }
   if(target.dataset.lesson){const l=lessons.find(x=>x.id===Number(target.dataset.lesson));if(l && l.status!=="locked"){studentState.page="practice";return {rerender:true,message:"تم فتح تدريب الدرس: "+l.title}}}
   return null;
 }
