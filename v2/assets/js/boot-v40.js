@@ -191,10 +191,85 @@ function bind(){
     });
   });
 
+  document.querySelectorAll("[data-trainer-risk-chip]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      state.role="trainer";
+      state.page="students";
+      state.filter=btn.getAttribute("data-trainer-risk-chip")||"";
+      state.studentId=null;
+      render();
+    });
+  });
+
+  var trainerSearch=document.getElementById("trainer-search");
+  var trainerRisk=document.getElementById("trainer-risk");
+  var trainerGroup=document.getElementById("trainer-group");
+
+  function applyStudentDomFilters(){
+    var q=(trainerSearch&&trainerSearch.value||"").trim().toLowerCase();
+    var risk=(trainerRisk&&trainerRisk.value||"").trim();
+    var group=(trainerGroup&&trainerGroup.value||"").trim();
+    document.querySelectorAll(".trainer-table tbody tr").forEach(function(row){
+      var text=(row.innerText||"").toLowerCase();
+      var okQ=!q||text.indexOf(q)>=0;
+      var okRisk=!risk||text.indexOf(risk.toLowerCase())>=0;
+      var okGroup=!group||text.indexOf(group)>=0;
+      row.style.display=okQ&&okRisk&&okGroup?"":"none";
+    });
+  }
+  trainerSearch&&trainerSearch.addEventListener("input",applyStudentDomFilters);
+  trainerRisk&&trainerRisk.addEventListener("change",function(){
+    if(trainerRisk.value){state.filter=trainerRisk.value;} else {state.filter="";}
+    applyStudentDomFilters();
+  });
+  trainerGroup&&trainerGroup.addEventListener("change",applyStudentDomFilters);
+
+  document.querySelectorAll("[data-360-action]").forEach(function(btn){
+    btn.addEventListener("click",async function(){
+      try{
+        var m=await import("./student360-v29.js?v=412");
+        var result=m.handleStudent360Action(btn);
+        if(result&&result.rerender) await render();
+      }catch(error){
+        document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-intervention-action]").forEach(function(btn){
+    btn.addEventListener("click",async function(){
+      try{
+        var m=await import("./intervention-v31.js?v=412");
+        var result=m.handleInterventionAction(btn);
+        if(result&&result.studentId){
+          state.role="trainer";
+          state.page="student360";
+          state.studentId=result.studentId;
+          state.filter="";
+        }
+        if(result&&result.rerender) await render();
+      }catch(error){
+        document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-intervention-filter]").forEach(function(btn){
+    btn.addEventListener("click",async function(){
+      try{
+        var m=await import("./intervention-v31.js?v=412");
+        m.setInterventionFilter(btn.getAttribute("data-intervention-filter")||"open");
+        await render();
+      }catch(error){
+        document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+      }
+    });
+  });
+
   document.querySelectorAll("[data-course-action],[data-course-editor-action],[data-lesson-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-manager-v36.js?v=410");
+        var m=await import("./course-manager-v36.js?v=412");
         var result;
         if(btn.hasAttribute("data-course-action")) result=m.handleCourseAction(btn);
         else if(btn.hasAttribute("data-course-editor-action")) result=m.handleCourseEditorAction(btn);
@@ -209,7 +284,7 @@ function bind(){
   document.querySelectorAll("[data-course-learning-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-learning-v38.js?v=408");
+        var m=await import("./course-learning-v38.js?v=412");
         var result=m.handleLearningAction(btn);
         if(result && result.page) state.page=result.page;
         if(result && result.rerender) await render();
@@ -223,7 +298,7 @@ function bind(){
   if(assessment) assessment.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./course-learning-v38.js?v=408");
+      var m=await import("./course-learning-v38.js?v=412");
       var result=m.submitLessonAssessment(event.currentTarget);
       if(result && result.rerender) await render();
     }catch(error){
