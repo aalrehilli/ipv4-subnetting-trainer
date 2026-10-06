@@ -36,7 +36,7 @@ function trainerDashboard(){
     <div><span class="eyebrow">Trainer Command Center • V2.2</span><h1>اتخذ القرار من شاشة واحدة</h1>
       <p>بدل البحث داخل التقارير، ابدأ بالطلاب الذين يحتاجون تدخلاً، ثم نفّذ الإجراء المناسب مباشرة.</p>
     </div>
-    <div class="command-priority"><span>أولوية اليوم</span><strong>${risk.length}</strong><small>متدربين يحتاجون متابعة</small></div>
+    <div class="command-priority"><span>أولوية اليوم</span><strong>${risk.length}</strong><small>متدربين يحتاجون متابعة</small><button class="btn btn-white mini-btn" data-trainer-page="interventions" style="margin-top:8px">فتح مركز التدخل</button></div>
   </div>
 
   <div class="student-grid-4 trainer-kpis">
