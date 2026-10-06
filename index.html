@@ -100,6 +100,22 @@
 
 
 /* V59 — لوحة المدرب المتقدمة والتقارير */
+
+/* V66.41 — مركز مراجعة الاختبار النهائي لـ IOS */
+.v6641-ios-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.v6641-ios-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px;text-align:center}
+.v6641-ios-kpi .num{font-size:27px;font-weight:900;color:#0759a5}
+.v6641-ios-kpi .lbl{font-size:12px;color:#65788a;margin-top:5px}
+.v6641-ios-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.v6641-ios-toolbar input,.v6641-ios-toolbar select{margin:0;flex:1;min-width:190px}
+.v6641-ios-detail{margin-top:8px;padding:10px;background:#f8fbfd;border:1px solid #dce8f2;border-radius:10px}
+.v6641-ios-cmd{font:12px/1.7 Consolas,monospace;direction:ltr;text-align:left;white-space:pre-wrap;background:#071014;color:#d9e8ed;border-radius:9px;padding:10px;max-height:260px;overflow:auto}
+.v6641-ios-status{display:inline-block;padding:4px 9px;border-radius:14px;font-weight:800;font-size:11px}
+.v6641-ios-status.ok{background:#e7f7ed;color:#137b39}
+.v6641-ios-status.bad{background:#ffe8e8;color:#a51f1f}
+@media(max-width:850px){.v6641-ios-kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.v6641-ios-kpis{grid-template-columns:1fr 1fr}.v6641-ios-toolbar input,.v6641-ios-toolbar select{min-width:140px}}
+
 .trainer-dashboard-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;padding:8px;background:#f5f9fd;border:1px solid #dce8f2;border-radius:14px;position:sticky;top:8px;z-index:5}
 .trainer-dashboard-tabs button{border:1px solid #cbd9e5;background:#fff;color:#2b5578;border-radius:10px;padding:10px 13px;font-weight:800;cursor:pointer;transition:.15s}
 .trainer-dashboard-tabs button:hover{background:#edf6ff;color:#0759a5}
@@ -1867,8 +1883,26 @@ html,body{max-width:100%;overflow-x:hidden}
 <section id="trainer" class="hidden">
 <div class="card hero"><h2>👨‍🏫 لوحة المدرب</h2><p class="muted">إدارة المتدربين وبنك الأسئلة ومتابعة النتائج من مكان واحد.</p>
 <div id="trainerStats"></div></div>
-<div class="card"><div class="trainer-dashboard-tabs" role="tablist" aria-label="أقسام لوحة المدرب"><button class="active" onclick="trainerTab('overview',this)">📊 النتائج</button><button onclick="trainerTab('students',this)">👥 المتدربون</button><button onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button onclick="trainerTab('exams',this)">📋 الاختبارات</button><button onclick="trainerTab('labs',this)">🧪 مختبرات PT</button><button onclick="trainerTab('blueprint',this)">🧩 بناء اختبار</button><button onclick="trainerTab('analytics',this)">📈 التحليلات</button><button onclick="trainerTab('reports',this)">📑 التقارير</button><button onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button class="green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
+<div class="card"><div class="trainer-dashboard-tabs" role="tablist" aria-label="أقسام لوحة المدرب"><button class="active" onclick="trainerTab('overview',this)">📊 النتائج</button><button onclick="trainerTab('students',this)">👥 المتدربون</button><button onclick="trainerTab('questions',this)">📝 بنك الأسئلة</button><button onclick="trainerTab('exams',this)">📋 الاختبارات</button><button onclick="trainerTab('labs',this)">🧪 مختبرات PT</button><button onclick="trainerTab('blueprint',this)">🧩 بناء اختبار</button><button onclick="trainerTab('analytics',this)">📈 التحليلات</button><button onclick="trainerTab('reports',this)">📑 التقارير</button><button onclick="trainerTab('smartFollow',this)">🎯 متابعة ذكية</button><button onclick="trainerTab('iosFinal',this)">🖥️ اختبار IOS النهائي</button><button class="green" onclick="exportCSV()">⬇️ تصدير CSV</button></div>
 <div id="trainerOverview"><h3>نتائج المتدربين</h3><div id="trainerTable"></div></div>
+<div id="trainerIosFinal" class="hidden">
+  <h3>🖥️ مراجعة الاختبار النهائي لـ Cisco IOS</h3>
+  <div class="trainer-report-note">يعرض هذا المركز المحاولات المسجلة مركزيًا من جلسات الاختبار الموثوقة، مع إمكانية فتح سجل أوامر كل محاولة.</div>
+  <div class="v6641-ios-kpis">
+    <div class="v6641-ios-kpi"><div class="num" id="v6641Total">0</div><div class="lbl">إجمالي المحاولات</div></div>
+    <div class="v6641-ios-kpi"><div class="num" id="v6641Passed">0</div><div class="lbl">محاولات ناجحة</div></div>
+    <div class="v6641-ios-kpi"><div class="num" id="v6641Avg">0%</div><div class="lbl">متوسط النتائج</div></div>
+    <div class="v6641-ios-kpi"><div class="num" id="v6641Best">0%</div><div class="lbl">أفضل نتيجة</div></div>
+  </div>
+  <div class="question">
+    <div class="v6641-ios-toolbar">
+      <input id="v6641Search" placeholder="🔎 بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="v6641Render()">
+      <select id="v6641Group" onchange="v6641Render()"><option value="">كل الشعب</option></select>
+      <button class="primary" onclick="loadTrainerIOSFinalAttempts()">🔄 تحديث</button>
+    </div>
+  </div>
+  <div id="v6641AttemptsArea"><div class="muted">اضغط «تحديث» لعرض المحاولات.</div></div>
+</div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
 <div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="Binary Conversion">Binary Conversion</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
 <input id="qSearch" placeholder="🔎 بحث في نص السؤال..." oninput="renderQuestionBank()">
@@ -4097,8 +4131,8 @@ function printTrainerReport(){const area=$("trainerReportsArea");if(!area)return
 </body></html>`);w.document.close()}
 
 function trainerTab(tab,btn){
-  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerLabs","trainerBlueprint","trainerAnalytics","trainerReports","trainerSmartFollow"].forEach(id=>$(id)?.classList.add("hidden"));
-  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",blueprint:"trainerBlueprint",analytics:"trainerAnalytics",reports:"trainerReports",smartFollow:"trainerSmartFollow",labs:"trainerLabs"};
+  ["trainerOverview","trainerStudents","trainerQuestions","trainerExams","trainerLabs","trainerBlueprint","trainerAnalytics","trainerReports","trainerSmartFollow","trainerIosFinal"].forEach(id=>$(id)?.classList.add("hidden"));
+  const map={overview:"trainerOverview",students:"trainerStudents",questions:"trainerQuestions",exams:"trainerExams",blueprint:"trainerBlueprint",analytics:"trainerAnalytics",reports:"trainerReports",smartFollow:"trainerSmartFollow",labs:"trainerLabs",iosFinal:"trainerIosFinal"};
   $(map[tab])?.classList.remove("hidden");
   if(btn){document.querySelectorAll(".trainer-dashboard-tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active")}
   if(tab==="students")loadTrainerStudents();
@@ -4108,8 +4142,75 @@ function trainerTab(tab,btn){
   if(tab==="analytics")loadTrainerAnalytics();
   if(tab==="reports")loadTrainerReports();
   if(tab==="smartFollow")loadTrainerSmartFollow();
+  if(tab==="iosFinal")loadTrainerIOSFinalAttempts();
 }
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+
+let v6641IOSRows=[];
+function v6641FmtTime(sec){
+  const s=Math.max(0,Math.floor(Number(sec||0)));
+  return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+}
+async function loadTrainerIOSFinalAttempts(){
+  const area=$("v6641AttemptsArea"); if(!area||!db)return;
+  if(!["trainer","admin"].includes(profile?.role)){
+    area.innerHTML='<div class="bad">❌ هذه الصفحة متاحة للمدرب والمدير فقط.</div>';return;
+  }
+  area.innerHTML='<div class="muted">⏳ جارٍ تحميل المحاولات المركزية...</div>';
+  try{
+    const r=await db.rpc("get_trainer_ios_final_attempts");
+    if(r.error)throw r.error;
+    v6641IOSRows=r.data||[];
+    const groups=[...new Set(v6641IOSRows.map(x=>String(x.group_name||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ar"));
+    const sel=$("v6641Group");
+    const current=sel?.value||"";
+    if(sel)sel.innerHTML='<option value="">كل الشعب</option>'+groups.map(g=>'<option value="'+esc(g)+'">'+esc(g)+'</option>').join("");
+    if(sel&&groups.includes(current))sel.value=current;
+    v6641Render();
+  }catch(e){
+    area.innerHTML='<div class="bad">❌ تعذر تحميل سجل اختبار IOS:<br>'+esc(e?.message||String(e))+'</div>';
+  }
+}
+function v6641Render(){
+  const area=$("v6641AttemptsArea"); if(!area)return;
+  const q=(($("v6641Search")?.value)||"").trim().toLowerCase();
+  const group=$("v6641Group")?.value||"";
+  const rows=v6641IOSRows.filter(x=>{
+    const hay=[x.student_name,x.student_id,x.group_name].map(v=>String(v||"").toLowerCase()).join(" ");
+    return (!q||hay.includes(q))&&(!group||String(x.group_name||"")===group);
+  });
+  const total=v6641IOSRows.length;
+  const passed=v6641IOSRows.filter(x=>x.passed).length;
+  const avg=total?Math.round(v6641IOSRows.reduce((s,x)=>s+Number(x.score||0),0)/total):0;
+  const best=total?Math.max(...v6641IOSRows.map(x=>Number(x.score||0))):0;
+  if($("v6641Total"))$("v6641Total").textContent=total;
+  if($("v6641Passed"))$("v6641Passed").textContent=passed;
+  if($("v6641Avg"))$("v6641Avg").textContent=avg+"%";
+  if($("v6641Best"))$("v6641Best").textContent=best+"%";
+  if(!rows.length){area.innerHTML='<div class="trainer-report-empty">لا توجد محاولات مطابقة.</div>';return;}
+  area.innerHTML='<div class="trainer-report-table-wrap"><table><tr><th>المتدرب</th><th>الشعبة</th><th>النتيجة</th><th>الأخطاء</th><th>الزمن</th><th>المهام</th><th>الحالة</th><th>التاريخ</th><th>التفاصيل</th></tr>'+
+    rows.map((x,i)=>{
+      const status=x.passed?'<span class="v6641-ios-status ok">ناجح</span>':'<span class="v6641-ios-status bad">غير ناجح</span>';
+      const hist=Array.isArray(x.command_history)?x.command_history:[];
+      const details=hist.map((h,n)=>((n+1)+". "+(h.correct?"✅":"❌")+" "+String(h.command||"")+"  ["+(h.normalized||"")+"]")).join("\n");
+      const detailId="v6641detail_"+i+"_"+String(x.attempt_id||"").replace(/[^a-zA-Z0-9_-]/g,"");
+      return '<tr>'+
+        '<td>'+esc(x.student_name||"—")+'<br><small>'+esc(x.student_id||"")+'</small></td>'+
+        '<td>'+esc(x.group_name||"—")+'</td>'+
+        '<td><b>'+Number(x.score||0)+'/100</b></td>'+
+        '<td>'+Number(x.errors||0)+'</td>'+
+        '<td>'+v6641FmtTime(x.duration_seconds)+'</td>'+
+        '<td>'+Number(x.steps_completed||0)+' / '+Number(x.total_steps||19)+'</td>'+
+        '<td>'+status+'</td>'+
+        '<td>'+(x.completed_at?new Date(x.completed_at).toLocaleString("ar-SA"):"—")+'</td>'+
+        '<td><details id="'+detailId+'"><summary style="cursor:pointer;color:#0759a5;font-weight:800">👁️ سجل الأوامر</summary>'+
+          '<div class="v6641-ios-detail"><div class="muted" style="margin-bottom:7px">رقم المحاولة: '+esc(x.attempt_id||"—")+'</div>'+
+          '<div class="v6641-ios-cmd">'+esc(details||"لا يوجد سجل أوامر.")+'</div></div></details></td>'+
+      '</tr>';
+    }).join("")+
+    '</table></div>';
+}
+
 async function loadTrainerOverview(){
   const ar=await db.from("attempts").select("*").order("submitted_at",{ascending:false});
   const er=await db.from("exercise_attempts").select("*").order("created_at",{ascending:false});
