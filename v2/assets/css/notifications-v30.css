@@ -1,0 +1,51 @@
+/* V3.0 Smart Notification Center */
+.notification-center{position:relative;display:inline-flex;align-items:center}
+.notification-bell{width:42px;height:42px;border:1px solid var(--line);background:#fff;border-radius:12px;display:grid;place-items:center;position:relative;cursor:pointer;box-shadow:var(--shadow)}
+.notification-bell span{font-size:18px;line-height:1}
+.notification-bell b{position:absolute;top:-5px;left:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--red);color:#fff;font-size:10px;display:grid;place-items:center;border:2px solid #fff}
+.notification-popover{display:none;position:absolute;top:50px;left:0;width:360px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 18px 50px rgba(21,54,84,.18);z-index:80;overflow:hidden}
+.notification-popover.open{display:block}
+.notification-pop-head{display:flex;justify-content:space-between;align-items:center;padding:14px 15px;border-bottom:1px solid #edf2f6}
+.notification-pop-head span{font-size:11px;color:var(--muted)}
+.notification-pop-list{max-height:390px;overflow:auto}
+.notification-pop-item{width:100%;display:flex;align-items:flex-start;gap:9px;padding:12px 14px;background:#fff;border:0;border-bottom:1px solid #f0f3f6;text-align:right;cursor:pointer}
+.notification-pop-item:hover,.notification-pop-item.unread{background:#f8fbff}
+.notification-pop-item>span:last-child{display:grid;gap:3px}
+.notification-pop-item strong{font-size:12px;color:var(--primary-2)}
+.notification-pop-item small{font-size:11px;line-height:1.7;color:var(--muted)}
+.notification-pop-dot{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:12px;font-weight:900;flex:none}
+.notification-pop-dot.red,.notification-icon.red{background:#fff0ef;color:var(--red)}
+.notification-pop-dot.orange,.notification-icon.orange{background:#fff4e8;color:#a56416}
+.notification-pop-dot.green,.notification-icon.green{background:#eaf8ef;color:var(--green)}
+.notification-pop-dot.purple,.notification-icon.purple{background:#f2edfa;color:var(--purple)}
+.notification-pop-foot{padding:10px 14px;text-align:center;background:#fbfcfd}
+.notification-pop-empty{padding:28px 15px;text-align:center;color:var(--muted);font-size:12px}
+.notification-page-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.notification-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.notification-list{display:grid;gap:10px}
+.notification-item{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:var(--shadow);border-right:4px solid #dbe5ed}
+.notification-item.unread{background:#fcfeff;border-right-color:var(--primary)}
+.notification-item.read{opacity:.86}
+.notification-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:16px;font-weight:900}
+.notification-body{min-width:0}
+.notification-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.notification-top>div{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.notification-top strong{font-size:14px;color:var(--primary-2)}
+.notification-top small{font-size:10px;color:var(--muted);white-space:nowrap}
+.notification-body p{margin:8px 0 11px;line-height:1.9;font-size:13px;color:var(--text)}
+.notification-actions{display:flex;gap:7px;flex-wrap:wrap}
+.notification-empty{padding:45px 20px;text-align:center}
+.notification-empty-icon{width:52px;height:52px;margin:0 auto 10px;border-radius:16px;background:#eaf8ef;color:var(--green);display:grid;place-items:center;font-weight:900;font-size:23px}
+.notification-empty h3{margin:0 0 6px}
+@media(max-width:750px){
+  .notification-popover{position:fixed;top:76px;left:12px;right:12px;width:auto}
+  .notification-summary-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .notification-page-actions{justify-content:stretch}
+  .notification-page-actions>*{flex:1}
+  .notification-item{grid-template-columns:1fr}
+  .notification-icon{width:38px;height:38px}
+  .notification-top{display:block}
+  .notification-top small{display:block;margin-top:5px}
+}
