@@ -455,6 +455,425 @@ document.getElementById("cStart").addEventListener("click",cStart);
 document.getElementById("cReset").addEventListener("click",function(){cReset();});
 document.getElementById("cHint").addEventListener("click",function(){document.getElementById("cFeedback").className="status";document.getElementById("cFeedback").textContent="💡 تلميح: راجع وضع IOS الحالي ثم نفّذ الأمر المرتبط بالمهمة التالية.";});
 document.querySelectorAll(".level").forEach(function(b){b.addEventListener("click",function(){document.querySelectorAll(".level").forEach(function(x){x.classList.remove("active");});b.classList.add("active");challengeState.level=b.dataset.level;challengeState.index=0;cReset();cRenderList();});});
+/* V66.32 — Functional IOS engine refinement */
+(function(){
+  "use strict";
+
+  function v6632FreshState(){
+    return {
+      mode:"user",modeName:"User EXEC",hostname:"Switch",
+      enableSecret:"",
+      consolePassword:"",consoleLogin:false,
+      vtyPassword:"",vtyLogin:false,vtyRange:"0 4",
+      servicePasswordEncryption:false,bannerMotd:"",
+      currentInterface:"",interfaceDescription:"",interfaceIp:"unassigned",interfaceMask:"unset",interfaceUp:false,
+      vlanIp:"unassigned",vlanMask:"unset",vlanUp:false,
+      defaultGateway:"",saved:false,history:[]
+    };
+  }
+
+  function v6632Normalize(v){
+    return String(v||"").trim().toLowerCase().replace(/\s+/g," ");
+  }
+
+  function v6632Record(raw,ok){
+    S.history.push({command:String(raw||""),ok:!!ok});
+  }
+
+  function v6632Out(text){ say("out",text); }
+  function v6632Ok(text){ say("ok",text); }
+  function v6632Err(text){ say("err",text); }
+
+  function v6632Prompt(){
+    return S.mode==="user"?S.hostname+">":
+      S.mode==="privileged"?S.hostname+"#":
+      S.mode==="global"?S.hostname+"(config)#":
+      S.mode==="line"?S.hostname+"(config-line)#":
+      S.hostname+"(config-if)#";
+  }
+
+  function v6632Refresh(){
+    var p=v6632Prompt();
+    promptEl.textContent=p; promptLabel.textContent=p;
+    var ifaceIp=S.currentInterface==="Vlan1"?S.vlanIp:S.interfaceIp;
+    var ifaceMask=S.currentInterface==="Vlan1"?S.vlanMask:S.interfaceMask;
+    var rows=[
+      ["Hostname",S.hostname],
+      ["الوضع",S.modeName],
+      ["Enable Secret",S.enableSecret?"مُضبط":"غير مضبوط"],
+      ["Console",S.consolePassword?(S.consoleLogin?"مُضبط + Login":"كلمة مرور فقط"):"غير مضبوط"],
+      ["VTY",S.vtyPassword?(S.vtyLogin?"مُضبط + Login":"كلمة مرور فقط"):"غير مضبوط"],
+      ["VLAN 1 IP",S.vlanIp],
+      ["VLAN 1 Mask",S.vlanMask],
+      ["الواجهة الحالية",S.currentInterface||"—"],
+      ["عنوان الواجهة",ifaceIp],
+      ["حالة الواجهة",((S.currentInterface==="Vlan1"?S.vlanUp:S.interfaceUp)?"up":"down")],
+      ["Default Gateway",S.defaultGateway||"غير مضبوط"],
+      ["Password Encryption",S.servicePasswordEncryption?"مُفعّل":"غير مفعّل"],
+      ["Saved",S.saved?"نعم":"لا"]
+    ];
+    stateEl.replaceChildren();
+    rows.forEach(function(r){
+      var d=document.createElement("div");d.className="state-row";
+      var b=document.createElement("b");b.textContent=r[0];
+      var s=document.createElement("span");s.textContent=r[1];
+      d.appendChild(b);d.appendChild(s);stateEl.appendChild(d);
+    });
+  }
+
+  function v6632WriteRunning(){
+    var a=["version 15.2","hostname "+S.hostname];
+    if(S.enableSecret)a.push("enable secret "+S.enableSecret);
+    if(S.servicePasswordEncryption)a.push("service password-encryption");
+    if(S.bannerMotd)a.push("banner motd #"+S.bannerMotd+"#");
+    a.push("!");
+    a.push("line console 0");
+    if(S.consolePassword)a.push(" password "+S.consolePassword);
+    if(S.consoleLogin)a.push(" login");
+    a.push("!");
+    a.push("line vty "+S.vtyRange);
+    if(S.vtyPassword)a.push(" password "+S.vtyPassword);
+    if(S.vtyLogin)a.push(" login");
+    if(S.currentInterface==="Vlan1" || S.vlanIp!=="unassigned"){
+      a.push("interface vlan 1");
+      if(S.vlanIp!=="unassigned")a.push(" ip address "+S.vlanIp+" "+S.vlanMask);
+      if(S.vlanUp)a.push(" no shutdown");
+    }
+    if(S.currentInterface==="GigabitEthernet0/0/0" || S.interfaceIp!=="unassigned"){
+      a.push("interface gigabitethernet 0/0/0");
+      if(S.interfaceDescription)a.push(" description "+S.interfaceDescription);
+      if(S.interfaceIp!=="unassigned")a.push(" ip address "+S.interfaceIp+" "+S.interfaceMask);
+      if(S.interfaceUp)a.push(" no shutdown");
+    }
+    if(S.defaultGateway)a.push("ip default-gateway "+S.defaultGateway);
+    return a.join("\n");
+  }
+
+  function v6632ShowIpBrief(){
+    var lines=[
+      "Interface              IP-Address      OK? Method Status                Protocol",
+      "Vlan1                  "+S.vlanIp+"   YES manual "+(S.vlanIp==="unassigned"?"administratively down":"up")+"              "+(S.vlanIp==="unassigned"?"down":(S.vlanUp?"up":"down"))
+    ];
+    if(S.interfaceIp!=="unassigned"){
+      lines.push("GigabitEthernet0/0/0   "+S.interfaceIp+"   YES manual "+(S.interfaceUp?"up":"administratively down")+"              "+(S.interfaceUp?"up":"down"));
+    }else{
+      lines.push("GigabitEthernet0/0/0   unassigned      YES unset  administratively down down");
+    }
+    return lines.join("\n");
+  }
+
+  runCommand=function(raw){
+    var original=String(raw||"").trim(); if(!original)return false;
+    var c=v6632Normalize(original);
+    say("cmd",v6632Prompt()+" "+original);
+
+    function fail(msg){v6632Err(msg||"% Invalid input detected.");v6632Record(original,false);v6632Refresh();return false;}
+    function done(msg){if(msg)v6632Ok(msg);v6632Record(original,true);v6632Refresh();return true;}
+
+    if(c==="?"){
+      var h;
+      if(S.mode==="user")h="enable  show  ping  traceroute  ?";
+      else if(S.mode==="privileged")h="configure terminal  show  copy  ping  traceroute  disable  ?";
+      else if(S.mode==="global")h="hostname  enable secret  line  interface  ip  service  banner  end  exit  ?";
+      else if(S.mode==="line")h="password  login  transport input  end  exit  ?";
+      else h="description  ip address  ipv6 address  no shutdown  shutdown  end  exit  ?";
+      v6632Out(h);v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show ?"){
+      if(S.mode==="user"){v6632Out("version  ip  interfaces  ipv6");}
+      else{v6632Out("running-config  startup-config  version  interfaces  ip interface brief  ip route  ipv6 route");}
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="enable"){
+      if(S.mode!=="user")return fail("% Command rejected in current mode.");
+      S.mode="privileged";S.modeName="Privileged EXEC";return done();
+    }
+
+    if(c==="disable"){
+      if(S.mode!=="privileged")return fail("% Command rejected in current mode.");
+      S.mode="user";S.modeName="User EXEC";return done();
+    }
+
+    if(c==="configure terminal"||c==="conf t"||c==="configure"){
+      if(S.mode!=="privileged")return fail("% Need privileged EXEC mode.");
+      S.mode="global";S.modeName="Global Configuration";return done();
+    }
+
+    if(c==="end"||c==="ctrl-z"){
+      if(S.mode==="user")return fail("% Already in User EXEC mode.");
+      S.mode="privileged";S.modeName="Privileged EXEC";return done();
+    }
+
+    if(c==="exit"){
+      if(S.mode==="global"){S.mode="privileged";S.modeName="Privileged EXEC";}
+      else if(S.mode==="line"||S.mode==="interface"){S.mode="global";S.modeName="Global Configuration";S.currentInterface="";}
+      else if(S.mode==="privileged"){S.mode="user";S.modeName="User EXEC";}
+      else{return fail("% Cannot exit from this mode.");}
+      return done();
+    }
+
+    if(c.indexOf("hostname ")===0){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      var hn=original.substring(9).trim();if(!hn)return fail("% Hostname cannot be empty.");
+      S.hostname=hn.replace(/\s+/g,"-");return done();
+    }
+
+    if(c==="no hostname"){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      S.hostname="Switch";return done();
+    }
+
+    if(c.indexOf("enable secret ")===0){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      var secret=original.substring(14).trim();if(!secret)return fail("% Secret cannot be empty.");
+      S.enableSecret=secret;return done("Enable secret configured.");
+    }
+
+    if(c==="line console 0"){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      S.mode="line";S.modeName="Line Console 0";S.currentInterface="";return done();
+    }
+
+    if(c==="line vty 0 4"||c==="line vty 0 15"){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      S.vtyRange=c.indexOf("0 15")>-1?"0 15":"0 4";S.mode="line";S.modeName="Line VTY "+S.vtyRange;S.currentInterface="";return done();
+    }
+
+    if(c.indexOf("password ")===0){
+      if(S.mode!=="line")return fail("% Password command is valid in line configuration mode.");
+      var pw=original.substring(9).trim();if(!pw)return fail("% Password cannot be empty.");
+      if(S.modeName.indexOf("Console")>-1)S.consolePassword=pw;else S.vtyPassword=pw;
+      return done("Password configured.");
+    }
+
+    if(c==="login"){
+      if(S.mode!=="line")return fail("% Login is valid in line configuration mode.");
+      if(S.modeName.indexOf("Console")>-1){if(!S.consolePassword)return fail("% Set a console password first.");S.consoleLogin=true;}
+      else {if(!S.vtyPassword)return fail("% Set a VTY password first.");S.vtyLogin=true;}
+      return done("Login enabled.");
+    }
+
+    if(c.indexOf("transport input ")===0){
+      if(S.mode!=="line" || S.modeName.indexOf("VTY")===-1)return fail("% Transport input is valid in VTY configuration mode.");
+      return done("Transport input configured.");
+    }
+
+    if(c==="service password-encryption"||c==="service password encryption"){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      S.servicePasswordEncryption=true;return done("Password encryption enabled.");
+    }
+
+    if(c.indexOf("banner motd")===0){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      var b=original.substring(11).trim();
+      if(b.length<3)return fail("% Incomplete banner command.");
+      var delim=b.charAt(0),end=b.charAt(b.length-1),body=b;
+      if(delim===end)body=b.slice(1,-1);else body=b;
+      S.bannerMotd=body;return done("MOTD banner configured.");
+    }
+
+    if(c==="copy running-config startup-config"||c==="write memory"||c==="copy run start"){
+      if(S.mode!=="privileged")return fail("% Need privileged EXEC mode.");
+      S.saved=true;return done("[OK] Configuration saved to startup-config.");
+    }
+
+    if(c==="show running-config"||c==="show run"){
+      if(S.mode==="user")return fail("% Need privileged EXEC mode.");
+      v6632Out(v6632WriteRunning());v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show startup-config"||c==="show start"){
+      if(!S.saved)return fail("% Startup-config is empty.");
+      v6632Out(v6632WriteRunning());v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show version"){
+      v6632Out("Cisco IOS Software, simulated training image\nDevice: "+S.hostname+"\nMode: "+S.modeName+"\nUptime: training session");
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="interface vlan 1"){
+      if(S.mode!=="global")return fail("% Need Global Configuration mode.");
+      S.mode="interface";S.modeName="Interface Vlan1";S.currentInterface="Vlan1";return done();
+    }
+
+    if(c==="interface gigabitethernet 0/0/0"||c==="interface gigabitethernet0/0/0"||c==="interface g0/0/0"){
+      if(S.mode!=="global")return fail("% Need Global Configuration mode.");
+      S.mode="interface";S.modeName="Interface GigabitEthernet0/0/0";S.currentInterface="GigabitEthernet0/0/0";return done();
+    }
+
+    if(c.indexOf("description ")===0){
+      if(S.mode!=="interface")return fail("% Invalid input detected.");
+      S.interfaceDescription=original.substring(12).trim();return done("Description configured.");
+    }
+
+    if(c.indexOf("ip address ")===0){
+      if(S.mode!=="interface")return fail("% Invalid input detected.");
+      var parts=original.split(/\s+/);
+      if(parts.length<4)return fail("% Incomplete command.");
+      if(S.currentInterface==="Vlan1"){S.vlanIp=parts[2];S.vlanMask=parts[3];}
+      else {S.interfaceIp=parts[2];S.interfaceMask=parts[3];}
+      return done("IPv4 address configured.");
+    }
+
+    if(c.indexOf("ipv6 address ")===0){
+      if(S.mode!=="interface")return fail("% Invalid input detected.");
+      return done("IPv6 address configured.");
+    }
+
+    if(c==="no shutdown"){
+      if(S.mode!=="interface")return fail("% Invalid input detected.");
+      if(S.currentInterface==="Vlan1")S.vlanUp=true;else S.interfaceUp=true;
+      return done("Interface enabled.");
+    }
+
+    if(c==="shutdown"){
+      if(S.mode!=="interface")return fail("% Invalid input detected.");
+      if(S.currentInterface==="Vlan1")S.vlanUp=false;else S.interfaceUp=false;
+      return done("Interface administratively down.");
+    }
+
+    if(c.indexOf("ip default-gateway ")===0){
+      if(S.mode!=="global")return fail("% Invalid input detected.");
+      var gw=original.substring(19).trim();if(!gw)return fail("% Default gateway cannot be empty.");
+      S.defaultGateway=gw;return done("Default gateway configured.");
+    }
+
+    if(c==="show ip interface brief"||c==="show ip int brief"){
+      if(S.mode==="user")return fail("% Need privileged EXEC mode.");
+      v6632Out(v6632ShowIpBrief());v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show ip route"){
+      if(S.mode==="user")return fail("% Need privileged EXEC mode.");
+      v6632Out((S.defaultGateway?"Gateway of last resort is "+S.defaultGateway:"Gateway of last resort is not set")+"\nNo dynamic routes in this training stage.");
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show ipv6 interface brief"){
+      v6632Out("Vlan1 [administratively down/down]\nNo IPv6 address configured in this training stage.");
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show interfaces"||c==="show ip interface"||c==="show ipv6 interface"){
+      v6632Out("Interface statistics are simulated for this training stage.");
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show vlan brief"){
+      v6632Out("VLAN Name                             Status    Ports\n1    default                          active    Gi0/1-24");
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c==="show interfaces status"){
+      v6632Out("Port      Name      Status       Vlan\nGi0/1     "+(S.interfaceDescription||"—")+"     "+(S.interfaceUp?"connected":"notconnect")+"       1");
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c.indexOf("ping ")===0){
+      var target=original.substring(5).trim();
+      if(!target)return fail("% Ping requires a destination.");
+      v6632Out("Type escape sequence to abort.\n!!!!!\nSuccess rate is 100 percent (5/5)\nDestination: "+target);
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c.indexOf("traceroute ")===0){
+      var dest=original.substring(11).trim();
+      if(!dest)return fail("% Traceroute requires a destination.");
+      v6632Out("Tracing the route to "+dest+"\n  1  192.168.1.1  1 msec");
+      v6632Record(original,true);v6632Refresh();return true;
+    }
+
+    if(c.indexOf("do show ")===0){
+      if(S.mode!=="global"&&S.mode!=="line"&&S.mode!=="interface")return fail("% DO command is used from configuration modes.");
+      var doCmd=original.substring(8).trim();
+      S.mode="privileged";S.modeName="Privileged EXEC";
+      var result=runCommand(doCmd);
+      S.mode="global";S.modeName="Global Configuration";
+      v6632Refresh();
+      return result;
+    }
+
+    return fail("% Invalid input detected.");
+  };
+
+  taskPass=function(){
+    var checks=[
+      S.mode==="privileged",
+      S.mode==="global",
+      S.hostname==="SW1",
+      S.enableSecret==="class",
+      S.consolePassword==="cisco" && S.consoleLogin,
+      S.vtyPassword==="cisco" && S.vtyLogin,
+      S.vlanIp==="192.168.1.2" && S.vlanMask==="255.255.255.0" && S.vlanUp,
+      S.history.some(function(x){return x.ok && v6632Normalize(x.command)==="show ip interface brief";}),
+      S.saved
+    ];
+    return !!checks[taskIndex];
+  };
+
+  resetDevice=function(){
+    S=v6632FreshState();
+    terminal.replaceChildren();
+    say("out","Cisco IOS Simulator V66.32 — جاهز");
+    say("out","السويتش جاهز. ابدأ بالأمر enable.");
+    v6632Refresh();
+  };
+
+  renderGuide=function(){
+    var host=document.querySelector("#guidePanel .guide-info");
+    if(!host)return;
+    host.replaceChildren();
+    var templates={
+      "hostname":"hostname SW1",
+      "enable secret":"enable secret class",
+      "password":"password cisco",
+      "banner motd":"banner motd #AUTHORIZED ACCESS ONLY#",
+      "description":"description LAN",
+      "ip address":"ip address 192.168.10.1 255.255.255.0",
+      "ipv6 address":"ipv6 address 2001:db8:10::1/64",
+      "ip default-gateway":"ip default-gateway 192.168.10.254"
+    };
+    var grid=document.createElement("div");grid.className="guide-grid";
+    Object.keys(guide).forEach(function(group){
+      var card=document.createElement("div");card.className="guide-group";
+      var h=document.createElement("h3");h.textContent=group;card.appendChild(h);
+      guide[group].forEach(function(cmd){
+        var b=document.createElement("button");b.type="button";b.className="cmd-chip";
+        b.textContent=cmd;b.title="إرسال الأمر إلى سطر CLI";
+        b.addEventListener("click",function(){
+          setTab("free");
+          input.value=templates[cmd]||cmd;
+          input.focus();
+        });
+        card.appendChild(b);
+      });
+      grid.appendChild(card);
+    });
+    host.appendChild(grid);
+  };
+
+  runInput=function(){
+    var raw=input.value.trim();if(!raw)return;
+    input.value="";
+    if(activeTab==="test"){
+      var q=tests[testIndex];
+      if(testIndex>=tests.length){renderTest();return;}
+      var accepted=normalize(q[1])===v6632Normalize(raw);
+      var executed=runCommand(raw);
+      if(accepted){testScore++;say("ok","✅ إجابة صحيحة.");}
+      else{say("err","❌ إجابة غير صحيحة. المتوقع: "+q[1]);}
+      if(!executed && accepted){say("out","ℹ️ الإجابة مطابقة للسؤال، لكن الجهاز يحتاج إلى الوضع الصحيح لتنفيذها.");}
+      testIndex++;renderTest();return;
+    }
+    var executed=runCommand(raw);
+    if(activeTab==="challenge" && executed)cGrade(raw);
+  };
+
+  window.v6632GetState=function(){return JSON.parse(JSON.stringify(S));};
+})();
 resetDevice();renderTask();renderTest();renderGuide();cRenderList();cRender();
 })();
 </script>
@@ -486,6 +905,30 @@ function runQa(){
    checks.push(add("configure",prompt()==="Switch(config)#"));
    runCommand("hostname QA1");
    checks.push(add("hostname",prompt()==="QA1(config)#"));
+   runCommand("enable secret class");
+   runCommand("line console 0");
+   runCommand("password cisco");
+   runCommand("login");
+   runCommand("exit");
+   runCommand("line vty 0 4");
+   runCommand("password cisco");
+   runCommand("login");
+   runCommand("end");
+   runCommand("configure terminal");
+   runCommand("interface vlan 1");
+   runCommand("ip address 192.168.1.2 255.255.255.0");
+   runCommand("no shutdown");
+   runCommand("end");
+   runCommand("show ip interface brief");
+   runCommand("copy running-config startup-config");
+   var s=window.v6632GetState();
+   checks.push(add("Enable Secret",s.enableSecret==="class"));
+   checks.push(add("Console",s.consolePassword==="cisco"&&s.consoleLogin));
+   checks.push(add("VTY",s.vtyPassword==="cisco"&&s.vtyLogin));
+   checks.push(add("VLAN1 IP",s.vlanIp==="192.168.1.2"&&s.vlanMask==="255.255.255.0"));
+   checks.push(add("VLAN1 up",s.vlanUp===true));
+   checks.push(add("Saved",s.saved===true));
+   checks.push(add("Show brief",s.history.some(function(x){return x.ok&&String(x.command).toLowerCase()==="show ip interface brief";})));
    resetDevice();
    checks.push(add("إعادة الجهاز",prompt()==="Switch>"));
  }catch(e){
