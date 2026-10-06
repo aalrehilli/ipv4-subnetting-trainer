@@ -102,6 +102,23 @@
 /* V59 — لوحة المدرب المتقدمة والتقارير */
 
 /* V66.41 — مركز مراجعة الاختبار النهائي لـ IOS */
+
+/* V66.42 — تحليلات IOS للمدرب */
+.v6642-ios-analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.v6642-ios-analytics-card{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px}
+.v6642-ios-analytics-card .num{font-size:25px;font-weight:900;color:#0759a5}
+.v6642-ios-analytics-card .lbl{font-size:12px;color:#65788a;margin-top:4px}
+.v6642-ios-two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.v6642-ios-panel{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:15px}
+.v6642-ios-panel h4{margin:0 0 10px;color:#0759a5}
+.v6642-ios-bar-row{display:grid;grid-template-columns:150px 1fr 58px;gap:8px;align-items:center;margin:7px 0;font-size:11px}
+.v6642-ios-bar-track{height:10px;background:#e8eef3;border-radius:999px;overflow:hidden}
+.v6642-ios-bar-track span{display:block;height:100%;background:#0759a5;border-radius:999px}
+.v6642-ios-insights{display:grid;gap:8px}
+.v6642-ios-insight{padding:10px 12px;border:1px solid #dce8f2;background:#f8fbfd;border-radius:10px;line-height:1.8}
+@media(max-width:950px){.v6642-ios-analytics-grid{grid-template-columns:repeat(2,1fr)}.v6642-ios-two{grid-template-columns:1fr}}
+@media(max-width:600px){.v6642-ios-analytics-grid{grid-template-columns:1fr 1fr}.v6642-ios-bar-row{grid-template-columns:100px 1fr 48px}}
+
 .v6641-ios-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
 .v6641-ios-kpi{background:#fff;border:1px solid #dce8f2;border-radius:14px;padding:14px;text-align:center}
 .v6641-ios-kpi .num{font-size:27px;font-weight:900;color:#0759a5}
@@ -1902,6 +1919,10 @@ html,body{max-width:100%;overflow-x:hidden}
     </div>
   </div>
   <div id="v6641AttemptsArea"><div class="muted">اضغط «تحديث» لعرض المحاولات.</div></div>
+  <div id="v6642IOSAnalytics" class="question" style="margin-top:14px">
+    <h3 style="margin-top:0">📈 تحليلات أداء IOS</h3>
+    <div id="v6642IOSAnalyticsArea"><div class="muted">سيتم بناء التحليلات بعد تحميل المحاولات.</div></div>
+  </div>
 </div>
 <div id="trainerStudents" class="hidden"><h3>👥 إدارة المتدربين</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="studentSearch" placeholder="بحث بالاسم أو رقم المتدرب أو الشعبة" oninput="filterStudents()" style="flex:1;min-width:220px"><button class="primary" onclick="loadTrainerStudents()">🔄 تحديث</button></div><div id="studentsTable"></div></div>
 <div id="trainerQuestions" class="hidden"><h3>📝 بنك الأسئلة</h3><div class="question"><h3>إضافة سؤال جديد</h3><label>نوع السؤال</label><div class="qtype-tabs"><button type="button" id="qtShort" class="active" onclick="setQuestionType('short')">✏️ إجابة قصيرة</button><button type="button" id="qtMCQ" onclick="setQuestionType('mcq')">🔘 اختيار من متعدد</button><button type="button" id="qtTF" onclick="setQuestionType('true_false')">✅❌ صح / خطأ</button><button type="button" id="qtMatch" onclick="setQuestionType('matching')">🔗 وصل بين العمودين</button></div><input type="hidden" id="qType" value="short"><label>نص السؤال</label><textarea id="qText" style="width:100%;min-height:90px;padding:10px;border:1px solid #cbd9e5;border-radius:8px"></textarea><div id="shortAnswerBox"><label>الإجابة الصحيحة</label><input id="qAnswer" placeholder="مثال: 4 أو 255.255.255.192"></div><div id="mcqBox" class="hidden"><div class="builder-help">أدخل 4 خيارات وحدد الخيار الصحيح.</div><div id="mcqChoices"></div></div><div id="tfBox" class="hidden"><label>الإجابة الصحيحة</label><select id="tfAnswer"><option value="true">صح</option><option value="false">خطأ</option></select></div><div id="matchBox" class="hidden"><div class="builder-help">اكتب عناصر العمود الأيسر وما يقابلها في العمود الأيمن. يمكن للمتدرب توصيل كل عنصر من اليسار بالعنصر الصحيح من اليمين.</div><div id="matchRows"></div><button type="button" class="primary mini-btn" onclick="addMatchRow()">➕ إضافة زوج</button></div><div class="grid"><div><label>المستوى</label><select id="qDifficulty"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></div><div><label>التصنيف</label><select id="qTopic"><option value="FLSM">FLSM</option><option value="IPv4">IPv4</option><option value="Subnetting">Subnetting</option><option value="Binary Conversion">Binary Conversion</option><option value="VLSM">VLSM</option></select></div></div><button class="primary green" onclick="addTrainerQuestion()">➕ إضافة السؤال</button><div id="questionMsg"></div></div><div class="qbank-tools">
@@ -4171,6 +4192,87 @@ async function loadTrainerIOSFinalAttempts(){
     area.innerHTML='<div class="bad">❌ تعذر تحميل سجل اختبار IOS:<br>'+esc(e?.message||String(e))+'</div>';
   }
 }
+
+const v6642StepTitles=[
+  "الدخول إلى privileged EXEC","الدخول إلى Global Configuration","تسمية الجهاز",
+  "إنشاء Enable Secret","ضبط VLAN 1","عنوان VLAN 1","تفعيل VLAN 1",
+  "العودة إلى privileged EXEC","ضبط البوابة الافتراضية","Default Gateway",
+  "تشفير كلمات المرور","MOTD","إعداد VTY","كلمة مرور VTY","تفعيل login",
+  "الوصول SSH/Telnet","العودة إلى privileged EXEC","التحقق","حفظ الإعدادات"
+];
+function v6642FmtDuration(sec){
+  const s=Math.max(0,Math.round(Number(sec||0)));
+  return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+}
+function v6642RenderAnalytics(){
+  const host=$("v6642IOSAnalyticsArea"); if(!host)return;
+  const rows=Array.isArray(v6641IOSRows)?v6641IOSRows:[];
+  if(!rows.length){
+    host.innerHTML='<div class="trainer-report-empty">لا توجد بيانات كافية لبناء التحليلات.</div>';
+    return;
+  }
+  const total=rows.length;
+  const passed=rows.filter(x=>x.passed).length;
+  const passRate=Math.round(passed*100/total);
+  const avg=Math.round(rows.reduce((s,x)=>s+Number(x.score||0),0)/total);
+  const avgTime=Math.round(rows.reduce((s,x)=>s+Number(x.duration_seconds||0),0)/total);
+  const avgErrors=Math.round(rows.reduce((s,x)=>s+Number(x.errors||0),0)/total*10)/10;
+  const groups=new Map();
+  const stepStats=v6642StepTitles.map(title=>({title,n:0,wrong:0,correct:0}));
+  rows.forEach(x=>{
+    const g=String(x.group_name||"غير محدد").trim()||"غير محدد";
+    const go=groups.get(g)||{group:g,n:0,passed:0,sum:0};
+    go.n++;
+    if(x.passed)go.passed++;
+    go.sum+=Number(x.score||0);
+    groups.set(g,go);
+    const hist=Array.isArray(x.command_history)?x.command_history:[];
+    hist.forEach(h=>{
+      const step=Math.max(0,Math.min(18,Number(h.step||1)-1));
+      if(!stepStats[step])return;
+      stepStats[step].n++;
+      if(h.correct)stepStats[step].correct++;
+      else stepStats[step].wrong++;
+    });
+  });
+  const groupRows=[...groups.values()].map(g=>({...g,avg:Math.round(g.sum/g.n),passRate:Math.round(g.passed/g.n*100)})).sort((a,b)=>a.avg-b.avg);
+  const hardSteps=stepStats.map((s,i)=>({...s,index:i,rate:s.n?Math.round(s.wrong/s.n*100):0})).sort((a,b)=>b.rate-a.rate);
+  const bestRow=rows.slice().sort((a,b)=>Number(b.score||0)-Number(a.score||0)||Number(a.duration_seconds||0)-Number(b.duration_seconds||0))[0];
+  const slowRow=rows.slice().sort((a,b)=>Number(b.duration_seconds||0)-Number(a.duration_seconds||0))[0];
+  const worst=hardSteps.find(x=>x.n>0);
+  const recent=rows.slice().sort((a,b)=>new Date(b.completed_at)-new Date(a.completed_at)).slice(0,10).reverse();
+  host.innerHTML=
+    '<div class="v6642-ios-analytics-grid">'+
+      '<div class="v6642-ios-analytics-card"><div class="num">'+passRate+'%</div><div class="lbl">نسبة النجاح</div></div>'+
+      '<div class="v6642-ios-analytics-card"><div class="num">'+avg+'%</div><div class="lbl">متوسط النتيجة</div></div>'+
+      '<div class="v6642-ios-analytics-card"><div class="num">'+v6642FmtDuration(avgTime)+'</div><div class="lbl">متوسط زمن الاختبار</div></div>'+
+      '<div class="v6642-ios-analytics-card"><div class="num">'+avgErrors+'</div><div class="lbl">متوسط الأخطاء</div></div>'+
+    '</div>'+
+    '<div class="v6642-ios-two">'+
+      '<div class="v6642-ios-panel"><h4>🧩 أكثر خطوات الاختبار صعوبة</h4>'+
+        hardSteps.slice(0,6).map((s,i)=>'<div class="v6642-ios-bar-row"><span>'+(i+1)+'. '+esc(s.title)+'</span><div class="v6642-ios-bar-track"><span style="width:'+s.rate+'%"></span></div><b>'+s.rate+'%</b></div>').join('')+
+      '</div>'+
+      '<div class="v6642-ios-panel"><h4>👥 الأداء حسب الشعبة</h4>'+
+        (groupRows.length?groupRows.map(g=>'<div class="v6642-ios-bar-row"><span>'+esc(g.group)+'</span><div class="v6642-ios-bar-track"><span style="width:'+g.passRate+'%"></span></div><b>'+g.passRate+'%</b></div>').join(''):'<div class="muted">لا توجد بيانات شعب.</div>')+
+      '</div>'+
+    '</div>'+
+    '<div class="v6642-ios-two">'+
+      '<div class="v6642-ios-panel"><h4>📊 آخر 10 محاولات</h4>'+
+        recent.map((x,i)=>'<div class="v6642-ios-bar-row"><span>'+(i+1)+'. '+esc(x.student_name||"متدرب")+'</span><div class="v6642-ios-bar-track"><span style="width:'+Number(x.score||0)+'%"></span></div><b>'+Number(x.score||0)+'%</b></div>').join('')+
+      '</div>'+
+      '<div class="v6642-ios-panel"><h4>💡 قراءة المدرب</h4><div class="v6642-ios-insights">'+
+        '<div class="v6642-ios-insight">🏆 أعلى نتيجة: <b>'+Number(bestRow?.score||0)+'/100</b> — '+esc(bestRow?.student_name||"—")+'</div>'+
+        '<div class="v6642-ios-insight">⏱️ أطول محاولة: <b>'+v6642FmtDuration(slowRow?.duration_seconds||0)+'</b> — '+esc(slowRow?.student_name||"—")+'</div>'+
+        '<div class="v6642-ios-insight">⚠️ أكثر خطوة تحتاج تدريبًا: <b>'+esc(worst?.title||"—")+'</b> — نسبة الخطأ '+Number(worst?.rate||0)+'%</div>'+
+        '<div class="v6642-ios-insight">🎯 التوصية: '+(passRate>=80?'الأداء العام جيد؛ ركّز على الخطوات الأعلى خطأً وتحسين الزمن.':passRate>=60?'الأداء متوسط؛ أنشئ جلسة مراجعة قبل الاختبار القادم.':'نسبة النجاح منخفضة؛ نفّذ تدريبًا إضافيًا على الأساسيات قبل إعادة الاختبار.')+'</div>'+
+      '</div></div>'+
+    '</div>'+
+    '<div class="v6642-ios-panel" style="margin-top:14px"><h4>🔢 توزيع الأخطاء حسب الخطوة</h4>'+
+      '<table><tr><th>الخطوة</th><th>محاولات مرصودة</th><th>صحيح</th><th>خطأ</th><th>نسبة الخطأ</th></tr>'+
+      stepStats.filter(s=>s.n>0).map(s=>'<tr><td style="text-align:right">'+esc(s.title)+'</td><td>'+s.n+'</td><td>'+s.correct+'</td><td>'+s.wrong+'</td><td>'+Math.round(s.wrong/s.n*100)+'%</td></tr>').join('')+
+      '</table></div>';
+}
+
 function v6641Render(){
   const area=$("v6641AttemptsArea"); if(!area)return;
   const q=(($("v6641Search")?.value)||"").trim().toLowerCase();
@@ -4209,6 +4311,7 @@ function v6641Render(){
       '</tr>';
     }).join("")+
     '</table></div>';
+  v6642RenderAnalytics();
 }
 
 async function loadTrainerOverview(){
