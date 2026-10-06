@@ -4,6 +4,7 @@ import {handleExamAction} from "./exam-v23.js";
 import {handleQuestionBankAction,updateFilter,questionBankView} from "./question-bank-v24.js";
 import {handleLabAction} from "./subnet-lab-v25.js";
 import {handleFlsmAction} from "./flsm-v26.js";
+import {handleVlsmAction} from "./vlsm-v27.js";
 
 const state={role:"student",page:"home"};
 const studentNav=[["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],["exams","الاختبارات"],["review","المراجعة الذكية"],["labs","المختبرات"],["progress","التقدم"],["achievements","الإنجازات"],["certificate","الشهادة"]];
