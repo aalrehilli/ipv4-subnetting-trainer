@@ -27,54 +27,71 @@ function home(){
   const next=lessons.find(l=>l.status==="current")||lessons[0];
   const ready=student.reviewTopics[0]||"Binary";
   return `
-  <div class="student-hero">
+  <section class="student-hero home-hero">
     <div class="student-hero-copy">
-      <span class="eyebrow">مسار التعلم الشخصي • Demo</span>
-      <h1>مرحبًا ${esc(student.name)} 👋</h1>
-      <p>هدفك الحالي: <strong>${esc(student.target)}</strong>. المنصة تقترح عليك خطوة واحدة واضحة بدل تشتيتك بين عشرات الخيارات.</p>
+      <span class="eyebrow">رحلتك التعليمية • Demo</span>
+      <h1>أهلًا ${esc(student.name)} 👋</h1>
+      <p>المنصة رتبت لك الطريق. ابدأ من مستواك، ثم انتقل مباشرة إلى التدريب المناسب لك.</p>
       <div class="hero-actions">
-        <button class="btn btn-white" data-page="course">متابعة المقرر</button>
-        <button class="btn btn-outline-white" data-page="review">ابدأ المراجعة الذكية</button>
+        <button class="btn btn-white" data-page="level">🎯 اختبار تحديد المستوى</button>
+        <button class="btn btn-outline-white" data-page="review">✦ المراجعة الذكية</button>
       </div>
     </div>
     <div class="student-hero-side">
-      <div class="hero-mini-label">المستوى الحالي</div>
+      <div class="hero-mini-label">مستواك الحالي</div>
       <div class="hero-level">${student.level}</div>
       <div class="progress hero-progress"><span style="width:${student.progress}%"></span></div>
       <div class="hero-progress-row"><span>${student.progress}% من المسار</span><span>${student.xp} XP</span></div>
     </div>
-  </div>
+  </section>
 
-  <div class="student-grid-4">
+  <div class="student-grid-4 home-kpis">
     ${statCard("تقدم المقرر",student.progress+"%","+6% هذا الأسبوع")}
-    ${statCard("متوسط الاختبارات",student.avgScore+"%","مستوى جيد")}
+    ${statCard("متوسط الأداء",student.avgScore+"%","آخر المحاولات")}
     ${statCard("سلسلة التعلم",student.streak+" أيام","استمر غدًا")}
-    ${statCard("نقاط الخبرة",student.xp+" XP","أقرب إنجاز: 500 XP")}
+    ${statCard("نقاط الخبرة",student.xp+" XP","الهدف التالي 500")}
   </div>
 
-  <div class="section-title"><h3>خطوتك التالية</h3><span class="badge orange">مهم</span></div>
-  <div class="next-grid">
-    <div class="card next-card">
-      <div class="next-icon">▶</div><div><div class="muted">أكمل من حيث توقفت</div><h3>${next.title}</h3><p class="muted">${next.desc}</p><div class="progress"><span style="width:${next.progress}%"></span></div><small>${next.progress}% مكتمل</small></div>
-      <button class="btn btn-primary" data-page="course">متابعة</button>
+  <div class="section-title"><h3>ابدأ من هنا</h3><span class="badge orange">3 خطوات فقط</span></div>
+  <div class="home-start-grid">
+    <div class="start-card level-start">
+      <div class="start-icon">🎯</div>
+      <div class="start-body">
+        <span class="eyebrow orange">الخطوة 1</span>
+        <h3>اختبار تحديد المستوى</h3>
+        <p>اعرف مستواك الحقيقي في IPv4 وBinary وSubnetting.</p>
+      </div>
+      <button class="btn btn-orange" data-page="level">ابدأ الآن</button>
     </div>
-    <div class="card recommendation-card">
-      <div class="next-icon purple">✦</div><div><div class="muted">المراجعة الذكية</div><h3>راجع ${ready}</h3><p class="muted">المنصة رصدت هذا الموضوع ضمن نقاط تحتاج مزيدًا من التدريب.</p></div>
+    <div class="start-card review-start">
+      <div class="start-icon purple">✦</div>
+      <div class="start-body">
+        <span class="eyebrow purple">الخطوة 2</span>
+        <h3>المراجعة الذكية</h3>
+        <p>راجع ${esc(ready)} وأهم النقاط التي تحتاج إلى تحسين.</p>
+      </div>
       <button class="btn btn-purple" data-page="review">راجع الآن</button>
     </div>
+    <div class="start-card course-start">
+      <div class="start-icon">▶</div>
+      <div class="start-body">
+        <span class="eyebrow blue">الخطوة 3</span>
+        <h3>تابع المقرر</h3>
+        <p>أكمل من ${esc(next.title)} دون العودة إلى قوائم كثيرة.</p>
+      </div>
+      <button class="btn btn-primary" data-page="course">متابعة</button>
+    </div>
   </div>
 
-  <div class="section-title"><h3>مسار التعلم</h3><button class="link-btn" data-page="progress">عرض التقدم الكامل</button></div>
+  <div class="section-title"><h3>مسار تعلمك</h3><button class="link-btn" data-page="progress">عرض التقدم الكامل</button></div>
   <div class="card">${pathHtml()}</div>
 
   <div class="section-title"><h3>آخر نشاط</h3><button class="link-btn" data-page="progress">السجل الكامل</button></div>
-  <div class="card activity-list">${defaultActivity.map(a=>`<div class="activity-item"><div class="activity-dot"></div><div class="activity-main"><strong>${a.title}</strong><span class="muted">${a.type} • ${a.time}</span></div><span class="badge ${a.status.includes("%")?"": "green"}">${a.status}</span></div>`).join("")}</div>
+  <div class="card activity-list">${defaultActivity.map(a=>`<div class="activity-item"><div class="activity-dot"></div><div class="activity-main"><strong>${a.title}</strong><span class="muted">${a.type} • ${a.time}</span></div><span class="badge ${a.status.includes("%")?"":"green"}">${a.status}</span></div>`).join("")}</div>
 
-  <div class="section-title"><h3>إنجازاتك</h3><button class="link-btn" data-page="achievements">عرض الجميع</button></div>
-  <div class="card achievement-row">${student.badges.map(b=>`<span class="achievement-chip">🏅 ${esc(b)}</span>`).join("")}<span class="achievement-chip muted-chip">🔒 500 XP</span><span class="achievement-chip muted-chip">🔒 80% في اختبار</span></div>
+  <div class="home-note"><strong>💡 نصيحة اليوم</strong><span>في Subnetting لا تحفظ النتائج فقط؛ اربط دائمًا بين Prefix وSubnet Mask وMagic Number.</span></div>
   `
 }
-
 function levelPage(){
   const areas=[
     ["IPv4","قوي","84%","تعرف الأساسيات جيدًا"],
