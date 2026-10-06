@@ -1,5 +1,6 @@
 import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent,resetDemo,loadPractice,savePractice} from "./demo-data.js";
 import {examPage,getLastWeakTopics} from "./exam-v23.js";
+import {labPage} from "./subnet-lab-v25.js";
 
 let student=loadStudent();
 
@@ -139,16 +140,7 @@ function practicePage(review=false){
 }
 
 function examsPage(){ return examPage(); }
-function labsPage(){
- return `
- <div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>حوّل المعرفة إلى تطبيق</h2><p>المختبر ليس صفحة إضافية؛ هو المرحلة التي تثبت فيها أنك تستطيع استخدام ما تعلمته.</p></div>
- <div class="grid-3">
-   <div class="card lab-card active-lab"><div class="lab-icon">⌘</div><span class="badge green">متاح</span><h3>Subnetting Challenge</h3><p class="muted">لديك شبكة واحتياجات محددة. احسب الشبكات والمضيفين وBroadcast.</p><div class="lab-tags"><span>/24</span><span>/26</span><span>FLSM</span></div><button class="btn btn-green">فتح المختبر</button></div>
-   <div class="card lab-card"><div class="lab-icon purple">01</div><span class="badge green">متاح</span><h3>Binary Lab</h3><p class="muted">حول عناوين IPv4 بين Binary وDecimal مع مؤقت تدريبي.</p><div class="lab-tags"><span>Binary</span><span>Speed</span></div><button class="btn btn-green" data-page="practice">فتح التدريب</button></div>
-   <div class="card lab-card"><div class="lab-icon orange">↗</div><span class="badge orange">المرحلة التالية</span><h3>Packet Tracer</h3><p class="muted">المختبر العملي سيُربط بعد اعتماد تجربة V2 الأساسية.</p><div class="lab-tags"><span>Network</span><span>Practical</span></div><button class="btn btn-soft" disabled>قريبًا</button></div>
- </div>`
-}
-
+function labsPage(){ return labPage(); }
 function progressPage(){
  const completed=lessons.filter(l=>l.progress===100).length;
  return `
