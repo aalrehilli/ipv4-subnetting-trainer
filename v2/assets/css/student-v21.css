@@ -29,3 +29,17 @@
 .level-start{border-top:4px solid var(--orange)}.review-start{border-top:4px solid var(--purple)}.course-start{border-top:4px solid var(--primary)}
 .home-note{margin-top:14px;padding:14px 16px;border-radius:14px;background:#eef7ff;border:1px solid #cfe4f6;display:flex;gap:10px;align-items:center;line-height:1.8}.home-note strong{color:var(--primary-2)}
 @media(max-width:900px){.home-start-grid{grid-template-columns:1fr}}
+
+/* V2.2 trainer command center */
+.trainer-command-hero{background:linear-gradient(135deg,#12395f,#0b6bcb 58%,#147b74);color:#fff;border-radius:24px;padding:26px;display:grid;grid-template-columns:1fr 220px;gap:18px;box-shadow:var(--shadow)}
+.trainer-command-hero h1{margin:4px 0 10px;color:#fff;font-size:29px}.trainer-command-hero p{margin:0;color:#e8f5ff;line-height:1.85}
+.command-priority{background:#ffffff18;border:1px solid #ffffff30;border-radius:18px;padding:18px;display:grid;align-content:center;text-align:center}.command-priority span,.command-priority small{color:#d9edff;font-size:12px}.command-priority strong{font-size:46px;line-height:1;margin:7px 0}
+.trainer-kpis{margin-top:14px}.trainer-kpi{min-height:120px}
+.intervention-grid{display:grid;gap:11px}.intervention-card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}.intervention-card.urgent{border-right:4px solid var(--red)}.intervention-icon{width:42px;height:42px;border-radius:12px;background:#fff0ef;color:var(--red);display:grid;place-items:center;font-weight:900;font-size:20px}.intervention-icon.purple{background:#f2edfa;color:var(--purple)}.intervention-icon.green{background:#eaf8ef;color:var(--green)}.intervention-card h3{margin:3px 0 4px}
+.risk-list{padding:7px 17px}.risk-row{display:grid;grid-template-columns:32px 1.3fr auto 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid #edf2f6}.risk-row:last-child{border-bottom:0}.risk-rank{width:30px;height:30px;border-radius:9px;background:#edf5fb;color:var(--primary);display:grid;place-items:center;font-weight:900}.risk-person{display:grid;gap:4px}.risk-topic{display:grid;gap:3px}
+.topic-bar{margin:13px 0}.topic-bar>div:first-child{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}.topic-bar b{color:var(--primary)}
+.trainer-bars{height:190px}.trainer-filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:12px}.trainer-filters input,.trainer-filters select{margin:0;padding:11px;border:1px solid var(--line);border-radius:10px}
+.trainer-table th,.trainer-table td{vertical-align:middle}.table-progress{min-width:90px}.mini-btn{padding:7px 10px}
+.student360-head{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center}.student360-avatar{width:62px;height:62px;border-radius:18px;background:#eaf4ff;color:var(--primary);display:grid;place-items:center;font-size:25px;font-weight:900}.student360-main h3{margin:0 0 5px}.analysis-box{padding:12px;border-radius:12px;background:#f7fafc;border:1px solid var(--line);margin:10px 0}.analysis-box strong{display:block;color:var(--primary-2);margin-bottom:5px}.intervention-log{margin-top:14px}
+@media(max-width:850px){.trainer-command-hero{grid-template-columns:1fr}.risk-row{grid-template-columns:32px 1fr auto}.risk-topic{display:none}.trainer-filters{grid-template-columns:1fr}}
+@media(max-width:650px){.intervention-card,.student360-head{grid-template-columns:1fr}.intervention-card .btn{width:100%}.risk-row{grid-template-columns:28px 1fr auto}.trainer-table{min-width:760px}.card:has(.trainer-table){overflow-x:auto}}
