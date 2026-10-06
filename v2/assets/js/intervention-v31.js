@@ -26,6 +26,27 @@ export function getInterventions(){
   return list.sort((a,b)=>a.status===b.status?a.priority-b.priority:(a.status==="open"?-1:1));
 }
 
+export function createIntervention(data){
+  const list=getInterventions();
+  const item={
+    id:"i"+Date.now(),
+    studentId:Number(data.studentId),
+    name:data.name||"متدرب",
+    group:String(data.group||""),
+    risk:data.risk||"متوسط",
+    topic:data.topic||"مراجعة",
+    score:Number(data.score||0),
+    reason:data.reason||"تم إنشاء التدخل من Student 360.",
+    action:data.action||"تدريب مستهدف",
+    status:"open",
+    priority:Number(data.priority||2),
+    createdAt:Date.now()
+  };
+  list.push(item);
+  write(list);
+  return item;
+}
+
 export function getOpenInterventions(){
   return getInterventions().filter(x=>x.status==="open");
 }
