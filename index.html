@@ -3407,7 +3407,7 @@ async function renderDashboard(){
     <div class="smart-columns"><div class="smart-panel"><h3>🏅 إنجازاتي</h3><div class="smart-achievements">${badges.map(b=>`<span class="badge-achievement">${b}</span>`).join('')}</div></div><div class="smart-panel"><div class="smart-streak"><div><strong>🔥 سلسلة التدريب</strong><div class="muted">${streak?`تدربت ${streak} يوم${streak===1?'':'ًا'} متتاليًا.`:'ابدأ اليوم لبناء سلسلة تدريب.'}</div></div><div class="fire">🔥 ${streak}</div></div></div></div>
     <div class="smart-panel"><h3>🕘 آخر نشاط</h3>${last?`<div class="smart-activity"><div class="smart-activity-row"><div class="type">${last.t}</div><div><strong>${esc(last.title)}</strong><div class="muted">النتيجة: ${last.s}${last.t==='منافسة'?' / 1000':last.t==='تمرين'?' / 100':'%' } — ${last.z}</div></div><div class="date">${new Date(last.d).toLocaleDateString('ar-SA')}</div></div></div>`:'<div class="smart-empty">لا يوجد نشاط حتى الآن. ابدأ بأول تمرين 🎯</div>'}</div>
   </div>`;
-  renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});\n
+  renderV54StudentAnalytics({attempts:a,exercises:e,lessons,lp,competitions});
   v6634RenderIOSProgress();
 
   renderV56SmartReviewPanel({attempts:a,lessons,lp});
