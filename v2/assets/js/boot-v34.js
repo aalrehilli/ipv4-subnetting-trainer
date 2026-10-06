@@ -43,6 +43,12 @@ function simplePage(title,eyebrow,desc,actions){
   return '<div class="page-intro"><span class="eyebrow blue">'+eyebrow+'</span><h2>'+title+'</h2><p>'+desc+'</p></div><div class="card"><div class="section-title"><h3>وضع V3.2</h3></div><p class="muted">هذه الشاشة تعمل الآن كواجهة مستقرة، ويمكن ربطها بالمكونات المتقدمة تدريجيًا.</p><div class="hero-actions" style="margin-top:15px">'+actions.map(x=>'<button class="btn '+(x[1]||"btn-primary")+'" data-page="'+x[0]+'">'+x[2]+'</button>').join("")+'</div></div>';
 }
 
+async function loadStudentPage(){
+  const m=await import("./student.js?v=350");
+  m.studentState.page=state.page;
+  return m.studentPage();
+}
+
 async function loadAdvanced(page){
   try{
     if(page==="notifications"){
@@ -74,10 +80,8 @@ async function render(){
   else if(state.page==="notifications")view=await loadAdvanced("notifications");
   else if(state.role==="trainer" && state.page==="interventions")view=await loadAdvanced("interventions");
   else if(state.role==="trainer")view=await loadAdvanced(state.page);
-  else if(state.page==="level")view=simplePage("اختبار تحديد المستوى","01 • التشخيص","ابدأ بقياس مستواك قبل التقدم.",[["home","btn-soft","عودة للرئيسية"],["practice","btn-primary","ابدأ التدريب"]]);
-  else if(state.page==="review")view=simplePage("المراجعة الذكية","05 • التحسين","راجع أضعف موضوع أولًا بدل إعادة المقرر كاملًا.",[["practice","btn-purple","ابدأ التدريب"],["progress","btn-soft","عرض التقدم"]]);
-  else if(state.page==="progress")view=simplePage("لوحة التقدم","07 • التقدم","تابع الإتقان والتقدم في مسارك.",[["home","btn-primary","الرئيسية"]]);
-  else view=simplePage("الشاشة التدريبية","V3.2","المكون سيُربط تدريجيًا مع محرك التعلم.",[["home","btn-primary","الرئيسية"]]);
+  else if(state.role==="student")view=await loadStudentPage();
+  else view=simplePage("الشاشة التدريبية","V3.3","اختر قسمًا من القائمة للمتابعة.",[["tdash","btn-primary","الرئيسية"]]);
 
   app.innerHTML='<div class="app-shell">'+sidebar()+'<main class="main">'+topbar()+'<div class="container">'+(view||"")+'</div></main></div>';
   bind();
