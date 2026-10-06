@@ -241,3 +241,27 @@
 .trainer-table-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:3px 3px 12px}.trainer-table-head>div{display:grid;gap:3px}.trainer-table-head strong{color:var(--primary-2)}.table-scroll{overflow:auto}.trainer-student-name{display:flex;align-items:center;gap:9px;min-width:165px}.trainer-student-name>div:last-child{display:grid;gap:2px}.trainer-student-name small{font-size:10px;color:var(--muted)}.student-mini-avatar{width:34px;height:34px;border-radius:10px;background:#edf5fb;color:var(--primary);display:grid;place-items:center;font-weight:900}.trainer-progress-cell{min-width:110px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px}.trainer-progress-cell small{font-size:10px;color:var(--muted)}.trainer-student-actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.trainer-student-actions-grid .action-card{text-align:right;border:1px solid var(--line);background:#fff}.trainer-student-actions-grid .action-card:hover{border-color:#b9d7ee;transform:translateY(-1px)}
 @media(max-width:1050px){.trainer-students-summary{grid-template-columns:repeat(3,1fr)}.trainer-student-toolbar{grid-template-columns:1fr 1fr}.trainer-filter-actions{grid-column:1/-1;justify-content:flex-start}.trainer-student-actions-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:650px){.trainer-students-summary{grid-template-columns:1fr 1fr}.trainer-student-toolbar{grid-template-columns:1fr}.trainer-filter-actions{grid-column:auto}.trainer-student-actions-grid{grid-template-columns:1fr}.trainer-table-head{display:block}.trainer-table-head .badge{margin-top:6px}}
+
+
+/* V3.13 Student 360 Professional Profile */
+.student360-head-actions{display:flex;gap:7px;flex-wrap:wrap}
+.student360-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.student360-decision{display:flex;justify-content:space-between;align-items:center;gap:16px;border-right:4px solid var(--purple);background:linear-gradient(180deg,#fff,#fafcff)}
+.decision-main{display:grid;gap:5px}.decision-main h2{margin:2px 0;font-size:21px;color:var(--primary-2)}.decision-actions{display:flex;gap:7px;flex-wrap:wrap}
+.section-card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.student360-empty-mini{padding:18px}
+.student360-intervention-card{display:grid;gap:8px;padding:14px;border-right:4px solid var(--orange);background:#fffaf3;border-radius:13px}
+.student360-intervention-card.assigned{border-right-color:var(--purple);background:#faf8ff}
+.student360-intervention-card.done{border-right-color:var(--green);background:#f8fcf9}
+.student360-intervention-card>div{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.student360-intervention-card strong{color:var(--primary-2)}
+.student360-intervention-card p{margin:0;line-height:1.8}
+.student360-intervention-meta{display:flex;gap:8px;flex-wrap:wrap}
+.student360-intervention-meta span{font-size:11px;background:#f5f7fa;padding:7px 9px;border-radius:9px;color:var(--muted)}
+.student360-intervention-meta b{color:var(--primary-2)}
+.student360-actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.student360-actions-grid .action-card{background:#fff;border:1px solid var(--line);text-align:right;cursor:pointer}
+.student360-actions-grid .action-card:hover{border-color:#b9d7ee;transform:translateY(-1px)}
+.trainer-note-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+@media(max-width:850px){.student360-decision{display:grid}.student360-actions-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.student360-head-actions{width:100%}.student360-head-actions .btn{flex:1}.student360-actions-grid{grid-template-columns:1fr}.decision-actions .btn{width:100%}}
