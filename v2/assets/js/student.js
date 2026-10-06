@@ -4,6 +4,7 @@ import {labPage} from "./subnet-lab-v25.js";
 import {flsmPage} from "./flsm-v26.js";
 import {vlsmPage} from "./vlsm-v27.js";
 import {getLearningSnapshot,getSmartRecommendation,getWeakTopics} from "./smart-engine-v28.js";
+import {notificationsPage} from "./notifications-v30.js";
 
 let student=loadStudent();
 
@@ -187,6 +188,7 @@ export function studentPage(){
   if(studentState.page==="exams") return examsPage();
   if(studentState.page==="labs") return labsPage();
   if(studentState.page==="progress") return progressPage();
+  if(studentState.page==="notifications") return notificationsPage("student");
   if(studentState.page==="achievements") return achievementsPage();
   if(studentState.page==="certificate") return certificatePage();
   return home();
