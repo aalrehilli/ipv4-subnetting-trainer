@@ -2,6 +2,7 @@ import {questions,loadPractice,savePractice} from "./demo-data.js";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
+const WEAK_KEY="ipv4AcademyV23WeakTopics";
 const DEMO_DURATION=5*60;
 
 const examQuestions=questions.slice(0,10);
@@ -133,6 +134,7 @@ function submitExam(auto=false){
   state.mode="result";
   state.submitted=true;
   localStorage.setItem(RESULT_KEY,JSON.stringify(result));
+  localStorage.setItem(WEAK_KEY,JSON.stringify(result.topics.filter(x=>x.percent<70).slice(0,3).map(x=>x.topic)));
   clearState();
   savePractice({
     ...loadPractice(),
@@ -269,6 +271,10 @@ export function handleExamAction(target){
 }
 
 export function submitFromReview(){submitExam(false)}
+export function getLastWeakTopics(){
+  try{return JSON.parse(localStorage.getItem(WEAK_KEY)||"[]")}catch{return []}
+}
+
 export function getTrainerExamSummary(){
   const r=loadResult();
   return {
