@@ -268,9 +268,81 @@ export function getTrainerView(page="tdash",filter="",id=null){
     <div class="card"><div class="stat-row"><span>بنك الأسئلة</span><b>سحب عشوائي + تصنيف</b></div><div class="stat-row"><span>المحاولات</span><b>حدود ومحاولات حسب الطالب</b></div><div class="stat-row"><span>التصحيح</span><b>Server-authoritative</b></div><div class="stat-row"><span>التحليل</span><b>Student 360 + Trainer Analytics</b></div></div>`;
   }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
-  if(page==="analytics")return `
-    <div class="page-intro"><span class="eyebrow purple">07 • التحليلات</span><h2>التحليلات واتخاذ القرار</h2><p>التحليل ليس أرقامًا فقط؛ كل مؤشر يجب أن يقود إلى إجراء.</p></div>
-    <div class="student-grid-4">${stat("متوسط التقدم","71%","جميع الطلاب")}${stat("متوسط الاختبارات","78%","هذا الشهر")}${stat("دقة التدريب","74%","آخر 30 يومًا")}${stat("طلاب معرضون للخطر","7","تحتاج تدخل")}</div>
-    <div class="grid-2" style="margin-top:14px"><div class="card"><h3>الموضوعات التي تحتاج تدخلًا</h3>${[["VLSM",48],["Subnet Mask",56],["Prefix",61],["Binary",72]].map(x=>`<div class="topic-bar"><div><span>${x[0]}</span><b>${x[1]}%</b></div><div class="progress"><span style="width:${x[1]}%"></span></div></div>`).join("")}</div><div class="card"><h3>ماذا نفعل الآن؟</h3><div class="stat-row"><span>الجلسة الجماعية التالية</span><b>VLSM</b></div><div class="stat-row"><span>طلاب متابعة فردية</span><b>7</b></div><div class="stat-row"><span>طلاب جاهزون للانتقال</span><b>12</b></div></div></div>`;
+  if(page==="analytics"){
+    const r=getTrainerExamSummary();
+    const interventions=getOpenInterventions();
+    const total=students.length;
+    const avgProgress=Math.round(students.reduce((a,s)=>a+s.progress,0)/total);
+    const avgScore=Math.round(students.reduce((a,s)=>a+s.avg,0)/total);
+    const high=students.filter(s=>s.risk==="مرتفع").length;
+    const medium=students.filter(s=>s.risk==="متوسط").length;
+    const active=Math.round(students.filter(s=>s.activity==="نشط").length/total*100);
+    const topics=[["IPv4",84],["Binary",72],["Prefix",61],["Subnet Mask",56],["FLSM",69],["VLSM",48]];
+    const weak=topics.filter(x=>x[1]<70).sort((a,b)=>a[1]-b[1]);
+    const ready=students.filter(s=>s.progress>=70&&s.avg>=70).length;
+    const trend=[62,66,69,65,72,76,78];
+    const severity=Math.max(0,Math.min(100,Math.round((high*100+medium*55)/Math.max(1,total))));
+    return `
+    <div class="page-intro with-action">
+      <div><span class="eyebrow purple">08 • التحليلات</span><h2>مركز التحليلات واتخاذ القرار</h2><p>حوّل بيانات المتدربين والاختبارات والتدخلات إلى قرارات تدريبية واضحة.</p></div>
+      <div class="trainer-analytics-head-actions">
+        <span class="badge purple">V3.15</span>
+        <button class="btn btn-soft" data-trainer-page="tdash">لوحة المدرب</button>
+      </div>
+    </div>
+
+    <div class="trainer-analytics-kpis">
+      <div class="card analytics-kpi"><span>متوسط التقدم</span><strong>${avgProgress}%</strong><small>جميع المتدربين</small></div>
+      <div class="card analytics-kpi"><span>متوسط الأداء</span><strong>${avgScore}%</strong><small>متوسط الاختبارات</small></div>
+      <div class="card analytics-kpi danger"><span>عالي الخطورة</span><strong>${high}</strong><small>تدخل مباشر</small></div>
+      <div class="card analytics-kpi warning"><span>قيد المتابعة</span><strong>${interventions.length}</strong><small>تدخلات مفتوحة</small></div>
+      <div class="card analytics-kpi success"><span>جاهزون</span><strong>${ready}</strong><small>للانتقال للمحور التالي</small></div>
+    </div>
+
+    <div class="trainer-analytics-grid">
+      <div class="card analytics-chart-card">
+        <div class="analytics-card-head"><div><span class="eyebrow blue">اتجاه الأداء</span><h3>متوسط الأداء خلال الأسابيع</h3></div><span class="badge green">+6%</span></div>
+        <div class="analytics-bars">${trend.map((v,i)=>'<div class="analytics-bar-item"><div class="analytics-bar"><span style="height:'+v+'%"></span></div><small>أسبوع '+(i+1)+'</small><b>'+v+'%</b></div>').join("")}</div>
+      </div>
+      <div class="card analytics-chart-card">
+        <div class="analytics-card-head"><div><span class="eyebrow red">مؤشر المخاطر</span><h3>توزيع الحالات</h3></div><span class="badge red">'+severity+'%</span></div>
+        <div class="risk-meter"><div class="risk-meter-track"><span style="width:'+severity+'%"></span></div><div class="risk-meter-labels"><span>منخفض</span><span>متوسط</span><span>مرتفع</span></div></div>
+        <div class="analytics-risk-grid"><div><strong>'+high+'</strong><span>مرتفع</span></div><div><strong>'+medium+'</strong><span>متوسط</span></div><div><strong>'+(total-high-medium)+'</strong><span>منخفض</span></div></div>
+      </div>
+    </div>
+
+    <div class="section-title"><h3>الموضوعات التي تحتاج تدخلًا</h3><button class="link-btn" data-trainer-page="students" data-risk="مرتفع">فتح الطلاب</button></div>
+    <div class="card analytics-topic-list">
+      ${topics.map(x=>'<div class="analytics-topic-row"><div class="analytics-topic-name"><strong>'+x[0]+'</strong><span class="badge '+(x[1]<50?"red":x[1]<70?"orange":"green")+'">'+(x[1]<50?"حرج":x[1]<70?"يحتاج تدريب":"جيد")+'</span></div><div class="progress"><span style="width:'+x[1]+'%"></span></div><strong class="analytics-topic-value">'+x[1]+'%</strong><button class="btn btn-soft mini-btn" data-trainer-page="students" data-risk="'+(x[1]<50?"مرتفع":x[1]<70?"متوسط":"منخفض")+'">عرض</button></div>').join("")}
+    </div>
+
+    <div class="trainer-analytics-grid">
+      <div class="card analytics-action-card">
+        <div class="analytics-card-head"><div><span class="eyebrow orange">الاختبارات</span><h3>آخر نتيجة مسجلة</h3></div><button class="btn btn-soft mini-btn" data-trainer-page="exams">إدارة الاختبارات</button></div>
+        <div class="analytics-exam-score"><strong>${r.lastResult?r.lastResult.percent+"%":"—"}</strong><span>${r.lastResult?(r.lastResult.passed?"ناجح":"يحتاج مراجعة"):"لم يسجل بعد"}</span></div>
+        <div class="stat-row"><span>عدد المحاولات</span><b>${r.attempts||0}</b></div>
+        <div class="stat-row"><span>أفضل موضوع</span><b>${r.lastResult?[...r.lastResult.topics].sort((a,b)=>b.percent-a.percent)[0]?.topic||"—":"—"}</b></div>
+        <div class="stat-row"><span>أضعف موضوع</span><b>${r.lastResult?[...r.lastResult.topics].sort((a,b)=>a.percent-b.percent)[0]?.topic||"—":"—"}</b></div>
+      </div>
+      <div class="card analytics-action-card">
+        <div class="analytics-card-head"><div><span class="eyebrow red">التدخلات</span><h3>حالة الإجراءات</h3></div><button class="btn btn-soft mini-btn" data-trainer-page="interventions">مركز التدخل</button></div>
+        <div class="analytics-intervention-score"><strong>${interventions.length}</strong><span>تدخلات مفتوحة</span></div>
+        <div class="stat-row"><span>أعلى أولوية</span><b>${interventions.filter(x=>x.priority===1).length}</b></div>
+        <div class="stat-row"><span>أقل من 50%</span><b>${interventions.filter(x=>Number(x.score)<50).length}</b></div>
+        <div class="stat-row"><span>أكثر موضوع تكرارًا</span><b>${weak[0]?.[0]||"—"}</b></div>
+      </div>
+    </div>
+
+    <div class="section-title"><h3>جدول القرار</h3><span class="badge">Priority Matrix</span></div>
+    <div class="card analytics-decision-table">
+      <div class="analytics-decision-row head"><span>الأولوية</span><span>الحالة</span><span>المؤشر</span><span>القرار</span><span>الإجراء</span></div>
+      <div class="analytics-decision-row"><strong class="badge red">1</strong><span>عالية</span><span>VLSM • 48%</span><strong>جلسة علاجية</strong><button class="btn btn-danger mini-btn" data-trainer-page="students" data-risk="مرتفع">تنفيذ</button></div>
+      <div class="analytics-decision-row"><strong class="badge orange">2</strong><span>متوسطة</span><span>Subnet Mask • 56%</span><strong>تدريب مخصص</strong><button class="btn btn-orange mini-btn" data-trainer-page="students" data-risk="متوسط">تنفيذ</button></div>
+      <div class="analytics-decision-row"><strong class="badge green">3</strong><span>جيدة</span><span>جاهزية • '+ready+' متدربين</span><strong>رفع مستوى الصعوبة</strong><button class="btn btn-green mini-btn" data-trainer-page="students" data-risk="منخفض">عرض</button></div>
+    </div>
+
+    <div class="card analytics-footer-note"><strong>ملاحظة:</strong> أرقام V3.15 الحالية مبنية على بيانات العرض داخل المنصة، وسيتم استبدالها ببيانات Supabase عند تفعيل طبقة البيانات الفعلية.</div>
+    `;
+  }
   return trainerDashboard();
 }
