@@ -36,6 +36,14 @@ export function saveTrainerExamConfigFromForm(form){
   localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(normalized));
   return normalized;
 }
+export function saveTrainerExamQuestionsFromForm(form){
+  const cfg=getExamConfig();
+  const ids=[...form.querySelectorAll('input[name="questionIds"]:checked')].map(x=>Number(x.value));
+  const valid=Array.from(new Set(ids)).filter(id=>questions.some(q=>q.id===id));
+  const next={...cfg,questionIds:valid.length?valid:[...cfg.questionIds]};
+  localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(next));
+  return next;
+}
 export function getTrainerExamConfig(){return getExamConfig()}
 export function resetTrainerExamConfig(){localStorage.removeItem(EXAM_CONFIG_KEY);localStorage.removeItem(EXAM_ATTEMPT_KEY);localStorage.removeItem(RESULT_KEY);return getExamConfig()}
 function getAttemptCount(){const n=Number(localStorage.getItem(EXAM_ATTEMPT_KEY)||0);return Number.isFinite(n)?n:0}
