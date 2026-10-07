@@ -301,22 +301,22 @@ function bind(){
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v24.js?v=421").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v24.js?v=422").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=421");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=422");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=421");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=422");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankStatus&&qbankStatus.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=421");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=422");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v24.js?v=421");
+        var m=await import("./question-bank-v24.js?v=422");
         var result=m.handleQuestionBankAction(btn);
         if(result&&result.export){
           var blob=new Blob([m.getExportData()],{type:"application/json;charset=utf-8"});
@@ -328,7 +328,9 @@ function bind(){
           return;
         }
         if(result&&result.openImport){
-          document.getElementById("qbank-import-file")?.click();
+          var format=result.openImport;
+          var input=document.getElementById("qbank-import-"+format+"-file");
+          input?.click();
           return;
         }
         if(result&&result.message){window.alert(result.message);}
@@ -339,23 +341,25 @@ function bind(){
     });
   });
 
-  var qbankImport=document.getElementById("qbank-import-file");
-  qbankImport&&qbankImport.addEventListener("change",function(event){
-    var file=event.target.files&&event.target.files[0];
-    if(!file)return;
-    var reader=new FileReader();
-    reader.onload=async function(){
-      try{
-        var m=await import("./question-bank-v24.js?v=421");
-        var result=m.importQuestionBankText(String(reader.result||""));
-        window.alert(result.message||"تمت معالجة الملف.");
-        if(result.ok) await render();
-      }catch(error){
-        document.getElementById("app").innerHTML=shell(errorView(error));bind();
-      }
-      event.target.value="";
-    };
-    reader.readAsText(file,"utf-8");
+  document.querySelectorAll("#qbank-import-json-file,#qbank-import-xml-file,#qbank-import-aiken-file").forEach(function(qbankImport){
+    qbankImport.addEventListener("change",function(event){
+      var file=event.target.files&&event.target.files[0];
+      if(!file)return;
+      var reader=new FileReader();
+      reader.onload=async function(){
+        try{
+          var m=await import("./question-bank-v24.js?v=422");
+          var format=event.target.id.indexOf("xml")>=0?"xml":event.target.id.indexOf("aiken")>=0?"aiken":"json";
+          var result=m.importQuestionBankText(String(reader.result||""),format);
+          window.alert(result.message||"تمت معالجة الملف.");
+          if(result.ok) await render();
+        }catch(error){
+          document.getElementById("app").innerHTML=shell(errorView(error));bind();
+        }
+        event.target.value="";
+      };
+      reader.readAsText(file,"utf-8");
+    });
   });
 
   var examSettings=document.getElementById("trainer-exam-settings-form");
