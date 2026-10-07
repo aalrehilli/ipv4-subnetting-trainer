@@ -341,3 +341,10 @@
 @media(max-width:1050px){.trainer-exam-kpis{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:800px){.trainer-exam-kpis{grid-template-columns:repeat(2,1fr)}.exam-question-picker{grid-template-columns:1fr}}
 @media(max-width:560px){.trainer-exam-kpis{grid-template-columns:1fr}.exam-setting-grid{grid-template-columns:1fr}.exam-result-topic-row{grid-template-columns:1fr auto}.exam-result-topic-row .progress{grid-column:1/-1}}
+
+
+/* V3.18 Trainer Exam Results */
+.exam-result-filter{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.exam-results-table-card{overflow:hidden}.exam-results-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 3px 12px}.exam-results-toolbar>div{display:grid;gap:3px}.exam-results-toolbar strong{color:var(--primary-2)}
+.exam-results-table{min-width:900px}.exam-results-table td,.exam-results-table th{vertical-align:middle}.exam-score-value{font-size:16px;color:var(--primary-2)}
+@media(max-width:700px){.exam-result-filter{justify-content:flex-start}.exam-results-toolbar{display:block}.exam-results-toolbar .badge{margin-top:6px}}
