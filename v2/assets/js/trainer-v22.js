@@ -1,6 +1,6 @@
 import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,resetTrainerExamConfig} from "./exam-v23.js?v=421";
 import {questions} from "./demo-data.js";
-import {questionBankView,refreshBank} from "./question-bank-v24.js?v=421";
+import {questionBankView,refreshBank} from "./question-bank-v24.js?v=422";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
