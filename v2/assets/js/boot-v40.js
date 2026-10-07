@@ -326,7 +326,7 @@ function bind(){
           var url=URL.createObjectURL(blob);
           var a=document.createElement("a");
           a.href=url;
-          a.download="ipv4-academy-question-bank-v3.21."+ext;
+          a.download="ipv4-academy-question-bank-v3.23."+ext;
           document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
           return;
         }
@@ -372,7 +372,7 @@ function bind(){
   if(examSettings) examSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=421");
+      var m=await import("./exam-v23.js?v=426");
       m.saveTrainerExamConfigFromForm(event.currentTarget);
       await render();
     }catch(error){
@@ -384,7 +384,7 @@ function bind(){
   if(examQuestionSettings) examQuestionSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=421");
+      var m=await import("./exam-v23.js?v=426");
       var cfg=m.saveTrainerExamQuestionsFromForm(event.currentTarget);
       var msg=document.getElementById("exam-question-msg");
       if(msg) msg.textContent="تم حفظ "+cfg.questionIds.length+" سؤالًا.";
@@ -396,7 +396,7 @@ function bind(){
 
   document.getElementById("reset-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=421");
+      var m=await import("./exam-v23.js?v=426");
       m.resetTrainerExamConfig();
       await render();
     }catch(error){
@@ -407,7 +407,7 @@ function bind(){
   document.querySelectorAll("#start-exam,#exam-prev,#exam-next,#submit-exam,[data-exam-answer],[data-exam-jump],[data-exam-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./exam-v23.js?v=421");
+        var m=await import("./exam-v23.js?v=426");
         var result;
         if(btn.id==="start-exam") result=m.handleExamAction(btn);
         else if(btn.id==="exam-prev") result=m.handleExamAction(btn);
