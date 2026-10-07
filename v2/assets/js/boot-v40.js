@@ -113,12 +113,12 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && state.page==="interventions"){
-      var interventions=await import("./intervention-v31.js?v=417");
+      var interventions=await import("./intervention-v31.js?v=419");
       return interventions.interventionCenterView();
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=417");
+      var trainer=await import("./trainer-v22.js?v=419");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
@@ -253,7 +253,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=417");
+        var m=await import("./intervention-v31.js?v=419");
         var result=m.handleInterventionAction(btn);
         if(result&&result.studentId){
           state.role="trainer";
@@ -271,7 +271,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-filter]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=417");
+        var m=await import("./intervention-v31.js?v=419");
         m.setInterventionFilter(btn.getAttribute("data-intervention-filter")||"open");
         await render();
       }catch(error){
@@ -284,7 +284,7 @@ function bind(){
   if(examSettings) examSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=417");
+      var m=await import("./exam-v23.js?v=419");
       m.saveTrainerExamConfigFromForm(event.currentTarget);
       await render();
     }catch(error){
@@ -296,7 +296,7 @@ function bind(){
   if(examQuestionSettings) examQuestionSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=417");
+      var m=await import("./exam-v23.js?v=419");
       var cfg=m.saveTrainerExamQuestionsFromForm(event.currentTarget);
       var msg=document.getElementById("exam-question-msg");
       if(msg) msg.textContent="تم حفظ "+cfg.questionIds.length+" سؤالًا.";
@@ -308,7 +308,7 @@ function bind(){
 
   document.getElementById("reset-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=417");
+      var m=await import("./exam-v23.js?v=419");
       m.resetTrainerExamConfig();
       await render();
     }catch(error){
@@ -319,7 +319,7 @@ function bind(){
   document.querySelectorAll("#start-exam,#exam-prev,#exam-next,#submit-exam,[data-exam-answer],[data-exam-jump],[data-exam-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./exam-v23.js?v=417");
+        var m=await import("./exam-v23.js?v=419");
         var result;
         if(btn.id==="start-exam") result=m.handleExamAction(btn);
         else if(btn.id==="exam-prev") result=m.handleExamAction(btn);
@@ -338,6 +338,17 @@ function bind(){
       }catch(error){
         document.getElementById("app").innerHTML=shell(errorView(error)); bind();
       }
+    });
+  });
+
+  document.querySelectorAll("[data-exam-result-filter]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      var filter=btn.getAttribute("data-exam-result-filter")||"all";
+      document.querySelectorAll("[data-exam-result-filter]").forEach(function(x){x.classList.toggle("active",x===btn);});
+      document.querySelectorAll(".exam-results-table tbody tr").forEach(function(row){
+        var ok=filter==="all"||row.getAttribute("data-exam-result-status")===filter;
+        row.style.display=ok?"":"none";
+      });
     });
   });
 
