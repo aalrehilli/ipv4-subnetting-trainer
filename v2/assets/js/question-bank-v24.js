@@ -390,7 +390,10 @@ function deleteQuestion(id){
 function importPreviewView(){
   const p=qbankState.importPreview;
   const sample=p.rows.slice(0,10);
-  return \`
+  const previewRows=sample.map(function(q,i){
+    return '<div class="import-preview-row"><div class="import-preview-index">'+(i+1)+'</div><div><strong>'+esc(q.q)+'</strong><div class="import-preview-meta"><span class="badge">'+esc(q.topic)+'</span><span class="badge '+diffClass(q.difficulty)+'">'+diffLabel(q.difficulty)+'</span><span class="muted">'+q.options.filter(Boolean).length+' خيارات</span></div></div></div>';
+  }).join("");
+  return `
   <div class="page-intro with-action">
     <div><span class="eyebrow purple">استيراد بنك الأسئلة • معاينة</span><h2>مراجعة قبل الاستيراد</h2><p>راجع نتائج التحليل أولًا. لن تتم إضافة أي سؤال حتى تضغط «تأكيد الاستيراد».</p></div>
     <div class="import-preview-actions">
@@ -399,18 +402,18 @@ function importPreviewView(){
     </div>
   </div>
   <div class="student-grid-4 qbank-import-summary">
-    <div class="card trainer-kpi"><div class="muted">المصدر</div><div class="kpi-value" style="font-size:22px">\${esc(p.label)}</div><div class="muted">\${esc(String(p.format||"").toUpperCase())}</div></div>
-    <div class="card trainer-kpi"><div class="muted">المكتشفة</div><div class="kpi-value">\${p.totalDetected}</div><div class="muted">سجل في الملف</div></div>
-    <div class="card trainer-kpi"><div class="muted">جاهزة للإضافة</div><div class="kpi-value" style="color:var(--green)">\${p.valid}</div><div class="muted">أسئلة جديدة</div></div>
-    <div class="card trainer-kpi"><div class="muted">مكررة / غير صالحة</div><div class="kpi-value" style="color:var(--orange)">\${p.duplicates+p.invalid}</div><div class="muted">\${p.duplicates} مكرر • \${p.invalid} غير صالح</div></div>
+    <div class="card trainer-kpi"><div class="muted">المصدر</div><div class="kpi-value" style="font-size:22px">${esc(p.label)}</div><div class="muted">${esc(String(p.format||"").toUpperCase())}</div></div>
+    <div class="card trainer-kpi"><div class="muted">المكتشفة</div><div class="kpi-value">${p.totalDetected}</div><div class="muted">سجل في الملف</div></div>
+    <div class="card trainer-kpi"><div class="muted">جاهزة للإضافة</div><div class="kpi-value" style="color:var(--green)">${p.valid}</div><div class="muted">أسئلة جديدة</div></div>
+    <div class="card trainer-kpi"><div class="muted">مكررة / غير صالحة</div><div class="kpi-value" style="color:var(--orange)">${p.duplicates+p.invalid}</div><div class="muted">${p.duplicates} مكرر • ${p.invalid} غير صالح</div></div>
   </div>
   <div class="card qbank-import-preview-card">
-    <div class="section-title"><h3>معاينة الأسئلة الجديدة</h3><span class="badge green">\${p.valid} سؤال جاهز</span></div>
-    \${sample.length?sample.map((q,i)=>\`<div class="import-preview-row"><div class="import-preview-index">\${i+1}</div><div><strong>\${esc(q.q)}</strong><div class="import-preview-meta"><span class="badge">\${esc(q.topic)}</span><span class="badge \${diffClass(q.difficulty)}">\${diffLabel(q.difficulty)}</span><span class="muted">\${q.options.filter(Boolean).length} خيارات</span></div></div></div>\`).join(""):'<div class="empty">لا توجد أسئلة جديدة جاهزة للإضافة.</div>'}
-    \${p.valid>10?'<div class="qbank-import-more">تم عرض أول 10 أسئلة فقط. سيتم استيراد جميع الأسئلة الجاهزة بعد التأكيد.</div>':''}
+    <div class="section-title"><h3>معاينة الأسئلة الجديدة</h3><span class="badge green">${p.valid} سؤال جاهز</span></div>
+    ${sample.length?previewRows:'<div class="empty">لا توجد أسئلة جديدة جاهزة للإضافة.</div>'}
+    ${p.valid>10?'<div class="qbank-import-more">تم عرض أول 10 أسئلة فقط. سيتم استيراد جميع الأسئلة الجاهزة بعد التأكيد.</div>':""}
   </div>
   <div class="card qbank-import-note"><strong>مهم:</strong> تم استبعاد الأسئلة التي تطابق أسئلة موجودة في البنك، وكذلك السجلات غير الصالحة. البيانات الحالية لم تُحفظ بعد.</div>
-  \`;
+  `;
 }
 
 export function previewEditorState(){
