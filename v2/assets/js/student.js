@@ -1,5 +1,5 @@
 import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent,resetDemo,loadPractice,savePractice} from "./demo-data.js";
-import {examPage,getLastWeakTopics} from "./exam-v23.js";
+import {examPage,getLastWeakTopics} from "./exam-v23.js?v=417";
 import {labPage} from "./subnet-lab-v25.js";
 import {flsmPage} from "./flsm-v26.js";
 import {vlsmPage} from "./vlsm-v27.js";
