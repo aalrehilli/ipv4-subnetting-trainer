@@ -1,10 +1,12 @@
 import {questions as seedQuestions} from "./demo-data.js";
 
 const KEY="ipv4AcademyV24QuestionBank";
+const EXAM_CONFIG_KEY="ipv4AcademyV317ExamConfig";
+const EXAM_PICK_KEY="ipv4AcademyV319ExamPick";
 const topics=["IPv4","Binary","Prefix","Subnet Mask","FLSM","VLSM"];
 const difficulties=["easy","medium","hard"];
 
-function uid(){return "q-"+Date.now()+"-"+Math.random().toString(36).slice(2,7)}
+function uid(){const nums=bank.map(q=>Number(q.id)).filter(Number.isFinite);return nums.length?Math.max(...nums)+1:1}
 
 function cloneSeed(){
   return seedQuestions.map(q=>({...q,options:[...q.opts],active:true,stats:{uses:Math.floor(5+Math.random()*40),correctRate:Math.floor(45+Math.random()*45)}}));
@@ -28,7 +30,8 @@ export const qbankState={
   modal:null,
   previewEditor:false,
   editingId:null,
-  previewId:null
+  previewId:null,
+  examPick:false
 };
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
@@ -36,6 +39,10 @@ const diffLabel=d=>d==="hard"?"متقدم":d==="medium"?"متوسط":"سهل";
 const diffClass=d=>d==="hard"?"red":d==="medium"?"orange":"green";
 
 export function refreshBank(){bank=load();return bank}
+export function getQuestionBank(){return [...bank]}
+function getExamPick(){try{return JSON.parse(localStorage.getItem(EXAM_PICK_KEY)||"[]").map(Number)}catch{return []}}
+function setExamPick(ids){localStorage.setItem(EXAM_PICK_KEY,JSON.stringify(Array.from(new Set(ids.map(Number).filter(Number.isFinite))))) }
+function applyExamPick(){const ids=getExamPick();if(!ids.length)return null;let cfg={};try{cfg=JSON.parse(localStorage.getItem(EXAM_CONFIG_KEY)||"{}")||{}}catch{};const merged={...cfg,questionIds:ids};localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(merged));return merged}
 
 function filtered(){
   return bank.filter(q=>{
@@ -56,8 +63,8 @@ function stats(){
 function row(q){
   const rate=q.stats?.correctRate??0;
   return `
-  <tr>
-    <td class="qbank-id"><span class="badge">${esc(q.id)}</span></td>
+  <tr data-qbank-row data-qbank-text="${esc(q.q+" "+q.topic+" "+diffLabel(q.difficulty))}" data-qbank-topic="${esc(q.topic)}" data-qbank-diff="${esc(q.difficulty)}">
+    <td class="qbank-id"><input type="checkbox" class="qbank-pick" data-q-action="pick" data-q-id="${esc(q.id)}" ${getExamPick().includes(Number(q.id))?"checked":""} aria-label="تحديد السؤال للاختبار"><span class="badge">#${esc(q.id)}</span></td>
     <td><strong>${esc(q.q)}</strong><div class="muted">استخدام: ${q.stats?.uses??0} • دقة: ${rate}%</div></td>
     <td><span class="badge">${esc(q.topic)}</span></td>
     <td><span class="badge ${diffClass(q.difficulty)}">${diffLabel(q.difficulty)}</span></td>
@@ -75,7 +82,7 @@ export function questionBankView(){
 
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">04 • بنك الأسئلة</span><h2>بنك الأسئلة</h2><p>كل سؤال له موضوع وصعوبة ونتيجة أداء، ويمكن معاينته قبل إدخاله في اختبار.</p></div>
+    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.19</span><h2>بنك الأسئلة الاحترافي</h2><p>ابحث، صنّف، عاين، وأنشئ مجموعة أسئلة للاختبار مباشرة من نفس الشاشة.</p></div>
     <button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button>
   </div>
 
@@ -90,13 +97,13 @@ export function questionBankView(){
     <div><label>بحث</label><input id="qbank-search" value="${esc(qbankState.search)}" placeholder="ابحث في نص السؤال..."></div>
     <div><label>الموضوع</label><select id="qbank-topic"><option value="">كل الموضوعات</option>${topics.map(x=>`<option ${qbankState.topic===x?"selected":""}>${x}</option>`).join("")}</select></div>
     <div><label>الصعوبة</label><select id="qbank-difficulty"><option value="">كل المستويات</option><option value="easy" ${qbankState.difficulty==="easy"?"selected":""}>سهل</option><option value="medium" ${qbankState.difficulty==="medium"?"selected":""}>متوسط</option><option value="hard" ${qbankState.difficulty==="hard"?"selected":""}>متقدم</option></select></div>
-    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div>
+    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button>
   </div>
 
   <div class="card qbank-table-wrap">
     <table class="table qbank-table">
-      <thead><tr><th>ID</th><th>السؤال</th><th>الموضوع</th><th>الصعوبة</th><th>الجودة</th><th>إجراء</th></tr></thead>
-      <tbody>${rows.length?rows.map(row).join(""):'<tr><td colspan="6"><div class="empty">لا توجد أسئلة مطابقة للفلاتر.</div></td></tr>'}</tbody>
+      <thead><tr><th>اختيار</th><th>ID</th><th>السؤال</th><th>الموضوع</th><th>الصعوبة</th><th>الجودة</th><th>إجراء</th></tr></thead>
+      <tbody>${rows.length?rows.map(row).join(""):'<tr><td colspan="7"><div class="empty">لا توجد أسئلة مطابقة للفلاتر.</div></td></tr>'}</tbody>
     </table>
   </div>`;
 }
@@ -147,6 +154,8 @@ export function handleQuestionBankAction(target){
   if(act==="new"){qbankState.modal="editor";qbankState.editingId=null;return {rerender:true}}
   if(act==="edit"){qbankState.modal="editor";qbankState.editingId=target.dataset.qId;return {rerender:true}}
   if(act==="preview"){qbankState.modal="preview";qbankState.previewId=target.dataset.qId;return {rerender:true}}
+  if(act==="pick"){const id=Number(target.dataset.qId);const ids=getExamPick();setExamPick(target.checked?ids.concat(id):ids.filter(x=>x!==id));return {rerender:true}}
+  if(act==="apply-exam"){const cfg=applyExamPick();return cfg?{rerender:true,examApplied:true}:{rerender:false,message:"حدد سؤالًا واحدًا على الأقل."}}
   if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;qbankState.previewEditor=false;return {rerender:true}}
   if(act==="back-editor"){qbankState.modal="editor";return {rerender:true}}
   if(act==="preview-edit"){qbankState.modal="editor-preview";return {rerender:true}}
@@ -154,9 +163,7 @@ export function handleQuestionBankAction(target){
   return null;
 }
 
-export function updateFilter(kind,value){
-  qbankState[kind]=value;
-}
+export function updateFilter(kind,value){qbankState[kind]=value;return qbankState;}
 
 function readEditor(){
   const options=[0,1,2,3].map(i=>document.getElementById("q-opt-"+i)?.value||"");
@@ -176,6 +183,7 @@ function saveEditor(){
   save(bank);
 }
 export function getEditingData(){return readEditor()}
+export function getExamPickedIds(){return getExamPick()}
 export function previewEditorState(){
   const data=readEditor();
   return `
