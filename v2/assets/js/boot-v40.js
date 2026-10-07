@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.20 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.21 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -301,29 +301,32 @@ function bind(){
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v24.js?v=422").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v24.js?v=423").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=422");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=423");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=422");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=423");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankStatus&&qbankStatus.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=422");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=423");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v24.js?v=422");
+        var m=await import("./question-bank-v24.js?v=423");
         var result=m.handleQuestionBankAction(btn);
         if(result&&result.export){
-          var blob=new Blob([m.getExportData()],{type:"application/json;charset=utf-8"});
+          var fmt=result.export;
+          var mime=fmt==="xml"?"application/xml;charset=utf-8":fmt==="aiken"?"text/plain;charset=utf-8":"application/json;charset=utf-8";
+          var ext=fmt==="xml"?"xml":fmt==="aiken"?"aiken":"json";
+          var blob=new Blob([m.getExportData(fmt)],{type:mime});
           var url=URL.createObjectURL(blob);
           var a=document.createElement("a");
           a.href=url;
-          a.download="ipv4-academy-question-bank-v3.20.json";
+          a.download="ipv4-academy-question-bank-v3.21."+ext;
           document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
           return;
         }
@@ -348,7 +351,7 @@ function bind(){
       var reader=new FileReader();
       reader.onload=async function(){
         try{
-          var m=await import("./question-bank-v24.js?v=422");
+          var m=await import("./question-bank-v24.js?v=423");
           var format=event.target.id.indexOf("xml")>=0?"xml":event.target.id.indexOf("aiken")>=0?"aiken":"json";
           var result=m.importQuestionBankText(String(reader.result||""),format);
           window.alert(result.message||"تمت معالجة الملف.");
