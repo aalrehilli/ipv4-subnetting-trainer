@@ -106,7 +106,7 @@ export function questionBankView(){
     <div><label>بحث</label><input id="qbank-search" value="${esc(qbankState.search)}" placeholder="ابحث في نص السؤال..."></div>
     <div><label>الموضوع</label><select id="qbank-topic"><option value="">كل الموضوعات</option>${topics.map(x=>`<option ${qbankState.topic===x?"selected":""}>${x}</option>`).join("")}</select></div>
     <div><label>الصعوبة</label><select id="qbank-difficulty"><option value="">كل المستويات</option><option value="easy" ${qbankState.difficulty==="easy"?"selected":""}>سهل</option><option value="medium" ${qbankState.difficulty==="medium"?"selected":""}>متوسط</option><option value="hard" ${qbankState.difficulty==="hard"?"selected":""}>متقدم</option></select></div><div><label>الحالة</label><select id="qbank-status"><option value="">كل الحالات</option><option value="active" ${qbankState.status==="active"?"selected":""}>نشطة</option><option value="inactive" ${qbankState.status==="inactive"?"selected":""}>معطلة</option></select></div>
-    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export">تصدير JSON</button><button class="btn btn-purple mini-btn" data-q-action="import">استيراد JSON</button><input id="qbank-import-file" type="file" accept=".json,application/json" hidden>
+    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export">تصدير JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-json">استيراد JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-xml">استيراد XML</button><button class="btn btn-purple mini-btn" data-q-action="import-aiken">استيراد Aiken</button><input id="qbank-import-json-file" type="file" accept=".json,application/json" hidden><input id="qbank-import-xml-file" type="file" accept=".xml,text/xml,application/xml" hidden><input id="qbank-import-aiken-file" type="file" accept=".txt,.aiken,text/plain" hidden>
   </div>
 
   <div class="card qbank-management-note"><strong>V3.20:</strong> يمكنك نسخ السؤال أو تعطيله أو حذفه، واستيراد/تصدير بنك الأسئلة. تعطيل السؤال يمنع استخدامه في الاختبارات الجديدة.</div>
@@ -171,7 +171,7 @@ export function handleQuestionBankAction(target){
   if(act==="toggle"){return toggleQuestion(Number(target.dataset.qId))}
   if(act==="delete"){return deleteQuestion(Number(target.dataset.qId))}
   if(act==="export"){return {export:true,message:"تم تجهيز ملف بنك الأسئلة."}}
-  if(act==="import"){return {openImport:true}}
+  if(act==="import-json"||act==="import-xml"||act==="import-aiken"){return {openImport:act.replace("import-","")}}
   if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;qbankState.previewEditor=false;return {rerender:true}}
   if(act==="back-editor"){qbankState.modal="editor";return {rerender:true}}
   if(act==="preview-edit"){qbankState.modal="editor-preview";return {rerender:true}}
@@ -203,23 +203,84 @@ export function getExamPickedIds(){return getExamPick()}
 export function getExportData(){
   return JSON.stringify({version:"3.20",exportedAt:new Date().toISOString(),questions:bank},null,2);
 }
-export function importQuestionBankText(text){
-  let parsed;
-  try{parsed=JSON.parse(text)}catch{return {ok:false,message:"ملف JSON غير صالح."}}
-  const incoming=Array.isArray(parsed)?parsed:parsed?.questions;
-  if(!Array.isArray(incoming)||!incoming.length)return {ok:false,message:"لم يتم العثور على أسئلة داخل الملف."};
-  const normalized=incoming.map(q=>normalizeImported(q)).filter(Boolean);
-  if(!normalized.length)return {ok:false,message:"لم يحتوي الملف على أسئلة صالحة."};
-  const existingTexts=new Set(bank.map(q=>String(q.q).trim()));
-  let added=0;
+function normalizeQuestionKey(value){
+  return String(value||"").toLowerCase().replace(/\s+/g," ").trim();
+}
+function importNormalized(list,label){
+  if(!Array.isArray(list)||!list.length)return {ok:false,message:"لم يتم العثور على أسئلة صالحة في الملف."};
+  const normalized=list.map(q=>normalizeImported(q)).filter(Boolean);
+  const existingTexts=new Set(bank.map(q=>normalizeQuestionKey(q.q)));
+  let added=0,duplicates=0,invalid=list.length-normalized.length;
   normalized.forEach(q=>{
-    if(existingTexts.has(String(q.q).trim()))return;
+    const key=normalizeQuestionKey(q.q);
+    if(!key||existingTexts.has(key)){duplicates++;return;}
     bank.push({...q,id:uid(),stats:{uses:0,correctRate:0}});
-    existingTexts.add(String(q.q).trim());
+    existingTexts.add(key);
     added++;
   });
   save(bank);
-  return {ok:true,added,total:bank.length,message:"تم استيراد "+added+" سؤال جديد."};
+  return {ok:true,added,duplicates,invalid,total:bank.length,message:"تم استيراد "+added+" سؤال من "+label+"، وتجاوز "+duplicates+" سؤال مكرر."};
+}
+export function importQuestionBankText(text,format="json"){
+  if(format==="aiken")return importAikenText(text);
+  if(format==="xml")return importMoodleXmlText(text);
+  let parsed;
+  try{parsed=JSON.parse(text)}catch{return {ok:false,message:"ملف JSON غير صالح."}}
+  const incoming=Array.isArray(parsed)?parsed:parsed?.questions;
+  return importNormalized(incoming,"JSON");
+}
+function importAikenText(text){
+  const lines=String(text||"").replace(/^\uFEFF/,"").split(/\r?\n/);
+  const blocks=[];
+  let current=[];
+  const flush=()=>{if(current.some(x=>x.trim()))blocks.push(current);current=[]};
+  lines.forEach(line=>{
+    if(!line.trim()){if(current.length)flush();return;}
+    current.push(line);
+  });
+  flush();
+  const list=[];
+  blocks.forEach(block=>{
+    const answerIndex=block.findIndex(x=>/^ANSWER\s*:\s*[A-D]$/i.test(x.trim()));
+    if(answerIndex<0)return;
+    const question=block.slice(0,answerIndex).find(x=>x.trim())?.trim()||"";
+    const optionLines=block.slice(0,answerIndex).filter(x=>/^[A-D][.)]\s+/i.test(x.trim()));
+    const answerLine=block[answerIndex].trim().match(/^ANSWER\s*:\s*([A-D])/i);
+    if(!question||optionLines.length<2||!answerLine)return;
+    const options=optionLines.map(x=>x.trim().replace(/^[A-D][.)]\s+/i,"").trim()).slice(0,4);
+    const a="ABCD".indexOf(answerLine[1].toUpperCase());
+    list.push({q:question,topic:"Binary",difficulty:"easy",options,a,why:""});
+  });
+  return importNormalized(list,"Aiken");
+}
+function importMoodleXmlText(text){
+  try{
+    const xml=new DOMParser().parseFromString(String(text||""),"application/xml");
+    const parserError=xml.querySelector("parsererror");
+    if(parserError)return {ok:false,message:"ملف XML غير صالح."};
+    const nodes=[...xml.querySelectorAll('question')].filter(n=>(n.getAttribute("type")||"multichoice").toLowerCase()!=="category");
+    const list=[];
+    nodes.forEach(node=>{
+      const type=(node.getAttribute("type")||"multichoice").toLowerCase();
+      const qtext=node.querySelector("questiontext text")?.textContent?.trim()||node.querySelector("questiontext")?.textContent?.trim()||node.querySelector("name text")?.textContent?.trim()||"";
+      const answers=[...node.querySelectorAll(":scope > answer")];
+      if(!qtext||!answers.length)return;
+      const usable=answers.map(a=>{
+        const text=a.querySelector(":scope > text")?.textContent?.trim()||a.textContent?.trim()||"";
+        const fraction=Number(a.getAttribute("fraction")||0);
+        return {text,fraction};
+      }).filter(x=>x.text);
+      if(!usable.length)return;
+      const options=usable.slice(0,4).map(x=>x.text);
+      while(options.length<4)options.push("");
+      let a=usable.findIndex(x=>x.fraction===100);
+      if(a<0)a=0;
+      const inferredTopic=topics.find(t=>new RegExp(t.replace(" ","\\s?"),"i").test(qtext))||"Binary";
+      const inferredDiff=/hard|صعب|متقدم/i.test(qtext)?"hard":/medium|متوسط/i.test(qtext)?"medium":"easy";
+      list.push({q:qtext,topic:inferredTopic,difficulty:inferredDiff,options,a,why:""});
+    });
+    return importNormalized(list,"Moodle XML");
+  }catch{return {ok:false,message:"تعذر قراءة ملف XML."}}
 }
 function normalizeImported(q){
   if(!q||!String(q.q||"").trim())return null;
