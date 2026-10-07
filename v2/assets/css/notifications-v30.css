@@ -382,3 +382,11 @@
 @media(max-width:1250px){.qbank-toolbar{grid-template-columns:1fr 1fr 1fr}.qbank-toolbar .qbank-count{min-width:110px}}
 @media(max-width:820px){.qbank-toolbar{grid-template-columns:1fr 1fr}.qbank-toolbar .btn{justify-self:start}}
 @media(max-width:560px){.qbank-toolbar{grid-template-columns:1fr}.qbank-management-note{font-size:11px}}
+
+
+/* V3.20 Import Formats */
+.qbank-toolbar .btn[data-q-action^="import-"]{white-space:nowrap}
+.qbank-format-note{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:11px;color:var(--muted)}
+.qbank-format-note .badge{font-size:9px}
+@media(max-width:1250px){.qbank-toolbar{grid-template-columns:1fr 1fr}.qbank-toolbar .qbank-count{min-width:110px}}
+@media(max-width:650px){.qbank-toolbar{grid-template-columns:1fr}.qbank-toolbar .btn{width:max-content}}
