@@ -1,6 +1,6 @@
 import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,resetTrainerExamConfig} from "./exam-v23.js?v=421";
 import {questions} from "./demo-data.js";
-import {questionBankView,refreshBank} from "./question-bank-v24.js?v=423";
+import {questionBankView,refreshBank} from "./question-bank-v24.js?v=424";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
@@ -314,7 +314,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
     return `
     <div class="page-intro with-action">
       <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات ونتائج المتدربين</h2><p>أنشئ الاختبار، راقب الإعدادات، ثم راجع نتائج جميع المتدربين واتخذ الإجراء المناسب.</p></div>
-      <div class="trainer-exam-head-actions"><span class="badge orange">V3.21</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
+      <div class="trainer-exam-head-actions"><span class="badge orange">V3.22</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
     </div>
 
     <div class="trainer-exam-kpis">
@@ -388,7 +388,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       ${last?last.topics.map(x=>'<div class="exam-result-topic-row"><strong>'+esc(x.topic)+'</strong><div class="progress"><span style="width:'+x.percent+'%"></span></div><span>'+x.percent+'%</span></div>').join(""):'<div class="empty">بعد أول محاولة سيظهر أداء كل موضوع هنا.</div>'}
     </div>
 
-    <div class="card exam-admin-note"><strong>V3.21:</strong> بنك الأسئلة أصبح مصدر الاختبار مباشرة؛ ويمكن تحديد مجموعة الأسئلة من بنك الأسئلة ثم اعتمادها للاختبار. النتائج ما زالت تجريبية حتى ربط Supabase.</div>
+    <div class="card exam-admin-note"><strong>V3.22:</strong> بنك الأسئلة أصبح مصدر الاختبار مباشرة؛ ويمكن تحديد مجموعة الأسئلة من بنك الأسئلة ثم اعتمادها للاختبار. النتائج ما زالت تجريبية حتى ربط Supabase.</div>
     `;
   }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
