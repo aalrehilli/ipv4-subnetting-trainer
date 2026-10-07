@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.14 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.17 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -113,12 +113,12 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && state.page==="interventions"){
-      var interventions=await import("./intervention-v31.js?v=415");
+      var interventions=await import("./intervention-v31.js?v=417");
       return interventions.interventionCenterView();
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=416");
+      var trainer=await import("./trainer-v22.js?v=417");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
@@ -241,7 +241,7 @@ function bind(){
   document.querySelectorAll("[data-360-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./student360-v29.js?v=414");
+        var m=await import("./student360-v29.js?v=417");
         var result=m.handleStudent360Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
@@ -253,7 +253,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=415");
+        var m=await import("./intervention-v31.js?v=417");
         var result=m.handleInterventionAction(btn);
         if(result&&result.studentId){
           state.role="trainer";
@@ -271,9 +271,70 @@ function bind(){
   document.querySelectorAll("[data-intervention-filter]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=415");
+        var m=await import("./intervention-v31.js?v=417");
         m.setInterventionFilter(btn.getAttribute("data-intervention-filter")||"open");
         await render();
+      }catch(error){
+        document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+      }
+    });
+  });
+
+  var examSettings=document.getElementById("trainer-exam-settings-form");
+  if(examSettings) examSettings.addEventListener("submit",async function(event){
+    event.preventDefault();
+    try{
+      var m=await import("./exam-v23.js?v=417");
+      m.saveTrainerExamConfigFromForm(event.currentTarget);
+      await render();
+    }catch(error){
+      document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+    }
+  });
+
+  var examQuestionSettings=document.getElementById("trainer-exam-settings-form-questions");
+  if(examQuestionSettings) examQuestionSettings.addEventListener("submit",async function(event){
+    event.preventDefault();
+    try{
+      var m=await import("./exam-v23.js?v=417");
+      var cfg=m.saveTrainerExamQuestionsFromForm(event.currentTarget);
+      var msg=document.getElementById("exam-question-msg");
+      if(msg) msg.textContent="تم حفظ "+cfg.questionIds.length+" سؤالًا.";
+      await render();
+    }catch(error){
+      document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+    }
+  });
+
+  document.getElementById("reset-trainer-exam")?.addEventListener("click",async function(){
+    try{
+      var m=await import("./exam-v23.js?v=417");
+      m.resetTrainerExamConfig();
+      await render();
+    }catch(error){
+      document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+    }
+  });
+
+  document.querySelectorAll("#start-exam,#exam-prev,#exam-next,#submit-exam,[data-exam-answer],[data-exam-jump],[data-exam-action]").forEach(function(btn){
+    btn.addEventListener("click",async function(){
+      try{
+        var m=await import("./exam-v23.js?v=417");
+        var result;
+        if(btn.id==="start-exam") result=m.handleExamAction(btn);
+        else if(btn.id==="exam-prev") result=m.handleExamAction(btn);
+        else if(btn.id==="exam-next") result=m.handleExamAction(btn);
+        else if(btn.id==="submit-exam") result=m.handleExamAction(btn);
+        else result=m.handleExamAction(btn);
+        if(result&&result.openSubmit){
+          m.handleExamAction({id:"submit-exam",dataset:{}});
+          await render();
+          return;
+        }
+        if(result&&result.review){
+          state.role="student";state.page="review";await render();return;
+        }
+        if(result&&result.rerender) await render();
       }catch(error){
         document.getElementById("app").innerHTML=shell(errorView(error)); bind();
       }
