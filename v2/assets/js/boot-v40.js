@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.17 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.19 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -276,6 +276,43 @@ function bind(){
         await render();
       }catch(error){
         document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+      }
+    });
+  });
+
+  var qbankSearch=document.getElementById("qbank-search");
+  var qbankTopic=document.getElementById("qbank-topic");
+  var qbankDifficulty=document.getElementById("qbank-difficulty");
+  function applyQbankDomFilters(){
+    var q=(qbankSearch&&qbankSearch.value||"").trim().toLowerCase();
+    var topic=(qbankTopic&&qbankTopic.value||"").trim();
+    var diff=(qbankDifficulty&&qbankDifficulty.value||"").trim();
+    document.querySelectorAll("[data-qbank-row]").forEach(function(row){
+      var text=(row.getAttribute("data-qbank-text")||"").toLowerCase();
+      var okQ=!q||text.indexOf(q)>=0;
+      var okTopic=!topic||row.getAttribute("data-qbank-topic")===topic;
+      var okDiff=!diff||row.getAttribute("data-qbank-diff")===diff;
+      row.style.display=okQ&&okTopic&&okDiff?"":"none";
+    });
+  }
+  qbankSearch&&qbankSearch.addEventListener("input",function(){
+    import("./question-bank-v24.js?v=420").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    applyQbankDomFilters();
+  });
+  qbankTopic&&qbankTopic.addEventListener("change",async function(){
+    try{var m=await import("./question-bank-v24.js?v=420");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+  });
+  qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
+    try{var m=await import("./question-bank-v24.js?v=420");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+  });
+  document.querySelectorAll("[data-q-action]").forEach(function(btn){
+    btn.addEventListener("click",async function(){
+      try{
+        var m=await import("./question-bank-v24.js?v=420");
+        var result=m.handleQuestionBankAction(btn);
+        if(result&&result.rerender) await render();
+      }catch(error){
+        document.getElementById("app").innerHTML=shell(errorView(error));bind();
       }
     });
   });
