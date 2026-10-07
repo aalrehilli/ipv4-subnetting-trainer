@@ -286,7 +286,7 @@ export function confirmImport(){
   preview.rows.forEach(q=>{bank.push({...q,id:uid(),stats:{uses:0,correctRate:0}});added++});
   save(bank);
   qbankState.importPreview=null;
-  return {ok:true,added,duplicates:preview.duplicates,invalid:preview.invalid,total:bank.length,message:"تم تأكيد الاستيراد وإضافة "+added+" سؤال."};
+  return {ok:true,added,duplicates:preview.duplicates,invalid:preview.invalid,total:bank.length,rerender:true,message:"تم تأكيد الاستيراد وإضافة "+added+" سؤال."};
 }
 export function cancelImportPreview(){
   qbankState.importPreview=null;
