@@ -348,3 +348,26 @@
 .exam-results-table-card{overflow:hidden}.exam-results-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 3px 12px}.exam-results-toolbar>div{display:grid;gap:3px}.exam-results-toolbar strong{color:var(--primary-2)}
 .exam-results-table{min-width:900px}.exam-results-table td,.exam-results-table th{vertical-align:middle}.exam-score-value{font-size:16px;color:var(--primary-2)}
 @media(max-width:700px){.exam-result-filter{justify-content:flex-start}.exam-results-toolbar{display:block}.exam-results-toolbar .badge{margin-top:6px}}
+
+
+/* V3.19 Question Bank */
+.qbank-toolbar{display:grid;grid-template-columns:1.6fr 1fr 1fr auto auto auto;gap:9px;align-items:end;margin:14px 0}
+.qbank-toolbar>div{min-width:0}
+.qbank-toolbar label{display:grid;gap:5px;font-size:11px;font-weight:800;color:var(--primary-2)}
+.qbank-toolbar input,.qbank-toolbar select{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:11px;background:#fff;font-family:inherit}
+.qbank-count{display:grid;gap:2px;padding:10px 12px;background:#f7f9fb;border-radius:11px;min-width:88px}
+.qbank-count strong{font-size:20px;color:var(--primary-2)}.qbank-count span{font-size:10px;color:var(--muted)}
+.qbank-selected{background:#fff7ed}.qbank-selected strong{color:var(--orange)}
+.qbank-table-wrap{overflow:auto}
+.qbank-table{min-width:980px}
+.qbank-table th,.qbank-table td{vertical-align:middle}
+.qbank-id{white-space:nowrap}.qbank-id input{accent-color:var(--primary);margin-left:6px;vertical-align:middle}
+.qquality{font-size:10px;font-weight:800;padding:5px 8px;border-radius:999px}.q-quality.high{background:#eaf8ef;color:#187341}.q-quality.mid{background:#fff3e5;color:#a85f00}.q-quality.low{background:#ffecec;color:#b31d1d}
+.qactions{display:flex;gap:6px;flex-wrap:wrap}
+.qbuilder-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px}.qbuilder-section{padding:14px 0;border-bottom:1px solid #edf2f5}.qbuilder-section:last-child{border-bottom:0}.qbuilder-section h3{margin:0 0 10px}
+.qbuilder-section textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px;font-family:inherit;line-height:1.8;resize:vertical}
+.qbuilder-section select,.qbuilder-section input{width:100%;padding:10px;border:1px solid var(--line);border-radius:11px;font-family:inherit}
+.qbuilder-options{display:grid;gap:8px}.q-option-edit{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center}.q-option-edit>span{width:28px;height:28px;border-radius:8px;background:#f1f6fa;display:grid;place-items:center;font-weight:800;color:var(--primary)}.q-option-edit label{font-size:10px;color:var(--muted);white-space:nowrap}
+.qbuilder-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap}
+@media(max-width:1100px){.qbank-toolbar{grid-template-columns:1fr 1fr 1fr}.qbuilder-grid{grid-template-columns:1fr}}
+@media(max-width:720px){.qbank-toolbar{grid-template-columns:1fr}.q-option-edit{grid-template-columns:30px 1fr}.q-option-edit label{grid-column:2}.qbank-toolbar .btn{justify-self:start}}
