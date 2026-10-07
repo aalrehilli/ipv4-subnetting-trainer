@@ -32,7 +32,8 @@ export const qbankState={
   editingId:null,
   previewId:null,
   examPick:false,
-  status:""
+  status:"",
+  importPreview:null
 };
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
@@ -88,10 +89,11 @@ export function questionBankView(){
   if(qbankState.modal==="editor")return editorView();
   if(qbankState.modal==="preview")return previewView();
   if(qbankState.modal==="editor-preview")return previewEditorState();
+  if(qbankState.importPreview)return importPreviewView();
 
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.21</span><h2>بنك الأسئلة الاحترافي</h2><p>أدر الأسئلة، انسخها، عطّلها، احذفها، واستورد أو صدّر البنك بصيغ JSON وMoodle XML وAiken مع ربط مباشر بالاختبارات.</p></div>
+    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.22</span><h2>بنك الأسئلة الاحترافي</h2><p>أدر الأسئلة، انسخها، عطّلها، احذفها، واستورد أو صدّر البنك بصيغ JSON وMoodle XML وAiken مع ربط مباشر بالاختبارات.</p></div>
     <button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button>
   </div>
 
@@ -109,7 +111,7 @@ export function questionBankView(){
     <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export-json">تصدير JSON</button><button class="btn btn-soft mini-btn" data-q-action="export-xml">تصدير XML</button><button class="btn btn-soft mini-btn" data-q-action="export-aiken">تصدير Aiken</button><button class="btn btn-purple mini-btn" data-q-action="import-json">استيراد JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-xml">استيراد XML</button><button class="btn btn-purple mini-btn" data-q-action="import-aiken">استيراد Aiken</button><input id="qbank-import-json-file" type="file" accept=".json,application/json" hidden><input id="qbank-import-xml-file" type="file" accept=".xml,text/xml,application/xml" hidden><input id="qbank-import-aiken-file" type="file" accept=".txt,.aiken,text/plain" hidden>
   </div>
 
-  <div class="card qbank-management-note"><strong>V3.20:</strong> يمكنك نسخ السؤال أو تعطيله أو حذفه، واستيراد/تصدير بنك الأسئلة. تعطيل السؤال يمنع استخدامه في الاختبارات الجديدة.</div>
+  <div class="card qbank-management-note"><strong>V3.22:</strong> يمكنك نسخ السؤال أو تعطيله أو حذفه، واستيراد/تصدير بنك الأسئلة. تعطيل السؤال يمنع استخدامه في الاختبارات الجديدة.</div>
 
   <div class="card qbank-table-wrap">
     <table class="table qbank-table">
@@ -174,6 +176,8 @@ export function handleQuestionBankAction(target){
   if(act==="export-xml"){return {export:"xml"}}
   if(act==="export-aiken"){return {export:"aiken"}}
   if(act==="import-json"||act==="import-xml"||act==="import-aiken"){return {openImport:act.replace("import-","")}}
+  if(act==="import-confirm"){return confirmImport()}
+  if(act==="import-cancel"){return cancelImportPreview()}
   if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;qbankState.previewEditor=false;return {rerender:true}}
   if(act==="back-editor"){qbankState.modal="editor";return {rerender:true}}
   if(act==="preview-edit"){qbankState.modal="editor-preview";return {rerender:true}}
@@ -241,20 +245,26 @@ function getMoodleXmlExport(){
 function normalizeQuestionKey(value){
   return String(value||"").toLowerCase().replace(/\s+/g," ").trim();
 }
-function importNormalized(list,label){
+function buildImportPreview(list,label,format){
   if(!Array.isArray(list)||!list.length)return {ok:false,message:"لم يتم العثور على أسئلة صالحة في الملف."};
-  const normalized=list.map(q=>normalizeImported(q)).filter(Boolean);
+  const normalized=[];
+  let invalid=list.length;
+  list.forEach(q=>{
+    const item=normalizeImported(q);
+    if(item)normalized.push(item);
+  });
+  invalid=invalid-normalized.length;
   const existingTexts=new Set(bank.map(q=>normalizeQuestionKey(q.q)));
-  let added=0,duplicates=0,invalid=list.length-normalized.length;
+  const incomingTexts=new Set();
+  const fresh=[];
+  let duplicates=0;
   normalized.forEach(q=>{
     const key=normalizeQuestionKey(q.q);
-    if(!key||existingTexts.has(key)){duplicates++;return;}
-    bank.push({...q,id:uid(),stats:{uses:0,correctRate:0}});
-    existingTexts.add(key);
-    added++;
+    if(!key||existingTexts.has(key)||incomingTexts.has(key)){duplicates++;return}
+    incomingTexts.add(key);
+    fresh.push(q);
   });
-  save(bank);
-  return {ok:true,added,duplicates,invalid,total:bank.length,message:"تم استيراد "+added+" سؤال من "+label+"، وتجاوز "+duplicates+" سؤال مكرر."};
+  return {ok:true,label,format,rows:fresh,totalDetected:list.length,valid:fresh.length,duplicates,invalid,message:"تم تحليل الملف. لم تتم إضافة أي سؤال بعد."};
 }
 export function importQuestionBankText(text,format="json"){
   if(format==="aiken")return importAikenText(text);
@@ -262,17 +272,31 @@ export function importQuestionBankText(text,format="json"){
   let parsed;
   try{parsed=JSON.parse(text)}catch{return {ok:false,message:"ملف JSON غير صالح."}}
   const incoming=Array.isArray(parsed)?parsed:parsed?.questions;
-  return importNormalized(incoming,"JSON");
+  return prepareImportPreview(incoming,"JSON","json");
+}
+export function prepareImportPreview(list,label,format){
+  const preview=buildImportPreview(list,label,format);
+  if(preview.ok)qbankState.importPreview=preview;
+  return preview;
+}
+export function confirmImport(){
+  const preview=qbankState.importPreview;
+  if(!preview||!preview.ok)return {ok:false,message:"لا توجد عملية استيراد معلقة."};
+  let added=0;
+  preview.rows.forEach(q=>{bank.push({...q,id:uid(),stats:{uses:0,correctRate:0}});added++});
+  save(bank);
+  qbankState.importPreview=null;
+  return {ok:true,added,duplicates:preview.duplicates,invalid:preview.invalid,total:bank.length,message:"تم تأكيد الاستيراد وإضافة "+added+" سؤال."};
+}
+export function cancelImportPreview(){
+  qbankState.importPreview=null;
+  return {rerender:true};
 }
 function importAikenText(text){
   const lines=String(text||"").replace(/^\uFEFF/,"").split(/\r?\n/);
-  const blocks=[];
-  let current=[];
+  const blocks=[];let current=[];
   const flush=()=>{if(current.some(x=>x.trim()))blocks.push(current);current=[]};
-  lines.forEach(line=>{
-    if(!line.trim()){if(current.length)flush();return;}
-    current.push(line);
-  });
+  lines.forEach(line=>{if(!line.trim()){if(current.length)flush();return}current.push(line)});
   flush();
   const list=[];
   blocks.forEach(block=>{
@@ -286,17 +310,16 @@ function importAikenText(text){
     const a="ABCD".indexOf(answerLine[1].toUpperCase());
     list.push({q:question,topic:"Binary",difficulty:"easy",options,a,why:""});
   });
-  return importNormalized(list,"Aiken");
+  return prepareImportPreview(list,"Aiken","aiken");
 }
 function importMoodleXmlText(text){
   try{
     const xml=new DOMParser().parseFromString(String(text||""),"application/xml");
     const parserError=xml.querySelector("parsererror");
     if(parserError)return {ok:false,message:"ملف XML غير صالح."};
-    const nodes=[...xml.querySelectorAll('question')].filter(n=>(n.getAttribute("type")||"multichoice").toLowerCase()!=="category");
+    const nodes=[...xml.querySelectorAll("question")].filter(n=>(n.getAttribute("type")||"multichoice").toLowerCase()!=="category");
     const list=[];
     nodes.forEach(node=>{
-      const type=(node.getAttribute("type")||"multichoice").toLowerCase();
       const qtext=node.querySelector("questiontext text")?.textContent?.trim()||node.querySelector("questiontext")?.textContent?.trim()||node.querySelector("name text")?.textContent?.trim()||"";
       const answers=[...node.querySelectorAll(":scope > answer")];
       if(!qtext||!answers.length)return;
@@ -306,15 +329,13 @@ function importMoodleXmlText(text){
         return {text,fraction};
       }).filter(x=>x.text);
       if(!usable.length)return;
-      const options=usable.slice(0,4).map(x=>x.text);
-      while(options.length<4)options.push("");
-      let a=usable.findIndex(x=>x.fraction===100);
-      if(a<0)a=0;
+      const options=usable.slice(0,4).map(x=>x.text);while(options.length<4)options.push("");
+      let a=usable.findIndex(x=>x.fraction===100);if(a<0)a=0;
       const inferredTopic=topics.find(t=>new RegExp(t.replace(" ","\\s?"),"i").test(qtext))||"Binary";
       const inferredDiff=/hard|صعب|متقدم/i.test(qtext)?"hard":/medium|متوسط/i.test(qtext)?"medium":"easy";
       list.push({q:qtext,topic:inferredTopic,difficulty:inferredDiff,options,a,why:""});
     });
-    return importNormalized(list,"Moodle XML");
+    return prepareImportPreview(list,"Moodle XML","xml");
   }catch{return {ok:false,message:"تعذر قراءة ملف XML."}}
 }
 function normalizeImported(q){
@@ -364,6 +385,32 @@ function deleteQuestion(id){
     }
   }catch{}
   return {rerender:true,message:"تم حذف السؤال."};
+}
+
+function importPreviewView(){
+  const p=qbankState.importPreview;
+  const sample=p.rows.slice(0,10);
+  return \`
+  <div class="page-intro with-action">
+    <div><span class="eyebrow purple">استيراد بنك الأسئلة • معاينة</span><h2>مراجعة قبل الاستيراد</h2><p>راجع نتائج التحليل أولًا. لن تتم إضافة أي سؤال حتى تضغط «تأكيد الاستيراد».</p></div>
+    <div class="import-preview-actions">
+      <button class="btn btn-soft" data-q-action="import-cancel">إلغاء</button>
+      <button class="btn btn-purple" data-q-action="import-confirm">تأكيد الاستيراد</button>
+    </div>
+  </div>
+  <div class="student-grid-4 qbank-import-summary">
+    <div class="card trainer-kpi"><div class="muted">المصدر</div><div class="kpi-value" style="font-size:22px">\${esc(p.label)}</div><div class="muted">\${esc(String(p.format||"").toUpperCase())}</div></div>
+    <div class="card trainer-kpi"><div class="muted">المكتشفة</div><div class="kpi-value">\${p.totalDetected}</div><div class="muted">سجل في الملف</div></div>
+    <div class="card trainer-kpi"><div class="muted">جاهزة للإضافة</div><div class="kpi-value" style="color:var(--green)">\${p.valid}</div><div class="muted">أسئلة جديدة</div></div>
+    <div class="card trainer-kpi"><div class="muted">مكررة / غير صالحة</div><div class="kpi-value" style="color:var(--orange)">\${p.duplicates+p.invalid}</div><div class="muted">\${p.duplicates} مكرر • \${p.invalid} غير صالح</div></div>
+  </div>
+  <div class="card qbank-import-preview-card">
+    <div class="section-title"><h3>معاينة الأسئلة الجديدة</h3><span class="badge green">\${p.valid} سؤال جاهز</span></div>
+    \${sample.length?sample.map((q,i)=>\`<div class="import-preview-row"><div class="import-preview-index">\${i+1}</div><div><strong>\${esc(q.q)}</strong><div class="import-preview-meta"><span class="badge">\${esc(q.topic)}</span><span class="badge \${diffClass(q.difficulty)}">\${diffLabel(q.difficulty)}</span><span class="muted">\${q.options.filter(Boolean).length} خيارات</span></div></div></div>\`).join(""):'<div class="empty">لا توجد أسئلة جديدة جاهزة للإضافة.</div>'}
+    \${p.valid>10?'<div class="qbank-import-more">تم عرض أول 10 أسئلة فقط. سيتم استيراد جميع الأسئلة الجاهزة بعد التأكيد.</div>':''}
+  </div>
+  <div class="card qbank-import-note"><strong>مهم:</strong> تم استبعاد الأسئلة التي تطابق أسئلة موجودة في البنك، وكذلك السجلات غير الصالحة. البيانات الحالية لم تُحفظ بعد.</div>
+  \`;
 }
 
 export function previewEditorState(){
