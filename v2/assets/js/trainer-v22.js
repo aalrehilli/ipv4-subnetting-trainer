@@ -22,6 +22,7 @@ const actions={
 };
 
 const fmtRisk=r=>r==="مرتفع"?"red":r==="متوسط"?"orange":"green";
+const esc=v=>String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
 function stat(label,value,sub=""){
   return '<div class="card trainer-kpi"><div class="muted">'+label+'</div><div class="kpi-value">'+value+'</div><div class="muted">'+sub+'</div></div>';
