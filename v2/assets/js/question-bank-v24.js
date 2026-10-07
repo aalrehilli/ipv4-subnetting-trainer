@@ -91,7 +91,7 @@ export function questionBankView(){
 
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.20</span><h2>بنك الأسئلة الاحترافي</h2><p>أدر الأسئلة، انسخها، عطّلها، احذفها، واستورد أو صدّر البنك مع ربط مباشر بالاختبارات.</p></div>
+    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.21</span><h2>بنك الأسئلة الاحترافي</h2><p>أدر الأسئلة، انسخها، عطّلها، احذفها، واستورد أو صدّر البنك بصيغ JSON وMoodle XML وAiken مع ربط مباشر بالاختبارات.</p></div>
     <button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button>
   </div>
 
@@ -106,7 +106,7 @@ export function questionBankView(){
     <div><label>بحث</label><input id="qbank-search" value="${esc(qbankState.search)}" placeholder="ابحث في نص السؤال..."></div>
     <div><label>الموضوع</label><select id="qbank-topic"><option value="">كل الموضوعات</option>${topics.map(x=>`<option ${qbankState.topic===x?"selected":""}>${x}</option>`).join("")}</select></div>
     <div><label>الصعوبة</label><select id="qbank-difficulty"><option value="">كل المستويات</option><option value="easy" ${qbankState.difficulty==="easy"?"selected":""}>سهل</option><option value="medium" ${qbankState.difficulty==="medium"?"selected":""}>متوسط</option><option value="hard" ${qbankState.difficulty==="hard"?"selected":""}>متقدم</option></select></div><div><label>الحالة</label><select id="qbank-status"><option value="">كل الحالات</option><option value="active" ${qbankState.status==="active"?"selected":""}>نشطة</option><option value="inactive" ${qbankState.status==="inactive"?"selected":""}>معطلة</option></select></div>
-    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export">تصدير JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-json">استيراد JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-xml">استيراد XML</button><button class="btn btn-purple mini-btn" data-q-action="import-aiken">استيراد Aiken</button><input id="qbank-import-json-file" type="file" accept=".json,application/json" hidden><input id="qbank-import-xml-file" type="file" accept=".xml,text/xml,application/xml" hidden><input id="qbank-import-aiken-file" type="file" accept=".txt,.aiken,text/plain" hidden>
+    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export-json">تصدير JSON</button><button class="btn btn-soft mini-btn" data-q-action="export-xml">تصدير XML</button><button class="btn btn-soft mini-btn" data-q-action="export-aiken">تصدير Aiken</button><button class="btn btn-purple mini-btn" data-q-action="import-json">استيراد JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-xml">استيراد XML</button><button class="btn btn-purple mini-btn" data-q-action="import-aiken">استيراد Aiken</button><input id="qbank-import-json-file" type="file" accept=".json,application/json" hidden><input id="qbank-import-xml-file" type="file" accept=".xml,text/xml,application/xml" hidden><input id="qbank-import-aiken-file" type="file" accept=".txt,.aiken,text/plain" hidden>
   </div>
 
   <div class="card qbank-management-note"><strong>V3.20:</strong> يمكنك نسخ السؤال أو تعطيله أو حذفه، واستيراد/تصدير بنك الأسئلة. تعطيل السؤال يمنع استخدامه في الاختبارات الجديدة.</div>
@@ -170,7 +170,9 @@ export function handleQuestionBankAction(target){
   if(act==="duplicate"){return duplicateQuestion(Number(target.dataset.qId))}
   if(act==="toggle"){return toggleQuestion(Number(target.dataset.qId))}
   if(act==="delete"){return deleteQuestion(Number(target.dataset.qId))}
-  if(act==="export"){return {export:true,message:"تم تجهيز ملف بنك الأسئلة."}}
+  if(act==="export-json"){return {export:"json"}}
+  if(act==="export-xml"){return {export:"xml"}}
+  if(act==="export-aiken"){return {export:"aiken"}}
   if(act==="import-json"||act==="import-xml"||act==="import-aiken"){return {openImport:act.replace("import-","")}}
   if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;qbankState.previewEditor=false;return {rerender:true}}
   if(act==="back-editor"){qbankState.modal="editor";return {rerender:true}}
@@ -200,8 +202,41 @@ function saveEditor(){
 }
 export function getEditingData(){return readEditor()}
 export function getExamPickedIds(){return getExamPick()}
-export function getExportData(){
-  return JSON.stringify({version:"3.20",exportedAt:new Date().toISOString(),questions:bank},null,2);
+function xmlEsc(value){
+  return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;");
+}
+function xmlCdata(value){
+  return String(value??"").replace(/\]\]>/g,"]]]]><![CDATA[>");
+}
+export function getExportData(format="json"){
+  if(format==="aiken")return getAikenExport();
+  if(format==="xml")return getMoodleXmlExport();
+  return JSON.stringify({version:"3.21",exportedAt:new Date().toISOString(),questions:bank},null,2);
+}
+function getAikenExport(){
+  return bank.map((q)=>{
+    const opts=(q.options||q.opts||[]).slice(0,4);
+    const lines=[String(q.q||"").trim()];
+    opts.forEach((o,n)=>lines.push(String.fromCharCode(65+n)+". "+String(o??"").trim()));
+    lines.push("ANSWER: "+String.fromCharCode(65+(Number(q.a)||0)));
+    return lines.join("\n");
+  }).join("\n\n")+"\n";
+}
+function getMoodleXmlExport(){
+  const questions=bank.map((q,i)=>{
+    const opts=(q.options||q.opts||[]).slice(0,4);
+    const answers=opts.map((o,n)=>'    <answer fraction="'+(n===Number(q.a)?100:0)+'"><text><![CDATA['+xmlCdata(o)+']]></text><feedback><text></text></feedback></answer>').join("\n");
+    return [
+      '  <question type="multichoice">',
+      '    <name><text>'+xmlEsc("IPv4 Academy Question "+(i+1))+'</text></name>',
+      '    <questiontext format="html"><text><![CDATA['+xmlCdata(q.q)+']]></text></questiontext>',
+      '    <single>true</single>',
+      '    <shuffleanswers>true</shuffleanswers>',
+      answers,
+      '  </question>'
+    ].join("\n");
+  }).join("\n");
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<quiz>\n'+questions+'\n</quiz>\n';
 }
 function normalizeQuestionKey(value){
   return String(value||"").toLowerCase().replace(/\s+/g," ").trim();
