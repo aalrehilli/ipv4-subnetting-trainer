@@ -108,17 +108,17 @@ async function loadPage(){
     }
 
     if(state.page==="notifications"){
-      var notifications=await import("./notifications-v30.js?v=410");
+      var notifications=await import("./notifications-v30.js?v=415");
       return notifications.notificationsPage(state.role);
     }
 
     if(state.role==="trainer" && state.page==="interventions"){
-      var interventions=await import("./intervention-v31.js?v=410");
+      var interventions=await import("./intervention-v31.js?v=415");
       return interventions.interventionCenterView();
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=410");
+      var trainer=await import("./trainer-v22.js?v=415");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId);
     }
 
@@ -239,7 +239,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=414");
+        var m=await import("./intervention-v31.js?v=415");
         var result=m.handleInterventionAction(btn);
         if(result&&result.studentId){
           state.role="trainer";
@@ -257,7 +257,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-filter]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=414");
+        var m=await import("./intervention-v31.js?v=415");
         m.setInterventionFilter(btn.getAttribute("data-intervention-filter")||"open");
         await render();
       }catch(error){
