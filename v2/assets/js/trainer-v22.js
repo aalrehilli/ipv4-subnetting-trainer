@@ -162,13 +162,13 @@ function trainerDashboard(){
   </div>
   `;
 }
-function studentsPage(filter=""){
+function studentsPage(filter="",group=""){
   const total=students.length;
   const high=students.filter(s=>s.risk==="مرتفع").length;
   const medium=students.filter(s=>s.risk==="متوسط").length;
   const low=students.filter(s=>s.risk==="منخفض").length;
   const active=students.filter(s=>s.activity==="نشط").length;
-  let rows=filter?students.filter(s=>s.risk===filter):students;
+  let rows=students.filter(s=>(!filter||s.risk===filter)&&(!group||String(s.group)===String(group)));
 
   return `
   <div class="page-intro with-action">
@@ -198,7 +198,7 @@ function studentsPage(filter=""){
     </div>
     <div>
       <label>المجموعة</label>
-      <select id="trainer-group"><option value="">كل المجموعات</option><option value="1">المجموعة 1</option><option value="2">المجموعة 2</option><option value="3">المجموعة 3</option></select>
+      <select id="trainer-group"><option value="">كل المجموعات</option><option value="1" ${group==="1"?"selected":""}>المجموعة 1</option><option value="2" ${group==="2"?"selected":""}>المجموعة 2</option><option value="3" ${group==="3"?"selected":""}>المجموعة 3</option></select>
     </div>
     <div class="trainer-filter-actions">
       <button class="filter-chip ${filter==="مرتفع"?"active":""}" data-trainer-risk-chip="مرتفع">عالي الخطورة</button>
@@ -239,15 +239,47 @@ function studentsPage(filter=""){
 }
 function student360(id){ return student360View(id); }
 
-export function getTrainerView(page="tdash",filter="",id=null){
-  if(page==="students")return studentsPage(filter);
+export function getTrainerView(page="tdash",filter="",id=null,group=""){
+  if(page==="students")return studentsPage(filter,group);
   if(page==="interventions")return interventionCenterView();
   if(page==="notifications")return notificationsPage("trainer");
   if(page==="student360")return student360(id);
-  if(page==="groups")return `
-    <div class="page-intro"><span class="eyebrow blue">02 • المجموعات</span><h2>المجموعات</h2><p>قارن الأداء قبل اتخاذ تدخل جماعي.</p></div>
-    <div class="grid-3"><div class="card"><h3>المجموعة 1</h3><div class="kpi-value">77%</div><div class="muted">21 متدرب • 4 يحتاج متابعة</div></div><div class="card"><h3>المجموعة 2</h3><div class="kpi-value">84%</div><div class="muted">16 متدرب • أداء مستقر</div></div><div class="card"><h3>المجموعة 3</h3><div class="kpi-value">69%</div><div class="muted">5 متدربين • 2 يحتاج متابعة</div></div></div>
-    <div class="card" style="margin-top:14px"><h3>أبرز الفروقات</h3><div class="stat-row"><span>أفضل مجموعة</span><b>المجموعة 2 • 84%</b></div><div class="stat-row"><span>أعلى مخاطرة</span><b>المجموعة 3</b></div></div>`;
+  if(page==="groups"){
+    const groups=[1,2,3].map(g=>{
+      const list=students.filter(s=>String(s.group)===String(g));
+      const avg=Math.round(list.reduce((a,s)=>a+s.avg,0)/Math.max(1,list.length));
+      const progress=Math.round(list.reduce((a,s)=>a+s.progress,0)/Math.max(1,list.length));
+      const high=list.filter(s=>s.risk==="مرتفع").length;
+      const med=list.filter(s=>s.risk==="متوسط").length;
+      const active=list.filter(s=>s.activity==="نشط").length;
+      return {id:String(g),list,avg,progress,high,med,active};
+    });
+    const best=[...groups].sort((a,b)=>b.avg-a.avg)[0];
+    const riskGroup=[...groups].sort((a,b)=>(b.high*2+b.med)-(a.high*2+a.med))[0];
+    return `
+    <div class="page-intro with-action"><div><span class="eyebrow blue">02 • المجموعات</span><h2>إدارة المجموعات</h2><p>قارن أداء المجموعات، راقب المخاطر، ثم افتح طلاب المجموعة لاتخاذ إجراء.</p></div><div class="group-head-actions"><span class="badge blue">3 مجموعات</span><button class="btn btn-primary" data-trainer-page="students">قائمة المتدربين</button></div></div>
+
+    <div class="trainer-group-summary">
+      <div class="card group-summary-card"><span>أفضل مجموعة</span><strong>المجموعة ${best.id}</strong><small>${best.avg}% متوسط الأداء</small></div>
+      <div class="card group-summary-card danger"><span>أعلى مخاطرة</span><strong>المجموعة ${riskGroup.id}</strong><small>${riskGroup.high} عالي • ${riskGroup.med} متوسط</small></div>
+      <div class="card group-summary-card success"><span>نشاط اليوم</span><strong>${Math.round(groups.reduce((a,g)=>a+g.active,0)/students.length*100)}%</strong><small>من إجمالي المتدربين</small></div>
+      <div class="card group-summary-card"><span>إجمالي المتدربين</span><strong>${students.length}</strong><small>3 مجموعات</small></div>
+    </div>
+
+    <div class="group-selector">
+      ${groups.map(g=>'<button class="group-selector-btn '+(g.id==="1"?"active":"")+'" data-group-filter="'+g.id+'"><span>المجموعة '+g.id+'</span><strong>'+g.avg+'%</strong><small>'+g.list.length+' متدربين</small></button>').join("")}
+    </div>
+
+    <div class="trainer-group-panels">
+      ${groups.map(g=>'<div class="card trainer-group-panel" data-group-panel="'+g.id+'" '+(g.id==="1"?"":"hidden")+'>        <div class="group-panel-head"><div><span class="eyebrow blue">المجموعة '+g.id+'</span><h3>نظرة عامة</h3></div><div class="group-panel-actions"><span class="badge '+(g.high?"red":"green")+'">'+(g.high?g.high+" عالي الخطورة":"لا يوجد عالي الخطورة")+'</span><button class="btn btn-primary mini-btn" data-trainer-page="students" data-group="'+g.id+'">فتح طلاب المجموعة</button></div></div>        <div class="group-metrics"><div><span>متوسط الأداء</span><strong>'+g.avg+'%</strong></div><div><span>متوسط التقدم</span><strong>'+g.progress+'%</strong></div><div><span>نشطون</span><strong>'+g.active+'</strong></div><div><span>متوسط الخطورة</span><strong>'+(g.high+g.med)+'</strong></div></div>        <div class="section-title"><h3>متدربو المجموعة</h3></div>        <div class="group-student-list">'+g.list.map(s=>'<div class="group-student-row"><div class="student-mini-avatar">'+s.name.slice(0,1)+'</div><div><strong>'+s.name+'</strong><small>'+s.topic+' • '+s.last+'</small></div><span class="badge '+fmtRisk(s.risk)+'">'+s.risk+'</span><strong>'+s.avg+'%</strong><button class="btn btn-soft mini-btn" data-student-id="'+s.id+'">360</button></div>').join("")+'</div>      </div>').join("")}
+    </div>
+
+    <div class="section-title"><h3>مقارنة الأداء</h3><span class="badge purple">Group Analytics</span></div>
+    <div class="card group-comparison-table"><div class="group-comparison-row head"><span>المجموعة</span><span>الأداء</span><span>التقدم</span><span>عالي الخطورة</span><span>إجراء</span></div>
+      ${groups.map(g=>'<div class="group-comparison-row"><strong>المجموعة '+g.id+'</strong><span>'+g.avg+'%</span><span>'+g.progress+'%</span><span class="badge '+(g.high?"red":"green")+'">'+g.high+'</span><button class="btn btn-soft mini-btn" data-group-filter="'+g.id+'">عرض المجموعة</button></div>').join("")}
+    </div>
+    `;
+  }
   if(page==="courses")return courseManagerView();
   if(page==="questions")return questionBankView();
   if(page==="exams"){
