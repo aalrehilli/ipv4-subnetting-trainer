@@ -1,4 +1,4 @@
-import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,resetTrainerExamConfig} from "./exam-v23.js";
+import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,resetTrainerExamConfig} from "./exam-v23.js";
 import {questions} from "./demo-data.js";
 import {questionBankView} from "./question-bank-v24.js";
 import {student360View} from "./student360-v29.js";
