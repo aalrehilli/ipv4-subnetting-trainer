@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.19 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.20 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -118,7 +118,7 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=420");
+      var trainer=await import("./trainer-v22.js?v=421");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
@@ -283,33 +283,55 @@ function bind(){
   var qbankSearch=document.getElementById("qbank-search");
   var qbankTopic=document.getElementById("qbank-topic");
   var qbankDifficulty=document.getElementById("qbank-difficulty");
+  var qbankStatus=document.getElementById("qbank-status");
   function applyQbankDomFilters(){
     var q=(qbankSearch&&qbankSearch.value||"").trim().toLowerCase();
     var topic=(qbankTopic&&qbankTopic.value||"").trim();
     var diff=(qbankDifficulty&&qbankDifficulty.value||"").trim();
+    var status=(qbankStatus&&qbankStatus.value||"").trim();
     document.querySelectorAll("[data-qbank-row]").forEach(function(row){
       var text=(row.getAttribute("data-qbank-text")||"").toLowerCase();
       var okQ=!q||text.indexOf(q)>=0;
       var okTopic=!topic||row.getAttribute("data-qbank-topic")===topic;
       var okDiff=!diff||row.getAttribute("data-qbank-diff")===diff;
-      row.style.display=okQ&&okTopic&&okDiff?"":"none";
+      var button=row.querySelector('[data-q-action="toggle"]');
+      var isActive=button && button.textContent.indexOf("تعطيل")>=0;
+      var okStatus=!status||(status==="active"?isActive:!isActive);
+      row.style.display=okQ&&okTopic&&okDiff&&okStatus?"":"none";
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v24.js?v=420").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v24.js?v=421").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=420");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=421");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=420");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=421");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+  });
+  qbankStatus&&qbankStatus.addEventListener("change",async function(){
+    try{var m=await import("./question-bank-v24.js?v=421");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v24.js?v=420");
+        var m=await import("./question-bank-v24.js?v=421");
         var result=m.handleQuestionBankAction(btn);
+        if(result&&result.export){
+          var blob=new Blob([m.getExportData()],{type:"application/json;charset=utf-8"});
+          var url=URL.createObjectURL(blob);
+          var a=document.createElement("a");
+          a.href=url;
+          a.download="ipv4-academy-question-bank-v3.20.json";
+          document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+          return;
+        }
+        if(result&&result.openImport){
+          document.getElementById("qbank-import-file")?.click();
+          return;
+        }
+        if(result&&result.message){window.alert(result.message);}
         if(result&&result.rerender) await render();
       }catch(error){
         document.getElementById("app").innerHTML=shell(errorView(error));bind();
