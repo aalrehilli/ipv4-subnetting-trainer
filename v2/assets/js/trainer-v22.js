@@ -1,4 +1,5 @@
-import {getTrainerExamSummary} from "./exam-v23.js";
+import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,resetTrainerExamConfig} from "./exam-v23.js";
+import {questions} from "./demo-data.js";
 import {questionBankView} from "./question-bank-v24.js";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
@@ -284,20 +285,76 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
   if(page==="questions")return questionBankView();
   if(page==="exams"){
     const r=getTrainerExamSummary();
+    const cfg=getTrainerExamConfig();
+    const limitText=cfg.attemptsLimit===0?"غير محدود":String(cfg.attemptsLimit);
+    const topics=questions.filter(q=>cfg.questionIds.includes(q.id));
+    const last=r.lastResult;
+    const weak=last?[...last.topics].sort((a,b)=>a.percent-b.percent)[0]:null;
     return `
-    <div class="page-intro with-action"><div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات</h2><p>أنشئ الاختبار، راقب المحاولات، ثم انتقل من النتيجة إلى تحليل الموضوعات.</p></div><span class="badge ${r.attempts?"green":""}">${r.attempts?r.attempts+" محاولة مسجلة":"لا توجد محاولات بعد"}</span></div>
-    <div class="student-grid-4">
-      <div class="card trainer-kpi"><div class="muted">الاختبار</div><div class="kpi-value" style="font-size:19px">IPv4 & Binary</div><div class="muted">10 أسئلة • 5 دقائق Demo</div></div>
-      <div class="card trainer-kpi"><div class="muted">آخر متوسط</div><div class="kpi-value">${r.avg?r.avg+"%":"—"}</div><div class="muted">آخر محاولة</div></div>
-      <div class="card trainer-kpi"><div class="muted">حالة النجاح</div><div class="kpi-value">${r.attempts?(r.lastResult.passed?"✅":"↗"):"—"}</div><div class="muted">${r.attempts?(r.lastResult.passed?"ناجح":"يحتاج مراجعة"):"بانتظار محاولة"}</div></div>
-      <div class="card trainer-kpi"><div class="muted">الحالة</div><div class="kpi-value" style="font-size:20px">${r.attempts?"مُستخدم":"جاهز"}</div><div class="muted">وضع العرض</div></div>
+    <div class="page-intro with-action">
+      <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات</h2><p>أنشئ الاختبار وحدد الأسئلة والوقت ونسبة النجاح وعدد المحاولات، ثم راقب النتائج.</p></div>
+      <div class="trainer-exam-head-actions"><span class="badge orange">V3.17</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
     </div>
-    <div class="grid-2" style="margin-top:14px">
-      <div class="card"><h3>إعداد الاختبار</h3><div class="stat-row"><span>الأسئلة</span><b>10</b></div><div class="stat-row"><span>المدة</span><b>5 دقائق</b></div><div class="stat-row"><span>النجاح</span><b>60%</b></div><div class="stat-row"><span>التصحيح</span><b>فوري في Demo</b></div><button class="btn btn-primary" data-demo-action="preview-exam" style="margin-top:12px">معاينة الاختبار</button></div>
-      <div class="card"><h3>أداء الموضوعات</h3>${r.lastResult?r.lastResult.topics.map(x=>`<div class="topic-bar"><div><span>${x.topic}</span><b>${x.percent}%</b></div><div class="progress"><span style="width:${x.percent}%"></span></div></div>`).join(""):'<div class="empty">بعد أول محاولة ستظهر هنا خريطة الأداء حسب الموضوع.</div>'}</div>
+
+    <div class="trainer-exam-kpis">
+      <div class="card exam-admin-kpi"><span>الأسئلة المحددة</span><strong>${cfg.questionIds.length}</strong><small>من ${questions.length}</small></div>
+      <div class="card exam-admin-kpi"><span>المدة</span><strong>${cfg.durationMin} د</strong><small>لكل محاولة</small></div>
+      <div class="card exam-admin-kpi warning"><span>نسبة النجاح</span><strong>${cfg.passPercent}%</strong><small>حد الاجتياز</small></div>
+      <div class="card exam-admin-kpi purple"><span>المحاولات</span><strong>${limitText}</strong><small>لكل متدرب</small></div>
+      <div class="card exam-admin-kpi success"><span>آخر نتيجة</span><strong>${last?last.percent+"%":"—"}</strong><small>${last?(last.passed?"ناجح":"يحتاج مراجعة"):"بانتظار محاولة"}</small></div>
     </div>
-    <div class="section-title"><h3>ما الذي سيأتي بعد Demo؟</h3></div>
-    <div class="card"><div class="stat-row"><span>بنك الأسئلة</span><b>سحب عشوائي + تصنيف</b></div><div class="stat-row"><span>المحاولات</span><b>حدود ومحاولات حسب الطالب</b></div><div class="stat-row"><span>التصحيح</span><b>Server-authoritative</b></div><div class="stat-row"><span>التحليل</span><b>Student 360 + Trainer Analytics</b></div></div>`;
+
+    <div class="grid-2 trainer-exam-main-grid">
+      <div class="card">
+        <div class="exam-admin-card-head"><div><span class="eyebrow blue">إعدادات الاختبار</span><h3>خصائص الاختبار</h3></div><span class="badge green">محلي Demo</span></div>
+        <form id="trainer-exam-settings-form" class="exam-settings-form">
+          <label>اسم الاختبار<input name="title" value="${esc(cfg.title)}"></label>
+          <div class="exam-setting-grid">
+            <label>المدة بالدقائق<input type="number" name="durationMin" min="1" max="60" value="${cfg.durationMin}"></label>
+            <label>نسبة النجاح %<input type="number" name="passPercent" min="0" max="100" value="${cfg.passPercent}"></label>
+          </div>
+          <label>عدد المحاولات لكل متدرب
+            <select name="attemptsLimit">
+              <option value="1" ${cfg.attemptsLimit===1?"selected":""}>محاولة واحدة</option>
+              <option value="2" ${cfg.attemptsLimit===2?"selected":""}>محاولتان</option>
+              <option value="3" ${cfg.attemptsLimit===3?"selected":""}>3 محاولات</option>
+              <option value="0" ${cfg.attemptsLimit===0?"selected":""}>غير محدود</option>
+            </select>
+          </label>
+          <div class="exam-settings-actions">
+            <button class="btn btn-primary" type="submit">حفظ إعدادات الاختبار</button>
+            <button class="btn btn-soft" type="button" id="reset-trainer-exam">إعادة الإعدادات الافتراضية</button>
+            <span id="exam-settings-msg" class="muted"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="exam-admin-card-head"><div><span class="eyebrow purple">النتائج</span><h3>آخر محاولة</h3></div><button class="btn btn-soft mini-btn" data-trainer-page="students">المتدربون</button></div>
+        ${last
+          ? '<div class="last-exam-result-card"><strong>'+last.percent+'%</strong><span class="badge '+(last.passed?"green":"orange")+'">'+(last.passed?"ناجح":"يحتاج مراجعة")+'</span><p class="muted">'+last.score+'/'+last.total+' إجابات صحيحة • '+(weak?"أضعف موضوع: "+esc(weak.topic):"")+'</p></div>'
+          : '<div class="empty"><h3>لا توجد نتائج بعد</h3><p class="muted">ابدأ الاختبار من حساب المتدرب لتظهر النتيجة هنا.</p></div>'}
+        <div class="stat-row"><span>المحاولات المسجلة</span><b>${r.attemptsUsed||0}</b></div>
+        <div class="stat-row"><span>حالة الاختبار</span><b>${r.attemptsUsed?"مستخدم":"جاهز"}</b></div>
+      </div>
+    </div>
+
+    <div class="section-title"><h3>بناء الاختبار</h3><span class="badge blue">${topics.length} سؤال محدد</span></div>
+    <form id="trainer-exam-settings-form-questions" class="card exam-question-builder">
+      <div class="exam-builder-head"><div><strong>اختر الأسئلة التي تدخل الاختبار</strong><span class="muted">يمكن تحديد أي عدد من بنك الأسئلة الحالي.</span></div><span class="badge">${questions.length} متاح</span></div>
+      <div class="exam-question-picker">
+        ${questions.map(q=>'<label class="exam-pick-card"><input type="checkbox" name="questionIds" value="'+q.id+'" '+(cfg.questionIds.includes(q.id)?"checked":"")+'><div><div><strong>#'+q.id+' • '+esc(q.topic)+'</strong><span class="badge '+(q.difficulty==="hard"?"red":q.difficulty==="medium"?"orange":"green")+'">'+(q.difficulty==="hard"?"متقدم":q.difficulty==="medium"?"متوسط":"سهل")+'</span></div><p>'+esc(q.q)+'</p></div></label>').join("")}
+      </div>
+      <div class="exam-settings-actions"><button class="btn btn-primary" type="submit">حفظ اختيار الأسئلة</button><span id="exam-question-msg" class="muted"></span></div>
+    </form>
+
+    <div class="section-title"><h3>تحليل آخر نتيجة</h3><button class="link-btn" data-trainer-page="analytics">فتح التحليلات</button></div>
+    <div class="card exam-result-topics">
+      ${last?last.topics.map(x=>'<div class="exam-result-topic-row"><strong>'+esc(x.topic)+'</strong><div class="progress"><span style="width:'+x.percent+'%"></span></div><span>'+x.percent+'%</span></div>').join(""):'<div class="empty">بعد أول محاولة سيظهر أداء كل موضوع هنا.</div>'}
+    </div>
+
+    <div class="card exam-admin-note"><strong>V3.17:</strong> إعدادات الاختبار تعمل محليًا في نسخة العرض الحالية. عند ربط Supabase ستصبح الإعدادات والنتائج مرتبطة بالمتدرب الحقيقي ويمكن تطبيق عدد المحاولات لكل متدرب بشكل مستقل.</div>
+    `;
   }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
   if(page==="analytics"){
