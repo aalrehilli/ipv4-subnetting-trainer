@@ -31,7 +31,8 @@ export const qbankState={
   previewEditor:false,
   editingId:null,
   previewId:null,
-  examPick:false
+  examPick:false,
+  status:""
 };
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
@@ -49,7 +50,8 @@ function filtered(){
     const text=(q.q+" "+q.topic+" "+q.difficulty).toLowerCase();
     return (!qbankState.search||text.includes(qbankState.search.toLowerCase()))
       && (!qbankState.topic||q.topic===qbankState.topic)
-      && (!qbankState.difficulty||q.difficulty===qbankState.difficulty);
+      && (!qbankState.difficulty||q.difficulty===qbankState.difficulty)
+      && (!qbankState.status||(qbankState.status==="active" ? q.active!==false : q.active===false));
   });
 }
 
@@ -62,14 +64,21 @@ function stats(){
 
 function row(q){
   const rate=q.stats?.correctRate??0;
+  const active=q.active!==false;
   return `
   <tr data-qbank-row data-qbank-text="${esc(q.q+" "+q.topic+" "+diffLabel(q.difficulty))}" data-qbank-topic="${esc(q.topic)}" data-qbank-diff="${esc(q.difficulty)}">
     <td class="qbank-id"><input type="checkbox" class="qbank-pick" data-q-action="pick" data-q-id="${esc(q.id)}" ${getExamPick().includes(Number(q.id))?"checked":""} aria-label="تحديد السؤال للاختبار"><span class="badge">#${esc(q.id)}</span></td>
     <td><strong>${esc(q.q)}</strong><div class="muted">استخدام: ${q.stats?.uses??0} • دقة: ${rate}%</div></td>
     <td><span class="badge">${esc(q.topic)}</span></td>
     <td><span class="badge ${diffClass(q.difficulty)}">${diffLabel(q.difficulty)}</span></td>
-    <td><span class="q-quality ${rate<55?"low":rate<75?"mid":"high"}">${rate<55?"مربك":rate<75?"مقبول":"جيد"}</span></td>
-    <td><div class="qactions"><button class="btn btn-soft mini-btn" data-q-action="preview" data-q-id="${esc(q.id)}">معاينة</button><button class="btn btn-primary mini-btn" data-q-action="edit" data-q-id="${esc(q.id)}">تعديل</button></div></td>
+    <td><span class="badge ${active?"green":"red"}">${active?"نشط":"معطل"}</span> <span class="q-quality ${rate<55?"low":rate<75?"mid":"high"}">${rate<55?"مربك":rate<75?"مقبول":"جيد"}</span></td>
+    <td><div class="qactions">
+      <button class="btn btn-soft mini-btn" data-q-action="preview" data-q-id="${esc(q.id)}">معاينة</button>
+      <button class="btn btn-primary mini-btn" data-q-action="edit" data-q-id="${esc(q.id)}">تعديل</button>
+      <button class="btn btn-soft mini-btn" data-q-action="duplicate" data-q-id="${esc(q.id)}">نسخ</button>
+      <button class="btn btn-${active?"orange":"green"} mini-btn" data-q-action="toggle" data-q-id="${esc(q.id)}">${active?"تعطيل":"تفعيل"}</button>
+      <button class="btn btn-danger mini-btn" data-q-action="delete" data-q-id="${esc(q.id)}">حذف</button>
+    </div></td>
   </tr>`;
 }
 
@@ -82,7 +91,7 @@ export function questionBankView(){
 
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.19</span><h2>بنك الأسئلة الاحترافي</h2><p>ابحث، صنّف، عاين، وأنشئ مجموعة أسئلة للاختبار مباشرة من نفس الشاشة.</p></div>
+    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.20</span><h2>بنك الأسئلة الاحترافي</h2><p>أدر الأسئلة، انسخها، عطّلها، احذفها، واستورد أو صدّر البنك مع ربط مباشر بالاختبارات.</p></div>
     <button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button>
   </div>
 
@@ -96,9 +105,11 @@ export function questionBankView(){
   <div class="card qbank-toolbar">
     <div><label>بحث</label><input id="qbank-search" value="${esc(qbankState.search)}" placeholder="ابحث في نص السؤال..."></div>
     <div><label>الموضوع</label><select id="qbank-topic"><option value="">كل الموضوعات</option>${topics.map(x=>`<option ${qbankState.topic===x?"selected":""}>${x}</option>`).join("")}</select></div>
-    <div><label>الصعوبة</label><select id="qbank-difficulty"><option value="">كل المستويات</option><option value="easy" ${qbankState.difficulty==="easy"?"selected":""}>سهل</option><option value="medium" ${qbankState.difficulty==="medium"?"selected":""}>متوسط</option><option value="hard" ${qbankState.difficulty==="hard"?"selected":""}>متقدم</option></select></div>
-    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button>
+    <div><label>الصعوبة</label><select id="qbank-difficulty"><option value="">كل المستويات</option><option value="easy" ${qbankState.difficulty==="easy"?"selected":""}>سهل</option><option value="medium" ${qbankState.difficulty==="medium"?"selected":""}>متوسط</option><option value="hard" ${qbankState.difficulty==="hard"?"selected":""}>متقدم</option></select></div><div><label>الحالة</label><select id="qbank-status"><option value="">كل الحالات</option><option value="active" ${qbankState.status==="active"?"selected":""}>نشطة</option><option value="inactive" ${qbankState.status==="inactive"?"selected":""}>معطلة</option></select></div>
+    <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export">تصدير JSON</button><button class="btn btn-purple mini-btn" data-q-action="import">استيراد JSON</button><input id="qbank-import-file" type="file" accept=".json,application/json" hidden>
   </div>
+
+  <div class="card qbank-management-note"><strong>V3.20:</strong> يمكنك نسخ السؤال أو تعطيله أو حذفه، واستيراد/تصدير بنك الأسئلة. تعطيل السؤال يمنع استخدامه في الاختبارات الجديدة.</div>
 
   <div class="card qbank-table-wrap">
     <table class="table qbank-table">
@@ -152,10 +163,15 @@ function previewView(){
 export function handleQuestionBankAction(target){
   const act=target.dataset.qAction;
   if(act==="new"){qbankState.modal="editor";qbankState.editingId=null;return {rerender:true}}
-  if(act==="edit"){qbankState.modal="editor";qbankState.editingId=target.dataset.qId;return {rerender:true}}
-  if(act==="preview"){qbankState.modal="preview";qbankState.previewId=target.dataset.qId;return {rerender:true}}
+  if(act==="edit"){qbankState.modal="editor";qbankState.editingId=Number(target.dataset.qId);return {rerender:true}}
+  if(act==="preview"){qbankState.modal="preview";qbankState.previewId=Number(target.dataset.qId);return {rerender:true}}
   if(act==="pick"){const id=Number(target.dataset.qId);const ids=getExamPick();setExamPick(target.checked?ids.concat(id):ids.filter(x=>x!==id));return {rerender:true}}
   if(act==="apply-exam"){const cfg=applyExamPick();return cfg?{rerender:true,examApplied:true}:{rerender:false,message:"حدد سؤالًا واحدًا على الأقل."}}
+  if(act==="duplicate"){return duplicateQuestion(Number(target.dataset.qId))}
+  if(act==="toggle"){return toggleQuestion(Number(target.dataset.qId))}
+  if(act==="delete"){return deleteQuestion(Number(target.dataset.qId))}
+  if(act==="export"){return {export:true,message:"تم تجهيز ملف بنك الأسئلة."}}
+  if(act==="import"){return {openImport:true}}
   if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;qbankState.previewEditor=false;return {rerender:true}}
   if(act==="back-editor"){qbankState.modal="editor";return {rerender:true}}
   if(act==="preview-edit"){qbankState.modal="editor-preview";return {rerender:true}}
@@ -174,8 +190,8 @@ function saveEditor(){
   const data=readEditor();
   if(!data.q.trim())return;
   if(data.options.filter(Boolean).length<2)return;
-  if(qbankState.editingId){
-    const idx=bank.findIndex(x=>x.id===qbankState.editingId);
+  if(qbankState.editingId!=null){
+    const idx=bank.findIndex(x=>Number(x.id)===Number(qbankState.editingId));
     if(idx>=0)bank[idx]={...bank[idx],...data};
   }else{
     bank.unshift({id:uid(),...data,active:true,stats:{uses:0,correctRate:0}});
@@ -184,6 +200,75 @@ function saveEditor(){
 }
 export function getEditingData(){return readEditor()}
 export function getExamPickedIds(){return getExamPick()}
+export function getExportData(){
+  return JSON.stringify({version:"3.20",exportedAt:new Date().toISOString(),questions:bank},null,2);
+}
+export function importQuestionBankText(text){
+  let parsed;
+  try{parsed=JSON.parse(text)}catch{return {ok:false,message:"ملف JSON غير صالح."}}
+  const incoming=Array.isArray(parsed)?parsed:parsed?.questions;
+  if(!Array.isArray(incoming)||!incoming.length)return {ok:false,message:"لم يتم العثور على أسئلة داخل الملف."};
+  const normalized=incoming.map(q=>normalizeImported(q)).filter(Boolean);
+  if(!normalized.length)return {ok:false,message:"لم يحتوي الملف على أسئلة صالحة."};
+  const existingTexts=new Set(bank.map(q=>String(q.q).trim()));
+  let added=0;
+  normalized.forEach(q=>{
+    if(existingTexts.has(String(q.q).trim()))return;
+    bank.push({...q,id:uid(),stats:{uses:0,correctRate:0}});
+    existingTexts.add(String(q.q).trim());
+    added++;
+  });
+  save(bank);
+  return {ok:true,added,total:bank.length,message:"تم استيراد "+added+" سؤال جديد."};
+}
+function normalizeImported(q){
+  if(!q||!String(q.q||"").trim())return null;
+  const opts=Array.isArray(q.options)?q.options:(Array.isArray(q.opts)?q.opts:[]);
+  const options=opts.map(x=>String(x??"").trim()).slice(0,4);
+  while(options.length<4)options.push("");
+  const a=Number(q.a);
+  return {
+    q:String(q.q).trim(),
+    topic:topics.includes(q.topic)?q.topic:"Binary",
+    difficulty:difficulties.includes(q.difficulty)?q.difficulty:"easy",
+    options,
+    a:Number.isInteger(a)&&a>=0&&a<options.length?a:0,
+    why:String(q.why||"").trim(),
+    active:q.active!==false
+  };
+}
+function duplicateQuestion(id){
+  const src=bank.find(q=>Number(q.id)===Number(id));
+  if(!src)return {rerender:false};
+  const copy={...src,id:uid(),q:String(src.q)+" (نسخة)",stats:{uses:0,correctRate:0}};
+  bank.unshift(copy);
+  save(bank);
+  return {rerender:true,message:"تم نسخ السؤال."};
+}
+function toggleQuestion(id){
+  const idx=bank.findIndex(q=>Number(q.id)===Number(id));
+  if(idx<0)return {rerender:false};
+  bank[idx]={...bank[idx],active:bank[idx].active===false};
+  if(bank[idx].active===false)setExamPick(getExamPick().filter(x=>Number(x)!==Number(id)));
+  save(bank);
+  return {rerender:true,message:bank[idx].active===false?"تم تعطيل السؤال.":"تم تفعيل السؤال."};
+}
+function deleteQuestion(id){
+  const exists=bank.some(q=>Number(q.id)===Number(id));
+  if(!exists)return {rerender:false};
+  bank=bank.filter(q=>Number(q.id)!==Number(id));
+  save(bank);
+  setExamPick(getExamPick().filter(x=>Number(x)!==Number(id)));
+  try{
+    const cfg=JSON.parse(localStorage.getItem(EXAM_CONFIG_KEY)||"null");
+    if(cfg&&Array.isArray(cfg.questionIds)){
+      cfg.questionIds=cfg.questionIds.filter(x=>Number(x)!==Number(id));
+      localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(cfg));
+    }
+  }catch{}
+  return {rerender:true,message:"تم حذف السؤال."};
+}
+
 export function previewEditorState(){
   const data=readEditor();
   return `
