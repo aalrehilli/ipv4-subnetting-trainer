@@ -1,5 +1,5 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
-import {refreshBank} from "./question-bank-v24.js?v=425";
+import {refreshBank} from "./question-bank-v24.js?v=426";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
