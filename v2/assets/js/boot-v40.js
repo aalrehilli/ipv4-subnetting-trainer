@@ -118,7 +118,7 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=419");
+      var trainer=await import("./trainer-v22.js?v=420");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
