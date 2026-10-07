@@ -281,3 +281,23 @@
 .v314-workflow{background:#f8fbfd}
 .v314-workflow small{font-size:9px;color:var(--muted)}
 @media(max-width:850px){.intervention-meta-grid{grid-template-columns:1fr}.intervention-note-inline{grid-template-columns:1fr}.intervention-note-inline .btn{justify-self:start}.intervention-status-stack{justify-content:flex-start}}
+
+
+/* V3.15 Trainer Analytics */
+.trainer-analytics-head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.trainer-analytics-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.analytics-kpi{display:grid;gap:3px;padding:14px;border-top:3px solid var(--primary)}
+.analytics-kpi span{font-size:11px;color:var(--muted)}.analytics-kpi strong{font-size:27px;color:var(--primary-2)}.analytics-kpi small{font-size:10px;color:var(--muted)}
+.analytics-kpi.danger{border-top-color:var(--red)}.analytics-kpi.warning{border-top-color:var(--orange)}.analytics-kpi.success{border-top-color:var(--green)}
+.trainer-analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.analytics-chart-card,.analytics-action-card{min-width:0}.analytics-card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}.analytics-card-head h3{margin:3px 0 0}
+.analytics-bars{height:230px;display:grid;grid-template-columns:repeat(7,1fr);gap:9px;align-items:end;border-bottom:1px solid var(--line);padding:10px 4px 0}
+.analytics-bar-item{height:100%;display:grid;grid-template-rows:1fr auto auto;gap:3px;align-items:end;text-align:center}.analytics-bar{height:100%;display:flex;align-items:end;justify-content:center}.analytics-bar span{display:block;width:28px;max-width:80%;background:var(--primary);border-radius:8px 8px 3px 3px}.analytics-bar-item small{font-size:9px;color:var(--muted)}.analytics-bar-item b{font-size:10px;color:var(--primary-2)}
+.risk-meter{padding:22px 4px 10px}.risk-meter-track{height:20px;background:linear-gradient(90deg,#eaf8ef 0%,#fff3e5 55%,#ffecec 100%);border-radius:999px;overflow:hidden}.risk-meter-track span{display:block;height:100%;background:var(--red);border-radius:999px}.risk-meter-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:7px}
+.analytics-risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:11px}.analytics-risk-grid>div{padding:12px;background:#f7f9fb;border-radius:11px;text-align:center}.analytics-risk-grid strong{display:block;font-size:22px;color:var(--primary-2)}.analytics-risk-grid span{font-size:10px;color:var(--muted)}
+.analytics-topic-list{display:grid;gap:9px}.analytics-topic-row{display:grid;grid-template-columns:180px 1fr 52px 65px;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid #eef3f6}.analytics-topic-row:last-child{border-bottom:0}.analytics-topic-name{display:flex;gap:7px;align-items:center}.analytics-topic-value{text-align:left;color:var(--primary-2)}
+.analytics-exam-score,.analytics-intervention-score{display:flex;align-items:end;gap:10px;padding:12px;background:#f7f9fb;border-radius:12px;margin-bottom:8px}.analytics-exam-score strong,.analytics-intervention-score strong{font-size:38px;color:var(--primary)}.analytics-exam-score span,.analytics-intervention-score span{font-size:12px;color:var(--muted);padding-bottom:7px}
+.analytics-decision-table{display:grid;gap:0;overflow:auto}.analytics-decision-row{min-width:700px;display:grid;grid-template-columns:90px 100px 1.2fr 1fr 80px;gap:10px;align-items:center;padding:11px 4px;border-bottom:1px solid #eef3f6;font-size:12px}.analytics-decision-row:last-child{border-bottom:0}.analytics-decision-row.head{font-size:10px;font-weight:800;color:var(--muted);background:#f8fafb}.analytics-footer-note{margin-top:14px;background:#f5f9fc;line-height:1.8;font-size:12px}
+@media(max-width:1050px){.trainer-analytics-kpis{grid-template-columns:repeat(3,1fr)}.analytics-topic-row{grid-template-columns:150px 1fr 50px 60px}}
+@media(max-width:800px){.trainer-analytics-kpis{grid-template-columns:repeat(2,1fr)}.trainer-analytics-grid{grid-template-columns:1fr}.analytics-topic-row{grid-template-columns:1fr 1fr 48px 60px}.analytics-topic-row .progress{grid-column:1/-1;grid-row:2}}
+@media(max-width:560px){.trainer-analytics-kpis{grid-template-columns:1fr}.analytics-bars{gap:5px}.analytics-bar span{width:20px}.analytics-topic-row{grid-template-columns:1fr auto}.analytics-topic-row .progress{grid-column:1/-1}.analytics-topic-row .btn{grid-column:1/-1;justify-self:start}}
