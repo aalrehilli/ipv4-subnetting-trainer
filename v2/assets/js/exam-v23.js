@@ -3,9 +3,48 @@ import {questions,loadPractice,savePractice} from "./demo-data.js";
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
 const WEAK_KEY="ipv4AcademyV23WeakTopics";
-const DEMO_DURATION=5*60;
+const EXAM_CONFIG_KEY="ipv4AcademyV317ExamConfig";
+const EXAM_ATTEMPT_KEY="ipv4AcademyV317Attempts";
+const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1};
 
-const examQuestions=questions.slice(0,10);
+function getExamConfig(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(EXAM_CONFIG_KEY)||"null");
+    if(!saved)return {...DEFAULT_CONFIG,questionIds:[...DEFAULT_CONFIG.questionIds]};
+    const ids=Array.isArray(saved.questionIds)&&saved.questionIds.length?saved.questionIds.map(Number):[...DEFAULT_CONFIG.questionIds];
+    return {...DEFAULT_CONFIG,...saved,questionIds:ids};
+  }catch{return {...DEFAULT_CONFIG,questionIds:[...DEFAULT_CONFIG.questionIds]}}
+}
+export function saveTrainerExamConfigFromForm(form){
+  const ids=[...form.querySelectorAll('input[name="questionIds"]:checked')].map(x=>Number(x.value));
+  const cfg={
+    title:(form.querySelector('[name="title"]')?.value||DEFAULT_CONFIG.title).trim(),
+    questionIds:ids.length?ids:DEFAULT_CONFIG.questionIds,
+    durationMin:Number(form.querySelector('[name="durationMin"]')?.value||5),
+    passPercent:Number(form.querySelector('[name="passPercent"]')?.value||60),
+    attemptsLimit:Number(form.querySelector('[name="attemptsLimit"]')?.value||0)
+  };
+  const normalized={
+    ...DEFAULT_CONFIG,
+    ...cfg,
+    questionIds:Array.from(new Set(cfg.questionIds)).filter(id=>questions.some(q=>q.id===id)),
+    durationMin:Math.max(1,Math.min(60,cfg.durationMin)),
+    passPercent:Math.max(0,Math.min(100,cfg.passPercent)),
+    attemptsLimit:Math.max(0,cfg.attemptsLimit)
+  };
+  if(!normalized.questionIds.length)normalized.questionIds=[...DEFAULT_CONFIG.questionIds];
+  localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(normalized));
+  return normalized;
+}
+export function getTrainerExamConfig(){return getExamConfig()}
+export function resetTrainerExamConfig(){localStorage.removeItem(EXAM_CONFIG_KEY);localStorage.removeItem(EXAM_ATTEMPT_KEY);localStorage.removeItem(RESULT_KEY);return getExamConfig()}
+function getAttemptCount(){const n=Number(localStorage.getItem(EXAM_ATTEMPT_KEY)||0);return Number.isFinite(n)?n:0}
+function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setItem(EXAM_ATTEMPT_KEY,String(n));return n}
+function selectedQuestions(){
+  const cfg=getExamConfig();
+  const list=cfg.questionIds.map(id=>questions.find(q=>q.id===Number(id))).filter(Boolean);
+  return list.length?list:questions.slice(0,10);
+}
 
 const state={
   mode:"intro",
@@ -45,7 +84,7 @@ function formatTime(sec){
   return m+":"+s;
 }
 function answeredCount(){return Object.keys(state.answers).length}
-function currentQuestion(){return examQuestions[state.index]}
+function currentQuestion(){return selectedQuestions()[state.index]}
 
 function hydrate(){
   const saved=loadSaved();
@@ -81,11 +120,14 @@ function stopTimer(){
   if(timer){clearInterval(timer);timer=null}
 }
 function startExam(){
+  const cfg=getExamConfig();
+  const attempts=getAttemptCount();
+  if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true};
   state.mode="live";
   state.index=0;
   state.answers={};
   state.startedAt=Date.now();
-  state.expiresAt=state.startedAt+DEMO_DURATION*1000;
+  state.expiresAt=state.startedAt+getExamConfig().durationMin*60*1000;
   state.submitted=false;
   state.result=null;
   saveState();
@@ -96,7 +138,7 @@ function answer(id){
   saveState();
 }
 function next(){
-  if(state.index<examQuestions.length-1)state.index++;
+  if(state.index<selectedQuestions().length-1)state.index++;
   saveState();
 }
 function prev(){
@@ -106,21 +148,21 @@ function prev(){
 function scoreExam(){
   let correct=0;
   const topicMap={};
-  examQuestions.forEach(q=>{
+  selectedQuestions().forEach(q=>{
     const ok=Number(state.answers[q.id])===q.a;
     if(ok)correct++;
     if(!topicMap[q.topic])topicMap[q.topic]={correct:0,total:0};
     topicMap[q.topic].total++;
     if(ok)topicMap[q.topic].correct++;
   });
-  const percent=Math.round(correct/examQuestions.length*100);
+  const percent=Math.round(correct/selectedQuestions().length*100);
   const topics=Object.entries(topicMap).map(([topic,x])=>({topic,percent:Math.round(x.correct/x.total*100),correct:x.correct,total:x.total})).sort((a,b)=>a.percent-b.percent);
   return {
     exam:"IPv4 & Binary",
     score:correct,
-    total:examQuestions.length,
+    total:selectedQuestions().length,
     percent,
-    passed:percent>=60,
+    passed:percent>=getExamConfig().passPercent,
     submittedAt:Date.now(),
     durationSec:Math.max(1,Math.round((Math.min(Date.now(),state.expiresAt)-state.startedAt)/1000)),
     topics
@@ -134,6 +176,7 @@ function submitExam(auto=false){
   state.mode="result";
   state.submitted=true;
   localStorage.setItem(RESULT_KEY,JSON.stringify(result));
+  incrementAttemptCount();
   localStorage.setItem(WEAK_KEY,JSON.stringify(result.topics.filter(x=>x.percent<70).slice(0,3).map(x=>x.topic)));
   clearState();
   savePractice({
@@ -155,20 +198,24 @@ function resetExam(){
 
 function introPage(){
   const result=loadResult();
+  const cfg=getExamConfig();
+  const used=getAttemptCount();
+  const limitText=cfg.attemptsLimit===0?"غير محدود":String(cfg.attemptsLimit);
+  const blocked=cfg.attemptsLimit>0&&used>=cfg.attemptsLimit;
   return `
-  <div class="page-intro"><span class="eyebrow orange">04 • الاختبارات</span><h2>اختبار IPv4 & Binary</h2><p>اختبار قصير يقيس فهمك للمفاهيم الأساسية قبل الانتقال إلى Subnetting المتقدم.</p></div>
+  <div class="page-intro"><span class="eyebrow orange">04 • الاختبارات</span><h2>${esc(cfg.title)}</h2><p>اختبار قصير يقيس فهمك للمفاهيم الأساسية قبل الانتقال إلى Subnetting المتقدم.</p></div>
   <div class="exam-start-layout">
     <div class="card exam-start-card">
       <div class="exam-start-icon">📝</div>
       <span class="badge orange">اختبار تجريبي</span>
       <h3>اختبر نفسك الآن</h3>
-      <p class="muted">10 أسئلة • 5 دقائق • نجاح من 60%</p>
+      <p class="muted">${selectedQuestions().length} أسئلة • ${cfg.durationMin} دقائق • نجاح من ${cfg.passPercent}% • المحاولات ${used}/${limitText}</p>
       <div class="exam-rules">
         <div>✓ لا توجد عقوبة على الرجوع بين الأسئلة</div>
         <div>✓ تستطيع مراجعة إجاباتك قبل التسليم</div>
         <div>✓ بعد التسليم سيظهر تحليل الأخطاء والموضوعات</div>
       </div>
-      <button class="btn btn-primary" id="start-exam">بدء الاختبار</button>
+      <button class="btn btn-primary" id="start-exam" ${blocked?"disabled":""}>${blocked?"استُنفدت المحاولات":"بدء الاختبار"}</button>
     </div>
     <div class="card exam-preview-card">
       <span class="eyebrow blue">آخر نتيجة</span>
@@ -188,7 +235,7 @@ function livePage(){
   const left=Math.max(0,Math.floor((state.expiresAt-Date.now())/1000));
   return `
   <div class="exam-live-head">
-    <div><span class="eyebrow orange">الاختبار قيد التنفيذ</span><h2>IPv4 & Binary</h2><p class="muted">السؤال ${state.index+1} من ${examQuestions.length}</p></div>
+    <div><span class="eyebrow orange">الاختبار قيد التنفيذ</span><h2>IPv4 & Binary</h2><p class="muted">السؤال ${state.index+1} من ${selectedQuestions().length}</p></div>
     <div class="exam-timer-wrap"><span>الوقت المتبقي</span><strong id="exam-timer" class="${left<=60?"timer-danger":""}">${formatTime(left)}</strong></div>
   </div>
   <div class="exam-layout">
@@ -201,16 +248,16 @@ function livePage(){
       </div>
       <div class="exam-controls">
         <button class="btn btn-soft" id="exam-prev" ${state.index===0?"disabled":""}>السابق</button>
-        <button class="btn btn-primary" id="exam-next">${state.index===examQuestions.length-1?"مراجعة وتسليم":"التالي"}</button>
+        <button class="btn btn-primary" id="exam-next">${state.index===selectedQuestions().length-1?"مراجعة وتسليم":"التالي"}</button>
       </div>
     </div>
     <aside class="card exam-map-card">
       <h3>خريطة الأسئلة</h3>
       <div class="exam-question-map">
-        ${examQuestions.map((x,i)=>`<button class="${i===state.index?"current":""} ${state.answers[x.id]!==undefined?"answered":""}" data-exam-jump="${i}">${i+1}</button>`).join("")}
+        ${selectedQuestions().map((x,i)=>`<button class="${i===state.index?"current":""} ${state.answers[x.id]!==undefined?"answered":""}" data-exam-jump="${i}">${i+1}</button>`).join("")}
       </div>
-      <div class="exam-progress-info"><span>تمت الإجابة</span><strong>${answeredCount()}/${examQuestions.length}</strong></div>
-      <div class="progress"><span style="width:${Math.round(answeredCount()/examQuestions.length*100)}%"></span></div>
+      <div class="exam-progress-info"><span>تمت الإجابة</span><strong>${answeredCount()}/${selectedQuestions().length}</strong></div>
+      <div class="progress"><span style="width:${Math.round(answeredCount()/selectedQuestions().length*100)}%"></span></div>
       <div class="exam-submit-box"><p class="muted">يمكنك التسليم في أي وقت، وستظهر لك النتيجة والتحليل مباشرة.</p><button class="btn btn-orange" id="submit-exam">تسليم الاختبار</button></div>
     </aside>
   </div>`;
@@ -253,19 +300,19 @@ export function examPage(){
 }
 
 export function handleExamAction(target){
-  if(target.id==="start-exam"){startExam();return {rerender:true}}
+  if(target.id==="start-exam"){const started=startExam();return started?.blocked?{blocked:true}:{rerender:true}}
   if(target.dataset.examAnswer!==undefined){
     answer(Number(target.dataset.examAnswer));
     return {rerender:true}
   }
   if(target.id==="exam-prev"){prev();return {rerender:true}}
   if(target.id==="exam-next"){
-    if(state.index===examQuestions.length-1){return {openSubmit:true}}
+    if(state.index===selectedQuestions().length-1){return {openSubmit:true}}
     next();return {rerender:true}
   }
   if(target.dataset.examJump!==undefined){state.index=Number(target.dataset.examJump);saveState();return {rerender:true}}
   if(target.id==="submit-exam"){submitExam(false);return {rerender:true}}
-  if(target.dataset.examAction==="retry"){startExam();return {rerender:true}}
+  if(target.dataset.examAction==="retry"){const started=startExam();return started?.blocked?{blocked:true}:{rerender:true}}
   if(target.dataset.examAction==="review-mistakes"){return {review:true}}
   return null;
 }
@@ -283,6 +330,8 @@ export function getTrainerExamSummary(){
     attempts:r?1:0,
     avg:r?r.percent:0,
     pass:r?(r.passed?1:0):0,
+    config:getExamConfig(),
+    attemptsUsed:getAttemptCount(),
     lastResult:r
   };
 }
