@@ -1,6 +1,6 @@
 import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,resetTrainerExamConfig} from "./exam-v23.js?v=417";
 import {questions} from "./demo-data.js";
-import {questionBankView} from "./question-bank-v24.js";
+import {questionBankView,refreshBank} from "./question-bank-v24.js?v=420";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
@@ -287,6 +287,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
   if(page==="exams"){
     const r=getTrainerExamSummary();
     const cfg=getTrainerExamConfig();
+    const bankQuestions=refreshBank();
     const limitText=cfg.attemptsLimit===0?"غير محدود":String(cfg.attemptsLimit);
     const topics=questions.filter(q=>cfg.questionIds.includes(q.id));
     const last=r.lastResult;
@@ -313,11 +314,11 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
     return `
     <div class="page-intro with-action">
       <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات ونتائج المتدربين</h2><p>أنشئ الاختبار، راقب الإعدادات، ثم راجع نتائج جميع المتدربين واتخذ الإجراء المناسب.</p></div>
-      <div class="trainer-exam-head-actions"><span class="badge orange">V3.18</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
+      <div class="trainer-exam-head-actions"><span class="badge orange">V3.19</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
     </div>
 
     <div class="trainer-exam-kpis">
-      <div class="card exam-admin-kpi"><span>الأسئلة المحددة</span><strong>${cfg.questionIds.length}</strong><small>من ${questions.length}</small></div>
+      <div class="card exam-admin-kpi"><span>الأسئلة المحددة</span><strong>${cfg.questionIds.length}</strong><small>من ${bankQuestions.length} في البنك</small></div>
       <div class="card exam-admin-kpi"><span>المدة</span><strong>${cfg.durationMin} د</strong><small>لكل محاولة</small></div>
       <div class="card exam-admin-kpi warning"><span>نسبة النجاح</span><strong>${cfg.passPercent}%</strong><small>حد الاجتياز</small></div>
       <div class="card exam-admin-kpi success"><span>متوسط النتائج</span><strong>${avgResults}%</strong><small>${passCount}/${demoResults.length} ناجح</small></div>
@@ -373,11 +374,11 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       </tbody></table></div>
     </div>
 
-    <div class="section-title"><h3>بناء الاختبار</h3><span class="badge blue">${topics.length} سؤال محدد</span></div>
+    <div class="section-title"><h3>بناء الاختبار</h3><div class="exam-result-filter"><span class="badge blue">${topics.length} سؤال محدد</span><button class="link-btn" data-trainer-page="questions">فتح بنك الأسئلة</button></div></div>
     <form id="trainer-exam-settings-form-questions" class="card exam-question-builder">
-      <div class="exam-builder-head"><div><strong>اختر الأسئلة التي تدخل الاختبار</strong><span class="muted">يمكن تحديد أي عدد من بنك الأسئلة الحالي.</span></div><span class="badge">${questions.length} متاح</span></div>
+      <div class="exam-builder-head"><div><strong>اختر الأسئلة التي تدخل الاختبار</strong><span class="muted">الاختيارات الآن تُسحب مباشرة من بنك الأسئلة الاحترافي.</span></div><span class="badge">${bankQuestions.length} متاح</span></div>
       <div class="exam-question-picker">
-        ${questions.map(q=>'<label class="exam-pick-card"><input type="checkbox" name="questionIds" value="'+q.id+'" '+(cfg.questionIds.includes(q.id)?"checked":"")+'><div><div><strong>#'+q.id+' • '+esc(q.topic)+'</strong><span class="badge '+(q.difficulty==="hard"?"red":q.difficulty==="medium"?"orange":"green")+'">'+(q.difficulty==="hard"?"متقدم":q.difficulty==="medium"?"متوسط":"سهل")+'</span></div><p>'+esc(q.q)+'</p></div></label>').join("")}
+        ${bankQuestions.map(q=>'<label class="exam-pick-card"><input type="checkbox" name="questionIds" value="'+q.id+'" '+(cfg.questionIds.includes(Number(q.id))?"checked":"")+'><div><div><strong>#'+q.id+' • '+esc(q.topic)+'</strong><span class="badge '+(q.difficulty==="hard"?"red":q.difficulty==="medium"?"orange":"green")+'">'+(q.difficulty==="hard"?"متقدم":q.difficulty==="medium"?"متوسط":"سهل")+'</span></div><p>'+esc(q.q)+'</p></div></label>').join("")}
       </div>
       <div class="exam-settings-actions"><button class="btn btn-primary" type="submit">حفظ اختيار الأسئلة</button><span id="exam-question-msg" class="muted"></span></div>
     </form>
@@ -387,7 +388,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       ${last?last.topics.map(x=>'<div class="exam-result-topic-row"><strong>'+esc(x.topic)+'</strong><div class="progress"><span style="width:'+x.percent+'%"></span></div><span>'+x.percent+'%</span></div>').join(""):'<div class="empty">بعد أول محاولة سيظهر أداء كل موضوع هنا.</div>'}
     </div>
 
-    <div class="card exam-admin-note"><strong>V3.18:</strong> جدول النتائج الحالي يعمل ببيانات العرض، مع جاهزية طبقة النتائج الفعلية للربط مع Supabase.</div>
+    <div class="card exam-admin-note"><strong>V3.19:</strong> بنك الأسئلة أصبح مصدر الاختبار مباشرة؛ ويمكن تحديد مجموعة الأسئلة من بنك الأسئلة ثم اعتمادها للاختبار. النتائج ما زالت تجريبية حتى ربط Supabase.</div>
     `;
   }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
