@@ -1,4 +1,5 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
+import {refreshBank} from "./question-bank-v24.js?v=420";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
@@ -6,17 +7,21 @@ const WEAK_KEY="ipv4AcademyV23WeakTopics";
 const EXAM_CONFIG_KEY="ipv4AcademyV317ExamConfig";
 const EXAM_ATTEMPT_KEY="ipv4AcademyV317Attempts";
 const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1};
+function availableQuestions(){return refreshBank().map(q=>({...q,opts:Array.isArray(q.opts)?q.opts:[...(q.options||[])]}))}
+function defaultQuestionIds(){return availableQuestions().map(q=>Number(q.id)).filter(Number.isFinite)}
 
 function getExamConfig(){
   try{
     const saved=JSON.parse(localStorage.getItem(EXAM_CONFIG_KEY)||"null");
-    if(!saved)return {...DEFAULT_CONFIG,questionIds:[...DEFAULT_CONFIG.questionIds]};
-    const ids=Array.isArray(saved.questionIds)&&saved.questionIds.length?saved.questionIds.map(Number):[...DEFAULT_CONFIG.questionIds];
+    if(!saved)return {...DEFAULT_CONFIG,questionIds:defaultQuestionIds()};
+    const ids=Array.isArray(saved.questionIds)&&saved.questionIds.length?saved.questionIds.map(Number):defaultQuestionIds();
     return {...DEFAULT_CONFIG,...saved,questionIds:ids};
-  }catch{return {...DEFAULT_CONFIG,questionIds:[...DEFAULT_CONFIG.questionIds]}}
+  }catch{return {...DEFAULT_CONFIG,questionIds:defaultQuestionIds()}}
 }
 export function saveTrainerExamConfigFromForm(form){
-  const ids=[...form.querySelectorAll('input[name="questionIds"]:checked')].map(x=>Number(x.value));
+  const selected=[...form.querySelectorAll('input[name="questionIds"]:checked')].map(x=>Number(x.value));
+  const current=getExamConfig();
+  const ids=selected.length?selected:current.questionIds;
   const cfg={
     title:(form.querySelector('[name="title"]')?.value||DEFAULT_CONFIG.title).trim(),
     questionIds:ids.length?ids:DEFAULT_CONFIG.questionIds,
@@ -27,19 +32,19 @@ export function saveTrainerExamConfigFromForm(form){
   const normalized={
     ...DEFAULT_CONFIG,
     ...cfg,
-    questionIds:Array.from(new Set(cfg.questionIds)).filter(id=>questions.some(q=>q.id===id)),
+    questionIds:Array.from(new Set(cfg.questionIds)).filter(id=>availableQuestions().some(q=>Number(q.id)===id)),
     durationMin:Math.max(1,Math.min(60,cfg.durationMin)),
     passPercent:Math.max(0,Math.min(100,cfg.passPercent)),
     attemptsLimit:Math.max(0,cfg.attemptsLimit)
   };
-  if(!normalized.questionIds.length)normalized.questionIds=[...DEFAULT_CONFIG.questionIds];
+  if(!normalized.questionIds.length)normalized.questionIds=defaultQuestionIds();
   localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(normalized));
   return normalized;
 }
 export function saveTrainerExamQuestionsFromForm(form){
   const cfg=getExamConfig();
   const ids=[...form.querySelectorAll('input[name="questionIds"]:checked')].map(x=>Number(x.value));
-  const valid=Array.from(new Set(ids)).filter(id=>questions.some(q=>q.id===id));
+  const valid=Array.from(new Set(ids)).filter(id=>availableQuestions().some(q=>Number(q.id)===id));
   const next={...cfg,questionIds:valid.length?valid:[...cfg.questionIds]};
   localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(next));
   return next;
@@ -50,7 +55,8 @@ function getAttemptCount(){const n=Number(localStorage.getItem(EXAM_ATTEMPT_KEY)
 function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setItem(EXAM_ATTEMPT_KEY,String(n));return n}
 function selectedQuestions(){
   const cfg=getExamConfig();
-  const list=cfg.questionIds.map(id=>questions.find(q=>q.id===Number(id))).filter(Boolean);
+  const source=availableQuestions();
+  const list=cfg.questionIds.map(id=>source.find(q=>Number(q.id)===Number(id))).filter(Boolean);
   return list.length?list:questions.slice(0,10);
 }
 
