@@ -1,4 +1,4 @@
-const state={role:"student",page:"home",filter:"",studentId:null};
+const state={role:"student",page:"home",filter:"",group:"",studentId:null};
 
 const studentNav=[
   ["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],
@@ -118,8 +118,8 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=415");
-      return trainer.getTrainerView(state.page,state.filter||"",state.studentId);
+      var trainer=await import("./trainer-v22.js?v=416");
+      return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
     if(state.role==="student"){
@@ -165,6 +165,7 @@ function bind(){
     state.role=state.role==="student"?"trainer":"student";
     state.page=state.role==="student"?"home":"tdash";
     state.filter="";
+    state.group="";
     state.studentId=null;
     render();
   });
@@ -177,6 +178,7 @@ function bind(){
       state.role="trainer";
       state.page=btn.getAttribute("data-trainer-page")||"tdash";
       state.filter=btn.getAttribute("data-risk")||"";
+      state.group=btn.getAttribute("data-group")||"";
       render();
     });
   });
@@ -188,6 +190,18 @@ function bind(){
       state.studentId=Number(btn.getAttribute("data-student-id")||0)||null;
       state.filter="";
       render();
+    });
+  });
+
+  document.querySelectorAll("[data-group-filter]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      state.role="trainer";
+      state.page="groups";
+      state.group=btn.getAttribute("data-group-filter")||"1";
+      document.querySelectorAll("[data-group-panel]").forEach(function(panel){
+        panel.hidden=panel.getAttribute("data-group-panel")!==state.group;
+      });
+      document.querySelectorAll("[data-group-filter]").forEach(function(x){x.classList.toggle("active",x.getAttribute("data-group-filter")===state.group);});
     });
   });
 
@@ -222,7 +236,7 @@ function bind(){
     if(trainerRisk.value){state.filter=trainerRisk.value;} else {state.filter="";}
     applyStudentDomFilters();
   });
-  trainerGroup&&trainerGroup.addEventListener("change",applyStudentDomFilters);
+  trainerGroup&&trainerGroup.addEventListener("change",function(){ state.group=trainerGroup.value||""; applyStudentDomFilters(); });
 
   document.querySelectorAll("[data-360-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
