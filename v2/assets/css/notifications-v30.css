@@ -390,3 +390,19 @@
 .qbank-format-note .badge{font-size:9px}
 @media(max-width:1250px){.qbank-toolbar{grid-template-columns:1fr 1fr}.qbank-toolbar .qbank-count{min-width:110px}}
 @media(max-width:650px){.qbank-toolbar{grid-template-columns:1fr}.qbank-toolbar .btn{width:max-content}}
+
+
+/* V3.22 Import Preview */
+.import-preview-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.qbank-import-summary{margin:14px 0}
+.qbank-import-preview-card{display:grid;gap:0}
+.import-preview-row{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;padding:12px 4px;border-bottom:1px solid #eef3f6}
+.import-preview-row:last-child{border-bottom:0}
+.import-preview-index{width:30px;height:30px;border-radius:9px;background:#edf5fb;color:var(--primary);display:grid;place-items:center;font-weight:900}
+.import-preview-row strong{font-size:12px;color:var(--primary-2);line-height:1.8}
+.import-preview-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.import-preview-meta .muted{font-size:10px}
+.qbank-import-more{margin-top:10px;padding:10px;background:#f7f9fb;border-radius:10px;color:var(--muted);font-size:11px}
+.qbank-import-note{margin-top:12px;background:#fffaf3;border-right:4px solid var(--orange);font-size:12px;line-height:1.9}
+.qbank-import-note strong{color:#a85f00}
+@media(max-width:700px){.import-preview-actions{width:100%}.import-preview-actions .btn{flex:1}.import-preview-row{grid-template-columns:30px 1fr}}
