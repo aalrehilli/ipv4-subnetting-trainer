@@ -254,6 +254,7 @@ function toggleQuestion(id){
   return {rerender:true,message:bank[idx].active===false?"تم تعطيل السؤال.":"تم تفعيل السؤال."};
 }
 function deleteQuestion(id){
+  if(!window.confirm("هل أنت متأكد من حذف هذا السؤال؟ لا يمكن التراجع عن الحذف من داخل المنصة."))return {rerender:false};
   const exists=bank.some(q=>Number(q.id)===Number(id));
   if(!exists)return {rerender:false};
   bank=bank.filter(q=>Number(q.id)!==Number(id));
