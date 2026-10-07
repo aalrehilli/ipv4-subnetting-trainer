@@ -7,7 +7,7 @@ const WEAK_KEY="ipv4AcademyV23WeakTopics";
 const EXAM_CONFIG_KEY="ipv4AcademyV317ExamConfig";
 const EXAM_ATTEMPT_KEY="ipv4AcademyV317Attempts";
 const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1};
-function availableQuestions(){return refreshBank().map(q=>({...q,opts:Array.isArray(q.opts)?q.opts:[...(q.options||[])]}))}
+function availableQuestions(){return refreshBank().filter(q=>q.active!==false).map(q=>({...q,opts:Array.isArray(q.opts)?q.opts:[...(q.options||[])]}))}
 function defaultQuestionIds(){return availableQuestions().map(q=>Number(q.id)).filter(Number.isFinite)}
 
 function getExamConfig(){
