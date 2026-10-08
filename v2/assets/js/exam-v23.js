@@ -93,11 +93,11 @@ export function saveTrainerExamQuestionsFromForm(form){
   localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(next));
   return next;
 }
-export function getTrainerExamConfig(){return getExamConfigPrivate()}
+export function getTrainerExamConfig(){return getExamConfig()}
 export function resetTrainerExamConfig(){localStorage.removeItem(EXAM_CONFIG_KEY);localStorage.removeItem(EXAM_ATTEMPT_KEY);localStorage.removeItem(RESULT_KEY);return getExamConfig()}
 function getAttemptCount(){const n=Number(localStorage.getItem(EXAM_ATTEMPT_KEY)||0);return Number.isFinite(n)?n:0}
 function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setItem(EXAM_ATTEMPT_KEY,String(n));return n}
-export function getExamConfig(){return getExamConfigPrivate()}\nfunction getExamConfigPrivate(){
+function selectedQuestions(){
   const cfg=getExamConfig();
   const source=availableQuestions();
   const list=cfg.questionIds.map(id=>source.find(q=>Number(q.id)===Number(id))).filter(Boolean);
