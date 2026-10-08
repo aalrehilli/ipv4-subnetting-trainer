@@ -27,7 +27,8 @@ export function isSupabaseConfigured(){
 }
 export function setSupabaseConfig(url,anonKey){
   if(!url||!anonKey)throw new Error("أدخل Supabase URL و anon key.");
-  localStorage.setItem(CONFIG_KEY,JSON.stringify({url,anonKey}));
+  localStorage.setItem(CONFIG_KEY,JSON.stringify({url:String(url).trim(),anonKey:String(anonKey).trim()}));
+  clientPromise=null;
   return true;
 }
 async function getClient(){
