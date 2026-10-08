@@ -446,7 +446,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       ${last?last.topics.map(x=>'<div class="exam-result-topic-row"><strong>'+esc(x.topic)+'</strong><div class="progress"><span style="width:'+x.percent+'%"></span></div><span>'+x.percent+'%</span></div>').join(""):'<div class="empty">بعد أول محاولة سيظهر أداء كل موضوع هنا.</div>'}
     </div>
 
-    <div class="card exam-admin-note"><strong>V3.28:</strong> بنك الأسئلة أصبح مصدر الاختبار مباشرة؛ ويمكن تحديد مجموعة الأسئلة من بنك الأسئلة ثم اعتمادها للاختبار. النتائج ما زالت تجريبية حتى ربط Supabase.</div>
+    <div class="card exam-admin-note"><strong>V3.32:</strong> بنك الأسئلة النهائي هو المصدر المركزي للاختبارات والتحليلات، وتُقرأ إحصائيات الأسئلة من المحاولات المسجلة.</div>
     `;
   }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
