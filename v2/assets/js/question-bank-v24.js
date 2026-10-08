@@ -93,7 +93,7 @@ export function questionBankView(){
 
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.23</span><h2>بنك الأسئلة الاحترافي</h2><p>أدر الأسئلة، انسخها، عطّلها، احذفها، واستورد أو صدّر البنك بصيغ JSON وMoodle XML وAiken مع ربط مباشر بالاختبارات.</p></div>
+    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.24</span><h2>بنك الأسئلة الاحترافي</h2><p>أدر الأسئلة، انسخها، عطّلها، احذفها، واستورد أو صدّر البنك بصيغ JSON وMoodle XML وAiken مع ربط مباشر بالاختبارات.</p></div>
     <button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button>
   </div>
 
@@ -111,7 +111,7 @@ export function questionBankView(){
     <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export-json">تصدير JSON</button><button class="btn btn-soft mini-btn" data-q-action="export-xml">تصدير XML</button><button class="btn btn-soft mini-btn" data-q-action="export-aiken">تصدير Aiken</button><button class="btn btn-purple mini-btn" data-q-action="import-json">استيراد JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-xml">استيراد XML</button><button class="btn btn-purple mini-btn" data-q-action="import-aiken">استيراد Aiken</button><input id="qbank-import-json-file" type="file" accept=".json,application/json" hidden><input id="qbank-import-xml-file" type="file" accept=".xml,text/xml,application/xml" hidden><input id="qbank-import-aiken-file" type="file" accept=".txt,.aiken,text/plain" hidden>
   </div>
 
-  <div class="card qbank-management-note"><strong>V3.23:</strong> مركز الاستيراد الذكي يتيح المعاينة، تعديل الأسئلة، واستبعاد السجلات قبل الحفظ. تعطيل السؤال يمنع استخدامه في الاختبارات الجديدة.</div>
+  <div class="card qbank-management-note"><strong>V3.24:</strong> الاستيراد الجماعي يدعم تحديد المجموعة وتعديل الخيارات والإجابة الصحيحة قبل الاعتماد. تعطيل السؤال يمنع استخدامه في الاختبارات الجديدة.</div>
 
   <div class="card qbank-table-wrap">
     <table class="table qbank-table">
@@ -179,6 +179,9 @@ export function handleQuestionBankAction(target){
   if(act==="import-confirm"){updateImportPreviewFromDom();return confirmImport()}
   if(act==="import-cancel"){return cancelImportPreview()}
   if(act==="import-remove"){return removeImportPreviewItem(target.dataset.importIndex)}
+  if(act==="import-select-all"){return setImportSelection(true)}
+  if(act==="import-clear-all"){return setImportSelection(false)}
+  if(act==="import-select-one"){return toggleImportSelection(target.dataset.importIndex,target.checked)}
   if(act==="back"){qbankState.modal=null;qbankState.editingId=null;qbankState.previewId=null;qbankState.previewEditor=false;return {rerender:true}}
   if(act==="back-editor"){qbankState.modal="editor";return {rerender:true}}
   if(act==="preview-edit"){qbankState.modal="editor-preview";return {rerender:true}}
@@ -268,7 +271,7 @@ function buildImportPreview(list,label,format){
     incomingTexts.add(key);
     fresh.push(q);
   });
-  return {ok:true,label,format,rows:fresh,totalDetected:list.length,valid:fresh.length,duplicates:duplicateRows.length,invalid:invalidRows.length,duplicateRows,invalidRows,message:"تم تحليل الملف. لم تتم إضافة أي سؤال بعد."};
+  return {ok:true,label,format,rows:fresh.map(function(q){return {...q,selected:true};}),totalDetected:list.length,valid:fresh.length,duplicates:duplicateRows.length,invalid:invalidRows.length,duplicateRows,invalidRows,message:"تم تحليل الملف. لم تتم إضافة أي سؤال بعد."};
 }
 export function importQuestionBankText(text,format="json"){
   if(format==="aiken")return importAikenText(text);
@@ -289,9 +292,33 @@ export function updateImportPreviewFromDom(){
   const textareas=[...document.querySelectorAll("[data-import-question]")];
   const topicsEls=[...document.querySelectorAll("[data-import-topic]")];
   const diffs=[...document.querySelectorAll("[data-import-difficulty]")];
-  preview.rows=preview.rows.map((q,i)=>({...q,q:(textareas[i]?.value||q.q).trim(),topic:topicsEls[i]?.value||q.topic,difficulty:diffs[i]?.value||q.difficulty})).filter(q=>q.q&&q.options.filter(Boolean).length>=2);
-  preview.valid=preview.rows.length;
+  const optionLists=[...document.querySelectorAll("[data-import-options]")];
+  const correctEls=[...document.querySelectorAll("[data-import-correct]")];
+  preview.rows=preview.rows.map((q,i)=>{
+    const opts=optionLists[i] ? [...optionLists[i].querySelectorAll("input[data-import-option]")].map(x=>(x.value||"").trim()).slice(0,4) : q.options;
+    while(opts.length<4)opts.push("");
+    const correct=correctEls[i] ? Number(correctEls[i].value) : Number(q.a)||0;
+    return {...q,q:(textareas[i]?.value||q.q).trim(),topic:topicsEls[i]?.value||q.topic,difficulty:diffs[i]?.value||q.difficulty,options:opts,a:Number.isInteger(correct)&&correct>=0&&correct<4?correct:q.a};
+  }).filter(q=>q.q&&q.options.filter(Boolean).length>=2);
+  preview.rows=preview.rows.map(q=>({...q,selected:q.selected!==false}));
+  preview.valid=preview.rows.filter(q=>q.selected).length;
   return {ok:true,rerender:true};
+}
+
+export function setImportSelection(all){
+  const preview=qbankState.importPreview;
+  if(!preview)return {rerender:false};
+  preview.rows.forEach(q=>{q.selected=all});
+  preview.valid=all?preview.rows.length:0;
+  return {rerender:true};
+}
+export function toggleImportSelection(index,selected){
+  const preview=qbankState.importPreview;
+  const i=Number(index);
+  if(!preview||!preview.rows[i])return {rerender:false};
+  preview.rows[i].selected=selected;
+  preview.valid=preview.rows.filter(q=>q.selected!==false).length;
+  return {rerender:false};
 }
 export function removeImportPreviewItem(index){
   const preview=qbankState.importPreview;
@@ -308,7 +335,11 @@ function importErrorDetailsView(p){
   const preview=qbankState.importPreview;
   if(!preview||!preview.ok)return {ok:false,message:"لا توجد عملية استيراد معلقة."};
   let added=0;
-  preview.rows.forEach(q=>{bank.push({...q,id:uid(),stats:{uses:0,correctRate:0}});added++});
+  preview.rows.filter(q=>q.selected!==false).forEach(q=>{
+    const copy={...q};delete copy.selected;
+    bank.push({...copy,id:uid(),stats:{uses:0,correctRate:0}});
+    added++;
+  });
   save(bank);
   qbankState.importPreview=null;
   return {ok:true,added,duplicates:preview.duplicates,invalid:preview.invalid,total:bank.length,rerender:true,message:"تم تأكيد الاستيراد وإضافة "+added+" سؤال."};
@@ -417,16 +448,20 @@ function deleteQuestion(id){
 function importPreviewView(){
   const p=qbankState.importPreview;
   const sample=p.rows.slice(0,20);
+  const selectedCount=p.rows.filter(q=>q.selected!==false).length;
   const rows=sample.map(function(q,i){
     const topicOptions=topics.map(function(t){return '<option'+(q.topic===t?' selected':'')+'>'+esc(t)+'</option>';}).join('');
     const diffOptions='<option value="easy"'+(q.difficulty==='easy'?' selected':'')+'>سهل</option><option value="medium"'+(q.difficulty==='medium'?' selected':'')+'>متوسط</option><option value="hard"'+(q.difficulty==='hard'?' selected':'')+'>متقدم</option>';
-    return '<div class="import-preview-edit-row"><div class="import-preview-index">'+(i+1)+'</div><div class="import-preview-edit-main"><textarea data-import-question rows="2">'+esc(q.q)+'</textarea><div class="import-preview-edit-grid"><label>الموضوع<select data-import-topic>'+topicOptions+'</select></label><label>الصعوبة<select data-import-difficulty>'+diffOptions+'</select></label><button class="btn btn-soft mini-btn" data-q-action="import-remove" data-import-index="'+i+'">استبعاد</button></div></div></div>';
+    const opts=q.options||['','','',''];
+    const optionInputs=opts.slice(0,4).map(function(o,n){return '<div class="import-option-edit"><span>'+String.fromCharCode(65+n)+'</span><input data-import-option value="'+esc(o)+'" placeholder="الخيار '+(n+1)+'"></div>';}).join('');
+    return '<div class="import-preview-edit-row '+(q.selected===false?'is-excluded':'')+'"><div class="import-preview-index">'+(i+1)+'</div><div class="import-preview-edit-main"><div class="import-question-edit-head"><label class="import-select-line"><input type="checkbox" data-import-selected '+(q.selected!==false?'checked':'')+'> اختيار السؤال</label><button class="btn btn-soft mini-btn" data-q-action="import-remove" data-import-index="'+i+'">استبعاد</button></div><textarea data-import-question rows="2">'+esc(q.q)+'</textarea><div class="import-preview-edit-grid"><label>الموضوع<select data-import-topic>'+topicOptions+'</select></label><label>الصعوبة<select data-import-difficulty>'+diffOptions+'</select></label><label>الإجابة الصحيحة<select data-import-correct>'+[0,1,2,3].map(function(n){return '<option value="'+n+'"'+(Number(q.a)===n?' selected':'')+'>'+String.fromCharCode(65+n)+'</option>';}).join('')+'</select></label></div><div class="import-options-grid" data-import-options>'+optionInputs+'</div></div></div>';
   }).join('');
-  return '<div class="page-intro with-action"><div><span class="eyebrow purple">V3.23 • مركز الاستيراد الذكي</span><h2>مراجعة وتعديل قبل الاستيراد</h2><p>يمكن تعديل نص السؤال وموضوعه وصعوبته أو استبعاده قبل الحفظ النهائي.</p></div><div class="import-preview-actions"><button class="btn btn-soft" data-q-action="import-cancel">إلغاء</button><button class="btn btn-purple" data-q-action="import-confirm">تأكيد الاستيراد</button></div></div>'
-    +'<div class="student-grid-4 qbank-import-summary"><div class="card trainer-kpi"><div class="muted">المصدر</div><div class="kpi-value" style="font-size:21px">'+esc(p.label)+'</div><div class="muted">'+esc(String(p.format||'').toUpperCase())+'</div></div><div class="card trainer-kpi"><div class="muted">المكتشفة</div><div class="kpi-value">'+p.totalDetected+'</div><div class="muted">سجل في الملف</div></div><div class="card trainer-kpi"><div class="muted">جديدة بعد التنقية</div><div class="kpi-value" style="color:var(--green)">'+p.valid+'</div><div class="muted">جاهزة للاستيراد</div></div><div class="card trainer-kpi"><div class="muted">مستبعدة</div><div class="kpi-value" style="color:var(--orange)">'+(p.duplicates+p.invalid)+'</div><div class="muted">'+p.duplicates+' مكرر • '+p.invalid+' غير صالح</div></div></div>'
-    +'<div class="card qbank-import-preview-card"><div class="section-title"><h3>تعديل الأسئلة الجديدة</h3><span class="badge green">'+p.valid+' سؤال</span></div>'+(sample.length?rows:'<div class="empty">لا توجد أسئلة جديدة جاهزة للإضافة.</div>')+(p.valid>20?'<div class="qbank-import-more">تم عرض أول 20 سؤالًا للتحرير. بقية الأسئلة ستُستورد كما تم تحليلها.</div>':'')+'</div>'
+  return '<div class="page-intro with-action"><div><span class="eyebrow purple">V3.24 • الاستيراد الجماعي</span><h2>مركز الاستيراد الجماعي المتقدم</h2><p>حدد الأسئلة، عدل الخيارات والإجابة الصحيحة، ثم اعتمد المجموعة دفعة واحدة.</p></div><div class="import-preview-actions"><button class="btn btn-soft" data-q-action="import-cancel">إلغاء</button><button class="btn btn-purple" data-q-action="import-confirm">تأكيد استيراد المحدد</button></div></div>'
+    +'<div class="student-grid-4 qbank-import-summary"><div class="card trainer-kpi"><div class="muted">المكتشفة</div><div class="kpi-value">'+p.totalDetected+'</div><div class="muted">سجل</div></div><div class="card trainer-kpi"><div class="muted">محدد الآن</div><div class="kpi-value" style="color:var(--primary)">'+selectedCount+'</div><div class="muted">جاهز للإضافة</div></div><div class="card trainer-kpi"><div class="muted">مكررة</div><div class="kpi-value" style="color:var(--orange)">'+p.duplicates+'</div><div class="muted">تم استبعادها</div></div><div class="card trainer-kpi"><div class="muted">غير صالحة</div><div class="kpi-value" style="color:var(--red)">'+p.invalid+'</div><div class="muted">تحتاج تصحيحًا خارج الملف</div></div></div>'
+    +'<div class="card qbank-bulk-toolbar"><strong>التحكم الجماعي</strong><button class="btn btn-soft mini-btn" data-q-action="import-select-all">تحديد الكل</button><button class="btn btn-soft mini-btn" data-q-action="import-clear-all">إلغاء تحديد الكل</button><span class="muted">'+p.valid+' أسئلة جديدة متاحة</span></div>'
+    +'<div class="card qbank-import-preview-card"><div class="section-title"><h3>الأسئلة الجاهزة</h3><span class="badge green">'+selectedCount+' محدد</span></div>'+(sample.length?rows:'<div class="empty">لا توجد أسئلة جديدة جاهزة للإضافة.</div>')+(p.valid>20?'<div class="qbank-import-more">تظهر أول 20 أسئلة للتحرير. جميع الأسئلة غير المستبعدة ستدخل عند التأكيد.</div>':'')+'</div>'
     +'<div class="card qbank-import-errors"><div class="section-title"><h3>تفاصيل الاستبعاد</h3><span class="badge orange">'+(p.duplicates+p.invalid)+'</span></div>'+importErrorDetailsView(p)+'</div>'
-    +'<div class="card qbank-import-note"><strong>V3.23:</strong> لم تتم إضافة أي سؤال بعد. يمكنك تعديل المعروض واستبعاد ما لا تريده، ثم اعتماد الاستيراد.</div>';
+    +'<div class="card qbank-import-note"><strong>V3.24:</strong> لا يتم حفظ أي سؤال حتى التأكيد. الأسئلة المحددة فقط ستنتقل إلى البنك.</div>';
 }
 
 export function previewEditorState(){
