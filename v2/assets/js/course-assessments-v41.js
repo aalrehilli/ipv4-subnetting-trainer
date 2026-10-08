@@ -126,3 +126,56 @@ export async function mountCourseAssessments(container,course){
     }
   });
 }
+
+
+export function prepareExamForStudent(exam){
+  const cfg={
+    title:String(exam.title||"اختبار المقرر"),
+    questionIds:Array.isArray(exam.questionIds)?exam.questionIds.map(Number).filter(Number.isFinite):[],
+    durationMin:Number(exam.durationMinutes||10),
+    passPercent:Number(exam.passPercent||60),
+    attemptsLimit:Number(exam.attemptsLimit||0),
+    selectionMode:exam.selectionMode==="random"?"random":"manual",
+    questionCount:Number(exam.questionCount||10),
+    difficultyMode:exam.difficultyMode||"all",
+    topicTargets:exam.topicTargets||{},
+    published:true,
+    updatedAt:Date.now(),
+    shuffleQuestions:true,
+    shuffleOptions:true,
+    version:341
+  };
+  localStorage.setItem("ipv4AcademyV317ExamConfig",JSON.stringify(cfg));
+  localStorage.setItem("ipv4AcademyV341CourseExamId",String(exam.id||""));
+  localStorage.setItem("ipv4AcademyV341CourseId",String(exam.courseId||""));
+  localStorage.setItem("ipv4AcademyV341UnitId",String(exam.unitId||""));
+  localStorage.setItem("ipv4AcademyV341LessonId",String(exam.lessonId||""));
+  return cfg;
+}
+
+export async function mountStudentCourseExams(container,courseId){
+  if(!container)return;
+  const result=await listCourseExams(courseId);
+  if(!result.ok){
+    container.innerHTML='<div class="card"><span class="badge orange">الاختبارات</span><p class="muted">تعذر تحميل الاختبارات المركزية.</p></div>';
+    return;
+  }
+  const rows=(result.rows||[]).filter(function(x){return x.published===true;});
+  container.innerHTML='<section class="card v41-student-exams">'+
+    '<div class="section-title"><div><span class="eyebrow orange">اختبارات المقرر</span><h3>اختبارات مرتبطة بهذا المقرر</h3><p class="muted">ابدأ الاختبار من داخل مسارك التعليمي مباشرة.</p></div><span class="badge orange">'+rows.length+' اختبار</span></div>'+
+    (rows.length?'<div class="v41-student-exam-list">'+rows.map(function(x){
+      return '<article class="v41-student-exam-row"><div><h3>'+esc(x.title)+'</h3><p class="muted">'+Number(x.questionCount||0)+' سؤال • '+Number(x.durationMinutes||10)+' دقيقة • اجتياز '+Number(x.passPercent||60)+'%</p></div><button class="btn btn-orange" data-v41-start-student-exam="'+esc(x.id)+'">بدء الاختبار</button></article>';
+    }).join("")+'</div>':'<div class="empty">لا توجد اختبارات منشورة لهذا المقرر حاليًا.</div>')+
+  '</section>';
+
+  container.addEventListener("click",function(ev){
+    const btn=ev.target.closest("[data-v41-start-student-exam]");
+    if(!btn)return;
+    const exam=rows.find(function(x){return String(x.id)===String(btn.getAttribute("data-v41-start-student-exam"));});
+    if(!exam)return;
+    prepareExamForStudent(exam);
+    document.querySelectorAll("[data-page]").forEach(function(x){
+      if(x.getAttribute("data-page")==="exams"){x.click();}
+    });
+  });
+}
