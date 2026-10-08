@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=466";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=467";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -132,11 +132,36 @@ export async function syncAllFromSupabase(){
   const status=await getSupabaseStatus();
   window.__IPV4_SUPABASE_STATUS__=status;
   if(!status.configured||!status.authenticated)return {status,questions:0,attempts:0};
+
+  let questionSync={count:0};
+  try{
+    const role=String(status.role||"");
+    if(role==="trainer"||role==="admin"){
+      let local=[];
+      try{local=JSON.parse(localStorage.getItem(QUESTION_KEY)||"[]");if(!Array.isArray(local))local=[];}catch{local=[]}
+      if(local.length)await syncLocalQuestionsToSupabase(local);
+      const remoteBank=await fetchCentralQuestionBank();
+      if(remoteBank.ok&&remoteBank.rows.length){
+        localStorage.setItem(QUESTION_KEY,JSON.stringify(remoteBank.rows.map(function(q){
+          const opts=Array.isArray(q.opts)?q.opts:[];
+          return {id:Number.isFinite(Number(q.id))?Number(q.id):q.id,q:q.q||"",prompt:q.q||"",topic:q.topic||"Binary",
+            difficulty:q.difficulty||"easy",options:opts,opts:opts,a:Number(q.a||0),why:q.why||"",
+            active:q.active!==false,points:Number(q.points||1),stats:{uses:0,correctRate:0},updatedAt:Date.now()};
+        })));
+        questionSync={count:remoteBank.rows.length};
+      }
+    }else{
+      const attempts=await fetchRemoteAttempts();
+      questionSync=await syncQuestionBankFromSupabase(attempts);
+    }
+  }catch(error){
+    questionSync={count:0,error:String(error&&error.message||error)};
+  }
+
   const attempts=await fetchRemoteAttempts();
-  const q=await syncQuestionBankFromSupabase(attempts);
   const a=await syncAttemptsFromSupabase();
   const u=await syncUnifiedExamAttempts();
-  return {status,questions:q.count||0,attempts:(u.ok?u.count:(a.count||0)),unifiedAttempts:u.ok};
+  return {status,questions:questionSync.count||0,attempts:(u.ok?u.count:(a.count||0)),unifiedAttempts:u.ok};
 }
 export async function syncLocalQuestionsToSupabase(list){
   const client=await getClient();
