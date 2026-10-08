@@ -1,7 +1,7 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=434";
 import {persistAttemptToSupabase} from "./supabase-v30.js?v=434";
-import {persistCourseExamAttempt} from "./course-assessments-v41.js?v=442";
+import {persistCourseExamAttempt} from "./course-assessments-v41.js?v=443";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
