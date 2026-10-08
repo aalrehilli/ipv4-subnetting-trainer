@@ -1,6 +1,6 @@
 import {questions as seedQuestions,loadStudent,saveStudent} from "./demo-data.js";
-import {recordLessonProgress,syncPendingLessonProgress} from "./course-supabase-v39.js?v=457";
-import {mountStudentCourseExams} from "./course-assessments-v41.js?v=457";
+import {recordLessonProgress,syncPendingLessonProgress} from "./course-supabase-v39.js?v=459";
+import {mountStudentCourseExams} from "./course-assessments-v41.js?v=459";
 
 const KEY="ipv4AcademyV36Courses";
 const ACTIVE_COURSE="ipv4AcademyV37Course";
