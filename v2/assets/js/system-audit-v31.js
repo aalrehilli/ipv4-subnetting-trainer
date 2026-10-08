@@ -9,7 +9,8 @@ const CORE_CHECKS=[
   {name:"المختبر VLSM",path:"./vlsm-v27.js",exports:["vlsmPage"]},
   {name:"المحرك الذكي",path:"./smart-engine-v28.js",exports:["getLearningSnapshot","getSmartRecommendation","getWeakTopics"]},
   {name:"الإشعارات",path:"./notifications-v30.js",exports:["notificationsPage","getUnreadCount"]},
-  {name:"Supabase",path:"./supabase-v30.js?v=436",exports:["isSupabaseConfigured","getSupabaseStatus","syncAllFromSupabase","syncTrainerExamToSupabase","persistAttemptToSupabase"]}
+  {name:"Supabase",path:"./supabase-v30.js?v=436",exports:["isSupabaseConfigured","getSupabaseStatus","syncAllFromSupabase","syncTrainerExamToSupabase","persistAttemptToSupabase"]},
+  {name:"مركز المختبرات",path:"./lab-center-v37.js?v=436",exports:["labCenterView"]}
 ];
 
 const exportNames=content=>{
