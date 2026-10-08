@@ -1,6 +1,6 @@
 import {questions as seedQuestions,loadStudent,saveStudent} from "./demo-data.js";
-import {recordLessonProgress} from "./course-supabase-v39.js?v=448";
-import {mountStudentCourseExams} from "./course-assessments-v41.js?v=448";
+import {recordLessonProgress} from "./course-supabase-v39.js?v=449";
+import {mountStudentCourseExams} from "./course-assessments-v41.js?v=449";
 
 const KEY="ipv4AcademyV36Courses";
 const ACTIVE_COURSE="ipv4AcademyV37Course";
@@ -85,11 +85,11 @@ export function learnerCourse(){
   '<div class="learner-unit-list">'+c.units.map((u,i)=>{const ls=u.lessons.filter(l=>l.status==="published");return '<section class="card learner-unit"><div class="learner-unit-head"><div><span class="unit-number">'+(i+1)+'</span><div><h3>'+esc(u.title)+'</h3><span class="muted">'+ls.length+' دروس منشورة</span></div></div><span class="badge '+(u.status==="published"?"green":"orange")+'">'+(u.status==="published"?"متاحة":"قيد الإعداد")+'</span></div>'+(ls.length?'<div class="learner-lesson-list">'+ls.map((l,j)=>'<article class="learner-lesson '+(isDone(c,u,l)?"completed":"")+'"><div class="lesson-number">'+(j+1)+'</div><div class="lesson-main"><div class="lesson-title-row"><h3>'+esc(l.title)+'</h3><span class="lesson-type">'+typeLabel(l.type)+'</span></div><p class="muted">'+esc(l.description||"")+'</p><div class="lesson-meta"><span>⏱ '+l.duration+' دقيقة</span><span>'+lessonQuestions(l).length+' أسئلة قصيرة</span><span>'+((l.lab||"")||"بدون مختبر")+'</span></div></div><button class="btn '+(isDone(c,u,l)?"btn-green":"btn-primary")+'" data-course-learning-action="open-lesson" data-course="'+c.id+'" data-unit="'+u.id+'" data-lesson="'+l.id+'">'+(isDone(c,u,l)?"مراجعة":"ابدأ الدرس")+'</button></article>').join("")+'</div>':'<div class="learner-empty">هذه الوحدة لم تُنشر دروسها بعد.</div>')+'</section>'}).join("")+'</div>';
 }
 
-function lessonPage(){
+export function lessonPage(){
   const x=activeLessonObj();
   if(!x)return learnerCourse();
   const {c,u,l}=x,completed=isDone(c,u,l),qs=lessonQuestions(l);
-  return '<div class="page-intro with-action"><div><span class="eyebrow purple">02 • محتوى الدرس • V3.48</span><h2>'+esc(l.title)+'</h2><p>'+esc(l.description||"")+'</p></div><button class="btn btn-soft" data-course-learning-action="back-course">← العودة للمقرر</button></div>'+
+  return '<div class="page-intro with-action"><div><span class="eyebrow purple">02 • محتوى الدرس • V3.49</span><h2>'+esc(l.title)+'</h2><p>'+esc(l.description||"")+'</p></div><button class="btn btn-soft" data-course-learning-action="back-course">← العودة للمقرر</button></div>'+
   '<div class="lesson-learning-layout"><main class="card lesson-learning-main"><div class="lesson-learning-meta"><span class="badge purple">'+typeLabel(l.type)+'</span><span class="badge">'+l.duration+' دقيقة</span><span class="badge '+(completed?"green":"orange")+'">'+(completed?"مكتمل":"قيد الدراسة")+'</span></div>'+
   (l.mediaType!=="none"&&l.resource?'<div class="lesson-media-placeholder"><strong>الوسائط</strong><p class="muted">'+esc(l.mediaType)+' • <a href="'+esc(l.resource)+'" target="_blank" rel="noopener">فتح المحتوى</a></p></div>':'')+
   '<section class="lesson-learning-section"><span class="eyebrow blue">أهداف الدرس</span><div class="learning-text">'+esc(l.objectives||"لم تُحدد أهداف بعد.")+'</div></section>'+
