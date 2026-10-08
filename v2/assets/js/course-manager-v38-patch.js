@@ -1,4 +1,4 @@
-/* IPv4 Academy V3.38 — Course builder + group visibility patch */
+/* IPv4 Academy V3.46 — Unified course manager for all courses */
 (function(){
   "use strict";
 
@@ -23,16 +23,49 @@
     }catch(e){return [];}
   }
 
+  function migrateCourseSchema(list){
+    const now=Date.now();
+    return (Array.isArray(list)?list:[]).map(function(c,index){
+      c=c||{};
+      c.visibility=c.visibility==="hidden"?"hidden":c.visibility==="groups"?"groups":"all";
+      c.visibleGroups=Array.isArray(c.visibleGroups)&&c.visibleGroups.length
+        ? Array.from(new Set(c.visibleGroups.map(String)))
+        : GROUPS.slice();
+      c.units=Array.isArray(c.units)?c.units:[];
+      c.units=c.units.map(function(u,ui){
+        u=u||{};
+        u.id=Number(u.id)||ui+1;
+        u.status=u.status==="published"?"published":"draft";
+        u.lessons=Array.isArray(u.lessons)?u.lessons:[];
+        u.lessons=u.lessons.map(function(l,li){
+          l=l||{};
+          l.id=Number(l.id)||li+1;
+          l.status=l.status==="published"?"published":"draft";
+          l.duration=Number(l.duration)||20;
+          l.type=l.type||"lesson";
+          return l;
+        });
+        return u;
+      });
+      c.updatedAt=Number(c.updatedAt)||now;
+      return c;
+    });
+  }
+
   function writeCourses(a){
-    localStorage.setItem(COURSES_KEY,JSON.stringify(a||[]));
+    const normalized=migrateCourseSchema(a||[]);
+    localStorage.setItem(COURSES_KEY,JSON.stringify(normalized));
+    localStorage.setItem(BACKUP_KEY,JSON.stringify(normalized));
+    return normalized;
   }
 
   function allCourses(){
+
     try{
       const a=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null");
       if(Array.isArray(a)&&a.length)return a;
     }catch(e){}
-    return readCourses();
+    return migrateCourseSchema(readCourses());
   }
 
   function studentGroup(){
@@ -62,11 +95,11 @@
       const existing=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null");
       if(Array.isArray(existing)&&existing.length&&!trainerMode())return;
     }catch(e){}
-    localStorage.setItem(BACKUP_KEY,JSON.stringify(current));
+    localStorage.setItem(BACKUP_KEY,JSON.stringify(migrateCourseSchema(current)));
   }
 
   function restoreAll(){
-    const a=allCourses();
+    const a=migrateCourseSchema(allCourses());
     if(a.length) writeCourses(a);
   }
 
@@ -161,18 +194,36 @@
 
   function enhanceCourseEditor(){
     const hero=document.querySelector(".course-editor-hero");
-    if(!hero||document.querySelector("[data-v38-visibility]"))return;
+    if(!hero)return;
     const c=activeCourse();
     if(!c)return;
+
+    if(!document.querySelector("[data-v46-course-overview]")){
+      const lessons=c.units.reduce(function(n,u){return n+(Array.isArray(u.lessons)?u.lessons.length:0);},0);
+      hero.insertAdjacentHTML("afterend",
+        '<section class="card" data-v46-course-overview style="margin-top:14px">'+
+          '<div class="section-title"><div><span class="eyebrow blue">V3.46 • إدارة موحدة</span><h3>'+esc(c.title)+'</h3>'+
+          '<p class="muted">هذه الأدوات مطبقة على جميع المقررات، وليست على مقرر واحد فقط.</p></div>'+
+          '<span class="badge '+visibilityTone(c)+'">'+esc(visibilityText(c))+'</span></div>'+
+          '<div class="grid-3">'+
+            '<div><div class="muted">الوحدات</div><strong>'+c.units.length+'</strong></div>'+
+            '<div><div class="muted">الدروس</div><strong>'+lessons+'</strong></div>'+
+            '<div><div class="muted">الحالة</div><strong>'+esc(c.status==="published"?"منشور":c.status==="archived"?"مؤرشف":"مسودة")+'</strong></div>'+
+          '</div>'+
+        '</section>'
+      );
+    }
+
+    if(document.querySelector("[data-v38-visibility]"))return;
     hero.insertAdjacentHTML("afterend",visibilityHtml(c));
     const visibility=document.querySelector("[data-v38-visibility]");
     if(visibility && !document.querySelector("[data-v40-roster]")){
       visibility.insertAdjacentHTML("afterend",'<div data-v40-roster data-v40-course-id="'+esc(c.id)+'" style="margin-top:14px"></div>');
       const box=document.querySelector("[data-v40-roster]");
-      import("./course-roster-v40.js?v=443").then(function(m){
+      import("./course-roster-v40.js?v=446").then(function(m){
         if(typeof m.mountCourseRoster==="function")return m.mountCourseRoster(box,String(c.id));
       }).then(function(){
-        return import("./course-assessments-v41.js?v=443");
+        return import("./course-assessments-v41.js?v=446");
       }).then(function(m){
         if(typeof m.mountCourseAssessments==="function"){
           const assessments=document.createElement("div");
@@ -221,7 +272,7 @@
   }
 
   async function manager(){
-    return import("./course-manager-v36.js?v=443");
+    return import("./course-manager-v36.js?v=446");
   }
 
   document.addEventListener("click",function(event){
@@ -321,7 +372,7 @@
     if(centralBusy||centralReady)return;
     centralBusy=true;
     try{
-      const m=await import("./course-supabase-v39.js?v=443");
+      const m=await import("./course-supabase-v39.js?v=446");
       if(role==="trainer"){
         const result=await m.pullCentralCourses({preserveOnEmpty:true});
         centralReady=true;
@@ -353,7 +404,7 @@
       filterCourseCards();
       if(centralReady){
         try{
-          const m=await import("./course-supabase-v39.js?v=443");
+          const m=await import("./course-supabase-v39.js?v=446");
           await m.syncTrainerCourses();
         }catch(e){}
       }
@@ -370,6 +421,8 @@
         if(typeof m.getCourses==="function")m.getCourses();
       }
     }catch(e){}
+    const normalized=migrateCourseSchema(readCourses());
+    if(normalized.length) writeCourses(normalized);
     captureAll();
     syncMode();
   }
