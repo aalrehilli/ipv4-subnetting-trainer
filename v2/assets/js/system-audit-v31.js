@@ -1,15 +1,15 @@
 const CORE_CHECKS=[
-  {name:"صفحة المقرر",path:"./course-learning-v38.js?v=434",exports:["learnerCourse","lessonPage","assessmentView","handleLearningAction","submitLessonAssessment"]},
-  {name:"محرك الاختبارات",path:"./exam-v23.js?v=434",exports:["examPage","handleExamAction","getTrainerExamConfig","saveTrainerExamBuilderFromForm","getExamPreviewQuestions","getExamAttempts","getQuestionAnalytics"]},
-  {name:"بنك الأسئلة",path:"./question-bank-v32.js?v=434",exports:["questionBankView","refreshBank","getQuestionBank","handleQuestionBankAction"]},
-  {name:"لوحة المدرب",path:"./trainer-v22.js?v=434",exports:["getTrainerView"]},
-  {name:"منصة المتدرب",path:"./student.js?v=434",exports:["studentPage"]},
+  {name:"صفحة المقرر",path:"./course-learning-v38.js?v=436",exports:["learnerCourse","lessonPage","assessmentView","handleLearningAction","submitLessonAssessment"]},
+  {name:"محرك الاختبارات",path:"./exam-v23.js?v=436",exports:["examPage","handleExamAction","getTrainerExamConfig","saveTrainerExamBuilderFromForm","getExamPreviewQuestions","getExamAttempts","getQuestionAnalytics"]},
+  {name:"بنك الأسئلة",path:"./question-bank-v32.js?v=436",exports:["questionBankView","refreshBank","getQuestionBank","handleQuestionBankAction"]},
+  {name:"لوحة المدرب",path:"./trainer-v22.js?v=436",exports:["getTrainerView"]},
+  {name:"منصة المتدرب",path:"./student.js?v=436",exports:["studentPage"]},
   {name:"المختبر Subnetting",path:"./subnet-lab-v25.js",exports:["labPage"]},
   {name:"المختبر FLSM",path:"./flsm-v26.js",exports:["flsmPage"]},
   {name:"المختبر VLSM",path:"./vlsm-v27.js",exports:["vlsmPage"]},
   {name:"المحرك الذكي",path:"./smart-engine-v28.js",exports:["getLearningSnapshot","getSmartRecommendation","getWeakTopics"]},
   {name:"الإشعارات",path:"./notifications-v30.js",exports:["notificationsPage","getUnreadCount"]},
-  {name:"Supabase",path:"./supabase-v30.js?v=434",exports:["isSupabaseConfigured","getSupabaseStatus","syncAllFromSupabase","syncTrainerExamToSupabase","persistAttemptToSupabase"]}
+  {name:"Supabase",path:"./supabase-v30.js?v=436",exports:["isSupabaseConfigured","getSupabaseStatus","syncAllFromSupabase","syncTrainerExamToSupabase","persistAttemptToSupabase"]}
 ];
 
 const exportNames=content=>{
@@ -88,7 +88,7 @@ export async function auditView(){
   const report=await runPlatformAudit();
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">V3.35 • تدقيق المنصة</span><h2>مركز صحة النظام</h2><p>فحص عقود الوحدات ومسارات التشغيل والتخزين المحلي وحالة Supabase قبل الانتقال للمرحلة التالية.</p></div>
+    <div><span class="eyebrow purple">V3.37 • تدقيق المنصة</span><h2>مركز صحة النظام</h2><p>فحص عقود الوحدات ومسارات التشغيل والتخزين المحلي وحالة Supabase قبل الانتقال للمرحلة التالية.</p></div>
     <div><span class="badge ${report.summary.error?"red":report.summary.warning?"orange":"green"}">${report.summary.ok}/${report.summary.total} وحدات سليمة</span></div>
   </div>
 
@@ -123,7 +123,7 @@ export async function auditView(){
   </div>
 
   <div class="card" style="margin-top:12px">
-    <strong>قاعدة V3.35</strong>
+    <strong>قاعدة V3.37</strong>
     <p class="muted" style="margin:5px 0 0;line-height:1.8">لا ننتقل إلى الحسابات حتى تكون عقود الوحدات الأساسية سليمة. أي تحذير هنا يعالج أولًا، ثم ينتقل البناء إلى بنك الأسئلة ومحرك الاختبارات ومركز النتائج بشكل متسلسل.</p>
   </div>
   `;
