@@ -6,7 +6,7 @@ import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
 import {courseManagerView} from "./course-manager-v36.js?v=403";
 import {auditView} from "./system-audit-v31.js?v=434";
-import {getLabStats} from "./lab-center-v37.js?v=443";
+import {getLabStats} from "./lab-center-v37.js?v=445";
 
 const students=[
   {id:1,name:"أحمد محمد",group:"1",progress:84,avg:88,last:"اليوم",risk:"منخفض",topic:"VLSM",weakness:64,activity:"نشط",trend:"+8%"},
