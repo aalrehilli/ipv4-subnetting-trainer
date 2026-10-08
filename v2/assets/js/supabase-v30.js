@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=459";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=464";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -201,6 +201,44 @@ export async function persistAttemptToSupabase(result,answers,selectedQuestions)
   return {ok:true,attemptId:attempt.id};
 }
 
+
+export async function fetchMyNotifications(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.from("student_notifications")
+    .select("id,user_id,title,message,notification_type,reference_id,created_at,read_at,dedupe_key,related_attempt_id")
+    .eq("user_id",session.user.id)
+    .order("created_at",{ascending:false})
+    .limit(60);
+  if(error)return {ok:false,error:error.message};
+  return {ok:true,rows:data||[]};
+}
+
+export async function markRemoteNotificationRead(id){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {error}=await client.from("student_notifications")
+    .update({read_at:new Date().toISOString()})
+    .eq("id",id).eq("user_id",session.user.id);
+  if(error)return {ok:false,error:error.message};
+  return {ok:true};
+}
+
+export async function markAllRemoteNotificationsRead(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {error}=await client.from("student_notifications")
+    .update({read_at:new Date().toISOString()})
+    .eq("user_id",session.user.id).is("read_at",null);
+  if(error)return {ok:false,error:error.message};
+  return {ok:true};
+}
 
 export async function signInWithGitHub(){
   const client=await getClient();
