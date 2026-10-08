@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=456";
+import {getSupabaseConfig} from "./supabase-v30.js?v=457";
 
 let clientPromise=null;
 
@@ -85,7 +85,7 @@ function groups(rows){
 function setupCard(configured){
   if(configured){
     return '<section class="card" data-v55-setup>'+
-      '<div class="section-title"><div><span class="eyebrow green">V3.56 • اتصال البيانات</span><h3>Supabase متصل بالمشروع</h3>'+
+      '<div class="section-title"><div><span class="eyebrow green">V3.57 • تسجيل GitHub</span><h3>Supabase متصل بالمشروع</h3>'+
       '<p class="muted">بيانات المشروع محفوظة. لإظهار متابعة المتدربين يلزم تسجيل الدخول بحساب مدرب/مدير.</p></div><span class="badge orange">يلزم تسجيل الدخول</span></div>'+
       '<form data-v55-auth-form>'+
         '<div class="lesson-form-grid">'+
@@ -114,7 +114,7 @@ export async function mountCourseRoster(container,courseId){
   if(!first.ok){
     const configured=await (async function(){
       try{
-        const m=await import("./supabase-v30.js?v=456");
+        const m=await import("./supabase-v30.js?v=457");
         return m.isSupabaseConfigured();
       }catch(e){return false;}
     })();
@@ -130,7 +130,7 @@ export async function mountCourseRoster(container,courseId){
         const status=cfgForm.querySelector("[data-v55-status]");
         try{
           const data=new FormData(cfgForm);
-          const m=await import("./supabase-v30.js?v=456");
+          const m=await import("./supabase-v30.js?v=457");
           m.setSupabaseConfig(String(data.get("url")||"").trim(),String(data.get("anonKey")||"").trim());
           const state=await m.getSupabaseStatus();
           if(status)status.textContent=state.message||"تم الحفظ.";
@@ -145,9 +145,14 @@ export async function mountCourseRoster(container,courseId){
         const status=container.querySelector("[data-v55-auth-status]");
         if(status)status.textContent="جاري التحويل إلى GitHub…";
         try{
-          const m=await import("./supabase-v30.js?v=456");
+          const m=await import("./supabase-v30.js?v=457");
           const result=await m.signInWithGitHub();
-          if(!result.ok && status)status.textContent=result.error||result.reason||"تعذر بدء تسجيل الدخول عبر GitHub.";
+          if(!result.ok && status){
+            const raw=String(result.error||result.reason||"تعذر بدء تسجيل الدخول عبر GitHub.");
+            status.textContent=raw.includes("Unsupported provider")||raw.includes("provider is not enabled")
+              ?"تسجيل الدخول عبر GitHub غير مفعّل في Supabase. فعّل GitHub من Authentication → Sign In / Providers."
+              :raw;
+          }
         }catch(error){
           if(status)status.textContent=String(error&&error.message||error);
         }
@@ -162,7 +167,7 @@ export async function mountCourseRoster(container,courseId){
         if(status)status.textContent="جاري تسجيل الدخول…";
         try{
           const data=new FormData(authForm);
-          const m=await import("./supabase-v30.js?v=456");
+          const m=await import("./supabase-v30.js?v=457");
           const result=await m.signInWithPassword(String(data.get("email")||"").trim(),String(data.get("password")||""));
           if(!result.ok){
             if(status)status.textContent=result.error||result.reason||"تعذر تسجيل الدخول.";
