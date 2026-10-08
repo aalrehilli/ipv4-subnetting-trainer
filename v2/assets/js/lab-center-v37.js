@@ -1,4 +1,4 @@
-import {getWeakTopics} from "./smart-engine-v28.js?v=435";
+import {getWeakTopics} from "./smart-engine-v28.js?v=436";
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 
