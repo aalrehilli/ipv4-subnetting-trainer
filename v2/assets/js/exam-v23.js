@@ -1,11 +1,12 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
-import {refreshBank} from "./question-bank-v24.js?v=429";
+import {refreshBank} from "./question-bank-v24.js?v=430";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
 const WEAK_KEY="ipv4AcademyV23WeakTopics";
 const EXAM_CONFIG_KEY="ipv4AcademyV317ExamConfig";
 const EXAM_ATTEMPT_KEY="ipv4AcademyV317Attempts";
+const ATTEMPTS_KEY="ipv4AcademyV327Attempts";
 const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1,selectionMode:"manual",questionCount:10,difficultyMode:"all",topicTargets:{},published:false,updatedAt:null};
 function availableQuestions(){return refreshBank().filter(q=>q.active!==false).map(q=>({...q,opts:Array.isArray(q.opts)?q.opts:[...(q.options||[])]}))}
 function defaultQuestionIds(){return availableQuestions().map(q=>Number(q.id)).filter(Number.isFinite)}
@@ -102,7 +103,39 @@ export function saveTrainerExamQuestionsFromForm(form){
 }
 export function getTrainerExamConfig(){return getExamConfig()}
 export function resetTrainerExamConfig(){localStorage.removeItem(EXAM_CONFIG_KEY);localStorage.removeItem(EXAM_ATTEMPT_KEY);localStorage.removeItem(RESULT_KEY);return getExamConfig()}
-function getAttemptCount(){const n=Number(localStorage.getItem(EXAM_ATTEMPT_KEY)||0);return Number.isFinite(n)?n:0}
+function loadAttempts(){
+  try{const x=JSON.parse(localStorage.getItem(ATTEMPTS_KEY)||"[]");return Array.isArray(x)?x:[]}catch{return []}
+}
+function getStudentIdentity(){
+  const profile=loadStudent();
+  let id=localStorage.getItem("ipv4AcademyLocalStudentId");
+  if(!id){id="student-local";localStorage.setItem("ipv4AcademyLocalStudentId",id)}
+  return {id,name:profile.name||"المتدرب التجريبي",group:profile.group||localStorage.getItem("ipv4AcademyStudentGroup")||"1"};
+}
+function saveAttemptRecord(result){
+  const identity=getStudentIdentity();
+  const attempts=loadAttempts();
+  const sameStudent=attempts.filter(x=>x.studentId===identity.id&&x.exam===result.exam);
+  const record={id:"ATT-"+Date.now()+"-"+Math.floor(Math.random()*10000),studentId:identity.id,studentName:identity.name,group:String(identity.group||"1"),exam:result.exam,attemptNo:sameStudent.length+1,score:result.score,total:result.total,percent:result.percent,passed:result.passed,submittedAt:result.submittedAt,durationSec:result.durationSec,autoSubmitted:!!result.autoSubmitted,topics:result.topics,questionResults:result.questionResults||[]};
+  attempts.unshift(record);
+  localStorage.setItem(ATTEMPTS_KEY,JSON.stringify(attempts.slice(0,500)));
+  return record;
+}
+export function getExamAttempts(examTitle=getExamConfig().title){
+  return loadAttempts().filter(x=>!examTitle||x.exam===examTitle).sort((a,b)=>Number(b.submittedAt)-Number(a.submittedAt));
+}
+export function getQuestionAnalytics(examTitle=getExamConfig().title){
+  const cfg=getExamConfig(),attempts=getExamAttempts(examTitle),source=availableQuestions();
+  return cfg.questionIds.map(id=>{
+    const q=source.find(x=>Number(x.id)===Number(id));
+    if(!q)return null;
+    const responses=attempts.flatMap(a=>(a.questionResults||[]).filter(x=>Number(x.id)===Number(id)));
+    const total=responses.length,answered=responses.filter(x=>x.selected!==null&&x.selected!==undefined).length,correct=responses.filter(x=>x.correct===true).length,unanswered=total-answered;
+    const optionCounts=(q.opts||[]).map((opt,index)=>({index,text:opt,count:responses.filter(x=>Number(x.selected)===index).length}));
+    return {id:Number(q.id),question:q.q,topic:q.topic,difficulty:q.difficulty,total,answered,correct,wrong:Math.max(0,answered-correct),unanswered,accuracy:total?Math.round(correct/total*100):0,options:optionCounts};
+  }).filter(Boolean);
+}
+function getAttemptCount(){return getExamAttempts().filter(x=>x.studentId===getStudentIdentity().id).length}
 function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setItem(EXAM_ATTEMPT_KEY,String(n));return n}
 function selectedQuestions(){
   const cfg=getExamConfig();
@@ -228,12 +261,15 @@ function openReview(){
 function scoreExam(){
   let correct=0;
   const topicMap={};
+  const questionResults=[];
   selectedQuestions().forEach(q=>{
-    const ok=Number(state.answers[q.id])===q.a;
+    const selected=state.answers[q.id]===undefined?null:Number(state.answers[q.id]);
+    const ok=selected!==null && selected===q.a;
     if(ok)correct++;
     if(!topicMap[q.topic])topicMap[q.topic]={correct:0,total:0};
     topicMap[q.topic].total++;
     if(ok)topicMap[q.topic].correct++;
+    questionResults.push({id:Number(q.id),topic:q.topic,difficulty:q.difficulty,selected,correctAnswer:q.a,correct:ok});
   });
   const percent=Math.round(correct/selectedQuestions().length*100);
   const topics=Object.entries(topicMap).map(([topic,x])=>({topic,percent:Math.round(x.correct/x.total*100),correct:x.correct,total:x.total})).sort((a,b)=>a.percent-b.percent);
@@ -245,13 +281,15 @@ function scoreExam(){
     passed:percent>=getExamConfig().passPercent,
     submittedAt:Date.now(),
     durationSec:Math.max(1,Math.round((Math.min(Date.now(),state.expiresAt)-state.startedAt)/1000)),
-    topics
+    topics,
+    questionResults
   };
 }
 function submitExam(auto=false){
   if(state.mode!=="live")return;
   const result=scoreExam();
   result.autoSubmitted=auto;
+  saveAttemptRecord(result);
   state.result=result;
   state.mode="result";
   state.submitted=true;
