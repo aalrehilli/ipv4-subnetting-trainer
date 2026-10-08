@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=459";
+import {getSupabaseConfig} from "./supabase-v30.js?v=460";
 
 const COURSES_KEY="ipv4AcademyV36Courses";
 const BACKUP_KEY="ipv4AcademyV38AllCourses";
@@ -142,8 +142,9 @@ export async function bootstrapCentralCourses(role){
   bootPromise=(async function(){
     const pulled=await pullCentralCourses();
     if(pulled.ok && role==="trainer" && pulled.count===0){
+      // Central catalog is empty: keep the local catalog authoritative for the first migration.
       lastCentralIds=[];
-      lastSignature=signature(readLocal());
+      lastSignature="";
     }
     return pulled;
   })().catch(function(error){return {ok:false,error:String(error&&error.message||error)}})
@@ -215,7 +216,7 @@ export function getLocalCourseProgress(courseId){
 }
 
 export async function getCourseConnectionState(){
-  const {getSupabaseStatus}=await import("./supabase-v30.js?v=459");
+  const {getSupabaseStatus}=await import("./supabase-v30.js?v=460");
   return getSupabaseStatus();
 }
 
