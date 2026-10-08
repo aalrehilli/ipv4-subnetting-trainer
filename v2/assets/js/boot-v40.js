@@ -172,6 +172,13 @@ async function render(){
   bind();
 }
 
+window.addEventListener("ipv4-course-switch",function(){
+  render().catch(function(error){
+    const app=document.getElementById("app");
+    if(app){app.innerHTML=shell(errorView(error));bind();}
+  });
+});
+
 function bind(){
   document.querySelectorAll("[data-lab-page]").forEach(function(btn){
     btn.addEventListener("click",function(){
