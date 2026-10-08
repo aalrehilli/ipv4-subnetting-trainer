@@ -75,11 +75,18 @@ export function saveTrainerExamConfigFromForm(form){
   };
   const normalized={
     ...DEFAULT_CONFIG,
+    ...current,
     ...cfg,
+    selectionMode:current.selectionMode||"manual",
+    questionCount:current.questionCount||10,
+    difficultyMode:current.difficultyMode||"all",
+    topicTargets:current.topicTargets||{},
+    published:current.published===true,
     questionIds:Array.from(new Set(cfg.questionIds)).filter(id=>availableQuestions().some(q=>Number(q.id)===id)),
     durationMin:Math.max(1,Math.min(60,cfg.durationMin)),
     passPercent:Math.max(0,Math.min(100,cfg.passPercent)),
-    attemptsLimit:Math.max(0,cfg.attemptsLimit)
+    attemptsLimit:Math.max(0,cfg.attemptsLimit),
+    updatedAt:Date.now()
   };
   if(!normalized.questionIds.length)normalized.questionIds=defaultQuestionIds();
   localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(normalized));
