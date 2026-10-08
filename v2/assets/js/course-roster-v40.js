@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=455";
+import {getSupabaseConfig} from "./supabase-v30.js?v=456";
 
 let clientPromise=null;
 
@@ -85,14 +85,14 @@ function groups(rows){
 function setupCard(configured){
   if(configured){
     return '<section class="card" data-v55-setup>'+
-      '<div class="section-title"><div><span class="eyebrow green">V3.55 • اتصال البيانات</span><h3>Supabase متصل بالمشروع</h3>'+
+      '<div class="section-title"><div><span class="eyebrow green">V3.56 • اتصال البيانات</span><h3>Supabase متصل بالمشروع</h3>'+
       '<p class="muted">بيانات المشروع محفوظة. لإظهار متابعة المتدربين يلزم تسجيل الدخول بحساب مدرب/مدير.</p></div><span class="badge orange">يلزم تسجيل الدخول</span></div>'+
       '<form data-v55-auth-form>'+
         '<div class="lesson-form-grid">'+
           '<label>البريد الإلكتروني<input name="email" type="email" required placeholder="trainer@example.com" autocomplete="username"></label>'+
           '<label>كلمة المرور<input name="password" type="password" required placeholder="••••••••" autocomplete="current-password"></label>'+
         '</div>'+
-        '<div class="course-form-actions"><button class="btn btn-primary" type="submit">تسجيل الدخول</button><span data-v55-auth-status class="muted"></span></div>'+
+        '<div class="course-form-actions"><button class="btn btn-primary" type="submit">تسجيل الدخول بالبريد</button><button class="btn btn-soft" type="button" data-v56-github-login>تسجيل الدخول عبر GitHub</button><span data-v55-auth-status class="muted"></span></div>'+
       '</form>'+
     '</section>';
   }
@@ -114,7 +114,7 @@ export async function mountCourseRoster(container,courseId){
   if(!first.ok){
     const configured=await (async function(){
       try{
-        const m=await import("./supabase-v30.js?v=455");
+        const m=await import("./supabase-v30.js?v=456");
         return m.isSupabaseConfigured();
       }catch(e){return false;}
     })();
@@ -130,12 +130,27 @@ export async function mountCourseRoster(container,courseId){
         const status=cfgForm.querySelector("[data-v55-status]");
         try{
           const data=new FormData(cfgForm);
-          const m=await import("./supabase-v30.js?v=455");
+          const m=await import("./supabase-v30.js?v=456");
           m.setSupabaseConfig(String(data.get("url")||"").trim(),String(data.get("anonKey")||"").trim());
           const state=await m.getSupabaseStatus();
           if(status)status.textContent=state.message||"تم الحفظ.";
           setTimeout(function(){mountCourseRoster(container,courseId);},250);
         }catch(error){ if(status)status.textContent=String(error&&error.message||error); }
+      });
+    }
+
+    const github=container.querySelector("[data-v56-github-login]");
+    if(github){
+      github.addEventListener("click",async function(){
+        const status=container.querySelector("[data-v55-auth-status]");
+        if(status)status.textContent="جاري التحويل إلى GitHub…";
+        try{
+          const m=await import("./supabase-v30.js?v=456");
+          const result=await m.signInWithGitHub();
+          if(!result.ok && status)status.textContent=result.error||result.reason||"تعذر بدء تسجيل الدخول عبر GitHub.";
+        }catch(error){
+          if(status)status.textContent=String(error&&error.message||error);
+        }
       });
     }
 
@@ -147,7 +162,7 @@ export async function mountCourseRoster(container,courseId){
         if(status)status.textContent="جاري تسجيل الدخول…";
         try{
           const data=new FormData(authForm);
-          const m=await import("./supabase-v30.js?v=455");
+          const m=await import("./supabase-v30.js?v=456");
           const result=await m.signInWithPassword(String(data.get("email")||"").trim(),String(data.get("password")||""));
           if(!result.ok){
             if(status)status.textContent=result.error||result.reason||"تعذر تسجيل الدخول.";
