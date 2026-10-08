@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=459";
+import {getSupabaseConfig} from "./supabase-v30.js?v=461";
 
 let clientPromise=null;
 
@@ -120,7 +120,7 @@ export async function mountCourseRoster(container,courseId){
   if(!first.ok){
     const configured=await (async function(){
       try{
-        const m=await import("./supabase-v30.js?v=459");
+        const m=await import("./supabase-v30.js?v=461");
         return m.isSupabaseConfigured();
       }catch(e){return false;}
     })();
@@ -136,7 +136,7 @@ export async function mountCourseRoster(container,courseId){
         const status=cfgForm.querySelector("[data-v55-status]");
         try{
           const data=new FormData(cfgForm);
-          const m=await import("./supabase-v30.js?v=459");
+          const m=await import("./supabase-v30.js?v=461");
           m.setSupabaseConfig(String(data.get("url")||"").trim(),String(data.get("anonKey")||"").trim());
           const state=await m.getSupabaseStatus();
           if(status)status.textContent=state.message||"تم الحفظ.";
@@ -151,7 +151,7 @@ export async function mountCourseRoster(container,courseId){
         const status=container.querySelector("[data-v55-auth-status]");
         if(status)status.textContent="جاري التحويل إلى GitHub…";
         try{
-          const m=await import("./supabase-v30.js?v=459");
+          const m=await import("./supabase-v30.js?v=461");
           const result=await m.signInWithGitHub();
           if(!result.ok && status){
             const raw=String(result.error||result.reason||"تعذر بدء تسجيل الدخول عبر GitHub.");
@@ -173,7 +173,7 @@ export async function mountCourseRoster(container,courseId){
         if(status)status.textContent="جاري تسجيل الدخول…";
         try{
           const data=new FormData(authForm);
-          const m=await import("./supabase-v30.js?v=459");
+          const m=await import("./supabase-v30.js?v=461");
           const result=await m.signInWithPassword(String(data.get("email")||"").trim(),String(data.get("password")||""));
           if(!result.ok){
             if(status)status.textContent=result.error||result.reason||"تعذر تسجيل الدخول.";
