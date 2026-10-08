@@ -104,11 +104,11 @@
   }
 
   function filterForStudent(){
-    const a=allCourses();
+    const a=migrateCourseSchema(allCourses());
     if(!a.length)return;
     const group=studentGroup();
     const visible=a.filter(function(c){return c&&c.status==="published"&&courseVisible(c,group);});
-    writeCourses(visible);
+    localStorage.setItem(COURSES_KEY,JSON.stringify(visible));
   }
 
   function activeCourse(){
@@ -173,7 +173,7 @@
 
     return '<section class="card v38-course-visibility" data-v38-visibility>'+
       '<div class="section-title">'+
-        '<div><span class="eyebrow purple">V3.38 • ظهور المقرر</span><h3>من يستطيع رؤية هذا المقرر؟</h3>'+
+        '<div><span class="eyebrow purple">V3.46 • ظهور المقرر</span><h3>من يستطيع رؤية هذا المقرر؟</h3>'+
         '<p class="muted">يمكنك نشر المقرر ثم عرضه لجميع المجموعات أو لمجموعات محددة، أو إخفاؤه عن الجميع دون حذف المحتوى.</p></div>'+
         '<span class="badge '+visibilityTone(c)+'">'+esc(visibilityText(c))+'</span>'+
       '</div>'+
