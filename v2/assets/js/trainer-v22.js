@@ -6,6 +6,7 @@ import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
 import {courseManagerView} from "./course-manager-v36.js?v=403";
 import {auditView} from "./system-audit-v31.js?v=434";
+import {getLabStats} from "./lab-center-v37.js?v=443";
 
 const students=[
   {id:1,name:"أحمد محمد",group:"1",progress:84,avg:88,last:"اليوم",risk:"منخفض",topic:"VLSM",weakness:64,activity:"نشط",trend:"+8%"},
@@ -452,7 +453,26 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
     <div class="card exam-admin-note"><strong>V3.35:</strong> بنك الأسئلة النهائي هو المصدر المركزي للاختبارات والتحليلات، وتُقرأ إحصائيات الأسئلة من المحاولات المسجلة.</div>
     `;
   }
-  if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
+  if(page==="labs"){
+    const s=getLabStats();
+    const labs=[
+      {id:"subnet",name:"Subnetting Challenge",desc:"Network / First Host / Last Host / Broadcast / Mask",attempts:s.subnet.attempts,avg:s.subnet.avg,color:"green"},
+      {id:"flsm",name:"FLSM Challenge",desc:"تقسيم الشبكة إلى شبكات متساوية",attempts:s.flsm.attempts,avg:s.flsm.avg,color:"purple"},
+      {id:"vlsm",name:"VLSM Challenge",desc:"توزيع العناوين حسب الاحتياج",attempts:s.vlsm.attempts,avg:s.vlsm.avg,color:"purple"}
+    ];
+    const total=labs.reduce((a,x)=>a+x.attempts,0);
+    const used=labs.filter(x=>x.attempts>0).length;
+    const avg=labs.length?Math.round(labs.reduce((a,x)=>a+x.avg,0)/labs.length):0;
+    const best=[...labs].sort((a,b)=>b.avg-a.avg)[0];
+    return '<div class="page-intro with-action"><div><span class="eyebrow green">06 • المختبرات</span><h2>إدارة المختبرات العملية</h2><p>متابعة استخدام المتدربين للمختبرات الفعلية، والانتقال مباشرة إلى مركز المختبر.</p></div><button class="btn btn-primary" data-trainer-page="labs-center">فتح مركز المختبرات</button></div>'+
+      '<div class="trainer-v36-kpis"><div class="card trainer-v311-summary-card"><div class="summary-icon">⌘</div><div><span class="muted">إجمالي المحاولات</span><strong>'+total+'</strong><small>المختبرات الثلاثة</small></div></div>'+
+      '<div class="card trainer-v311-summary-card"><div class="summary-icon green">✓</div><div><span class="muted">مختبرات مستخدمة</span><strong>'+used+'/3</strong><small>حسب السجلات الحالية</small></div></div>'+
+      '<div class="card trainer-v311-summary-card"><div class="summary-icon purple">↗</div><div><span class="muted">متوسط الأداء</span><strong>'+avg+'%</strong><small>متوسط المختبرات</small></div></div>'+
+      '<div class="card trainer-v311-summary-card"><div class="summary-icon orange">★</div><div><span class="muted">أفضل مختبر</span><strong>'+best.name+'</strong><small>'+best.avg+'%</small></div></div></div>'+
+      '<div class="section-title"><h3>المختبرات</h3><span class="badge green">بيانات فعلية من سجل المختبر</span></div>'+
+      '<div class="grid-3">'+labs.map(x=>'<div class="card"><div class="section-title"><h3>'+x.name+'</h3><span class="badge '+x.color+'">'+(x.attempts?"مستخدم":"لم يستخدم بعد")+'</span></div><p class="muted">'+x.desc+'</p><div class="stat-row"><span>المحاولات</span><b>'+x.attempts+'</b></div><div class="stat-row"><span>متوسط الأداء</span><b>'+x.avg+'%</b></div><div class="progress"><span style="width:'+x.avg+'%"></span></div><button class="btn btn-'+(x.id==="subnet"?"green":"purple")+'" data-lab-page="'+x.id+'">فتح المختبر</button></div>').join("")+'</div>'+
+      '<div class="card" style="margin-top:14px"><div class="section-title"><h3>خارطة تطوير المختبرات</h3><span class="badge purple">V3.45</span></div><div class="grid-3"><div><strong>Subnetting</strong><p class="muted">متابعة مسائل IPv4 وSubnet Mask.</p></div><div><strong>FLSM / VLSM</strong><p class="muted">متابعة التقسيم المتساوي والمرن.</p></div><div><strong>التالي</strong><p class="muted">Binary Speed ثم Packet Tracer وربطها بالمقرر.</p></div></div></div>';
+  }
   if(page==="analytics"){
     const r=getTrainerExamSummary();
     const interventions=getOpenInterventions();
