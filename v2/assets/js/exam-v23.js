@@ -1,5 +1,5 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
-import {refreshBank} from "./question-bank-v24.js?v=427";
+import {refreshBank} from "./question-bank-v24.js?v=428";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
@@ -268,12 +268,12 @@ function introPage(){
   const limitText=cfg.attemptsLimit===0?"غير محدود":String(cfg.attemptsLimit);
   const blocked=cfg.attemptsLimit>0&&used>=cfg.attemptsLimit;
   return `
-  <div class="page-intro"><span class="eyebrow orange">04 • الاختبارات</span><h2>${esc(cfg.title)}</h2><p>اختبار قصير يقيس فهمك للمفاهيم الأساسية قبل الانتقال إلى Subnetting المتقدم.</p></div>
+  <div class="page-intro"><span class="eyebrow orange">04 • الاختبارات</span><h2>${esc(cfg.title)}</h2><p>اختبار تدريبي مُعد من بنك الأسئلة وفق إعدادات المدرب الحالية.</p></div>
   <div class="exam-start-layout">
     <div class="card exam-start-card">
       <div class="exam-start-icon">📝</div>
-      <span class="badge orange">اختبار تجريبي</span>
-      <h3>اختبر نفسك الآن</h3>
+      <span class="badge ${cfg.published?"green":"orange"}">${cfg.published?"اختبار منشور":"مسودة تجريبية"}</span>
+      <h3>${esc(cfg.title)}</h3>
       <p class="muted">${selectedQuestions().length} أسئلة • ${cfg.durationMin} دقائق • نجاح من ${cfg.passPercent}% • المحاولات ${used}/${limitText}</p>
       <div class="exam-rules">
         <div>✓ لا توجد عقوبة على الرجوع بين الأسئلة</div>
@@ -300,7 +300,7 @@ function livePage(){
   const left=Math.max(0,Math.floor((state.expiresAt-Date.now())/1000));
   return `
   <div class="exam-live-head">
-    <div><span class="eyebrow orange">الاختبار قيد التنفيذ</span><h2>IPv4 & Binary</h2><p class="muted">السؤال ${state.index+1} من ${selectedQuestions().length}</p></div>
+    <div><span class="eyebrow orange">الاختبار قيد التنفيذ</span><h2>${esc(getExamConfig().title)}</h2><p class="muted">السؤال ${state.index+1} من ${selectedQuestions().length}</p></div>
     <div class="exam-timer-wrap"><span>الوقت المتبقي</span><strong id="exam-timer" class="${left<=60?"timer-danger":""}">${formatTime(left)}</strong></div>
   </div>
   <div class="exam-layout">
