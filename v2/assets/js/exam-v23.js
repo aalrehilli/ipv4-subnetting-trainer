@@ -1,6 +1,7 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=434";
 import {persistAttemptToSupabase} from "./supabase-v30.js?v=434";
+import {persistCourseExamAttempt} from "./course-assessments-v41.js?v=442";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
@@ -330,6 +331,9 @@ function submitExam(auto=false){
   state.result=result;
   persistAttemptToSupabase(result,state.answers,selectedQuestions()).catch(function(error){
     localStorage.setItem("ipv4AcademySupabaseLastSyncError",String(error?.message||error));
+  });
+  persistCourseExamAttempt(result).catch(function(error){
+    localStorage.setItem("ipv4AcademyCourseExamLastSyncError",String(error?.message||error));
   });
   state.mode="result";
   state.submitted=true;
