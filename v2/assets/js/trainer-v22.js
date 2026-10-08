@@ -395,6 +395,8 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
             <option value="hard" ${cfg.difficultyMode==="hard"?"selected":""}>متقدم فقط</option>
           </select>
         </label>
+        <label class="exam-check-option"><span>ترتيب الأسئلة عشوائي</span><input type="checkbox" name="shuffleQuestions" ${cfg.shuffleQuestions!==false?"checked":""}></label>
+        <label class="exam-check-option"><span>ترتيب الخيارات عشوائي</span><input type="checkbox" name="shuffleOptions" ${cfg.shuffleOptions!==false?"checked":""}></label>
         <div class="exam-builder-status"><span>الحالة</span><strong>${cfg.published?"منشور للمتدربين":"مسودة غير منشورة"}</strong></div>
       </div>
 
