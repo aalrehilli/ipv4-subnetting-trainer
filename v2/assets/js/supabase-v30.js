@@ -136,6 +136,26 @@ export async function syncAllFromSupabase(){
   const a=await syncAttemptsFromSupabase();
   return {status,questions:q.count||0,attempts:a.count||0};
 }
+export async function syncLocalQuestionsToSupabase(list){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"Supabase غير مهيأ"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"تسجيل الدخول مطلوب"};
+  const rows=(list||[]).map(q=>({
+    id:Number(q.id),
+    prompt:q.q||q.prompt||"",
+    options:Array.isArray(q.opts)?q.opts:(Array.isArray(q.options)?q.options:[]),
+    answer:{correctIndex:Number(q.a||0),why:q.why||""},
+    difficulty:q.difficulty||"easy",
+    topic:q.topic||"",
+    points:Number(q.points||1),
+    is_active:q.active!==false
+  }));
+  if(!rows.length)return {ok:true,count:0};
+  const {error}=await client.from("questions").upsert(rows,{onConflict:"id"});
+  if(error)throw error;
+  return {ok:true,count:rows.length};
+}
 export async function syncTrainerExamToSupabase(cfg){
   const client=await getClient();
   if(!client)return {ok:false,reason:"Supabase غير مهيأ"};
