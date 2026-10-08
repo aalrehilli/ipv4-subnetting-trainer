@@ -81,9 +81,13 @@ export async function fetchCentralCourses(){
   return {ok:true,courses};
 }
 
-export async function pullCentralCourses(){
+export async function pullCentralCourses(options){
   const result=await fetchCentralCourses();
   if(!result.ok)return result;
+  const preserveOnEmpty=options&&options.preserveOnEmpty===true;
+  if(result.courses.length===0&&preserveOnEmpty){
+    return {ok:true,count:0,courses:[]};
+  }
   writeLocal(result.courses);
   lastCentralIds=result.courses.map(function(c){return String(c.id);});
   lastSignature=signature(result.courses);
