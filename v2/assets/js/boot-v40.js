@@ -108,8 +108,8 @@ async function loadPage(){
     }
 
     if(state.page==="notifications"){
-      var notifications=await import("./notifications-v30.js?v=464");
-      return notifications.notificationsPage(state.role);
+      var centralNotifications=await import("./notifications-v64.js?v=464");
+      return centralNotifications.notificationsV64View(state.role);
     }
 
     if(state.role==="trainer" && window.__IPV4_SUPABASE_STATUS__?.configured && !(
@@ -203,6 +203,9 @@ window.addEventListener("ipv4-course-switch",function(){
 });
 
 function bind(){
+  import("./notifications-v64.js?v=464").then(function(m){
+    if(typeof m.bindCentralNotifications==="function")m.bindCentralNotifications();
+  }).catch(function(){});
   document.querySelectorAll("[data-lab-page]").forEach(function(btn){
     btn.addEventListener("click",function(){
       var target=btn.getAttribute("data-lab-page")||"labs";
