@@ -265,10 +265,10 @@
     if(visibility && !document.querySelector("[data-v40-roster]")){
       visibility.insertAdjacentHTML("afterend",'<div data-v40-roster data-v40-course-id="'+esc(c.id)+'" style="margin-top:14px"></div>');
       const box=document.querySelector("[data-v40-roster]");
-      import("./course-roster-v40.js?v=462").then(function(m){
+      import("./course-roster-v40.js?v=465").then(function(m){
         if(typeof m.mountCourseRoster==="function")return m.mountCourseRoster(box,String(c.id));
       }).then(function(){
-        return import("./course-assessments-v41.js?v=461");
+        return import("./course-assessments-v41.js?v=465");
       }).then(function(m){
         if(typeof m.mountCourseAssessments==="function"){
           const assessments=document.createElement("div");
@@ -417,7 +417,7 @@
     if(centralBusy||centralReady)return;
     centralBusy=true;
     try{
-      const m=await import("./course-supabase-v39.js?v=461");
+      const m=await import("./course-supabase-v39.js?v=465");
       if(role==="trainer"){
         const result=await m.pullCentralCourses({preserveOnEmpty:true});
         centralReady=true;
@@ -450,7 +450,7 @@
       filterCourseCards();
       if(centralReady){
         try{
-          const m=await import("./course-supabase-v39.js?v=461");
+          const m=await import("./course-supabase-v39.js?v=465");
           await m.syncTrainerCourses();
         }catch(e){}
       }
