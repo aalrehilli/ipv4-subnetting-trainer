@@ -1,4 +1,4 @@
-/* IPv4 Academy V3.46 — Unified course manager for all courses */
+/* IPv4 Academy V3.47 — Universal course navigator */
 (function(){
   "use strict";
 
@@ -190,6 +190,51 @@
         '<div class="course-form-actions"><button class="btn btn-primary" type="submit">حفظ إعدادات الظهور</button><span class="muted">الحالة الحالية: '+(c.status==="published"?"منشور":"مسودة")+'</span></div>'+
       '</form>'+
     '</section>';
+  }
+
+  function addUniversalCourseNavigator(){
+    if(!trainerMode() || document.querySelector("[data-v47-course-switcher]"))return;
+    const c=activeCourse();
+    if(!c)return;
+    const list=migrateCourseSchema(allCourses());
+    const html='<section class="card" data-v47-course-switcher style="margin:0 0 14px;padding:14px 16px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">'+
+        '<div><span class="eyebrow blue">V3.47 • المقرر الحالي</span><strong style="display:block;font-size:18px;margin-top:4px">'+esc(c.title)+'</strong></div>'+
+        '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+
+          '<select data-v47-course-select class="course-selector" style="min-width:260px">'+
+            list.map(function(x){return '<option value="'+esc(x.id)+'" '+(Number(x.id)===Number(c.id)?"selected":"")+'>'+esc(x.title)+' — '+esc(x.code||"")+'</option>';}).join("")+
+          '</select>'+
+          '<button class="btn btn-soft mini-btn" data-v47-course-list>كل المقررات</button>'+
+        '</div>'+
+      '</div>'+
+    '</section>';
+    const anchor=document.querySelector(".page-intro");
+    if(anchor)anchor.insertAdjacentHTML("beforebegin",html);
+    const select=document.querySelector("[data-v47-course-select]");
+    if(select&&!select.__v47){
+      select.__v47=true;
+      select.addEventListener("change",function(){
+        const id=select.value;
+        localStorage.setItem(ACTIVE_KEY,String(id));
+        localStorage.removeItem("ipv4AcademyV36Unit");
+        localStorage.removeItem("ipv4AcademyV36Lesson");
+        localStorage.removeItem("ipv4AcademyV36UnitForm");
+        const nav=courseNavButton();
+        if(nav)nav.click();
+      });
+    }
+    const allBtn=document.querySelector("[data-v47-course-list]");
+    if(allBtn&&!allBtn.__v47){
+      allBtn.__v47=true;
+      allBtn.addEventListener("click",function(){
+        localStorage.removeItem(ACTIVE_KEY);
+        localStorage.removeItem("ipv4AcademyV36Unit");
+        localStorage.removeItem("ipv4AcademyV36Lesson");
+        localStorage.removeItem("ipv4AcademyV36UnitForm");
+        const nav=courseNavButton();
+        if(nav)nav.click();
+      });
+    }
   }
 
   function enhanceCourseEditor(){
@@ -400,6 +445,7 @@
       restoreAll();
       ensureNewCourseBuilder();
       addCourseVisibilityBadge();
+      addUniversalCourseNavigator();
       enhanceCourseEditor();
       filterCourseCards();
       if(centralReady){
