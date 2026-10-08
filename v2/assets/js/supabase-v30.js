@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=467";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=468";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
