@@ -272,3 +272,68 @@ grant select on academy_v2.profiles,
 
 -- PostgREST must expose academy_v2 in Supabase Dashboard:
 -- Settings → API → Exposed schemas → add academy_v2.
+
+
+-- V3.30: write policies for real student attempts and staff management.
+drop policy if exists v2_attempts_insert on academy_v2.attempts;
+create policy v2_attempts_insert on academy_v2.attempts
+for insert with check (student_id=auth.uid());
+
+drop policy if exists v2_attempts_update on academy_v2.attempts;
+create policy v2_attempts_update on academy_v2.attempts
+for update using (student_id=auth.uid() or academy_v2.is_staff())
+with check (student_id=auth.uid() or academy_v2.is_staff());
+
+drop policy if exists v2_attempt_answers_insert on academy_v2.attempt_answers;
+create policy v2_attempt_answers_insert on academy_v2.attempt_answers
+for insert with check (
+  exists(select 1 from academy_v2.attempts a where a.id=attempt_id and (a.student_id=auth.uid() or academy_v2.is_staff()))
+);
+
+drop policy if exists v2_attempt_answers_update on academy_v2.attempt_answers;
+create policy v2_attempt_answers_update on academy_v2.attempt_answers
+for update using (
+  exists(select 1 from academy_v2.attempts a where a.id=attempt_id and (a.student_id=auth.uid() or academy_v2.is_staff()))
+)
+with check (
+  exists(select 1 from academy_v2.attempts a where a.id=attempt_id and (a.student_id=auth.uid() or academy_v2.is_staff()))
+);
+
+drop policy if exists v2_questions_staff_insert on academy_v2.questions;
+create policy v2_questions_staff_insert on academy_v2.questions
+for insert with check (academy_v2.is_staff());
+
+drop policy if exists v2_questions_staff_update on academy_v2.questions;
+create policy v2_questions_staff_update on academy_v2.questions
+for update using (academy_v2.is_staff()) with check (academy_v2.is_staff());
+
+drop policy if exists v2_questions_staff_delete on academy_v2.questions;
+create policy v2_questions_staff_delete on academy_v2.questions
+for delete using (academy_v2.is_staff());
+
+drop policy if exists v2_exams_staff_insert on academy_v2.exams;
+create policy v2_exams_staff_insert on academy_v2.exams
+for insert with check (academy_v2.is_staff());
+
+drop policy if exists v2_exams_staff_update on academy_v2.exams;
+create policy v2_exams_staff_update on academy_v2.exams
+for update using (academy_v2.is_staff()) with check (academy_v2.is_staff());
+
+drop policy if exists v2_exams_staff_delete on academy_v2.exams;
+create policy v2_exams_staff_delete on academy_v2.exams
+for delete using (academy_v2.is_staff());
+
+drop policy if exists v2_exam_questions_staff_insert on academy_v2.exam_questions;
+create policy v2_exam_questions_staff_insert on academy_v2.exam_questions
+for insert with check (academy_v2.is_staff());
+
+drop policy if exists v2_exam_questions_staff_update on academy_v2.exam_questions;
+create policy v2_exam_questions_staff_update on academy_v2.exam_questions
+for update using (academy_v2.is_staff()) with check (academy_v2.is_staff());
+
+drop policy if exists v2_exam_questions_staff_delete on academy_v2.exam_questions;
+create policy v2_exam_questions_staff_delete on academy_v2.exam_questions
+for delete using (academy_v2.is_staff());
+
+create index if not exists idx_v2_attempt_answers_question on academy_v2.attempt_answers(question_id);
+create index if not exists idx_v2_exam_questions_question on academy_v2.exam_questions(question_id);
