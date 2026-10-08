@@ -1,5 +1,5 @@
 import {questions as seedQuestions,loadStudent,saveStudent} from "./demo-data.js";
-import {recordLessonProgress,syncPendingLessonProgress} from "./course-supabase-v39.js?v=459";
+import {recordLessonProgress,syncPendingLessonProgress,getMyCourseProgress} from "./course-supabase-v39.js?v=461";
 import {mountStudentCourseExams} from "./course-assessments-v41.js?v=459";
 
 const KEY="ipv4AcademyV36Courses";
@@ -40,6 +40,35 @@ function resolveQuestion(ref){
   return null;
 }
 function lessonQuestions(l){return String(l.questions||"").split(",").map(x=>resolveQuestion(x)).filter(Boolean).slice(0,5)}
+const centralProgressLoaded=new Set();
+
+async function hydrateCentralProgress(c){
+  if(!c||!c.id)return {ok:false,reason:"NO_COURSE"};
+  const id=String(c.id);
+  if(centralProgressLoaded.has(id))return {ok:true,changed:false};
+  const result=await getMyCourseProgress(id);
+  if(!result.ok){
+    // Keep retrying when the student has not authenticated yet.
+    return result;
+  }
+  const rows=Array.isArray(result.rows)?result.rows:[];
+  const local=done();
+  const before=local.length;
+  rows.forEach(function(r){
+    if(r&&r.completed){
+      const key=String(c.id)+"-"+String(r.unit_id)+"-"+String(r.lesson_id);
+      if(!local.includes(key))local.push(key);
+    }
+  });
+  saveDone(local);
+  centralProgressLoaded.add(id);
+  const changed=local.length!==before;
+  if(changed){
+    window.dispatchEvent(new CustomEvent("ipv4-course-progress-sync",{detail:{courseId:id}}));
+  }
+  return {ok:true,changed,rows:rows.length};
+}
+
 function recordPractice(results){
   let practice={};
   try{practice=JSON.parse(localStorage.getItem(PRACTICE)||"{}")||{}}catch{practice={}};
@@ -75,6 +104,7 @@ export function learnerCourse(){
       });
     }
   },0);
+  hydrateCentralProgress(c).catch(function(){});
   const pct=coursePct(c);
   setTimeout(function(){
     const box=document.getElementById("v41-student-course-exams");
