@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=457";
+import {getSupabaseConfig} from "./supabase-v30.js?v=459";
 
 let clientPromise=null;
 
@@ -38,7 +38,13 @@ async function roster(courseId,group){
     p_course_id:String(courseId),
     p_group_no:group?String(group):null
   });
-  if(error)return {ok:false,error:error.message};
+  if(error){
+    const message=String(error.message||error);
+    if(message.includes("Could not find the function public.academy_course_student_roster")||message.includes("schema cache")){
+      return {ok:false,reason:"ROSTER_RPC_MISSING",error:"دالة متابعة المقرر غير مفعّلة في Supabase. شغّل Migration V3.59 ثم اضغط تحديث."};
+    }
+    return {ok:false,error:message};
+  }
   return {ok:true,rows:Array.isArray(data)?data:[]};
 }
 
@@ -97,7 +103,7 @@ function setupCard(configured){
     '</section>';
   }
   return '<section class="card" data-v55-setup>'+
-    '<div class="section-title"><div><span class="eyebrow orange">V3.55 • إعداد الاتصال</span><h3>Supabase غير مهيأ</h3>'+
+    '<div class="section-title"><div><span class="eyebrow orange">V3.59 • إعداد الاتصال</span><h3>Supabase غير مهيأ</h3>'+
     '<p class="muted">أدخل Project URL و Publishable/Anon Key مرة واحدة فقط ثم افحص الاتصال.</p></div><span class="badge orange">غير مهيأ</span></div>'+
     '<form data-v55-supabase-form>'+
       '<label>Supabase Project URL<input name="url" placeholder="https://xxxx.supabase.co" autocomplete="off"></label>'+
@@ -114,7 +120,7 @@ export async function mountCourseRoster(container,courseId){
   if(!first.ok){
     const configured=await (async function(){
       try{
-        const m=await import("./supabase-v30.js?v=457");
+        const m=await import("./supabase-v30.js?v=459");
         return m.isSupabaseConfigured();
       }catch(e){return false;}
     })();
@@ -130,7 +136,7 @@ export async function mountCourseRoster(container,courseId){
         const status=cfgForm.querySelector("[data-v55-status]");
         try{
           const data=new FormData(cfgForm);
-          const m=await import("./supabase-v30.js?v=457");
+          const m=await import("./supabase-v30.js?v=459");
           m.setSupabaseConfig(String(data.get("url")||"").trim(),String(data.get("anonKey")||"").trim());
           const state=await m.getSupabaseStatus();
           if(status)status.textContent=state.message||"تم الحفظ.";
@@ -145,7 +151,7 @@ export async function mountCourseRoster(container,courseId){
         const status=container.querySelector("[data-v55-auth-status]");
         if(status)status.textContent="جاري التحويل إلى GitHub…";
         try{
-          const m=await import("./supabase-v30.js?v=457");
+          const m=await import("./supabase-v30.js?v=459");
           const result=await m.signInWithGitHub();
           if(!result.ok && status){
             const raw=String(result.error||result.reason||"تعذر بدء تسجيل الدخول عبر GitHub.");
@@ -167,7 +173,7 @@ export async function mountCourseRoster(container,courseId){
         if(status)status.textContent="جاري تسجيل الدخول…";
         try{
           const data=new FormData(authForm);
-          const m=await import("./supabase-v30.js?v=457");
+          const m=await import("./supabase-v30.js?v=459");
           const result=await m.signInWithPassword(String(data.get("email")||"").trim(),String(data.get("password")||""));
           if(!result.ok){
             if(status)status.textContent=result.error||result.reason||"تعذر تسجيل الدخول.";
