@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=464";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=466";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -140,23 +140,21 @@ export async function syncAllFromSupabase(){
 }
 export async function syncLocalQuestionsToSupabase(list){
   const client=await getClient();
-  if(!client)return {ok:false,reason:"Supabase غير مهيأ"};
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
   const {data:{session}}=await client.auth.getSession();
-  if(!session)return {ok:false,reason:"تسجيل الدخول مطلوب"};
-  const rows=(list||[]).map(q=>({
-    id:Number(q.id),
-    prompt:q.q||q.prompt||"",
-    options:Array.isArray(q.opts)?q.opts:(Array.isArray(q.options)?q.options:[]),
-    answer:{correctIndex:Number(q.a||0),why:q.why||""},
-    difficulty:q.difficulty||"easy",
-    topic:q.topic||"",
-    points:Number(q.points||1),
-    is_active:q.active!==false
-  }));
-  if(!rows.length)return {ok:true,count:0};
-  const {error}=await client.from("questions").upsert(rows,{onConflict:"id"});
-  if(error)throw error;
-  return {ok:true,count:rows.length};
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const payload=(list||[]).map(function(q){
+    return {
+      id:Number(q.id),q:q.q||q.prompt||"",prompt:q.q||q.prompt||"",
+      options:Array.isArray(q.opts)?q.opts:(Array.isArray(q.options)?q.options:[]),
+      a:Number(q.a||0),difficulty:q.difficulty||"easy",topic:q.topic||"",
+      active:q.active!==false,points:Number(q.points||1)
+    };
+  });
+  if(!payload.length)return {ok:true,count:0};
+  const {data,error}=await client.rpc("academy_sync_question_bank",{p_questions:payload});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,count:Number(data?.count||payload.length)};
 }
 export async function syncTrainerExamToSupabase(cfg){
   const client=await getClient();
@@ -238,6 +236,26 @@ export async function markAllRemoteNotificationsRead(){
   return {ok:true};
 }
 
+export async function fetchCentralExamQuestions(examId){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_exam_question_set",{p_exam_id:String(examId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,rows:Array.isArray(data)?data:[]};
+}
+
+export async function fetchCentralQuestionBank(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_question_bank");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,rows:Array.isArray(data)?data:[]};
+}
+
 export async function startCentralExamAttempt(examId,title,courseId){
   const client=await getClient();
   if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
@@ -254,6 +272,10 @@ export async function startCentralExamAttempt(examId,title,courseId){
     return {ok:false,error:msg};
   }
   return {ok:true,data};
+}
+
+export async function getCentralAttemptResult(){
+  return syncUnifiedExamAttempts();
 }
 
 export async function recordUnifiedExamAttempt(payload){
