@@ -1,6 +1,6 @@
 import {questions as seedQuestions,loadStudent,saveStudent} from "./demo-data.js";
-import {recordLessonProgress} from "./course-supabase-v39.js?v=449";
-import {mountStudentCourseExams} from "./course-assessments-v41.js?v=449";
+import {recordLessonProgress,syncPendingLessonProgress} from "./course-supabase-v39.js?v=451";
+import {mountStudentCourseExams} from "./course-assessments-v41.js?v=451";
 
 const KEY="ipv4AcademyV36Courses";
 const ACTIVE_COURSE="ipv4AcademyV37Course";
@@ -59,6 +59,7 @@ function completeLesson(c,u,l){
 
 export function learnerCourse(){
   const c=activeCourse();
+  syncPendingLessonProgress().catch(function(){});
   const available=publishedCourses();
   if(!c)return '<div class="card empty"><h3>لا يوجد مقرر منشور</h3><p class="muted">سيظهر المقرر هنا بعد نشره من مركز المدرب.</p></div>';
   localStorage.setItem(ACTIVE_COURSE,String(c.id));
