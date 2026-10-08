@@ -1,4 +1,5 @@
 import {questions as seedQuestions,loadStudent,saveStudent} from "./demo-data.js";
+import {recordLessonProgress} from "./course-supabase-v39.js?v=440";
 
 const KEY="ipv4AcademyV36Courses";
 const ACTIVE_COURSE="ipv4AcademyV37Course";
@@ -47,7 +48,13 @@ function recordPractice(results){
   practice.lastLessonAssessment=Date.now();
   localStorage.setItem(PRACTICE,JSON.stringify(practice));
 }
-function completeLesson(c,u,l){const key=lessonKey(c,u,l),d=done();if(!d.includes(key))d.push(key);saveDone(d)}
+function completeLesson(c,u,l){
+  if(!c||!u||!l)return;
+  const key=lessonKey(c,u,l),d=done();
+  if(!d.includes(key))d.push(key);
+  saveDone(d);
+  recordLessonProgress(c.id,u.id,l.id,true,null,null).catch(function(){});
+}
 
 function learnerCourse(){
   const c=activeCourse();
@@ -94,6 +101,7 @@ function submitAssessment(form){
   const qs=lessonQuestions(x.l),results=qs.map((q,i)=>{const el=form.querySelector('input[name="q-'+i+'"]:checked');const answer=el?Number(el.value):null;return{id:q.id,topic:q.topic,correct:answer===q.a,answer,q};});
   const score=results.filter(r=>r.correct).length,total=results.length,percent=Math.round(score/total*100),payload={score,total,percent,results,timestamp:Date.now(),lessonId:x.l.id,unitId:x.u.id,courseId:x.c.id};
   localStorage.setItem("ipv4AcademyV38LastResult",JSON.stringify(payload));
+  recordLessonProgress(x.c.id,x.u.id,x.l.id,percent>=60,score,total).catch(function(){});
   saveAttempts([...attempts(),{...payload}].slice(-100));
   recordPractice(results);
   const s=loadStudent();s.xp=Number(s.xp||0)+(score*10);if(percent>=60)s.progress=Math.min(100,Number(s.progress||0)+1);saveStudent(s);
