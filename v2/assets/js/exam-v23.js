@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
-import {refreshBank} from "./question-bank-v32.js?v=467";
-import {startCentralExamAttempt,recordUnifiedExamAttempt} from "./supabase-v30.js?v=467";
+import {refreshBank} from "./question-bank-v32.js?v=468";
+import {startCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=468";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
@@ -65,7 +65,7 @@ function getExamConfig(){
   try{
     const saved=JSON.parse(localStorage.getItem(EXAM_CONFIG_KEY)||"null");
     if(!saved)return {...DEFAULT_CONFIG,questionIds:defaultQuestionIds()};
-    const ids=Array.isArray(saved.questionIds)&&saved.questionIds.length?saved.questionIds.map(Number):defaultQuestionIds();
+    const ids=Array.isArray(saved.questionIds)&&saved.questionIds.length?saved.questionIds.map(function(x){const n=Number(x);return Number.isFinite(n)?n:String(x||"")}).filter(Boolean):defaultQuestionIds();
     return {...DEFAULT_CONFIG,...saved,questionIds:ids,topicTargets:saved.topicTargets||{}};
   }catch{return {...DEFAULT_CONFIG,questionIds:defaultQuestionIds()}}
 }
@@ -157,7 +157,10 @@ function selectedQuestions(){
   return list.length?list:questions.slice(0,10);
 }
 function buildAttemptQuestionIds(cfg){
-  const ids=[...(cfg.questionIds||[])].map(Number).filter(Number.isFinite);
+  const ids=[...(cfg.questionIds||[])].map(function(x){
+    const n=Number(x);
+    return Number.isFinite(n)?n:String(x||"");
+  }).filter(Boolean);
   return cfg.shuffleQuestions===false?ids:shuffle(ids);
 }
 function buildOptionOrders(list,cfg){
@@ -273,16 +276,28 @@ function stopTimer(){
 async function startExam(){
   const cfg=getExamConfig();
   const attempts=getAttemptCount();
-  if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
-
   const courseExamId=localStorage.getItem("ipv4AcademyV341CourseExamId")||"";
   const courseId=localStorage.getItem("ipv4AcademyV341CourseId")||"";
   let central=null;
   try{central=await startCentralExamAttempt(courseExamId,cfg.title,courseId);}catch(e){central={ok:false,error:String(e&&e.message||e)};}
+
   if(central&&central.reason==="ATTEMPTS_LIMIT")return {blocked:true,reason:central.error||"تم استنفاد عدد المحاولات المسموح بها."};
-  if(!(central&&central.ok) && central && ["AUTH_REQUIRED","SUPABASE_NOT_CONFIGURED"].includes(String(central.reason||"")) &&
-     cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit){
-    return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
+  if(!(central&&central.ok)){
+    if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
+    if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
+  }
+
+  if(central&&central.ok){
+    const d=central.data||{};
+    if(d.title)localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify({
+      ...cfg,title:String(d.title),durationMin:Number(d.durationMinutes||cfg.durationMin),
+      passPercent:Number(d.passPercent||cfg.passPercent),attemptsLimit:Number(d.attemptsLimit??cfg.attemptsLimit),
+      questionCount:Number(d.questionCount||cfg.questionCount),selectionMode:d.selectionMode||cfg.selectionMode,
+      difficultyMode:d.difficultyMode||cfg.difficultyMode,
+      questionIds:Array.isArray(d.questionIds)?d.questionIds:cfg.questionIds,
+      shuffleQuestions:d.shuffleQuestions!==false,shuffleOptions:d.shuffleOptions!==false,published:true,
+      topicTargets:cfg.topicTargets||{},updatedAt:Date.now(),version:365
+    }));
   }
 
   state.mode="live";
