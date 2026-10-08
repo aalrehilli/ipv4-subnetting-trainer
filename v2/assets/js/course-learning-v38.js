@@ -1,6 +1,6 @@
 import {questions as seedQuestions,loadStudent,saveStudent} from "./demo-data.js";
-import {recordLessonProgress} from "./course-supabase-v39.js?v=443";
-import {mountStudentCourseExams} from "./course-assessments-v41.js?v=443";
+import {recordLessonProgress} from "./course-supabase-v39.js?v=448";
+import {mountStudentCourseExams} from "./course-assessments-v41.js?v=448";
 
 const KEY="ipv4AcademyV36Courses";
 const ACTIVE_COURSE="ipv4AcademyV37Course";
@@ -57,7 +57,7 @@ function completeLesson(c,u,l){
   recordLessonProgress(c.id,u.id,l.id,true,null,null).catch(function(){});
 }
 
-function learnerCourse(){
+export function learnerCourse(){
   const c=activeCourse();
   const available=publishedCourses();
   if(!c)return '<div class="card empty"><h3>لا يوجد مقرر منشور</h3><p class="muted">سيظهر المقرر هنا بعد نشره من مركز المدرب.</p></div>';
@@ -79,7 +79,7 @@ function learnerCourse(){
     const box=document.getElementById("v41-student-course-exams");
     if(box)mountStudentCourseExams(box,String(c.id)).catch(function(){});
   },0);
-  return '<div class="page-intro with-action"><div><span class="eyebrow blue">02 • المقرر • V3.43</span><h2>'+esc(c.title)+'</h2><p>'+esc(c.description||"مسارك التعليمي")+'</p></div><div style="display:flex;gap:8px;align-items:center"><select id="v43-course-selector" class="course-selector">'+available.map(function(x){return '<option value="'+esc(x.id)+'" '+(Number(x.id)===Number(c.id)?"selected":"")+'>'+esc(x.title)+'</option>';}).join("")+'</select><span class="badge '+(pct>=80?"green":pct>=40?"orange":"purple")+'">'+pct+'% مكتمل</span></div></div>'+
+  return '<div class="page-intro with-action"><div><span class="eyebrow blue">02 • المقرر • V3.48</span><h2>'+esc(c.title)+'</h2><p>'+esc(c.description||"مسارك التعليمي")+'</p></div><div style="display:flex;gap:8px;align-items:center"><select id="v43-course-selector" class="course-selector">'+available.map(function(x){return '<option value="'+esc(x.id)+'" '+(Number(x.id)===Number(c.id)?"selected":"")+'>'+esc(x.title)+'</option>';}).join("")+'</select><span class="badge '+(pct>=80?"green":pct>=40?"orange":"purple")+'">'+pct+'% مكتمل</span></div></div>'+
   '<div class="card learner-course-hero"><div><strong>رحلتك داخل المقرر</strong><p class="muted">تعلم → تدريب قصير → نتيجة → إتقان.</p></div><div class="progress"><span style="width:'+pct+'%"></span></div><div class="learner-course-stats"><span>'+c.units.length+' وحدات</span><span>'+allLessons(c).length+' درس منشور</span><span>'+c.students+' متدرب</span></div></div>'+
   '<div id="v41-student-course-exams" data-v41-student-course="'+esc(c.id)+'"></div>'+
   '<div class="learner-unit-list">'+c.units.map((u,i)=>{const ls=u.lessons.filter(l=>l.status==="published");return '<section class="card learner-unit"><div class="learner-unit-head"><div><span class="unit-number">'+(i+1)+'</span><div><h3>'+esc(u.title)+'</h3><span class="muted">'+ls.length+' دروس منشورة</span></div></div><span class="badge '+(u.status==="published"?"green":"orange")+'">'+(u.status==="published"?"متاحة":"قيد الإعداد")+'</span></div>'+(ls.length?'<div class="learner-lesson-list">'+ls.map((l,j)=>'<article class="learner-lesson '+(isDone(c,u,l)?"completed":"")+'"><div class="lesson-number">'+(j+1)+'</div><div class="lesson-main"><div class="lesson-title-row"><h3>'+esc(l.title)+'</h3><span class="lesson-type">'+typeLabel(l.type)+'</span></div><p class="muted">'+esc(l.description||"")+'</p><div class="lesson-meta"><span>⏱ '+l.duration+' دقيقة</span><span>'+lessonQuestions(l).length+' أسئلة قصيرة</span><span>'+((l.lab||"")||"بدون مختبر")+'</span></div></div><button class="btn '+(isDone(c,u,l)?"btn-green":"btn-primary")+'" data-course-learning-action="open-lesson" data-course="'+c.id+'" data-unit="'+u.id+'" data-lesson="'+l.id+'">'+(isDone(c,u,l)?"مراجعة":"ابدأ الدرس")+'</button></article>').join("")+'</div>':'<div class="learner-empty">هذه الوحدة لم تُنشر دروسها بعد.</div>')+'</section>'}).join("")+'</div>';
@@ -89,7 +89,7 @@ function lessonPage(){
   const x=activeLessonObj();
   if(!x)return learnerCourse();
   const {c,u,l}=x,completed=isDone(c,u,l),qs=lessonQuestions(l);
-  return '<div class="page-intro with-action"><div><span class="eyebrow purple">02 • محتوى الدرس • V3.8</span><h2>'+esc(l.title)+'</h2><p>'+esc(l.description||"")+'</p></div><button class="btn btn-soft" data-course-learning-action="back-course">← العودة للمقرر</button></div>'+
+  return '<div class="page-intro with-action"><div><span class="eyebrow purple">02 • محتوى الدرس • V3.48</span><h2>'+esc(l.title)+'</h2><p>'+esc(l.description||"")+'</p></div><button class="btn btn-soft" data-course-learning-action="back-course">← العودة للمقرر</button></div>'+
   '<div class="lesson-learning-layout"><main class="card lesson-learning-main"><div class="lesson-learning-meta"><span class="badge purple">'+typeLabel(l.type)+'</span><span class="badge">'+l.duration+' دقيقة</span><span class="badge '+(completed?"green":"orange")+'">'+(completed?"مكتمل":"قيد الدراسة")+'</span></div>'+
   (l.mediaType!=="none"&&l.resource?'<div class="lesson-media-placeholder"><strong>الوسائط</strong><p class="muted">'+esc(l.mediaType)+' • <a href="'+esc(l.resource)+'" target="_blank" rel="noopener">فتح المحتوى</a></p></div>':'')+
   '<section class="lesson-learning-section"><span class="eyebrow blue">أهداف الدرس</span><div class="learning-text">'+esc(l.objectives||"لم تُحدد أهداف بعد.")+'</div></section>'+
