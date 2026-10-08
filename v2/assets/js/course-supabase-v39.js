@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=439";
+import {getSupabaseConfig} from "./supabase-v30.js?v=451";
 
 const COURSES_KEY="ipv4AcademyV36Courses";
 const BACKUP_KEY="ipv4AcademyV38AllCourses";
@@ -158,14 +158,34 @@ export async function syncForRole(role){
 
 
 export async function recordLessonProgress(courseId,unitId,lessonId,completed,score,total){
-  return rpc("academy_record_lesson_progress",{
-    p_course_id:String(courseId),
-    p_unit_id:Number(unitId),
-    p_lesson_id:Number(lessonId),
-    p_completed:!!completed,
-    p_score:score===null||score===undefined?null:Number(score),
-    p_total:total===null||total===undefined?null:Number(total)
+  const item={
+    courseId:String(courseId),
+    unitId:Number(unitId),
+    lessonId:Number(lessonId),
+    completed:!!completed,
+    score:score===null||score===undefined?null:Number(score),
+    total:total===null||total===undefined?null:Number(total),
+    at:new Date().toISOString()
+  };
+  const local=readLocalProgress();
+  local.push(item);
+  writeLocalProgress(local.slice(-500));
+
+  const result=await rpc("academy_record_lesson_progress",{
+    p_course_id:item.courseId,
+    p_unit_id:item.unitId,
+    p_lesson_id:item.lessonId,
+    p_completed:item.completed,
+    p_score:item.score,
+    p_total:item.total
   });
+  if(result.ok){
+    return {...result,central:true,queued:0};
+  }
+  const queue=readQueue();
+  queue.push(item);
+  writeQueue(queue.slice(-500));
+  return {...result,central:false,queued:queue.length};
 }
 
 export async function getCourseRoster(courseId,group){
@@ -175,4 +195,50 @@ export async function getCourseRoster(courseId,group){
   });
   if(!result.ok)return result;
   return {ok:true,rows:Array.isArray(result.data)?result.data:[]};
+}
+
+
+const V3.51_PROGRESS_QUEUE="ipv4AcademyV51ProgressQueue";
+const V3.51_LOCAL_PROGRESS="ipv4AcademyV51LocalProgress";
+
+function readQueue(){
+  try{const a=JSON.parse(localStorage.getItem(V3.51_PROGRESS_QUEUE)||"[]");return Array.isArray(a)?a:[];}catch(e){return[];}
+}
+function writeQueue(a){localStorage.setItem(V3.51_PROGRESS_QUEUE,JSON.stringify(Array.isArray(a)?a:[]));}
+function readLocalProgress(){
+  try{const a=JSON.parse(localStorage.getItem(V3.51_LOCAL_PROGRESS)||"[]");return Array.isArray(a)?a:[];}catch(e){return[];}
+}
+function writeLocalProgress(a){localStorage.setItem(V3.51_LOCAL_PROGRESS,JSON.stringify(Array.isArray(a)?a:[]));}
+
+export function getLocalCourseProgress(courseId){
+  return readLocalProgress().filter(function(x){return String(x.courseId)===String(courseId);});
+}
+
+export async function getCourseConnectionState(){
+  const {getSupabaseStatus}=await import("./supabase-v30.js?v=451");
+  return getSupabaseStatus();
+}
+
+export async function syncPendingLessonProgress(){
+  const q=readQueue();
+  if(!q.length)return {ok:true,queued:0,synced:0};
+  const remaining=[];
+  let synced=0;
+  for(const item of q){
+    const result=await rpc("academy_record_lesson_progress",{
+      p_course_id:String(item.courseId),
+      p_unit_id:Number(item.unitId),
+      p_lesson_id:Number(item.lessonId),
+      p_completed:!!item.completed,
+      p_score:item.score===null||item.score===undefined?null:Number(item.score),
+      p_total:item.total===null||item.total===undefined?null:Number(item.total)
+    });
+    if(result.ok)synced++;
+    else {remaining.push(item); break;}
+  }
+  if(remaining.length!==q.length){
+    const unsent=q.slice(synced);
+    writeQueue(unsent);
+  }
+  return {ok:remaining.length===0,queued:remaining.length,synced};
 }
