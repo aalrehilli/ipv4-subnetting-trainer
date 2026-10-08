@@ -124,7 +124,7 @@ function saveAttemptRecord(result){
   const identity=getStudentIdentity();
   const attempts=loadAttempts();
   const sameStudent=attempts.filter(x=>x.studentId===identity.id&&x.exam===result.exam);
-  const record={id:"ATT-"+Date.now()+"-"+Math.floor(Math.random()*10000),studentId:identity.id,studentName:identity.name,group:String(identity.group||"1"),exam:result.exam,attemptNo:sameStudent.length+1,score:result.score,total:result.total,percent:result.percent,passed:result.passed,submittedAt:result.submittedAt,durationSec:result.durationSec,autoSubmitted:!!result.autoSubmitted,topics:result.topics,questionResults:result.questionResults||[]};
+  const record={id:state.centralAttemptId?String(state.centralAttemptId):"ATT-"+Date.now()+"-"+Math.floor(Math.random()*10000),remoteId:state.centralAttemptId?String(state.centralAttemptId):null,studentId:identity.id,studentName:identity.name,group:String(identity.group||"1"),exam:result.exam,attemptNo:sameStudent.length+1,score:result.score,total:result.total,percent:result.percent,passed:result.passed,submittedAt:result.submittedAt,durationSec:result.durationSec,autoSubmitted:!!result.autoSubmitted,topics:result.topics,questionResults:result.questionResults||[]};
   attempts.unshift(record);
   localStorage.setItem(ATTEMPTS_KEY,JSON.stringify(attempts.slice(0,500)));
   return record;
@@ -267,13 +267,16 @@ async function startExam(){
   const cfg=getExamConfig();
   const attempts=getAttemptCount();
   if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
-  if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
 
   const courseExamId=localStorage.getItem("ipv4AcademyV341CourseExamId")||"";
   const courseId=localStorage.getItem("ipv4AcademyV341CourseId")||"";
   let central=null;
   try{central=await startCentralExamAttempt(courseExamId,cfg.title,courseId);}catch(e){central={ok:false,error:String(e&&e.message||e)};}
   if(central&&central.reason==="ATTEMPTS_LIMIT")return {blocked:true,reason:central.error||"تم استنفاد عدد المحاولات المسموح بها."};
+  if(!(central&&central.ok) && central && ["AUTH_REQUIRED","SUPABASE_NOT_CONFIGURED"].includes(String(central.reason||"")) &&
+     cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit){
+    return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
+  }
 
   state.mode="live";
   state.index=0;
