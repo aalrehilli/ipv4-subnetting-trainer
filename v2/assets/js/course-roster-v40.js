@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=439";
+import {getSupabaseConfig} from "./supabase-v30.js?v=451";
 
 let clientPromise=null;
 
@@ -82,12 +82,43 @@ function groups(rows){
   return Array.from(new Set(rows.map(function(r){return String(r.group||"");}).filter(Boolean))).sort(function(a,b){return Number(a)-Number(b);});
 }
 
+function setupCard(){
+  return '<section class="card" data-v51-setup>'+
+    '<div class="section-title"><div><span class="eyebrow orange">V3.51 • اتصال البيانات</span><h3>تفعيل المتابعة المركزية</h3>'+
+    '<p class="muted">أدخل Supabase URL و anon/publishable key. بعد الحفظ ستتحول الحالة إلى «مهيأ — يلزم تسجيل الدخول» إذا كانت بيانات المشروع صحيحة.</p></div><span class="badge orange">غير مهيأ</span></div>'+
+    '<form data-v51-supabase-form>'+
+      '<label>Supabase Project URL<input name="url" placeholder="https://xxxx.supabase.co" autocomplete="off"></label>'+
+      '<label>Anon / Publishable Key<input name="anonKey" placeholder="sb_publishable_... أو eyJ..." autocomplete="off"></label>'+
+      '<div class="course-form-actions"><button class="btn btn-primary" type="submit">حفظ وفحص الاتصال</button><span data-v51-status class="muted"></span></div>'+
+    '</form>'+
+  '</section>';
+}
+
 export async function mountCourseRoster(container,courseId){
   if(!container)return;
   container.innerHTML='<div class="card"><div class="section-title"><div><span class="eyebrow green">V3.40 • متدربو المقرر</span><h3>تحميل بيانات المتدربين…</h3></div></div><p class="muted">يتم جلب التقدم والنشاط من Supabase.</p></div>';
   const first=await roster(courseId,"");
   if(!first.ok){
-    container.innerHTML='<div class="card"><div class="section-title"><h3>متدربو المقرر</h3><span class="badge orange">غير متصل</span></div><p class="muted">'+esc(first.error||first.reason||"تعذر تحميل البيانات.")+'</p></div>';
+    container.innerHTML=setupCard()+
+      '<div class="card"><div class="section-title"><h3>متدربو المقرر</h3><span class="badge orange">'+esc(first.reason==="AUTH_REQUIRED"?"مهيأ — يلزم تسجيل الدخول":"غير متصل")+'</span></div>'+
+      '<p class="muted">'+esc(first.error||first.reason||"تعذر تحميل البيانات.")+'</p></div>';
+    const form=container.querySelector("[data-v51-supabase-form]");
+    if(form){
+      form.addEventListener("submit",async function(event){
+        event.preventDefault();
+        const status=form.querySelector("[data-v51-status]");
+        try{
+          const data=new FormData(form);
+          const m=await import("./supabase-v30.js?v=451");
+          m.setSupabaseConfig(String(data.get("url")||"").trim(),String(data.get("anonKey")||"").trim());
+          const state=await m.getSupabaseStatus();
+          if(status)status.textContent=state.message||"تم الحفظ.";
+          setTimeout(function(){mountCourseRoster(container,courseId);},250);
+        }catch(error){
+          if(status)status.textContent=String(error&&error.message||error);
+        }
+      });
+    }
     return;
   }
   let allRows=first.rows||[];
