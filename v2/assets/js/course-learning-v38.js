@@ -62,6 +62,10 @@ function learnerCourse(){
   if(!c)return '<div class="card empty"><h3>لا يوجد مقرر منشور</h3><p class="muted">سيظهر المقرر هنا بعد نشره من مركز المدرب.</p></div>';
   localStorage.setItem(ACTIVE_COURSE,String(c.id));
   const pct=coursePct(c);
+  setTimeout(function(){
+    const box=document.getElementById("v41-student-course-exams");
+    if(box)mountStudentCourseExams(box,String(c.id)).catch(function(){});
+  },0);
   return '<div class="page-intro with-action"><div><span class="eyebrow blue">02 • المقرر • V3.8</span><h2>'+esc(c.title)+'</h2><p>'+esc(c.description||"مسارك التعليمي")+'</p></div><span class="badge '+(pct>=80?"green":pct>=40?"orange":"purple")+'">'+pct+'% مكتمل</span></div>'+
   '<div class="card learner-course-hero"><div><strong>رحلتك داخل المقرر</strong><p class="muted">تعلم → تدريب قصير → نتيجة → إتقان.</p></div><div class="progress"><span style="width:'+pct+'%"></span></div><div class="learner-course-stats"><span>'+c.units.length+' وحدات</span><span>'+allLessons(c).length+' درس منشور</span><span>'+c.students+' متدرب</span></div></div>'+
   '<div id="v41-student-course-exams" data-v41-student-course="'+esc(c.id)+'"></div>'+
@@ -112,12 +116,6 @@ function submitAssessment(form){
 }
 
 function courseProgressPage(){return lessonPage()}
-
-setTimeout(function(){
-  const box=document.getElementById("v41-student-course-exams");
-  const id=box&&box.getAttribute("data-v41-student-course");
-  if(box&&id)mountStudentCourseExams(box,id).catch(function(){});
-},0);
 
 export function handleLearningAction(t){
   const a=t.dataset.courseLearningAction,c=activeCourse();
