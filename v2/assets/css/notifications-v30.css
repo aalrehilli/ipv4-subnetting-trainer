@@ -517,3 +517,12 @@
 .qintel-bottom{margin-top:12px}.qintel-bottom .card{min-height:170px}
 @media(max-width:1050px){.trainer-results-kpis,.qintel-kpis{grid-template-columns:repeat(3,1fr)}.trainer-results-filters{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.trainer-results-kpis,.qintel-kpis{grid-template-columns:1fr 1fr}.trainer-results-filters{grid-template-columns:1fr}.exam-check-option{justify-content:flex-start}.qintel-bottom{grid-template-columns:1fr}}
+
+
+/* V3.36 Final Trainer Command Center */
+.trainer-v36-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.trainer-v36-command-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.trainer-command-card{display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-height:145px}.trainer-command-card.primary{border-top:4px solid var(--primary)}
+.trainer-v36-main-grid{align-items:start}.trainer-v36-topic-list,.trainer-v36-latest{display:grid;gap:8px}.trainer-v36-note{margin-top:12px;background:#f5f9fc;border-right:4px solid var(--primary);font-size:11px;line-height:1.9}
+@media(max-width:1100px){.trainer-v36-kpis{grid-template-columns:repeat(3,1fr)}.trainer-v36-command-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.trainer-v36-kpis,.trainer-v36-command-grid{grid-template-columns:1fr}.trainer-command-card{min-height:auto}}
