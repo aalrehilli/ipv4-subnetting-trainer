@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=453";
+import {getSupabaseConfig} from "./supabase-v30.js?v=454";
 
 const COURSES_KEY="ipv4AcademyV36Courses";
 const BACKUP_KEY="ipv4AcademyV38AllCourses";
@@ -215,7 +215,7 @@ export function getLocalCourseProgress(courseId){
 }
 
 export async function getCourseConnectionState(){
-  const {getSupabaseStatus}=await import("./supabase-v30.js?v=453");
+  const {getSupabaseStatus}=await import("./supabase-v30.js?v=454");
   return getSupabaseStatus();
 }
 
