@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.35 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.36 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -101,7 +101,7 @@ async function loadPage(){
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
-      var learning=await import("./course-learning-v38.js?v=434");
+      var learning=await import("./course-learning-v38.js?v=435");
       if(state.page==="course") return learning.learnerCourse();
       if(state.page==="lesson-assessment") return learning.assessmentView();
       return learning.lessonPage();
@@ -118,14 +118,14 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","results","labs","analytics","tdash","student360","audit","qintel"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=434");
-      if(state.page==="results"){var results=await import("./results-center-v34.js?v=434");return results.resultsCenterView();}
-      if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=434");return qi.questionIntelligenceView();}
+      var trainer=await import("./trainer-v22.js?v=435");
+      if(state.page==="results"){var results=await import("./results-center-v34.js?v=435");return results.resultsCenterView();}
+      if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=435");return qi.questionIntelligenceView();}
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
     if(state.role==="student"){
-      var student=await import("./student.js?v=434");
+      var student=await import("./student.js?v=435");
       student.studentState.page=state.page;
       return student.studentPage();
     }
@@ -139,7 +139,7 @@ async function loadPage(){
 
 async function syncSupabaseRuntime(){
   try{
-    var sb=await import("./supabase-v30.js?v=434");
+    var sb=await import("./supabase-v30.js?v=435");
     var result=await sb.syncAllFromSupabase();
     window.__IPV4_SUPABASE_STATUS__=result.status||window.__IPV4_SUPABASE_STATUS__||{configured:false,authenticated:false};
     return result;
@@ -317,22 +317,22 @@ function bind(){
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v32.js?v=434").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v32.js?v=435").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=434");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=435");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=434");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=435");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankStatus&&qbankStatus.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=434");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=435");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v32.js?v=434");
+        var m=await import("./question-bank-v32.js?v=435");
         var result=m.handleQuestionBankAction(btn);
         if(result&&result.export){
           var fmt=result.export;
@@ -354,7 +354,7 @@ function bind(){
         }
         if(result&&result.message){window.alert(result.message);}
         try{
-          var sb=await import("./supabase-v30.js?v=434");
+          var sb=await import("./supabase-v30.js?v=435");
           if(typeof sb.syncLocalQuestionsToSupabase==="function") await sb.syncLocalQuestionsToSupabase(m.getQuestionBank());
         }catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
         if(result&&result.rerender) await render();
@@ -371,7 +371,7 @@ function bind(){
       var reader=new FileReader();
       reader.onload=async function(){
         try{
-          var m=await import("./question-bank-v32.js?v=434");
+          var m=await import("./question-bank-v32.js?v=435");
           var format=event.target.id.indexOf("xml")>=0?"xml":event.target.id.indexOf("aiken")>=0?"aiken":"json";
           var result=m.importQuestionBankText(String(reader.result||""),format);
           if(result&&result.ok&&result.rows){
@@ -392,9 +392,9 @@ function bind(){
   if(examSettings) examSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=434");
+      var m=await import("./exam-v23.js?v=435");
       var cfg=m.saveTrainerExamConfigFromForm(event.currentTarget);
-      try{var sb=await import("./supabase-v30.js?v=434");await sb.syncTrainerExamToSupabase(cfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=435");await sb.syncTrainerExamToSupabase(cfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -405,7 +405,7 @@ function bind(){
   if(examQuestionSettings) examQuestionSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=434");
+      var m=await import("./exam-v23.js?v=435");
       var cfg=m.saveTrainerExamBuilderFromForm(event.currentTarget);
       var msg=document.getElementById("exam-question-msg");
       if(msg) msg.textContent="تم بناء الاختبار بـ "+cfg.questionIds.length+" سؤال.";
@@ -417,10 +417,10 @@ function bind(){
 
   document.getElementById("publish-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=434");
+      var m=await import("./exam-v23.js?v=435");
       if(examQuestionSettings) m.saveTrainerExamBuilderFromForm(examQuestionSettings);
       var publishedCfg=m.publishTrainerExam(true);
-      try{var sb=await import("./supabase-v30.js?v=434");await sb.syncTrainerExamToSupabase(publishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=435");await sb.syncTrainerExamToSupabase(publishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -429,9 +429,9 @@ function bind(){
 
   document.getElementById("unpublish-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=434");
+      var m=await import("./exam-v23.js?v=435");
       var unpublishedCfg=m.publishTrainerExam(false);
-      try{var sb=await import("./supabase-v30.js?v=434");await sb.syncTrainerExamToSupabase(unpublishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=435");await sb.syncTrainerExamToSupabase(unpublishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -440,7 +440,7 @@ function bind(){
 
   document.getElementById("reset-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=434");
+      var m=await import("./exam-v23.js?v=435");
       m.resetTrainerExamConfig();
       await render();
     }catch(error){
@@ -451,7 +451,7 @@ function bind(){
   document.querySelectorAll("#start-exam,#exam-prev,#exam-next,#submit-exam,#exam-review-back,#exam-review-submit,[data-exam-answer],[data-exam-jump],[data-exam-review-jump],[data-exam-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./exam-v23.js?v=434");
+        var m=await import("./exam-v23.js?v=435");
         var result;
         if(btn.id==="start-exam") result=m.handleExamAction(btn);
         else if(btn.id==="exam-prev") result=m.handleExamAction(btn);
@@ -490,17 +490,17 @@ function bind(){
 
   document.querySelectorAll("#results-search,#results-exam-filter,#results-status-filter,#results-group-filter").forEach(function(el){
     el.addEventListener("input",async function(){
-      var m=await import("./results-center-v34.js?v=434");
+      var m=await import("./results-center-v34.js?v=435");
       m.filterResultsDom();
     });
     el.addEventListener("change",async function(){
-      var m=await import("./results-center-v34.js?v=434");
+      var m=await import("./results-center-v34.js?v=435");
       m.filterResultsDom();
     });
   });
   document.querySelectorAll("[data-results-export]").forEach(function(btn){
     btn.addEventListener("click",async function(){
-      var m=await import("./results-center-v34.js?v=434");
+      var m=await import("./results-center-v34.js?v=435");
       var blob=new Blob(["\uFEFF"+m.getResultsCsv()],{type:"text/csv;charset=utf-8"});
       var url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download="ipv4-academy-results-v3.34.csv";
@@ -509,10 +509,10 @@ function bind(){
   });
 
   document.querySelectorAll("#qintel-status-filter,#qintel-topic-filter,#qintel-difficulty-filter").forEach(function(el){
-    el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=434");m.filterQuestionIntelligence();});
+    el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=435");m.filterQuestionIntelligence();});
   });
   document.querySelectorAll("[data-qintel-export]").forEach(function(btn){
-    btn.addEventListener("click",async function(){var m=await import("./question-intelligence-v35.js?v=434");var blob=new Blob(["\\uFEFF"+m.getQuestionIntelligenceJson()],{type:"application/json;charset=utf-8"});var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ipv4-academy-question-intelligence-v3.35.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
+    btn.addEventListener("click",async function(){var m=await import("./question-intelligence-v35.js?v=435");var blob=new Blob(["\\uFEFF"+m.getQuestionIntelligenceJson()],{type:"application/json;charset=utf-8"});var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ipv4-academy-question-intelligence-v3.35.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
   });
 
   document.querySelectorAll("[data-course-action],[data-course-editor-action],[data-lesson-action]").forEach(function(btn){
