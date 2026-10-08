@@ -118,6 +118,7 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","results","labs","analytics","tdash","student360","audit","qintel"].indexOf(state.page)>=0){
+      if(state.page==="tdash"){var finalDash=await import("./trainer-dashboard-v36.js?v=435");return finalDash.trainerDashboardView();}
       var trainer=await import("./trainer-v22.js?v=435");
       if(state.page==="results"){var results=await import("./results-center-v34.js?v=435");return results.resultsCenterView();}
       if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=435");return qi.questionIntelligenceView();}
