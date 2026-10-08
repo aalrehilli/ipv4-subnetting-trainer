@@ -29,6 +29,37 @@ function formatDate(value){
   }catch(e){return String(value);}
 }
 
+async function student360(courseId,studentId){
+  const c=await client();
+  if(!c)return {ok:false,reason:"Supabase غير مهيأ"};
+  const session=await c.auth.getSession();
+  if(!session?.data?.session)return {ok:false,reason:"تسجيل الدخول مطلوب"};
+  const {data,error}=await c.rpc("academy_course_student_360",{
+    p_course_id:String(courseId),
+    p_student_id:String(studentId)
+  });
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data:data||{}};
+}
+
+function renderStudent360(box,data){
+  const p=data.profile||{}, s=data.summary||{}, lessons=Array.isArray(data.lessons)?data.lessons:[];
+  const pct=Number(s.total_lessons||0)?Math.round(Number(s.completed_lessons||0)/Number(s.total_lessons||0)*100):0;
+  const weak=lessons.filter(x=>Number(x.percent||0)<60 && x.percent!==null && x.percent!==undefined);
+  box.innerHTML='<section class="card" style="margin-top:14px;border-right:4px solid var(--blue)">'+
+    '<div class="section-title"><div><span class="eyebrow blue">V3.62 • ملف المتدرب 360</span><h3>'+esc(p.name||"متدرب")+'</h3><p class="muted">المجموعة '+esc(p.group||"—")+(p.student_id?" • الرقم التدريبي "+esc(p.student_id):"")+'</p></div><button class="btn btn-soft mini-btn" data-v62-close>إغلاق</button></div>'+
+    '<div class="grid-3" style="margin-bottom:14px">'+
+      '<div class="card"><span class="muted">إكمال المقرر</span><strong style="display:block;font-size:26px">'+pct+'%</strong><div class="progress"><span style="width:'+pct+'%"></span></div></div>'+
+      '<div class="card"><span class="muted">متوسط التقييم</span><strong style="display:block;font-size:26px">'+Number(s.avg_score||0)+'%</strong></div>'+
+      '<div class="card"><span class="muted">المحاولات</span><strong style="display:block;font-size:26px">'+Number(s.attempts||0)+'</strong></div>'+
+    '</div>'+
+    '<div class="section-title"><div><h4>تفصيل الدروس</h4><p class="muted">الدروس التي تحتاج متابعة تظهر أولًا.</p></div><span class="badge '+(weak.length?"red":"green")+'">'+(weak.length?weak.length+" تحتاج متابعة":"لا توجد فجوات حرجة")+'</span></div>'+
+    '<div class="table-scroll"><table class="table trainer-table"><thead><tr><th>الدرس</th><th>الحالة</th><th>النتيجة</th><th>المحاولات</th><th>آخر نشاط</th></tr></thead><tbody>'+
+    lessons.map(x=>'<tr><td><strong>'+esc(x.title||"درس")+'</strong><small class="muted">وحدة '+esc(x.unit_id)+'</small></td><td><span class="badge '+(x.completed?"green":"orange")+'">'+(x.completed?"مكتمل":"غير مكتمل")+'</span></td><td><strong>'+((x.percent===null||x.percent===undefined)?"—":Number(x.percent)+"%")+'</strong></td><td>'+Number(x.attempts||0)+'</td><td><small class="muted">'+esc(formatDate(x.last_activity))+'</small></td></tr>').join("")+
+    '</tbody></table></div>'+
+  '</section>';
+}
+
 async function roster(courseId,group){
   const c=await client();
   if(!c)return {ok:false,reason:"Supabase غير مهيأ"};
@@ -217,4 +248,29 @@ export async function mountCourseRoster(container,courseId){
   select&&select.addEventListener("change",function(){reload(select.value);});
   const refresh=container.querySelector("[data-v40-roster-refresh]");
   refresh&&refresh.addEventListener("click",function(){reload(select?select.value:"");});
+
+  container.addEventListener("click",async function(event){
+    const button=event.target.closest("[data-student-id]");
+    if(button && button.getAttribute("data-student-id")){
+      const id=button.getAttribute("data-student-id");
+      let detail=container.querySelector("[data-v62-student-360]");
+      if(!detail){
+        detail=document.createElement("div");
+        detail.setAttribute("data-v62-student-360","1");
+        container.appendChild(detail);
+      }
+      detail.innerHTML='<div class="card"><p class="muted">جاري تحميل الملف 360…</p></div>';
+      const result=await student360(courseId,id);
+      if(!result.ok){
+        detail.innerHTML='<div class="card"><p class="muted">'+esc(result.error||result.reason||"تعذر تحميل الملف.")+'</p></div>';
+        return;
+      }
+      renderStudent360(detail,result.data);
+      detail.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+    if(event.target.closest("[data-v62-close]")){
+      const detail=container.querySelector("[data-v62-student-360]");
+      if(detail)detail.remove();
+    }
+  });
 }
