@@ -7,7 +7,7 @@ const DONE="ipv4AcademyV37Done";
 const MODE="ipv4AcademyV38Mode";
 const ATTEMPTS="ipv4AcademyV38LessonAttempts";
 const PRACTICE="ipv4AcademyV2Practice";
-const QBANK="ipv4AcademyV24QuestionBank";
+const QBANK="ipv4AcademyV32QuestionBank";
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 const readCourses=()=>{try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a:[]}catch{return[]}};
