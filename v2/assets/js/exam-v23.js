@@ -6,16 +6,60 @@ const RESULT_KEY="ipv4AcademyV23ExamResult";
 const WEAK_KEY="ipv4AcademyV23WeakTopics";
 const EXAM_CONFIG_KEY="ipv4AcademyV317ExamConfig";
 const EXAM_ATTEMPT_KEY="ipv4AcademyV317Attempts";
-const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1};
+const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1,selectionMode:"manual",questionCount:10,difficultyMode:"all",topicTargets:{},published:false,updatedAt:null};
 function availableQuestions(){return refreshBank().filter(q=>q.active!==false).map(q=>({...q,opts:Array.isArray(q.opts)?q.opts:[...(q.options||[])]}))}
 function defaultQuestionIds(){return availableQuestions().map(q=>Number(q.id)).filter(Number.isFinite)}
+function shuffle(list){
+  const a=[...list];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+function difficultyAllowed(q,mode){return mode==="all"||q.difficulty===mode}
+function buildAutoQuestionIds(count,difficultyMode,targets){
+  const pool=availableQuestions().filter(q=>difficultyAllowed(q,difficultyMode));
+  const used=new Set(),picked=[];
+  Object.entries(targets||{}).forEach(([topic,n])=>{
+    const need=Math.max(0,Number(n)||0);
+    if(!need)return;
+    shuffle(pool.filter(q=>q.topic===topic&&!used.has(Number(q.id)))).slice(0,need).forEach(q=>{used.add(Number(q.id));picked.push(Number(q.id))});
+  });
+  if(picked.length<count){
+    shuffle(pool.filter(q=>!used.has(Number(q.id)))).slice(0,Math.max(0,count-picked.length)).forEach(q=>{used.add(Number(q.id));picked.push(Number(q.id))});
+  }
+  return picked.slice(0,count);
+}
+export function getExamPreviewQuestions(){
+  return selectedQuestions().map(q=>({...q,opts:Array.isArray(q.opts)?q.opts:[...(q.options||[])]}));
+}
+export function publishTrainerExam(published=true){
+  const cfg=getExamConfig();
+  const next={...cfg,published:!!published,updatedAt:Date.now()};
+  localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(next));
+  return next;
+}
+export function saveTrainerExamBuilderFromForm(form){
+  const current=getExamConfig();
+  const mode=form.querySelector('[name="selectionMode"]')?.value||current.selectionMode;
+  const count=Math.max(1,Math.min(100,Number(form.querySelector('[name="questionCount"]')?.value||current.questionCount||10)));
+  const difficultyMode=form.querySelector('[name="difficultyMode"]')?.value||current.difficultyMode||"all";
+  const targets={};
+  form.querySelectorAll('[data-topic-target]').forEach(el=>{
+    const v=Math.max(0,Math.min(100,Number(el.value)||0));
+    if(v)targets[el.getAttribute('data-topic-target')]=v;
+  });
+  const manual=[...form.querySelectorAll('input[name="questionIds"]:checked')].map(x=>Number(x.value));
+  const ids=mode==="random"?buildAutoQuestionIds(count,difficultyMode,targets):Array.from(new Set(manual)).filter(id=>availableQuestions().some(q=>Number(q.id)===id)).slice(0,100);
+  const next={...current,selectionMode:mode,questionCount:count,difficultyMode,topicTargets:targets,questionIds:ids.length?ids:current.questionIds,updatedAt:Date.now()};
+  localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(next));
+  return next;
+}
 
 function getExamConfig(){
   try{
     const saved=JSON.parse(localStorage.getItem(EXAM_CONFIG_KEY)||"null");
     if(!saved)return {...DEFAULT_CONFIG,questionIds:defaultQuestionIds()};
     const ids=Array.isArray(saved.questionIds)&&saved.questionIds.length?saved.questionIds.map(Number):defaultQuestionIds();
-    return {...DEFAULT_CONFIG,...saved,questionIds:ids};
+    return {...DEFAULT_CONFIG,...saved,questionIds:ids,topicTargets:saved.topicTargets||{}};
   }catch{return {...DEFAULT_CONFIG,questionIds:defaultQuestionIds()}}
 }
 export function saveTrainerExamConfigFromForm(form){
@@ -49,11 +93,11 @@ export function saveTrainerExamQuestionsFromForm(form){
   localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(next));
   return next;
 }
-export function getTrainerExamConfig(){return getExamConfig()}
+export function getTrainerExamConfig(){return getExamConfigPrivate()}
 export function resetTrainerExamConfig(){localStorage.removeItem(EXAM_CONFIG_KEY);localStorage.removeItem(EXAM_ATTEMPT_KEY);localStorage.removeItem(RESULT_KEY);return getExamConfig()}
 function getAttemptCount(){const n=Number(localStorage.getItem(EXAM_ATTEMPT_KEY)||0);return Number.isFinite(n)?n:0}
 function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setItem(EXAM_ATTEMPT_KEY,String(n));return n}
-function selectedQuestions(){
+export function getExamConfig(){return getExamConfigPrivate()}\nfunction getExamConfigPrivate(){
   const cfg=getExamConfig();
   const source=availableQuestions();
   const list=cfg.questionIds.map(id=>source.find(q=>Number(q.id)===Number(id))).filter(Boolean);
