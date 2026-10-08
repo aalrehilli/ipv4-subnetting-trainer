@@ -1,4 +1,4 @@
-import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,resetTrainerExamConfig} from "./exam-v23.js?v=421";
+import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,saveTrainerExamBuilderFromForm,publishTrainerExam,getExamPreviewQuestions,resetTrainerExamConfig} from "./exam-v23.js?v=427";
 import {questions} from "./demo-data.js";
 import {questionBankView,refreshBank} from "./question-bank-v24.js?v=427";
 import {student360View} from "./student360-v29.js";
@@ -314,7 +314,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
     return `
     <div class="page-intro with-action">
       <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات ونتائج المتدربين</h2><p>أنشئ الاختبار، راقب الإعدادات، ثم راجع نتائج جميع المتدربين واتخذ الإجراء المناسب.</p></div>
-      <div class="trainer-exam-head-actions"><span class="badge orange">V3.24</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
+      <div class="trainer-exam-head-actions"><span class="badge orange">V3.25</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
     </div>
 
     <div class="trainer-exam-kpis">
@@ -374,14 +374,66 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       </tbody></table></div>
     </div>
 
-    <div class="section-title"><h3>بناء الاختبار</h3><div class="exam-result-filter"><span class="badge blue">${topics.length} سؤال محدد</span><button class="link-btn" data-trainer-page="questions">فتح بنك الأسئلة</button></div></div>
-    <form id="trainer-exam-settings-form-questions" class="card exam-question-builder">
-      <div class="exam-builder-head"><div><strong>اختر الأسئلة التي تدخل الاختبار</strong><span class="muted">الاختيارات الآن تُسحب مباشرة من بنك الأسئلة الاحترافي.</span></div><span class="badge">${bankQuestions.length} متاح</span></div>
-      <div class="exam-question-picker">
-        ${bankQuestions.map(q=>'<label class="exam-pick-card"><input type="checkbox" name="questionIds" value="'+q.id+'" '+(cfg.questionIds.includes(Number(q.id))?"checked":"")+'><div><div><strong>#'+q.id+' • '+esc(q.topic)+'</strong><span class="badge '+(q.difficulty==="hard"?"red":q.difficulty==="medium"?"orange":"green")+'">'+(q.difficulty==="hard"?"متقدم":q.difficulty==="medium"?"متوسط":"سهل")+'</span></div><p>'+esc(q.q)+'</p></div></label>').join("")}
+
+    <div class="section-title"><h3>منشئ الاختبار الاحترافي</h3><div class="exam-result-filter"><span class="badge blue">\${cfg.questionIds.length} سؤال</span><span class="badge \${cfg.published?"green":"orange"}">\${cfg.published?"منشور":"مسودة"}</span></div></div>
+    <form id="trainer-exam-settings-form-questions" class="card exam-question-builder v325-builder">
+      <div class="exam-builder-head"><div><strong>أنشئ الاختبار من بنك الأسئلة</strong><span class="muted">اختر يدويًا أو دع المنصة تبني مجموعة عشوائية حسب الموضوع والصعوبة.</span></div><span class="badge">\${bankQuestions.length} سؤال نشط</span></div>
+
+      <div class="exam-v325-grid">
+        <label>طريقة الاختيار
+          <select name="selectionMode">
+            <option value="manual" \${cfg.selectionMode==="manual"?"selected":""}>اختيار يدوي</option>
+            <option value="random" \${cfg.selectionMode==="random"?"selected":""}>اختيار عشوائي ذكي</option>
+          </select>
+        </label>
+        <label>عدد الأسئلة
+          <input type="number" name="questionCount" min="1" max="100" value="\${cfg.questionCount||Math.min(10,Math.max(1,bankQuestions.length))}">
+        </label>
+        <label>مستوى الصعوبة
+          <select name="difficultyMode">
+            <option value="all" \${cfg.difficultyMode==="all"?"selected":""}>كل المستويات</option>
+            <option value="easy" \${cfg.difficultyMode==="easy"?"selected":""}>سهل فقط</option>
+            <option value="medium" \${cfg.difficultyMode==="medium"?"selected":""}>متوسط فقط</option>
+            <option value="hard" \${cfg.difficultyMode==="hard"?"selected":""}>متقدم فقط</option>
+          </select>
+        </label>
+        <div class="exam-builder-status"><span>الحالة</span><strong>\${cfg.published?"منشور للمتدربين":"مسودة غير منشورة"}</strong></div>
       </div>
-      <div class="exam-settings-actions"><button class="btn btn-primary" type="submit">حفظ اختيار الأسئلة</button><span id="exam-question-msg" class="muted"></span></div>
+
+      <div class="exam-topic-targets">
+        <div class="section-title"><h4>توزيع الأسئلة حسب الموضوع</h4><span class="muted">يستخدم مع الاختيار العشوائي.</span></div>
+        <div class="exam-topic-target-grid">
+          \${["IPv4","Binary","Prefix","Subnet Mask","FLSM","VLSM"].map(t=>'<label><span>'+t+'</span><input type="number" min="0" max="100" data-topic-target="'+t+'" value="'+(cfg.topicTargets?.[t]||0)+'"></label>').join("")}
+        </div>
+      </div>
+
+      <div class="exam-builder-preview-bar">
+        <div><strong>المجموعة الحالية</strong><span class="muted">\${cfg.selectionMode==="random"?"مبنية من قواعد الاختيار الحالية":"مختارة يدويًا"}</span></div>
+        <div class="exam-builder-actions">
+          <button class="btn btn-primary" type="submit">حفظ وبناء الاختبار</button>
+          <button class="btn btn-green" type="button" id="publish-trainer-exam">\${cfg.published?"تحديث النشر":"نشر للمتدربين"}</button>
+          <button class="btn btn-soft" type="button" id="unpublish-trainer-exam">إلغاء النشر</button>
+        </div>
+        <span id="exam-question-msg" class="muted"></span>
+      </div>
+
+      <div class="exam-manual-picker-head"><strong>الاختيار اليدوي</strong><span class="muted">يستخدم عند اختيار «يدوي» ويمكن مراجعته حتى مع الوضع العشوائي.</span></div>
+      <div class="exam-question-picker">
+        \${bankQuestions.map(q=>'<label class="exam-pick-card"><input type="checkbox" name="questionIds" value="'+q.id+'" '+(cfg.questionIds.includes(Number(q.id))?"checked":"")+'><div><div><strong>#'+q.id+' • '+esc(q.topic)+'</strong><span class="badge '+(q.difficulty==="hard"?"red":q.difficulty==="medium"?"orange":"green")+'">'+(q.difficulty==="hard"?"متقدم":q.difficulty==="medium"?"متوسط":"سهل")+'</span></div><p>'+esc(q.q)+'</p></div></label>').join("")}
+      </div>
     </form>
+
+    <div class="card exam-preview-card">
+      <div class="section-title"><h3>معاينة الاختبار</h3><span class="badge purple">\${getExamPreviewQuestions().length} سؤال</span></div>
+      <div class="exam-preview-meta">
+        <div><span>الاختبار</span><strong>\${esc(cfg.title)}</strong></div>
+        <div><span>المدة</span><strong>\${cfg.durationMin} دقيقة</strong></div>
+        <div><span>النجاح</span><strong>\${cfg.passPercent}%</strong></div>
+        <div><span>المحاولات</span><strong>\${limitText}</strong></div>
+      </div>
+      <div class="exam-preview-list">\${getExamPreviewQuestions().slice(0,8).map((q,i)=>'<div class="exam-preview-item"><b>'+(i+1)+'</b><span>'+esc(q.q)+'</span><em>'+esc(q.topic)+'</em></div>').join("") || '<div class="empty">لا توجد أسئلة محددة بعد.</div>'}</div>
+      \${getExamPreviewQuestions().length>8?'<div class="qbank-import-more">يظهر أول 8 أسئلة فقط في المعاينة، وسيظهر كامل الاختبار للمتدرب.</div>':''}
+    </div>
 
     <div class="section-title"><h3>تحليل آخر نتيجة</h3><button class="link-btn" data-trainer-page="analytics">فتح التحليلات</button></div>
     <div class="card exam-result-topics">
