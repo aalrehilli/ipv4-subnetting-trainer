@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.28 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.30 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -134,6 +134,19 @@ async function loadPage(){
   }
 }
 
+
+async function syncSupabaseRuntime(){
+  try{
+    var sb=await import("./supabase-v30.js?v=430");
+    var result=await sb.syncAllFromSupabase();
+    window.__IPV4_SUPABASE_STATUS__=result.status||window.__IPV4_SUPABASE_STATUS__||{configured:false,authenticated:false};
+    return result;
+  }catch(error){
+    window.__IPV4_SUPABASE_STATUS__={configured:false,authenticated:false,message:"تعذر مزامنة Supabase",error:String(error&&error.message||error)};
+    return null;
+  }
+}
+
 async function render(){
   var app=document.getElementById("app");
   if(!app){
@@ -144,6 +157,7 @@ async function render(){
   // نرسم الهيكل فورًا أولًا، ثم نملأ المحتوى. هذا يمنع الشاشة البيضاء أثناء التحميل.
   app.innerHTML=shell('<div class="card"><h3>جاري تحميل الشاشة…</h3><p class="muted">IPv4 Academy</p></div>');
 
+  await syncSupabaseRuntime();
   var content=await loadPage();
   app.innerHTML=shell(content||placeholder("صفحة فارغة","لا يوجد محتوى لهذه الشاشة."));
   bind();
@@ -337,6 +351,10 @@ function bind(){
           return;
         }
         if(result&&result.message){window.alert(result.message);}
+        try{
+          var sb=await import("./supabase-v30.js?v=430");
+          if(typeof sb.syncLocalQuestionsToSupabase==="function") await sb.syncLocalQuestionsToSupabase(m.getQuestionBank());
+        }catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
         if(result&&result.rerender) await render();
       }catch(error){
         document.getElementById("app").innerHTML=shell(errorView(error));bind();
@@ -373,7 +391,8 @@ function bind(){
     event.preventDefault();
     try{
       var m=await import("./exam-v23.js?v=430");
-      m.saveTrainerExamConfigFromForm(event.currentTarget);
+      var cfg=m.saveTrainerExamConfigFromForm(event.currentTarget);
+      try{var sb=await import("./supabase-v30.js?v=430");await sb.syncTrainerExamToSupabase(cfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -398,7 +417,8 @@ function bind(){
     try{
       var m=await import("./exam-v23.js?v=430");
       if(examQuestionSettings) m.saveTrainerExamBuilderFromForm(examQuestionSettings);
-      m.publishTrainerExam(true);
+      var publishedCfg=m.publishTrainerExam(true);
+      try{var sb=await import("./supabase-v30.js?v=430");await sb.syncTrainerExamToSupabase(publishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -408,7 +428,8 @@ function bind(){
   document.getElementById("unpublish-trainer-exam")?.addEventListener("click",async function(){
     try{
       var m=await import("./exam-v23.js?v=430");
-      m.publishTrainerExam(false);
+      var unpublishedCfg=m.publishTrainerExam(false);
+      try{var sb=await import("./supabase-v30.js?v=430");await sb.syncTrainerExamToSupabase(unpublishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
