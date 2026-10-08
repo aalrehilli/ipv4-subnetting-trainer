@@ -508,6 +508,13 @@ function bind(){
     });
   });
 
+  document.querySelectorAll("#qintel-status-filter,#qintel-topic-filter,#qintel-difficulty-filter").forEach(function(el){
+    el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=434");m.filterQuestionIntelligence();});
+  });
+  document.querySelectorAll("[data-qintel-export]").forEach(function(btn){
+    btn.addEventListener("click",async function(){var m=await import("./question-intelligence-v35.js?v=434");var blob=new Blob(["\\uFEFF"+m.getQuestionIntelligenceJson()],{type:"application/json;charset=utf-8"});var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ipv4-academy-question-intelligence-v3.35.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
+  });
+
   document.querySelectorAll("[data-course-action],[data-course-editor-action],[data-lesson-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
