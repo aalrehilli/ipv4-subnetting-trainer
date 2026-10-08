@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.24 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.25 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -118,7 +118,7 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=421");
+      var trainer=await import("./trainer-v22.js?v=428");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
@@ -301,22 +301,22 @@ function bind(){
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v24.js?v=427").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v24.js?v=428").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=427");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=428");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=427");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=428");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankStatus&&qbankStatus.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=427");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=428");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v24.js?v=427");
+        var m=await import("./question-bank-v24.js?v=428");
         var result=m.handleQuestionBankAction(btn);
         if(result&&result.export){
           var fmt=result.export;
@@ -351,7 +351,7 @@ function bind(){
       var reader=new FileReader();
       reader.onload=async function(){
         try{
-          var m=await import("./question-bank-v24.js?v=427");
+          var m=await import("./question-bank-v24.js?v=428");
           var format=event.target.id.indexOf("xml")>=0?"xml":event.target.id.indexOf("aiken")>=0?"aiken":"json";
           var result=m.importQuestionBankText(String(reader.result||""),format);
           if(result&&result.ok&&result.rows){
@@ -372,7 +372,7 @@ function bind(){
   if(examSettings) examSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=427");
+      var m=await import("./exam-v23.js?v=428");
       m.saveTrainerExamConfigFromForm(event.currentTarget);
       await render();
     }catch(error){
@@ -384,10 +384,31 @@ function bind(){
   if(examQuestionSettings) examQuestionSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=427");
-      var cfg=m.saveTrainerExamQuestionsFromForm(event.currentTarget);
+      var m=await import("./exam-v23.js?v=428");
+      var cfg=m.saveTrainerExamBuilderFromForm(event.currentTarget);
       var msg=document.getElementById("exam-question-msg");
-      if(msg) msg.textContent="تم حفظ "+cfg.questionIds.length+" سؤالًا.";
+      if(msg) msg.textContent="تم بناء الاختبار بـ "+cfg.questionIds.length+" سؤال.";
+      await render();
+    }catch(error){
+      document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+    }
+  });
+
+  document.getElementById("publish-trainer-exam")?.addEventListener("click",async function(){
+    try{
+      var m=await import("./exam-v23.js?v=428");
+      if(examQuestionSettings) m.saveTrainerExamBuilderFromForm(examQuestionSettings);
+      m.publishTrainerExam(true);
+      await render();
+    }catch(error){
+      document.getElementById("app").innerHTML=shell(errorView(error)); bind();
+    }
+  });
+
+  document.getElementById("unpublish-trainer-exam")?.addEventListener("click",async function(){
+    try{
+      var m=await import("./exam-v23.js?v=428");
+      m.publishTrainerExam(false);
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -396,7 +417,7 @@ function bind(){
 
   document.getElementById("reset-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=427");
+      var m=await import("./exam-v23.js?v=428");
       m.resetTrainerExamConfig();
       await render();
     }catch(error){
@@ -407,7 +428,7 @@ function bind(){
   document.querySelectorAll("#start-exam,#exam-prev,#exam-next,#submit-exam,[data-exam-answer],[data-exam-jump],[data-exam-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./exam-v23.js?v=427");
+        var m=await import("./exam-v23.js?v=428");
         var result;
         if(btn.id==="start-exam") result=m.handleExamAction(btn);
         else if(btn.id==="exam-prev") result=m.handleExamAction(btn);
