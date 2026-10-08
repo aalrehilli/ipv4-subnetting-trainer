@@ -1,5 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v24.js?v=430";
+import {persistAttemptToSupabase} from "./supabase-v30.js?v=430";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
@@ -269,7 +270,7 @@ function scoreExam(){
     if(!topicMap[q.topic])topicMap[q.topic]={correct:0,total:0};
     topicMap[q.topic].total++;
     if(ok)topicMap[q.topic].correct++;
-    questionResults.push({id:Number(q.id),topic:q.topic,difficulty:q.difficulty,selected,correctAnswer:q.a,correct:ok});
+    questionResults.push({id:Number(q.id),bankQuestionId:Number(q.id),prompt:q.q,options:q.opts||[],topic:q.topic,difficulty:q.difficulty,selected,correctAnswer:q.a,correct:ok});
   });
   const percent=Math.round(correct/selectedQuestions().length*100);
   const topics=Object.entries(topicMap).map(([topic,x])=>({topic,percent:Math.round(x.correct/x.total*100),correct:x.correct,total:x.total})).sort((a,b)=>a.percent-b.percent);
@@ -291,6 +292,9 @@ function submitExam(auto=false){
   result.autoSubmitted=auto;
   saveAttemptRecord(result);
   state.result=result;
+  persistAttemptToSupabase(result,state.answers,selectedQuestions()).catch(function(error){
+    localStorage.setItem("ipv4AcademySupabaseLastSyncError",String(error?.message||error));
+  });
   state.mode="result";
   state.submitted=true;
   localStorage.setItem(RESULT_KEY,JSON.stringify(result));
