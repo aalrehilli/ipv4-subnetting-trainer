@@ -331,10 +331,12 @@
       addCourseVisibilityBadge();
       enhanceCourseEditor();
       filterCourseCards();
-      try{
-        const m=await import("./course-supabase-v39.js?v=439");
-        await m.syncTrainerCourses();
-      }catch(e){}
+      if(centralReady){
+        try{
+          const m=await import("./course-supabase-v39.js?v=439");
+          await m.syncTrainerCourses();
+        }catch(e){}
+      }
     }else{
       filterForStudent();
     }
