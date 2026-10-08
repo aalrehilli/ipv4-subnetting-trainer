@@ -35,8 +35,8 @@ begin
   select coalesce(
     jsonb_agg(
       jsonb_build_object(
-        'unit_id', l.local_unit_id,
-        'lesson_id', l.local_lesson_id,
+        'unit_id', split_part(l.unit_id,':',2),
+        'lesson_id', l.local_id,
         'completed', p.completed,
         'score', p.assessment_score,
         'total', p.assessment_total,
@@ -45,7 +45,7 @@ begin
         'last_activity_at', p.last_activity_at,
         'completed_at', p.completed_at
       )
-      order by l.position, l.local_unit_id, l.local_lesson_id
+      order by l.position, split_part(l.unit_id,':',2)::integer, l.local_id
     ),
     '[]'::jsonb
   )
