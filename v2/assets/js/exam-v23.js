@@ -157,7 +157,7 @@ function hydrate(){
   const valid=saved.expiresAt && saved.expiresAt>Date.now();
   if((saved.mode==="live" || saved.mode==="review") && valid){
     Object.assign(state,saved);
-    if(state.mode==="live")ensureTimer();
+    if(state.mode==="live"||state.mode==="review")ensureTimer();
   }else if(saved.mode==="live"&&!valid){
     Object.assign(state,saved);
     submitExam(true);
@@ -172,14 +172,17 @@ function hydrate(){
 
 function ensureTimer(){
   stopTimer();
-  if(state.mode!=="live"||!state.expiresAt)return;
+  if((state.mode!=="live"&&state.mode!=="review")||!state.expiresAt)return;
   timer=setInterval(()=>{
     const left=Math.max(0,Math.floor((state.expiresAt-Date.now())/1000));
     const el=document.getElementById("exam-timer");
-    if(el){
-      el.textContent=formatTime(left);
-      el.classList.toggle("timer-danger",left<=60);
-    }
+    const reviewEl=document.getElementById("exam-review-timer");
+    [el,reviewEl].forEach(node=>{
+      if(node){
+        node.textContent=formatTime(left);
+        node.classList.toggle("timer-danger",left<=60);
+      }
+    });
     if(left<=0){
       stopTimer();
       submitExam(true);
@@ -220,7 +223,7 @@ function prev(){
 function openReview(){
   state.mode="review";
   saveState();
-  stopTimer();
+  ensureTimer();
 }
 function scoreExam(){
   let correct=0;
@@ -351,7 +354,7 @@ function reviewPage(){
   <div class="card exam-review-summary">
     <div class="exam-review-stat"><span>إجابات</span><strong>${answered}</strong><small>من ${list.length}</small></div>
     <div class="exam-review-stat warning"><span>بدون إجابة</span><strong>${unanswered.length}</strong><small>${unanswered.length?"يستحسن مراجعتها":"ممتاز"}</small></div>
-    <div class="exam-review-stat"><span>الوقت</span><strong>تم إيقاف المؤقت</strong><small>وقت المراجعة</small></div>
+    <div class="exam-review-stat"><span>الوقت المتبقي</span><strong id="exam-review-timer">--:--</strong><small>المؤقت مستمر</small></div>
   </div>
   <div class="card exam-review-list-card">
     <div class="exam-review-head"><div><span class="eyebrow blue">خريطة الاختبار</span><h3>الأسئلة</h3></div><span class="badge ${unanswered.length?"orange":"green"}">${unanswered.length?"توجد أسئلة غير مجابة":"كل الأسئلة مجابة"}</span></div>
