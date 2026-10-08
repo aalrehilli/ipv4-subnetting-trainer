@@ -81,8 +81,8 @@ function riskStudents(rows){
   '</div>').join("");
 }
 
-export async function trainerAnalyticsView(){
-  const local=await loadAnalytics("");
+export async function trainerAnalyticsView(courseId=""){
+  const local=await loadAnalytics(courseId||"");
   if(!local.ok){
     const label=local.reason==="AUTH_REQUIRED"?"تسجيل الدخول بحساب مدرب/مدير مطلوب":"تعذر الاتصال بالبيانات المركزية";
     return '<div class="page-intro"><span class="eyebrow purple">V3.63 • التحليلات المركزية</span><h2>مركز التحليلات</h2><p>'+label+'</p></div>'+
