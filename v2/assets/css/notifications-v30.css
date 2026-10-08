@@ -543,3 +543,22 @@
 .lab-v37-note{margin-top:12px;background:#f5f9fc;border-right:4px solid var(--green);line-height:1.9;font-size:11px}
 @media(max-width:1000px){.lab-v37-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.lab-v37-grid{grid-template-columns:1fr}.lab-v37-card{min-height:auto}}
+
+
+/* V3.38 Adaptive Smart Review */
+.smart-review-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.smart-review-hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin:14px 0;border-right:4px solid var(--purple);background:#fbf9fe}
+.smart-review-topic-row{display:grid;grid-template-columns:170px 1fr 45px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #edf2f5}
+.smart-review-topic-row:last-child{border-bottom:0}
+.smart-review-topic-row>div:first-child{display:grid;gap:2px}.smart-review-topic-row small{font-size:9px;color:var(--muted)}
+.smart-review-question-row{display:grid;grid-template-columns:30px 1fr 50px;gap:9px;align-items:center;padding:10px;border-bottom:1px solid #edf2f5}
+.smart-review-question-row:last-child{border-bottom:0}
+.smart-review-question-row>span{width:28px;height:28px;border-radius:8px;background:#f2edfa;color:var(--purple);display:grid;place-items:center;font-weight:900}
+.smart-review-question-row>div{display:grid;gap:3px;min-width:0}.smart-review-question-row strong{font-size:10px;line-height:1.6}.smart-review-question-row small{font-size:9px;color:var(--muted)}
+.smart-review-session-meta{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:10px;color:var(--muted)}
+.smart-review-feedback{margin-top:14px;padding:13px;border-radius:12px;border-right:4px solid var(--primary);background:#f7faff;line-height:1.8}
+.smart-review-feedback.correct{border-right-color:var(--green);background:#f2fbf5}.smart-review-feedback.wrong{border-right-color:var(--red);background:#fff6f6}
+.smart-review-feedback strong{display:block;margin-bottom:5px}.smart-review-feedback p{margin:0 0 4px}.smart-review-feedback small{color:var(--muted)}
+.smart-review-question-card .answer-option:disabled{cursor:default;opacity:.96}
+@media(max-width:900px){.smart-review-kpis{grid-template-columns:repeat(2,1fr)}.smart-review-hero{grid-template-columns:1fr}}
+@media(max-width:600px){.smart-review-kpis{grid-template-columns:1fr}.smart-review-topic-row{grid-template-columns:1fr}.smart-review-question-row{grid-template-columns:28px 1fr}.smart-review-question-row>b{grid-column:2}}
