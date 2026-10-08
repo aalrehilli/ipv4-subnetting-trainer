@@ -1,4 +1,4 @@
-import {getExamAttempts} from "./exam-v23.js?v=433";
+import {getExamAttempts} from "./exam-v23.js?v=434";
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 
