@@ -1,11 +1,11 @@
-import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,saveTrainerExamBuilderFromForm,publishTrainerExam,getExamPreviewQuestions,getExamAttempts,getQuestionAnalytics,resetTrainerExamConfig} from "./exam-v23.js?v=432";
+import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,saveTrainerExamBuilderFromForm,publishTrainerExam,getExamPreviewQuestions,getExamAttempts,getQuestionAnalytics,resetTrainerExamConfig} from "./exam-v23.js?v=434";
 import {questions} from "./demo-data.js";
-import {questionBankView,refreshBank} from "./question-bank-v32.js?v=432";
+import {questionBankView,refreshBank} from "./question-bank-v32.js?v=434";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
 import {courseManagerView} from "./course-manager-v36.js?v=403";
-import {auditView} from "./system-audit-v31.js?v=432";
+import {auditView} from "./system-audit-v31.js?v=434";
 
 const students=[
   {id:1,name:"أحمد محمد",group:"1",progress:84,avg:88,last:"اليوم",risk:"منخفض",topic:"VLSM",weakness:64,activity:"نشط",trend:"+8%"},
@@ -308,7 +308,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
     return `
     <div class="page-intro with-action">
       <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات ونتائج المتدربين</h2><p>أنشئ الاختبار، راقب الإعدادات، ثم راجع نتائج جميع المتدربين واتخذ الإجراء المناسب.</p><small class="muted">${window.__IPV4_SUPABASE_STATUS__?.message||"Supabase غير متصل — البيانات المحلية تعمل كنسخة احتياطية."}</small></div>
-      <div class="trainer-exam-head-actions"><span class="badge purple">V3.32</span><span class="badge" data-supabase-status>Supabase</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
+      <div class="trainer-exam-head-actions"><span class="badge purple">V3.35</span><span class="badge" data-supabase-status>Supabase</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
     </div>
 
     <div class="trainer-exam-kpis">
@@ -447,7 +447,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       ${last?last.topics.map(x=>'<div class="exam-result-topic-row"><strong>'+esc(x.topic)+'</strong><div class="progress"><span style="width:'+x.percent+'%"></span></div><span>'+x.percent+'%</span></div>').join(""):'<div class="empty">بعد أول محاولة سيظهر أداء كل موضوع هنا.</div>'}
     </div>
 
-    <div class="card exam-admin-note"><strong>V3.32:</strong> بنك الأسئلة النهائي هو المصدر المركزي للاختبارات والتحليلات، وتُقرأ إحصائيات الأسئلة من المحاولات المسجلة.</div>
+    <div class="card exam-admin-note"><strong>V3.35:</strong> بنك الأسئلة النهائي هو المصدر المركزي للاختبارات والتحليلات، وتُقرأ إحصائيات الأسئلة من المحاولات المسجلة.</div>
     `;
   }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
