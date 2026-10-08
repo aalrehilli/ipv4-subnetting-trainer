@@ -24,6 +24,7 @@ function card(id,title,desc,badge,cls,action,stats,meta){
   const last=stats.last;
   return '<div class="lab-v37-card '+cls+'"><div class="lab-v37-icon">'+(id==="subnet"?"⌘":id==="flsm"?"4":"V")+'</div><div class="lab-v37-card-head"><span class="badge '+cls+'">'+badge+'</span><span class="muted">'+stats.attempts+' محاولة</span></div><h3>'+title+'</h3><p>'+desc+'</p><div class="lab-v37-meta"><span>'+meta[0]+'</span><span>'+meta[1]+'</span></div><div class="lab-v37-metrics"><div><small>متوسطك</small><strong>'+stats.avg+'%</strong></div><div><small>آخر نتيجة</small><strong>'+ (last?Number(last.percent||0)+"%":"—") +'</strong></div></div><button class="btn btn-'+(id==="vlsm"?"purple":id==="flsm"?"purple":"green")+'" data-lab-page="'+action+'">'+(stats.attempts?"استمرار التدريب":"ابدأ المختبر")+'</button></div>';
 }
+export function getLabStats(){return labStats();}
 export function labCenterView(){
   const s=labStats();
   const totalAttempts=s.subnet.attempts+s.flsm.attempts+s.vlsm.attempts;
