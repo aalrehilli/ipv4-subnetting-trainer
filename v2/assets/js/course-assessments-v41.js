@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=467";
+import {getSupabaseConfig} from "./supabase-v30.js?v=468";
 
 let clientPromise=null;
 async function client(){
@@ -219,7 +219,7 @@ export async function mountStudentCourseExams(container,courseId){
 export async function persistCourseExamAttempt(result){
   const attemptId=localStorage.getItem("ipv4AcademyV365Attempt")||"";
   if(!attemptId)return {ok:false,reason:"NO_CENTRAL_ATTEMPT"};
-  const m=await import("./supabase-v30.js?v=467");
+  const m=await import("./supabase-v30.js?v=468");
   return m.recordUnifiedExamAttempt({
     attemptId:String(attemptId),
     score:Number(result.score||0),
