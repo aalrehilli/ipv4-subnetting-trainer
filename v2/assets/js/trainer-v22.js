@@ -242,41 +242,6 @@ function studentsPage(filter="",group=""){
 }
 function student360(id){ return student360View(id); }
 
-function resultsCenterPage(){
-  const attempts=getExamAttempts("");
-  const pass=attempts.filter(x=>x.passed).length;
-  const avg=attempts.length?Math.round(attempts.reduce((s,x)=>s+x.percent,0)/attempts.length):0;
-  const studentsCount=new Set(attempts.map(x=>x.studentId||x.studentName)).size;
-  const examsCount=new Set(attempts.map(x=>x.exam)).size;
-  const latest=attempts[0]||null;
-  const fmtDate=x=>x?new Date(x).toLocaleString("ar-SA",{dateStyle:"short",timeStyle:"short"}):"—";
-  const status=x=>x.passed?"passed":"review";
-  return `
-  <div class="page-intro with-action"><div><span class="eyebrow purple">V3.34 • مركز النتائج</span><h2>مركز النتائج والتحليل</h2><p>استعرض جميع المحاولات المسجلة، قارن الأداء، وافتح مسار التحليل لكل اختبار.</p></div><div class="trainer-exam-head-actions"><span class="badge blue">نتائج فعلية</span><button class="btn btn-soft" data-results-export>تصدير CSV</button></div></div>
-  <div class="trainer-results-kpis">
-    <div class="card exam-admin-kpi"><span>إجمالي المحاولات</span><strong>${attempts.length}</strong><small>جميع الاختبارات</small></div>
-    <div class="card exam-admin-kpi success"><span>ناجحة</span><strong>${pass}</strong><small>نسبة النجاح ${attempts.length?Math.round(pass/attempts.length*100):0}%</small></div>
-    <div class="card exam-admin-kpi"><span>متوسط النتائج</span><strong>${avg}%</strong><small>من جميع المحاولات</small></div>
-    <div class="card exam-admin-kpi purple"><span>متدربون</span><strong>${studentsCount}</strong><small>ظهروا في النتائج</small></div>
-    <div class="card exam-admin-kpi warning"><span>اختبارات</span><strong>${examsCount}</strong><small>اختبارات لها محاولات</small></div>
-  </div>
-  <div class="card trainer-results-filter-card">
-    <div class="trainer-results-filters">
-      <label>بحث المتدرب<input id="results-search" placeholder="اسم المتدرب..."></label>
-      <label>الاختبار<select id="results-exam-filter"><option value="">كل الاختبارات</option>${[...new Set(attempts.map(x=>x.exam))].map(e=>"<option>"+esc(e)+"</option>").join("")}</select></label>
-      <label>الحالة<select id="results-status-filter"><option value="">كل الحالات</option><option value="passed">ناجح</option><option value="review">يحتاج مراجعة</option></select></label>
-      <label>المجموعة<select id="results-group-filter"><option value="">كل المجموعات</option>${[...new Set(attempts.map(x=>String(x.group||"1")))].sort().map(g=>"<option>"+esc(g)+"</option>").join("")}</select></label>
-    </div>
-  </div>
-  <div class="card exam-results-table-card">
-    <div class="exam-results-toolbar"><div><strong>${attempts.length} محاولة</strong><span class="muted">يتم تحديثها من طبقة النتائج الحالية</span></div><span class="badge green">${pass} ناجح</span></div>
-    <div class="table-scroll"><table class="table exam-results-table trainer-results-table"><thead><tr><th>المتدرب</th><th>المجموعة</th><th>الاختبار</th><th>النتيجة</th><th>الحالة</th><th>المحاولة</th><th>المدة</th><th>التسليم</th><th>التاريخ</th></tr></thead><tbody>
-    ${attempts.map(x=>{const m=Math.floor((x.durationSec||0)/60),s=String((x.durationSec||0)%60).padStart(2,"0");return "<tr data-results-row data-student=\""+esc(x.studentName||"")+" \" data-exam=\""+esc(x.exam||"")+" \" data-status=\""+status(x)+"\" data-group=\""+esc(String(x.group||"1"))+"\"><td><strong>"+esc(x.studentName||"—")+"</strong></td><td>"+esc(String(x.group||"1"))+"</td><td><small>"+esc(x.exam||"—")+"</small></td><td><strong class=\"exam-score-value\">"+x.percent+"%</strong></td><td><span class=\"badge "+(x.passed?"green":"orange")+"\">"+(x.passed?"ناجح":"يحتاج مراجعة")+"</span></td><td>"+x.attemptNo+"</td><td>"+m+":"+s+"</td><td>"+(x.autoSubmitted?"تلقائي":"يدوي")+"</td><td><small>"+fmtDate(x.submittedAt)+"</small></td></tr>"}).join("") || "<tr><td colspan=\"9\"><div class=\"empty\">لا توجد نتائج فعلية بعد.</div></td></tr>}    </tbody></table></div>
-  </div>
-  <div class="card trainer-results-note"><strong>معلومة:</strong> النتائج تعتمد على المحاولات المسجلة. مع تفعيل Supabase تصبح هذه الصفحة واجهة تقارير حقيقية للمدرب.</div>
-  `;
-}
-
 export function getTrainerView(page="tdash",filter="",id=null,group=""){
   if(page==="results")return resultsCenterPage();
   if(page==="students")return studentsPage(filter,group);
