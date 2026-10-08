@@ -1,5 +1,5 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
-import {refreshBank} from "./question-bank-v24.js?v=428";
+import {refreshBank} from "./question-bank-v24.js?v=429";
 
 const EXAM_KEY="ipv4AcademyV23Exam";
 const RESULT_KEY="ipv4AcademyV23ExamResult";
@@ -155,12 +155,18 @@ function hydrate(){
   const saved=loadSaved();
   if(!saved)return;
   const valid=saved.expiresAt && saved.expiresAt>Date.now();
-  if(saved.mode==="live" && valid){
+  if((saved.mode==="live" || saved.mode==="review") && valid){
     Object.assign(state,saved);
-    ensureTimer();
+    if(state.mode==="live")ensureTimer();
   }else if(saved.mode==="live"&&!valid){
     Object.assign(state,saved);
     submitExam(true);
+  }else if(saved.mode==="review"){
+    Object.assign(state,saved);
+    state.mode="intro";
+    state.answers={};
+    state.index=0;
+    clearState();
   }
 }
 
@@ -187,7 +193,8 @@ function stopTimer(){
 function startExam(){
   const cfg=getExamConfig();
   const attempts=getAttemptCount();
-  if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true};
+  if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
+  if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
   state.mode="live";
   state.index=0;
   state.answers={};
@@ -210,6 +217,11 @@ function prev(){
   if(state.index>0)state.index--;
   saveState();
 }
+function openReview(){
+  state.mode="review";
+  saveState();
+  stopTimer();
+}
 function scoreExam(){
   let correct=0;
   const topicMap={};
@@ -223,7 +235,7 @@ function scoreExam(){
   const percent=Math.round(correct/selectedQuestions().length*100);
   const topics=Object.entries(topicMap).map(([topic,x])=>({topic,percent:Math.round(x.correct/x.total*100),correct:x.correct,total:x.total})).sort((a,b)=>a.percent-b.percent);
   return {
-    exam:"IPv4 & Binary",
+    exam:getExamConfig().title,
     score:correct,
     total:selectedQuestions().length,
     percent,
@@ -266,7 +278,8 @@ function introPage(){
   const cfg=getExamConfig();
   const used=getAttemptCount();
   const limitText=cfg.attemptsLimit===0?"غير محدود":String(cfg.attemptsLimit);
-  const blocked=cfg.attemptsLimit>0&&used>=cfg.attemptsLimit;
+  const blocked=!cfg.published || (cfg.attemptsLimit>0&&used>=cfg.attemptsLimit);
+  const startLabel=!cfg.published?"بانتظار النشر":(cfg.attemptsLimit>0&&used>=cfg.attemptsLimit?"استُنفدت المحاولات":"بدء الاختبار");
   return `
   <div class="page-intro"><span class="eyebrow orange">04 • الاختبارات</span><h2>${esc(cfg.title)}</h2><p>اختبار تدريبي مُعد من بنك الأسئلة وفق إعدادات المدرب الحالية.</p></div>
   <div class="exam-start-layout">
@@ -280,12 +293,13 @@ function introPage(){
         <div>✓ تستطيع مراجعة إجاباتك قبل التسليم</div>
         <div>✓ بعد التسليم سيظهر تحليل الأخطاء والموضوعات</div>
       </div>
-      <button class="btn btn-primary" id="start-exam" ${blocked?"disabled":""}>${blocked?"استُنفدت المحاولات":"بدء الاختبار"}</button>
+      <button class="btn btn-primary" id="start-exam" ${blocked?"disabled":""}>${startLabel}</button>
     </div>
     <div class="card exam-preview-card">
       <span class="eyebrow blue">آخر نتيجة</span>
       ${result?'<div class="last-result-score">'+result.percent+'%</div><div class="muted">'+(result.passed?"ناجح ✅":"يحتاج مراجعة")+' • '+result.score+'/'+result.total+'</div>':'<div class="last-result-empty">لم تبدأ الاختبار بعد</div>'}
       <div class="exam-preview-divider"></div>
+      ${!cfg.published?'<div class="exam-publish-note">🔒 الاختبار محفوظ كمسودة وغير متاح للمتدربين حتى يقوم المدرب بنشره.</div>':""}
       <h3>ما الذي سنقيسه؟</h3>
       <div class="mini-topic-list">
         ${["IPv4","Binary","Prefix","Subnet Mask","FLSM","VLSM"].map(x=>'<span>'+x+'</span>').join("")}
@@ -328,6 +342,34 @@ function livePage(){
   </div>`;
 }
 
+function reviewPage(){
+  const list=selectedQuestions();
+  const unanswered=list.filter(q=>state.answers[q.id]===undefined);
+  const answered=list.length-unanswered.length;
+  return `
+  <div class="page-intro"><span class="eyebrow orange">الاختبار • مراجعة نهائية</span><h2>راجع إجاباتك قبل التسليم</h2><p>تأكد من الإجابات ثم اختر التسليم النهائي. يمكنك العودة لأي سؤال وتعديله.</p></div>
+  <div class="card exam-review-summary">
+    <div class="exam-review-stat"><span>إجابات</span><strong>${answered}</strong><small>من ${list.length}</small></div>
+    <div class="exam-review-stat warning"><span>بدون إجابة</span><strong>${unanswered.length}</strong><small>${unanswered.length?"يستحسن مراجعتها":"ممتاز"}</small></div>
+    <div class="exam-review-stat"><span>الوقت</span><strong>تم إيقاف المؤقت</strong><small>وقت المراجعة</small></div>
+  </div>
+  <div class="card exam-review-list-card">
+    <div class="exam-review-head"><div><span class="eyebrow blue">خريطة الاختبار</span><h3>الأسئلة</h3></div><span class="badge ${unanswered.length?"orange":"green"}">${unanswered.length?"توجد أسئلة غير مجابة":"كل الأسئلة مجابة"}</span></div>
+    <div class="exam-review-grid">
+      ${list.map((q,i)=>`
+        <button class="exam-review-row ${state.answers[q.id]===undefined?"unanswered":"answered"}" data-exam-review-jump="${i}">
+          <span>${i+1}</span>
+          <div><strong>السؤال ${i+1}</strong><small>${esc(q.topic)} • ${state.answers[q.id]===undefined?"بدون إجابة":"تمت الإجابة"}</small></div>
+          <b>${state.answers[q.id]===undefined?"—":"✓"}</b>
+        </button>`).join("")}
+    </div>
+    <div class="exam-review-actions">
+      <button class="btn btn-soft" id="exam-review-back">العودة للسؤال الحالي</button>
+      <button class="btn btn-orange" id="exam-review-submit">تسليم نهائي</button>
+    </div>
+    ${unanswered.length?'<div class="exam-review-warning">⚠️ لديك '+unanswered.length+' سؤال غير مجاب. التسليم سيحتسبها أخطاء.</div>':""}
+  </div>`;
+}
 function resultPage(){
   const r=state.result||loadResult();
   if(!r)return introPage();
@@ -360,24 +402,45 @@ export function examPage(){
   if(!state.result && !state.submitted)hydrate();
   if(state.mode==="live")ensureTimer();
   if(state.mode==="result")return resultPage();
+  if(state.mode==="review")return reviewPage();
   if(state.mode==="live")return livePage();
   return introPage();
 }
 
 export function handleExamAction(target){
-  if(target.id==="start-exam"){const started=startExam();return started?.blocked?{blocked:true}:{rerender:true}}
+  if(target.id==="start-exam"){
+    const started=startExam();
+    return started?.blocked?{blocked:true,message:started.reason}:{rerender:true};
+  }
   if(target.dataset.examAnswer!==undefined){
     answer(Number(target.dataset.examAnswer));
     return {rerender:true}
   }
   if(target.id==="exam-prev"){prev();return {rerender:true}}
   if(target.id==="exam-next"){
-    if(state.index===selectedQuestions().length-1){return {openSubmit:true}}
+    if(state.index===selectedQuestions().length-1){openReview();return {openReview:true}}
     next();return {rerender:true}
   }
   if(target.dataset.examJump!==undefined){state.index=Number(target.dataset.examJump);saveState();return {rerender:true}}
+  if(target.dataset.examReviewJump!==undefined){
+    state.mode="live";
+    state.index=Number(target.dataset.examReviewJump);
+    saveState();
+    ensureTimer();
+    return {rerender:true};
+  }
+  if(target.id==="exam-review-back"){
+    state.mode="live";
+    saveState();
+    ensureTimer();
+    return {rerender:true};
+  }
+  if(target.id==="exam-review-submit"){submitExam(false);return {rerender:true}}
   if(target.id==="submit-exam"){submitExam(false);return {rerender:true}}
-  if(target.dataset.examAction==="retry"){const started=startExam();return started?.blocked?{blocked:true}:{rerender:true}}
+  if(target.dataset.examAction==="retry"){
+    const started=startExam();
+    return started?.blocked?{blocked:true,message:started.reason}:{rerender:true}
+  }
   if(target.dataset.examAction==="review-mistakes"){return {review:true}}
   return null;
 }
