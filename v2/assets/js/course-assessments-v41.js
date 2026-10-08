@@ -55,6 +55,25 @@ function examRow(e,stats){
   '</div>';
 }
 
+function examFormHtml(exam){
+  const e=exam||{};
+  const ids=Array.isArray(e.questionIds)?e.questionIds.join(","):"";
+  return '<form class="card v41-exam-form" data-v41-exam-form data-v41-exam-id="'+esc(e.id||"")+'">'+
+      '<div class="grid-2">'+
+      '<label>عنوان الاختبار<input name="title" required value="'+esc(e.title||"")+'" placeholder="اختبار الوحدة الأولى"></label>'+
+      '<label>المدة بالدقائق<input name="durationMinutes" type="number" min="1" max="180" value="'+Number(e.durationMinutes||10)+'"></label>'+
+      '<label>نسبة الاجتياز<input name="passPercent" type="number" min="0" max="100" value="'+Number(e.passPercent||60)+'"></label>'+
+      '<label>عدد المحاولات<input name="attemptsLimit" type="number" min="0" value="'+Number(e.attemptsLimit===undefined?1:e.attemptsLimit)+'"></label>'+
+      '<label>طريقة اختيار الأسئلة<select name="selectionMode"><option value="manual" '+(e.selectionMode==="manual"||!e.selectionMode?"selected":"")+'>يدوي</option><option value="random" '+(e.selectionMode==="random"?"selected":"")+'>عشوائي</option></select></label>'+
+      '<label>عدد الأسئلة<input name="questionCount" type="number" min="1" max="100" value="'+Number(e.questionCount||10)+'"></label>'+
+      '<label>الصعوبة<select name="difficultyMode"><option value="all" '+(e.difficultyMode==="all"||!e.difficultyMode?"selected":"")+'>الكل</option><option value="easy" '+(e.difficultyMode==="easy"?"selected":"")+'>سهل</option><option value="medium" '+(e.difficultyMode==="medium"?"selected":"")+'>متوسط</option><option value="hard" '+(e.difficultyMode==="hard"?"selected":"")+'>متقدم</option></select></label>'+
+      '<label>حالة النشر<select name="published"><option value="false" '+(e.published===true?"":"selected")+'>مسودة</option><option value="true" '+(e.published===true?"selected":"")+'>منشور</option></select></label>'+
+      '</div>'+
+      '<label style="display:block;margin-top:10px">معرفات الأسئلة<input name="questionIds" value="'+esc(ids)+'" placeholder="1,2,3,4"></label>'+
+      '<div class="course-form-actions"><button class="btn btn-primary" type="submit">حفظ الاختبار</button><button class="btn btn-soft" type="button" data-v41-cancel>إلغاء</button></div>'+
+      '</form>';
+}
+
 export async function mountCourseAssessments(container,course){
   if(!container||!course)return;
   container.innerHTML='<section class="card v41-assessments"><div class="section-title"><div><span class="eyebrow orange">V3.41 • الاختبارات والأسئلة</span><h3>اختبارات المقرر</h3><p class="muted">اربط الاختبار بالمقرر أو الوحدة أو الدرس.</p></div><button class="btn btn-primary" data-v41-new-exam>+ اختبار جديد</button></div><div data-v41-exam-list><p class="muted">جاري تحميل الاختبارات…</p></div></section>';
@@ -88,31 +107,16 @@ export async function mountCourseAssessments(container,course){
 
   refreshStats().then(renderRows).catch(renderRows);
 
-  const newBtn=container.querySelector("[data-v41-new-exam]");
-  newBtn&&newBtn.addEventListener("click",function(){
+  async function openExamForm(exam){
     const box=container.querySelector("[data-v41-exam-list]");
     if(!box)return;
-    box.innerHTML=
-      '<form class="card v41-exam-form" data-v41-exam-form>'+
-      '<div class="grid-2">'+
-      '<label>عنوان الاختبار<input name="title" required placeholder="اختبار الوحدة الأولى"></label>'+
-      '<label>المدة بالدقائق<input name="durationMinutes" type="number" min="1" max="180" value="10"></label>'+
-      '<label>نسبة الاجتياز<input name="passPercent" type="number" min="0" max="100" value="60"></label>'+
-      '<label>عدد المحاولات<input name="attemptsLimit" type="number" min="0" value="1"></label>'+
-      '<label>طريقة اختيار الأسئلة<select name="selectionMode"><option value="manual">يدوي</option><option value="random">عشوائي</option></select></label>'+
-      '<label>عدد الأسئلة<input name="questionCount" type="number" min="1" max="100" value="10"></label>'+
-      '<label>الصعوبة<select name="difficultyMode"><option value="all">الكل</option><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></label>'+
-      '<label>حالة النشر<select name="published"><option value="false">مسودة</option><option value="true">منشور</option></select></label>'+
-      '</div>'+
-      '<label style="display:block;margin-top:10px">معرفات الأسئلة<input name="questionIds" placeholder="1,2,3,4"></label>'+
-      '<div class="course-form-actions"><button class="btn btn-primary" type="submit">حفظ الاختبار</button><button class="btn btn-soft" type="button" data-v41-cancel>إلغاء</button></div>'+
-      '</form>';
-
+    box.innerHTML=examFormHtml(exam);
     const form=box.querySelector("[data-v41-exam-form]");
     form.addEventListener("submit",async function(ev){
       ev.preventDefault();
       const d=new FormData(form);
       const payload={
+        id:String(form.getAttribute("data-v41-exam-id")||"")||undefined,
         courseId:String(course.id),
         title:String(d.get("title")||"").trim(),
         durationMinutes:Number(d.get("durationMinutes")||10),
@@ -131,10 +135,19 @@ export async function mountCourseAssessments(container,course){
       await refreshStats();
       renderRows();
     });
-    box.querySelector("[data-v41-cancel]")?.addEventListener("click",renderRows);
-  });
+    form.querySelector("[data-v41-cancel]")?.addEventListener("click",renderRows);
+  }
+
+  const newBtn=container.querySelector("[data-v41-new-exam]");
+  newBtn&&newBtn.addEventListener("click",function(){openExamForm(null);});
 
   container.addEventListener("click",async function(ev){
+    const edit=ev.target.closest("[data-v41-edit-exam]");
+    if(edit){
+      const exam=rows.find(function(x){return String(x.id)===String(edit.getAttribute("data-v41-edit-exam"));});
+      if(exam)openExamForm(exam);
+      return;
+    }
     const del=ev.target.closest("[data-v41-delete-exam]");
     if(del){
       if(!window.confirm("هل تريد حذف الاختبار؟"))return;
