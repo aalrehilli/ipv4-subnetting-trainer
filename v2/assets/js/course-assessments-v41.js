@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=443";
+import {getSupabaseConfig} from "./supabase-v30.js?v=465";
 
 let clientPromise=null;
 async function client(){
