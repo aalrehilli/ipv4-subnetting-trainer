@@ -1,4 +1,4 @@
-// IPv4 Academy V3.54 — Supabase public client configuration
+// IPv4 Academy V3.55 — Supabase public client configuration
 // This file contains only the browser-safe Project URL and Publishable/Anon key.
 // Never place a service_role key here.
 export const SUPABASE_URL="https://cvakitsdwxkksxemdhxj.supabase.co";
