@@ -313,7 +313,7 @@
     try{
       const m=await import("./course-supabase-v39.js?v=439");
       if(role==="trainer"){
-        const result=await m.pullCentralCourses();
+        const result=await m.pullCentralCourses({preserveOnEmpty:true});
         centralReady=true;
         if(result.ok&&result.count){
           const btn=document.querySelector('.sidebar [data-page="courses"]');
