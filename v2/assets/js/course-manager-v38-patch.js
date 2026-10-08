@@ -57,7 +57,12 @@
 
   function captureAll(){
     const current=readCourses();
-    if(current.length) localStorage.setItem(BACKUP_KEY,JSON.stringify(current));
+    if(!current.length)return;
+    try{
+      const existing=JSON.parse(localStorage.getItem(BACKUP_KEY)||"null");
+      if(Array.isArray(existing)&&existing.length&&!trainerMode())return;
+    }catch(e){}
+    localStorage.setItem(BACKUP_KEY,JSON.stringify(current));
   }
 
   function restoreAll(){
