@@ -1,0 +1,128 @@
+import {getSupabaseConfig} from "./supabase-v30.js?v=439";
+
+let clientPromise=null;
+async function client(){
+  if(clientPromise)return clientPromise;
+  clientPromise=import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm").then(function(m){
+    const c=getSupabaseConfig();
+    if(!c.url||!c.anonKey)return null;
+    return m.createClient(c.url,c.anonKey);
+  }).catch(function(){return null;});
+  return clientPromise;
+}
+async function rpc(name,args){
+  const c=await client();
+  if(!c)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const session=await c.auth.getSession();
+  if(!session?.data?.session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await c.rpc(name,args||{});
+  if(error)return {ok:false,error:error.message};
+  return {ok:true,data};
+}
+function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function activeCourseId(courseId){return String(courseId||"");}
+
+export async function listCourseExams(courseId){
+  const r=await rpc("academy_course_exams",{p_course_id:activeCourseId(courseId)});
+  return r.ok?{ok:true,rows:Array.isArray(r.data)?r.data:[]}:r;
+}
+
+export async function saveCourseExam(exam){
+  return rpc("academy_save_course_exam",{p_exam:exam});
+}
+
+export async function deleteCourseExam(id){
+  return rpc("academy_delete_course_exam",{p_id:id});
+}
+
+export async function listQuestionLinks(courseId){
+  const r=await rpc("academy_course_question_links",{p_course_id:activeCourseId(courseId)});
+  return r.ok?{ok:true,rows:Array.isArray(r.data)?r.data:[]}:r;
+}
+
+export async function saveQuestionLink(link){
+  return rpc("academy_save_course_question_link",{p_link:link});
+}
+
+function examRow(e){
+  const published=e.published===true;
+  return '<div class="card v41-exam-row">'+
+    '<div><span class="badge '+(published?"green":"orange")+'">'+(published?"منشور":"مسودة")+'</span><h3>'+esc(e.title)+'</h3>'+
+    '<p class="muted">'+Number(e.durationMinutes||10)+' دقيقة • '+Number(e.questionCount||0)+' سؤال • اجتياز '+Number(e.passPercent||0)+'% • '+(Number(e.attemptsLimit||0)===0?"محاولات غير محدودة":Number(e.attemptsLimit)+" محاولة")+'</p></div>'+
+    '<div class="v41-exam-actions"><button class="btn btn-soft mini-btn" data-v41-delete-exam="'+esc(e.id)+'">حذف</button><button class="btn btn-primary mini-btn" data-v41-edit-exam="'+esc(e.id)+'">تعديل</button></div>'+
+  '</div>';
+}
+
+export async function mountCourseAssessments(container,course){
+  if(!container||!course)return;
+  container.innerHTML='<section class="card v41-assessments"><div class="section-title"><div><span class="eyebrow orange">V3.41 • الاختبارات والأسئلة</span><h3>اختبارات المقرر</h3><p class="muted">اربط الاختبار بالمقرر أو الوحدة أو الدرس.</p></div><button class="btn btn-primary" data-v41-new-exam>+ اختبار جديد</button></div><div data-v41-exam-list><p class="muted">جاري تحميل الاختبارات…</p></div></section>';
+
+  let result=await listCourseExams(course.id);
+  let rows=result.ok?result.rows:[];
+
+  function renderRows(){
+    const list=container.querySelector("[data-v41-exam-list]");
+    if(!list)return;
+    list.innerHTML=rows.length?rows.map(examRow).join(""):'<div class="empty">لا توجد اختبارات مرتبطة بهذا المقرر بعد.</div>';
+  }
+
+  renderRows();
+
+  const newBtn=container.querySelector("[data-v41-new-exam]");
+  newBtn&&newBtn.addEventListener("click",function(){
+    const box=container.querySelector("[data-v41-exam-list]");
+    if(!box)return;
+    box.innerHTML=
+      '<form class="card v41-exam-form" data-v41-exam-form>'+
+      '<div class="grid-2">'+
+      '<label>عنوان الاختبار<input name="title" required placeholder="اختبار الوحدة الأولى"></label>'+
+      '<label>المدة بالدقائق<input name="durationMinutes" type="number" min="1" max="180" value="10"></label>'+
+      '<label>نسبة الاجتياز<input name="passPercent" type="number" min="0" max="100" value="60"></label>'+
+      '<label>عدد المحاولات<input name="attemptsLimit" type="number" min="0" value="1"></label>'+
+      '<label>طريقة اختيار الأسئلة<select name="selectionMode"><option value="manual">يدوي</option><option value="random">عشوائي</option></select></label>'+
+      '<label>عدد الأسئلة<input name="questionCount" type="number" min="1" max="100" value="10"></label>'+
+      '<label>الصعوبة<select name="difficultyMode"><option value="all">الكل</option><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">متقدم</option></select></label>'+
+      '<label>حالة النشر<select name="published"><option value="false">مسودة</option><option value="true">منشور</option></select></label>'+
+      '</div>'+
+      '<label style="display:block;margin-top:10px">معرفات الأسئلة<input name="questionIds" placeholder="1,2,3,4"></label>'+
+      '<div class="course-form-actions"><button class="btn btn-primary" type="submit">حفظ الاختبار</button><button class="btn btn-soft" type="button" data-v41-cancel>إلغاء</button></div>'+
+      '</form>';
+
+    const form=box.querySelector("[data-v41-exam-form]");
+    form.addEventListener("submit",async function(ev){
+      ev.preventDefault();
+      const d=new FormData(form);
+      const payload={
+        courseId:String(course.id),
+        title:String(d.get("title")||"").trim(),
+        durationMinutes:Number(d.get("durationMinutes")||10),
+        passPercent:Number(d.get("passPercent")||60),
+        attemptsLimit:Number(d.get("attemptsLimit")||1),
+        selectionMode:String(d.get("selectionMode")||"manual"),
+        questionCount:Number(d.get("questionCount")||10),
+        difficultyMode:String(d.get("difficultyMode")||"all"),
+        published:String(d.get("published"))==="true",
+        questionIds:String(d.get("questionIds")||"").split(",").map(function(x){return x.trim();}).filter(Boolean)
+      };
+      const saved=await saveCourseExam(payload);
+      if(!saved.ok){window.alert(saved.error||saved.reason||"تعذر حفظ الاختبار.");return;}
+      const latest=await listCourseExams(course.id);
+      rows=latest.ok?latest.rows:rows;
+      renderRows();
+    });
+    box.querySelector("[data-v41-cancel]")?.addEventListener("click",renderRows);
+  });
+
+  container.addEventListener("click",async function(ev){
+    const del=ev.target.closest("[data-v41-delete-exam]");
+    if(del){
+      if(!window.confirm("هل تريد حذف الاختبار؟"))return;
+      const r=await deleteCourseExam(del.getAttribute("data-v41-delete-exam"));
+      if(r.ok){
+        const latest=await listCourseExams(course.id);
+        rows=latest.ok?latest.rows:rows;
+        renderRows();
+      }else window.alert(r.error||r.reason||"تعذر الحذف.");
+    }
+  });
+}
