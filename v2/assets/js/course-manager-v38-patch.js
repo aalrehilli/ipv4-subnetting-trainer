@@ -170,9 +170,19 @@
       visibility.insertAdjacentHTML("afterend",'<div data-v40-roster data-v40-course-id="'+esc(c.id)+'" style="margin-top:14px"></div>');
       const box=document.querySelector("[data-v40-roster]");
       import("./course-roster-v40.js?v=440").then(function(m){
-        if(typeof m.mountCourseRoster==="function")m.mountCourseRoster(box,String(c.id));
+        if(typeof m.mountCourseRoster==="function")return m.mountCourseRoster(box,String(c.id));
+      }).then(function(){
+        return import("./course-assessments-v41.js?v=441");
+      }).then(function(m){
+        if(typeof m.mountCourseAssessments==="function"){
+          const assessments=document.createElement("div");
+          assessments.setAttribute("data-v41-assessments","1");
+          assessments.style.marginTop="14px";
+          box.parentElement.appendChild(assessments);
+          m.mountCourseAssessments(assessments,c);
+        }
       }).catch(function(error){
-        if(box)box.innerHTML='<div class="card"><p class="muted">تعذر تحميل متدربي المقرر: '+esc(error&&error.message||error)+'</p></div>';
+        if(box)box.innerHTML+='<div class="card" style="margin-top:12px"><p class="muted">تعذر تحميل مكونات المقرر: '+esc(error&&error.message||error)+'</p></div>';
       });
     }
   }
