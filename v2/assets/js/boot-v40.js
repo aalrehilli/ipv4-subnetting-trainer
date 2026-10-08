@@ -123,7 +123,7 @@ async function loadPage(){
     }
 
     if(state.role==="student"){
-      var student=await import("./student.js?v=417");
+      var student=await import("./student.js?v=428");
       student.studentState.page=state.page;
       return student.studentPage();
     }
