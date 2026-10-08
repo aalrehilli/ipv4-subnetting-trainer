@@ -148,6 +148,9 @@ function getAttemptCount(){return getExamAttempts().filter(x=>x.studentId===getS
 function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setItem(EXAM_ATTEMPT_KEY,String(n));return n}
 function selectedQuestions(){
   const cfg=getExamConfig();
+  if((state.mode==="live"||state.mode==="review") && Array.isArray(state.centralQuestions) && state.centralQuestions.length){
+    return state.centralQuestions;
+  }
   const source=availableQuestions();
   const ids=(state.mode==="live"||state.mode==="review")&&Array.isArray(state.questionIds)&&state.questionIds.length?state.questionIds:cfg.questionIds;
   const list=ids.map(id=>source.find(q=>Number(q.id)===Number(id))).filter(Boolean);
@@ -178,7 +181,9 @@ const state={
   submitted:false,
   result:null,
   centralAttemptId:null,
-  centralAttemptNo:null
+  centralAttemptNo:null,
+  centralExamId:null,
+  centralQuestions:[]
 };
 
 let timer=null;
@@ -190,7 +195,7 @@ function saveState(){
   localStorage.setItem(EXAM_KEY,JSON.stringify({
     mode:state.mode,index:state.index,answers:state.answers,
     questionIds:state.questionIds,optionOrders:state.optionOrders,
-    startedAt:state.startedAt,expiresAt:state.expiresAt,centralAttemptId:state.centralAttemptId,centralAttemptNo:state.centralAttemptNo
+    startedAt:state.startedAt,expiresAt:state.expiresAt,centralAttemptId:state.centralAttemptId,centralAttemptNo:state.centralAttemptNo,centralExamId:state.centralExamId,centralQuestions:state.centralQuestions
   }));
 }
 function clearState(){
@@ -220,6 +225,8 @@ function hydrate(){
     Object.assign(state,saved);
     state.centralAttemptId=saved.centralAttemptId||null;
     state.centralAttemptNo=saved.centralAttemptNo||null;
+    state.centralExamId=saved.centralExamId||null;
+    state.centralQuestions=Array.isArray(saved.centralQuestions)?saved.centralQuestions:[];
     state.questionIds=Array.isArray(saved.questionIds)?saved.questionIds.map(Number):[];
     state.optionOrders=saved.optionOrders||{};
     if((state.mode==="live"||state.mode==="review")&&!state.questionIds.length){
@@ -290,6 +297,19 @@ async function startExam(){
   state.result=null;
   state.centralAttemptId=central&&central.ok?String(central.data?.attemptId||""):null;
   state.centralAttemptNo=central&&central.ok?Number(central.data?.attemptNo||0):null;
+  state.centralExamId=courseExamId || localStorage.getItem("ipv4AcademyV365ExamId") || (central&&central.data?.examId?String(central.data.examId):"");
+  state.centralQuestions=[];
+  if(state.centralAttemptId && state.centralExamId){
+    try{
+      const qset=await fetchCentralExamQuestions(state.centralExamId);
+      if(qset.ok && qset.rows.length){
+        state.centralQuestions=qset.rows.map(function(q){
+          return {...q,id:String(q.id),opts:Array.isArray(q.opts)?q.opts:[],options:Array.isArray(q.options)?q.options:[]};
+        });
+        state.questionIds=state.centralQuestions.map(q=>q.id);
+      }
+    }catch(e){}
+  }
   if(state.centralAttemptId)localStorage.setItem(CENTRAL_ATTEMPT_KEY,state.centralAttemptId);
   saveState();
   ensureTimer();
@@ -344,28 +364,34 @@ function scoreExam(){
 }
 async function submitExam(auto=false){
   if(state.mode!=="live")return;
-  const result=scoreExam();
+  let result=scoreExam();
   result.autoSubmitted=auto;
-  saveAttemptRecord(result);
-  state.result=result;
 
   if(state.centralAttemptId){
     try{
-      const central=await recordUnifiedExamAttempt({
+      const centralPayload={
         attemptId:state.centralAttemptId,
-        score:Number(result.score||0),
-        total:Number(result.total||0),
-        percent:Number(result.percent||0),
-        passed:!!result.passed,
         durationSec:Number(result.durationSec||0),
         autoSubmitted:!!result.autoSubmitted,
-        questionResults:Array.isArray(result.questionResults)?result.questionResults:[]
-      });
-      if(!central.ok)localStorage.setItem("ipv4AcademySupabaseLastSyncError",String(central.error||central.reason||"تعذر تسجيل المحاولة المركزية."));
+        questionResults:selectedQuestions().map(function(q){
+          return {id:String(q.id),selected:state.answers[q.id]===undefined?null:Number(state.answers[q.id])};
+        })
+      };
+      const central=await recordUnifiedExamAttempt(centralPayload);
+      if(central.ok && central.data){
+        result={...result,score:Number(central.data.score||0),total:Number(central.data.total||0),
+          percent:Number(central.data.percent||0),passed:central.data.passed===true,
+          topics:Array.isArray(central.data.topics)?central.data.topics:result.topics};
+      }else{
+        localStorage.setItem("ipv4AcademySupabaseLastSyncError",String(central.error||central.reason||"تعذر تسجيل المحاولة المركزية."));
+      }
     }catch(error){
       localStorage.setItem("ipv4AcademySupabaseLastSyncError",String(error&&error.message||error));
     }
   }
+
+  saveAttemptRecord(result);
+  state.result=result;
 
   state.mode="result";
   state.submitted=true;
@@ -391,6 +417,8 @@ function resetExam(){
   state.result=null;
   state.centralAttemptId=null;
   state.centralAttemptNo=null;
+  state.centralExamId=null;
+  state.centralQuestions=[];
 }
 
 function introPage(){
