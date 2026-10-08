@@ -151,7 +151,7 @@ with course_lessons as (
 student_rows as (
   select
     p.id,
-    coalesce(nullif(trim(p.full_name),''),p.email,'متدرب') student_name,
+    coalesce(nullif(trim(p.full_name),''),'متدرب') student_name,
     coalesce(nullif(trim(p.group_no::text),''),'—') group_no,
     coalesce(p.is_active,true) is_active
   from public.profiles p
