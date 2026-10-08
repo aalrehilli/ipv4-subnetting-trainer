@@ -1,7 +1,7 @@
 import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
-const QUESTION_KEY="ipv4AcademyV24QuestionBank";
+const QUESTION_KEY="ipv4AcademyV32QuestionBank";
 const ATTEMPTS_KEY="ipv4AcademyV327Attempts";
 
 let clientPromise=null;
