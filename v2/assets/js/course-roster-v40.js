@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=451";
+import {getSupabaseConfig} from "./supabase-v30.js?v=454";
 
 let clientPromise=null;
 
@@ -109,7 +109,7 @@ export async function mountCourseRoster(container,courseId){
         const status=form.querySelector("[data-v51-status]");
         try{
           const data=new FormData(form);
-          const m=await import("./supabase-v30.js?v=451");
+          const m=await import("./supabase-v30.js?v=454");
           m.setSupabaseConfig(String(data.get("url")||"").trim(),String(data.get("anonKey")||"").trim());
           const state=await m.getSupabaseStatus();
           if(status)status.textContent=state.message||"تم الحفظ.";
