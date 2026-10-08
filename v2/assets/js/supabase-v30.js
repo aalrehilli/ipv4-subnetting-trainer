@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=455";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -199,4 +199,24 @@ export async function persistAttemptToSupabase(result,answers,selectedQuestions)
     if(error)throw error;
   }
   return {ok:true,attemptId:attempt.id};
+}
+
+
+export async function signInWithPassword(email,password){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const result=await client.auth.signInWithPassword({
+    email:String(email||"").trim(),
+    password:String(password||"")
+  });
+  if(result.error)return {ok:false,error:result.error.message};
+  return {ok:true,session:result.data.session,user:result.data.user};
+}
+
+export async function signOut(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {error}=await client.auth.signOut();
+  if(error)return {ok:false,error:error.message};
+  return {ok:true};
 }
