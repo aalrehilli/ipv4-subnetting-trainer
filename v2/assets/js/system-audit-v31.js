@@ -1,7 +1,7 @@
 const CORE_CHECKS=[
-  {name:"صفحة المقرر",path:"./course-learning-v38.js?v=431",exports:["learnerCourse","lessonPage","assessmentView","handleLearningAction","submitLessonAssessment"]},
+  {name:"صفحة المقرر",path:"./course-learning-v38.js?v=432",exports:["learnerCourse","lessonPage","assessmentView","handleLearningAction","submitLessonAssessment"]},
   {name:"محرك الاختبارات",path:"./exam-v23.js?v=430",exports:["examPage","handleExamAction","getTrainerExamConfig","saveTrainerExamBuilderFromForm","getExamPreviewQuestions","getExamAttempts","getQuestionAnalytics"]},
-  {name:"بنك الأسئلة",path:"./question-bank-v24.js?v=430",exports:["questionBankView","refreshBank","getQuestionBank","handleQuestionBankAction"]},
+  {name:"بنك الأسئلة",path:"./question-bank-v32.js?v=430",exports:["questionBankView","refreshBank","getQuestionBank","handleQuestionBankAction"]},
   {name:"لوحة المدرب",path:"./trainer-v22.js?v=430",exports:["getTrainerView"]},
   {name:"منصة المتدرب",path:"./student.js?v=430",exports:["studentPage"]},
   {name:"المختبر Subnetting",path:"./subnet-lab-v25.js",exports:["labPage"]},
@@ -88,7 +88,7 @@ export async function auditView(){
   const report=await runPlatformAudit();
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">V3.31 • تدقيق المنصة</span><h2>مركز صحة النظام</h2><p>فحص عقود الوحدات ومسارات التشغيل والتخزين المحلي وحالة Supabase قبل الانتقال للمرحلة التالية.</p></div>
+    <div><span class="eyebrow purple">V3.32 • تدقيق المنصة</span><h2>مركز صحة النظام</h2><p>فحص عقود الوحدات ومسارات التشغيل والتخزين المحلي وحالة Supabase قبل الانتقال للمرحلة التالية.</p></div>
     <div><span class="badge ${report.summary.error?"red":report.summary.warning?"orange":"green"}">${report.summary.ok}/${report.summary.total} وحدات سليمة</span></div>
   </div>
 
@@ -123,7 +123,7 @@ export async function auditView(){
   </div>
 
   <div class="card" style="margin-top:12px">
-    <strong>قاعدة V3.31</strong>
+    <strong>قاعدة V3.32</strong>
     <p class="muted" style="margin:5px 0 0;line-height:1.8">لا ننتقل إلى الحسابات حتى تكون عقود الوحدات الأساسية سليمة. أي تحذير هنا يعالج أولًا، ثم ينتقل البناء إلى بنك الأسئلة ومحرك الاختبارات ومركز النتائج بشكل متسلسل.</p>
   </div>
   `;
