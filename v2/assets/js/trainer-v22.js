@@ -304,8 +304,8 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
     const easiestQuestion=questionAnalytics.filter(x=>x.total>0).sort((x,y)=>y.accuracy-x.accuracy)[0]||null;
     return `
     <div class="page-intro with-action">
-      <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات ونتائج المتدربين</h2><p>أنشئ الاختبار، راقب الإعدادات، ثم راجع نتائج جميع المتدربين واتخذ الإجراء المناسب.</p></div>
-      <div class="trainer-exam-head-actions"><span class="badge orange">V3.28</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
+      <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات ونتائج المتدربين</h2><p>أنشئ الاختبار، راقب الإعدادات، ثم راجع نتائج جميع المتدربين واتخذ الإجراء المناسب.</p><small class="muted">${window.__IPV4_SUPABASE_STATUS__?.message||"Supabase غير متصل — البيانات المحلية تعمل كنسخة احتياطية."}</small></div>
+      <div class="trainer-exam-head-actions"><span class="badge purple">V3.30</span><span class="badge" data-supabase-status>Supabase</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
     </div>
 
     <div class="trainer-exam-kpis">
@@ -430,7 +430,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       ${getExamPreviewQuestions().length>8?'<div class="qbank-import-more">يظهر أول 8 أسئلة فقط في المعاينة، وسيظهر كامل الاختبار للمتدرب.</div>':''}
     </div>
 
-    <div class="section-title"><h3>V3.28 • تحليل مستوى كل سؤال</h3><span class="badge purple">${questionAnalytics.filter(x=>x.total>0).length} سؤال تم تحليله</span></div>
+    <div class="section-title"><h3>V3.29 • تحليل مستوى كل سؤال وربط بنك الأسئلة</h3><span class="badge purple">${questionAnalytics.filter(x=>x.total>0).length} سؤال تم تحليله</span></div>
     <div class="card question-analytics-summary">
       <div><span>أصعب سؤال</span><strong>${hardestQuestion?hardestQuestion.accuracy:0}%</strong><small>${hardestQuestion?esc(hardestQuestion.question):"لا توجد محاولات بعد"}</small></div>
       <div><span>أفضل سؤال</span><strong>${easiestQuestion?easiestQuestion.accuracy:0}%</strong><small>${easiestQuestion?esc(easiestQuestion.question):"لا توجد محاولات بعد"}</small></div>
