@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=460";
+import {getSupabaseConfig} from "./supabase-v30.js?v=461";
 
 const COURSES_KEY="ipv4AcademyV36Courses";
 const BACKUP_KEY="ipv4AcademyV38AllCourses";
@@ -189,6 +189,13 @@ export async function recordLessonProgress(courseId,unitId,lessonId,completed,sc
   return {...result,central:false,queued:queue.length};
 }
 
+export async function getMyCourseProgress(courseId){
+  const result=await rpc("academy_course_my_progress",{p_course_id:String(courseId)});
+  if(!result.ok)return result;
+  const rows=Array.isArray(result.data)?result.data:[];
+  return {ok:true,rows};
+}
+
 export async function getCourseRoster(courseId,group){
   const result=await rpc("academy_course_student_roster",{
     p_course_id:String(courseId),
@@ -216,7 +223,7 @@ export function getLocalCourseProgress(courseId){
 }
 
 export async function getCourseConnectionState(){
-  const {getSupabaseStatus}=await import("./supabase-v30.js?v=460");
+  const {getSupabaseStatus}=await import("./supabase-v30.js?v=461");
   return getSupabaseStatus();
 }
 
