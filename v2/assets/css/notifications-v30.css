@@ -526,3 +526,20 @@
 .trainer-v36-main-grid{align-items:start}.trainer-v36-topic-list,.trainer-v36-latest{display:grid;gap:8px}.trainer-v36-note{margin-top:12px;background:#f5f9fc;border-right:4px solid var(--primary);font-size:11px;line-height:1.9}
 @media(max-width:1100px){.trainer-v36-kpis{grid-template-columns:repeat(3,1fr)}.trainer-v36-command-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.trainer-v36-kpis,.trainer-v36-command-grid{grid-template-columns:1fr}.trainer-command-card{min-height:auto}}
+
+
+/* V3.37 Unified Practical Labs */
+.lab-v37-kpis{margin-top:14px}
+.lab-v37-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.lab-v37-card{display:flex;flex-direction:column;gap:10px;padding:18px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:var(--shadow);min-height:340px}
+.lab-v37-card.green{border-top:4px solid var(--green)}.lab-v37-card.purple{border-top:4px solid var(--purple)}
+.lab-v37-card.lab-v37-disabled{opacity:.78;background:#fafbfd}
+.lab-v37-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:20px;font-weight:900;background:#edf6ff;color:var(--primary)}
+.lab-v37-card.green .lab-v37-icon{background:#eaf8ef;color:var(--green)}.lab-v37-card.purple .lab-v37-icon{background:#f2edfa;color:var(--purple)}
+.lab-v37-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.lab-v37-card h3{margin:0;font-size:17px}.lab-v37-card p{margin:0;color:var(--muted);line-height:1.9;min-height:70px;font-size:11px}
+.lab-v37-meta{display:flex;gap:8px;flex-wrap:wrap}.lab-v37-meta span{padding:6px 9px;background:#f6f8fa;border-radius:9px;font-size:10px;color:var(--muted)}
+.lab-v37-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}.lab-v37-metrics>div{padding:10px;border-radius:11px;background:#f7f9fb;display:grid;gap:3px}.lab-v37-metrics small{font-size:9px;color:var(--muted)}.lab-v37-metrics strong{font-size:18px;color:var(--primary-2)}
+.lab-v37-flow{margin-top:12px}.lab-v37-flow .card{border-top:3px solid var(--primary)}
+.lab-v37-note{margin-top:12px;background:#f5f9fc;border-right:4px solid var(--green);line-height:1.9;font-size:11px}
+@media(max-width:1000px){.lab-v37-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.lab-v37-grid{grid-template-columns:1fr}.lab-v37-card{min-height:auto}}
