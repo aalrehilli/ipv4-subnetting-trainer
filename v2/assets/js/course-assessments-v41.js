@@ -44,11 +44,13 @@ export async function saveQuestionLink(link){
   return rpc("academy_save_course_question_link",{p_link:link});
 }
 
-function examRow(e){
+function examRow(e,stats){
   const published=e.published===true;
+  const s=stats||{count:0,avg:0,passed:0};
   return '<div class="card v41-exam-row">'+
     '<div><span class="badge '+(published?"green":"orange")+'">'+(published?"منشور":"مسودة")+'</span><h3>'+esc(e.title)+'</h3>'+
-    '<p class="muted">'+Number(e.durationMinutes||10)+' دقيقة • '+Number(e.questionCount||0)+' سؤال • اجتياز '+Number(e.passPercent||0)+'% • '+(Number(e.attemptsLimit||0)===0?"محاولات غير محدودة":Number(e.attemptsLimit)+" محاولة")+'</p></div>'+
+    '<p class="muted">'+Number(e.durationMinutes||10)+' دقيقة • '+Number(e.questionCount||0)+' سؤال • اجتياز '+Number(e.passPercent||0)+'% • '+(Number(e.attemptsLimit||0)===0?"محاولات غير محدودة":Number(e.attemptsLimit)+" محاولة")+'</p>'+
+    '<small class="muted">المحاولات: '+s.count+' • متوسط: '+s.avg+'% • الناجحون: '+s.passed+'</small></div>'+
     '<div class="v41-exam-actions"><button class="btn btn-soft mini-btn" data-v41-delete-exam="'+esc(e.id)+'">حذف</button><button class="btn btn-primary mini-btn" data-v41-edit-exam="'+esc(e.id)+'">تعديل</button></div>'+
   '</div>';
 }
@@ -59,14 +61,32 @@ export async function mountCourseAssessments(container,course){
 
   let result=await listCourseExams(course.id);
   let rows=result.ok?result.rows:[];
+  let statsByExam={};
+
+  async function refreshStats(){
+    statsByExam={};
+    const all=await Promise.all(rows.map(async function(e){
+      try{
+        const r=await listCourseExamAttempts(course.id,e.id);
+        if(!r.ok||!Array.isArray(r.data))return;
+        const a=r.data;
+        statsByExam[String(e.id)]={
+          count:a.length,
+          avg:a.length?Math.round(a.reduce(function(s,x){return s+Number(x.percent||0);},0)/a.length):0,
+          passed:a.filter(function(x){return x.passed===true;}).length
+        };
+      }catch(error){}
+    }));
+    return all;
+  }
 
   function renderRows(){
     const list=container.querySelector("[data-v41-exam-list]");
     if(!list)return;
-    list.innerHTML=rows.length?rows.map(examRow).join(""):'<div class="empty">لا توجد اختبارات مرتبطة بهذا المقرر بعد.</div>';
+    list.innerHTML=rows.length?rows.map(function(e){return examRow(e,statsByExam[String(e.id)]);}).join(""):'<div class="empty">لا توجد اختبارات مرتبطة بهذا المقرر بعد.</div>';
   }
 
-  renderRows();
+  refreshStats().then(renderRows).catch(renderRows);
 
   const newBtn=container.querySelector("[data-v41-new-exam]");
   newBtn&&newBtn.addEventListener("click",function(){
@@ -108,6 +128,7 @@ export async function mountCourseAssessments(container,course){
       if(!saved.ok){window.alert(saved.error||saved.reason||"تعذر حفظ الاختبار.");return;}
       const latest=await listCourseExams(course.id);
       rows=latest.ok?latest.rows:rows;
+      await refreshStats();
       renderRows();
     });
     box.querySelector("[data-v41-cancel]")?.addEventListener("click",renderRows);
@@ -121,6 +142,7 @@ export async function mountCourseAssessments(container,course){
       if(r.ok){
         const latest=await listCourseExams(course.id);
         rows=latest.ok?latest.rows:rows;
+        await refreshStats();
         renderRows();
       }else window.alert(r.error||r.reason||"تعذر الحذف.");
     }
