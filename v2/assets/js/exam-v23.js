@@ -8,7 +8,8 @@ const WEAK_KEY="ipv4AcademyV23WeakTopics";
 const EXAM_CONFIG_KEY="ipv4AcademyV317ExamConfig";
 const EXAM_ATTEMPT_KEY="ipv4AcademyV317Attempts";
 const ATTEMPTS_KEY="ipv4AcademyV327Attempts";
-const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1,selectionMode:"manual",questionCount:10,difficultyMode:"all",topicTargets:{},published:false,updatedAt:null};
+const EXAM_ENGINE_VERSION=333;
+const DEFAULT_CONFIG={title:"IPv4 & Binary",questionIds:questions.map(q=>q.id),durationMin:5,passPercent:60,attemptsLimit:1,selectionMode:"manual",questionCount:10,difficultyMode:"all",topicTargets:{},published:false,updatedAt:null,shuffleQuestions:true,shuffleOptions:true,version:333};
 function availableQuestions(){return refreshBank().filter(q=>q.active!==false).map(q=>({...q,opts:Array.isArray(q.opts)?q.opts:[...(q.options||[])]}))}
 function defaultQuestionIds(){return availableQuestions().map(q=>Number(q.id)).filter(Number.isFinite)}
 function shuffle(list){
@@ -44,6 +45,8 @@ export function saveTrainerExamBuilderFromForm(form){
   const mode=form.querySelector('[name="selectionMode"]')?.value||current.selectionMode;
   const count=Math.max(1,Math.min(100,Number(form.querySelector('[name="questionCount"]')?.value||current.questionCount||10)));
   const difficultyMode=form.querySelector('[name="difficultyMode"]')?.value||current.difficultyMode||"all";
+  const shuffleQuestions=form.querySelector('[name="shuffleQuestions"]')?.checked!==false;
+  const shuffleOptions=form.querySelector('[name="shuffleOptions"]')?.checked!==false;
   const targets={};
   form.querySelectorAll('[data-topic-target]').forEach(el=>{
     const v=Math.max(0,Math.min(100,Number(el.value)||0));
@@ -51,7 +54,7 @@ export function saveTrainerExamBuilderFromForm(form){
   });
   const manual=[...form.querySelectorAll('input[name="questionIds"]:checked')].map(x=>Number(x.value));
   const ids=mode==="random"?buildAutoQuestionIds(count,difficultyMode,targets):Array.from(new Set(manual)).filter(id=>availableQuestions().some(q=>Number(q.id)===id)).slice(0,100);
-  const next={...current,selectionMode:mode,questionCount:count,difficultyMode,topicTargets:targets,questionIds:ids.length?ids:current.questionIds,updatedAt:Date.now()};
+  const next={...current,selectionMode:mode,questionCount:count,difficultyMode,topicTargets:targets,questionIds:ids.length?ids:current.questionIds,shuffleQuestions,shuffleOptions,updatedAt:Date.now(),version:EXAM_ENGINE_VERSION};
   localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(next));
   return next;
 }
@@ -82,6 +85,8 @@ export function saveTrainerExamConfigFromForm(form){
     selectionMode:current.selectionMode||"manual",
     questionCount:current.questionCount||10,
     difficultyMode:current.difficultyMode||"all",
+    shuffleQuestions:current.shuffleQuestions!==false,
+    shuffleOptions:current.shuffleOptions!==false,
     topicTargets:current.topicTargets||{},
     published:current.published===true,
     questionIds:Array.from(new Set(cfg.questionIds)).filter(id=>availableQuestions().some(q=>Number(q.id)===id)),
@@ -142,14 +147,30 @@ function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setIte
 function selectedQuestions(){
   const cfg=getExamConfig();
   const source=availableQuestions();
-  const list=cfg.questionIds.map(id=>source.find(q=>Number(q.id)===Number(id))).filter(Boolean);
+  const ids=(state.mode==="live"||state.mode==="review")&&Array.isArray(state.questionIds)&&state.questionIds.length?state.questionIds:cfg.questionIds;
+  const list=ids.map(id=>source.find(q=>Number(q.id)===Number(id))).filter(Boolean);
   return list.length?list:questions.slice(0,10);
+}
+function buildAttemptQuestionIds(cfg){
+  const ids=[...(cfg.questionIds||[])].map(Number).filter(Number.isFinite);
+  return cfg.shuffleQuestions===false?ids:shuffle(ids);
+}
+function buildOptionOrders(list,cfg){
+  const orders={};
+  list.forEach(q=>{const ids=q.opts.map((_,i)=>i);orders[q.id]=cfg.shuffleOptions===false?ids:shuffle(ids)});
+  return orders;
+}
+function displayOptions(q){
+  const order=Array.isArray(state.optionOrders?.[q.id])?state.optionOrders[q.id]:q.opts.map((_,i)=>i);
+  return order.map(i=>({originalIndex:i,text:q.opts[i]}));
 }
 
 const state={
   mode:"intro",
   index:0,
   answers:{},
+  questionIds:[],
+  optionOrders:{},
   startedAt:null,
   expiresAt:null,
   submitted:false,
@@ -164,6 +185,7 @@ function loadSaved(){
 function saveState(){
   localStorage.setItem(EXAM_KEY,JSON.stringify({
     mode:state.mode,index:state.index,answers:state.answers,
+    questionIds:state.questionIds,optionOrders:state.optionOrders,
     startedAt:state.startedAt,expiresAt:state.expiresAt
   }));
 }
@@ -192,6 +214,13 @@ function hydrate(){
   const valid=saved.expiresAt && saved.expiresAt>Date.now();
   if((saved.mode==="live" || saved.mode==="review") && valid){
     Object.assign(state,saved);
+    state.questionIds=Array.isArray(saved.questionIds)?saved.questionIds.map(Number):[];
+    state.optionOrders=saved.optionOrders||{};
+    if((state.mode==="live"||state.mode==="review")&&!state.questionIds.length){
+      const cfg=getExamConfig();
+      state.questionIds=buildAttemptQuestionIds(cfg);
+      state.optionOrders=buildOptionOrders(selectedQuestions(),cfg);
+    }
     if(state.mode==="live"||state.mode==="review")ensureTimer();
   }else if(saved.mode==="live"&&!valid){
     Object.assign(state,saved);
@@ -236,15 +265,21 @@ function startExam(){
   state.mode="live";
   state.index=0;
   state.answers={};
+  state.questionIds=buildAttemptQuestionIds(cfg);
+  state.optionOrders={};
   state.startedAt=Date.now();
-  state.expiresAt=state.startedAt+getExamConfig().durationMin*60*1000;
+  state.expiresAt=state.startedAt+cfg.durationMin*60*1000;
+  state.optionOrders=buildOptionOrders(selectedQuestions(),cfg);
   state.submitted=false;
   state.result=null;
   saveState();
   ensureTimer();
 }
-function answer(id){
-  state.answers[String(currentQuestion().id)]=id;
+function answer(displayIndex){
+  const q=currentQuestion();
+  const option=displayOptions(q)[Number(displayIndex)];
+  if(!option)return;
+  state.answers[String(q.id)]=option.originalIndex;
   saveState();
 }
 function next(){
@@ -271,7 +306,7 @@ function scoreExam(){
     if(!topicMap[q.topic])topicMap[q.topic]={correct:0,total:0};
     topicMap[q.topic].total++;
     if(ok)topicMap[q.topic].correct++;
-    questionResults.push({id:Number(q.id),bankQuestionId:Number(q.id),prompt:q.q,options:q.opts||[],topic:q.topic,difficulty:q.difficulty,selected,correctAnswer:q.a,correct:ok});
+    questionResults.push({id:Number(q.id),bankQuestionId:Number(q.id),prompt:q.q,options:q.opts||[],topic:q.topic,difficulty:q.difficulty,selected,correctAnswer:q.a,correct:ok,optionOrder:state.optionOrders?.[q.id]||q.opts.map((_,i)=>i)});
   });
   const percent=Math.round(correct/selectedQuestions().length*100);
   const topics=Object.entries(topicMap).map(([topic,x])=>({topic,percent:Math.round(x.correct/x.total*100),correct:x.correct,total:x.total})).sort((a,b)=>a.percent-b.percent);
@@ -313,6 +348,8 @@ function resetExam(){
   state.mode="intro";
   state.index=0;
   state.answers={};
+  state.questionIds=[];
+  state.optionOrders={};
   state.startedAt=null;
   state.expiresAt=null;
   state.submitted=false;
@@ -369,7 +406,7 @@ function livePage(){
       <div class="exam-question-number">السؤال ${state.index+1}</div>
       <h2>${q.q}</h2>
       <div class="exam-answer-grid">
-        ${q.opts.map((o,i)=>`<button class="exam-answer ${Number(chosen)===i?"selected":""}" data-exam-answer="${i}"><span>${String.fromCharCode(65+i)}</span>${esc(o)}</button>`).join("")}
+        ${displayOptions(q).map((o,i)=>`<button class="exam-answer ${Number(chosen)===o.originalIndex?"selected":""}" data-exam-answer="${i}"><span>${String.fromCharCode(65+i)}</span>${esc(o.text)}</button>`).join("")}
       </div>
       <div class="exam-controls">
         <button class="btn btn-soft" id="exam-prev" ${state.index===0?"disabled":""}>السابق</button>
