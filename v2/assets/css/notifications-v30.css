@@ -503,3 +503,17 @@
 .question-analytics-legend{display:flex;gap:15px;flex-wrap:wrap;padding:12px 4px 0;font-size:10px;color:var(--muted)}
 .question-analytics-legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:4px}.question-analytics-legend .green{background:#20a45a}.question-analytics-legend .orange{background:#e68a00}.question-analytics-legend .red{background:#d93025}
 @media(max-width:800px){.question-analytics-summary{grid-template-columns:1fr}}
+
+
+/* V3.33-3.35 Final Exam, Results Center & Question Intelligence */
+.exam-check-option{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 11px;border:1px solid var(--line);border-radius:11px;background:#fbfcfd;font-size:11px;font-weight:800;color:var(--primary-2)}
+.exam-check-option input{width:18px;height:18px;accent-color:var(--primary)}
+.trainer-results-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.trainer-results-filter-card{margin-bottom:12px}.trainer-results-filters{display:grid;grid-template-columns:1.4fr 1.2fr 1fr 1fr;gap:10px}.trainer-results-filters label{display:grid;gap:5px;font-size:10px;font-weight:800;color:var(--primary-2)}.trainer-results-filters input,.trainer-results-filters select{padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-family:inherit}
+.trainer-results-table{min-width:1050px}.trainer-results-note{margin-top:12px;background:#f5f9fc;border-right:4px solid var(--purple);font-size:11px;line-height:1.8}
+.qintel-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.qintel-note{margin:12px 0;background:#f5f9fc;border-right:4px solid var(--purple);line-height:1.9;font-size:11px}.qintel-note p{margin:4px 0 0;color:var(--muted)}
+.qintel-filter-card{margin-bottom:12px}.question-intelligence-table{overflow:hidden}.question-intelligence-table table{min-width:1200px}.question-intelligence-table td,.question-intelligence-table th{vertical-align:middle}.question-intelligence-table tr[data-qintel-row]{transition:opacity .15s}
+.qintel-bottom{margin-top:12px}.qintel-bottom .card{min-height:170px}
+@media(max-width:1050px){.trainer-results-kpis,.qintel-kpis{grid-template-columns:repeat(3,1fr)}.trainer-results-filters{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.trainer-results-kpis,.qintel-kpis{grid-template-columns:1fr 1fr}.trainer-results-filters{grid-template-columns:1fr}.exam-check-option{justify-content:flex-start}.qintel-bottom{grid-template-columns:1fr}}
