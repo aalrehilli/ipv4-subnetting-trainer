@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.23 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.24 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -301,22 +301,22 @@ function bind(){
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v24.js?v=426").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v24.js?v=427").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=426");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=427");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=426");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=427");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankStatus&&qbankStatus.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v24.js?v=426");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v24.js?v=427");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v24.js?v=426");
+        var m=await import("./question-bank-v24.js?v=427");
         var result=m.handleQuestionBankAction(btn);
         if(result&&result.export){
           var fmt=result.export;
@@ -326,7 +326,7 @@ function bind(){
           var url=URL.createObjectURL(blob);
           var a=document.createElement("a");
           a.href=url;
-          a.download="ipv4-academy-question-bank-v3.23."+ext;
+          a.download="ipv4-academy-question-bank-v3.24."+ext;
           document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
           return;
         }
@@ -351,7 +351,7 @@ function bind(){
       var reader=new FileReader();
       reader.onload=async function(){
         try{
-          var m=await import("./question-bank-v24.js?v=426");
+          var m=await import("./question-bank-v24.js?v=427");
           var format=event.target.id.indexOf("xml")>=0?"xml":event.target.id.indexOf("aiken")>=0?"aiken":"json";
           var result=m.importQuestionBankText(String(reader.result||""),format);
           if(result&&result.ok&&result.rows){
