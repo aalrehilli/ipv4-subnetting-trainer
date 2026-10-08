@@ -489,3 +489,17 @@
 .exam-review-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid #edf2f5}
 .exam-review-warning{margin-top:10px;padding:10px 12px;background:#fff7ed;border-right:4px solid var(--orange);border-radius:10px;font-size:11px;color:#8a5600;line-height:1.8}
 @media(max-width:700px){.exam-review-summary{grid-template-columns:1fr}.exam-review-grid{grid-template-columns:1fr}.exam-review-head{display:block}.exam-review-head .badge{display:inline-flex;margin-top:6px}}
+
+
+/* V3.27-3.28 Real Exam Results & Question Analytics */
+.question-analytics-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.question-analytics-summary>div{display:grid;gap:4px;padding:14px;background:#f7f9fb;border-top:3px solid var(--primary);border-radius:11px}
+.question-analytics-summary>div:nth-child(2){border-top-color:var(--green)}.question-analytics-summary>div:nth-child(3){border-top-color:var(--purple)}
+.question-analytics-summary span{font-size:10px;color:var(--muted)}.question-analytics-summary strong{font-size:26px;color:var(--primary-2)}.question-analytics-summary small{font-size:10px;color:var(--muted);line-height:1.7}
+.question-analytics-table-card{overflow:hidden}.question-analytics-table{min-width:1050px}.question-analytics-table td,.question-analytics-table th{vertical-align:middle}
+.question-analytics-table tr.critical{background:#fff7f7}.question-analytics-table tr.needs-review{background:#fffaf3}.question-analytics-table tr.good{background:#fbfffc}.question-analytics-table tr.no-data{opacity:.7}
+.question-analytics-q{min-width:280px;line-height:1.7;font-size:11px}.question-accuracy{display:block;margin-bottom:5px;color:var(--primary-2)}
+.question-analytics-table .progress{min-width:90px}
+.question-analytics-legend{display:flex;gap:15px;flex-wrap:wrap;padding:12px 4px 0;font-size:10px;color:var(--muted)}
+.question-analytics-legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:4px}.question-analytics-legend .green{background:#20a45a}.question-analytics-legend .orange{background:#e68a00}.question-analytics-legend .red{background:#d93025}
+@media(max-width:800px){.question-analytics-summary{grid-template-columns:1fr}}
