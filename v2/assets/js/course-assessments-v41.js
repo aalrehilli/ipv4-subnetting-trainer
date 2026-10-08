@@ -217,22 +217,18 @@ export async function mountStudentCourseExams(container,courseId){
 
 
 export async function persistCourseExamAttempt(result){
-  const examId=localStorage.getItem("ipv4AcademyV341CourseExamId")||"";
-  const courseId=localStorage.getItem("ipv4AcademyV341CourseId")||"";
-  if(!examId||!courseId)return {ok:false,reason:"NOT_A_COURSE_EXAM"};
-  return rpc("academy_record_course_exam_attempt",{
-    p_attempt:{
-      examId,
-      courseId,
-      score:Number(result.score||0),
-      total:Number(result.total||0),
-      percent:Number(result.percent||0),
-      passed:!!result.passed,
-      durationSec:Number(result.durationSec||0),
-      autoSubmitted:!!result.autoSubmitted,
-      questionResults:Array.isArray(result.questionResults)?result.questionResults:[],
-      submittedAt:Number(result.submittedAt||Date.now())
-    }
+  const attemptId=localStorage.getItem("ipv4AcademyV365Attempt")||"";
+  if(!attemptId)return {ok:false,reason:"NO_CENTRAL_ATTEMPT"};
+  const m=await import("./supabase-v30.js?v=465");
+  return m.recordUnifiedExamAttempt({
+    attemptId:String(attemptId),
+    score:Number(result.score||0),
+    total:Number(result.total||0),
+    percent:Number(result.percent||0),
+    passed:!!result.passed,
+    durationSec:Number(result.durationSec||0),
+    autoSubmitted:!!result.autoSubmitted,
+    questionResults:Array.isArray(result.questionResults)?result.questionResults:[]
   });
 }
 
