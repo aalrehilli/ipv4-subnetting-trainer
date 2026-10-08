@@ -165,6 +165,16 @@
     const c=activeCourse();
     if(!c)return;
     hero.insertAdjacentHTML("afterend",visibilityHtml(c));
+    const visibility=document.querySelector("[data-v38-visibility]");
+    if(visibility && !document.querySelector("[data-v40-roster]")){
+      visibility.insertAdjacentHTML("afterend",'<div data-v40-roster data-v40-course-id="'+esc(c.id)+'" style="margin-top:14px"></div>');
+      const box=document.querySelector("[data-v40-roster]");
+      import("./course-roster-v40.js?v=440").then(function(m){
+        if(typeof m.mountCourseRoster==="function")m.mountCourseRoster(box,String(c.id));
+      }).catch(function(error){
+        if(box)box.innerHTML='<div class="card"><p class="muted">تعذر تحميل متدربي المقرر: '+esc(error&&error.message||error)+'</p></div>';
+      });
+    }
   }
 
   function ensureNewCourseBuilder(){
