@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
-import {refreshBank} from "./question-bank-v32.js?v=434";
-import {startCentralExamAttempt,recordUnifiedExamAttempt} from "./supabase-v30.js?v=464";
+import {refreshBank} from "./question-bank-v32.js?v=465";
+import {startCentralExamAttempt,recordUnifiedExamAttempt} from "./supabase-v30.js?v=465";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
@@ -386,6 +386,8 @@ function resetExam(){
   state.expiresAt=null;
   state.submitted=false;
   state.result=null;
+  state.centralAttemptId=null;
+  state.centralAttemptNo=null;
 }
 
 function introPage(){
