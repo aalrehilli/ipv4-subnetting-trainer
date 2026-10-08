@@ -492,15 +492,20 @@ export function getLastWeakTopics(){
 }
 
 export function getTrainerExamSummary(){
-  const r=loadResult();
+  const config=getExamConfig();
+  const attempts=getExamAttempts(config.title);
+  const last=attempts[0]||loadResult();
+  const avg=attempts.length?Math.round(attempts.reduce((sum,x)=>sum+x.percent,0)/attempts.length):(last?last.percent:0);
+  const pass=attempts.length?attempts.filter(x=>x.passed).length:(last?(last.passed?1:0):0);
   return {
-    title:"IPv4 & Binary",
-    status:r?"تم تنفيذ محاولات":"جاهز",
-    attempts:r?1:0,
-    avg:r?r.percent:0,
-    pass:r?(r.passed?1:0):0,
-    config:getExamConfig(),
+    title:config.title,
+    status:attempts.length?"تم تنفيذ محاولات":"جاهز",
+    attempts:attempts.length,
+    avg,
+    pass,
+    config,
     attemptsUsed:getAttemptCount(),
-    lastResult:r
+    lastResult:last,
+    attemptsList:attempts
   };
 }
