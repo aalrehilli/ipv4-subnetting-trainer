@@ -288,16 +288,57 @@
     }
   },true);
 
-  function syncMode(){
+  let centralRole="";
+  let centralReady=false;
+  let centralBusy=false;
+
+  async function syncCentralRole(){
+    const role=trainerMode()?"trainer":"student";
+    if(role!==centralRole){
+      centralRole=role;
+      centralReady=false;
+    }
+    if(centralBusy||centralReady)return;
+    centralBusy=true;
+    try{
+      const m=await import("./course-supabase-v39.js?v=439");
+      if(role==="trainer"){
+        const result=await m.pullCentralCourses();
+        centralReady=true;
+        if(result.ok&&result.count){
+          const btn=document.querySelector('.sidebar [data-page="courses"]');
+          if(btn)btn.click();
+        }
+      }else{
+        const result=await m.pullCentralCourses();
+        centralReady=true;
+        if(result.ok){
+          const btn=document.querySelector('.sidebar [data-page="course"]');
+          if(btn)btn.click();
+        }
+      }
+    }catch(e){
+      centralReady=true;
+    }finally{
+      centralBusy=false;
+    }
+  }
+
+  async function syncMode(){
     if(trainerMode()){
       restoreAll();
       ensureNewCourseBuilder();
       addCourseVisibilityBadge();
       enhanceCourseEditor();
       filterCourseCards();
+      try{
+        const m=await import("./course-supabase-v39.js?v=439");
+        await m.syncTrainerCourses();
+      }catch(e){}
     }else{
       filterForStudent();
     }
+    syncCentralRole();
   }
 
   async function bootstrap(){
