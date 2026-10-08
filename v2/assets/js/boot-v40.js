@@ -206,7 +206,16 @@ function bind(){
 
   document.querySelectorAll("[data-page]").forEach(function(btn){
     btn.addEventListener("click",function(){
-      state.page=btn.getAttribute("data-page");
+      const target=btn.getAttribute("data-page");
+      if(state.role==="trainer" && target==="courses"){
+        try{
+          localStorage.removeItem("ipv4AcademyV36Course");
+          localStorage.removeItem("ipv4AcademyV36Unit");
+          localStorage.removeItem("ipv4AcademyV36Lesson");
+          localStorage.removeItem("ipv4AcademyV36UnitForm");
+        }catch(e){}
+      }
+      state.page=target;
       render().catch(function(error){
         document.getElementById("app").innerHTML=shell(errorView(error));
         bind();
