@@ -1,6 +1,6 @@
-import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,saveTrainerExamBuilderFromForm,publishTrainerExam,getExamPreviewQuestions,resetTrainerExamConfig} from "./exam-v23.js?v=429";
+import {getTrainerExamSummary,getTrainerExamConfig,saveTrainerExamConfigFromForm,saveTrainerExamQuestionsFromForm,saveTrainerExamBuilderFromForm,publishTrainerExam,getExamPreviewQuestions,getExamAttempts,getQuestionAnalytics,resetTrainerExamConfig} from "./exam-v23.js?v=430";
 import {questions} from "./demo-data.js";
-import {questionBankView,refreshBank} from "./question-bank-v24.js?v=429";
+import {questionBankView,refreshBank} from "./question-bank-v24.js?v=430";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
@@ -293,41 +293,33 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
     const last=r.lastResult;
     const weak=last?[...last.topics].sort((a,b)=>a.percent-b.percent)[0]:null;
 
-    const demoResults=students.map((s,i)=>{
-      const offset=[8,-5,4,-9,2,-3][i];
-      const score=Math.max(0,Math.min(100,s.avg+offset));
-      return {
-        studentId:s.id,name:s.name,group:s.group,score,
-        passed:score>=cfg.passPercent,
-        attempts:[2,1,2,1,1,2][i],
-        time:[4,3,5,2,4,4][i]+":0"+(i+1),
-        topic:s.topic,
-        weak:score<70?s.topic:"—",
-        status:s.activity==="متوقف"?"متوقف":score>=cfg.passPercent?"ناجح":"يحتاج مراجعة"
-      };
-    });
-    const passCount=demoResults.filter(x=>x.passed).length;
-    const avgResults=Math.round(demoResults.reduce((a,x)=>a+x.score,0)/demoResults.length);
-    const highest=[...demoResults].sort((a,b)=>b.score-a.score)[0];
-    const lowest=[...demoResults].sort((a,b)=>a.score-b.score)[0];
-
+    const actualAttempts=getExamAttempts(cfg.title);
+    const questionAnalytics=getQuestionAnalytics(cfg.title);
+    const passCount=actualAttempts.filter(x=>x.passed).length;
+    const avgResults=actualAttempts.length?Math.round(actualAttempts.reduce((sum,x)=>sum+x.percent,0)/actualAttempts.length):0;
+    const highest=actualAttempts.length?[...actualAttempts].sort((x,y)=>y.percent-x.percent)[0]:null;
+    const lowest=actualAttempts.length?[...actualAttempts].sort((x,y)=>x.percent-y.percent)[0]:null;
+    const latestAttempt=actualAttempts[0]||null;
+    const hardestQuestion=questionAnalytics.filter(x=>x.total>0).sort((x,y)=>x.accuracy-y.accuracy)[0]||null;
+    const easiestQuestion=questionAnalytics.filter(x=>x.total>0).sort((x,y)=>y.accuracy-x.accuracy)[0]||null;
     return `
     <div class="page-intro with-action">
       <div><span class="eyebrow orange">05 • الاختبارات</span><h2>إدارة الاختبارات ونتائج المتدربين</h2><p>أنشئ الاختبار، راقب الإعدادات، ثم راجع نتائج جميع المتدربين واتخذ الإجراء المناسب.</p></div>
-      <div class="trainer-exam-head-actions"><span class="badge orange">V3.26</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
+      <div class="trainer-exam-head-actions"><span class="badge orange">V3.28</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات</button></div>
     </div>
 
     <div class="trainer-exam-kpis">
+      <div class="card exam-admin-kpi"><span>المحاولات الحقيقية</span><strong>${actualAttempts.length}</strong><small>نتائج مسجلة</small></div>
       <div class="card exam-admin-kpi"><span>الأسئلة المحددة</span><strong>${cfg.questionIds.length}</strong><small>من ${bankQuestions.length} في البنك</small></div>
       <div class="card exam-admin-kpi"><span>المدة</span><strong>${cfg.durationMin} د</strong><small>لكل محاولة</small></div>
       <div class="card exam-admin-kpi warning"><span>نسبة النجاح</span><strong>${cfg.passPercent}%</strong><small>حد الاجتياز</small></div>
-      <div class="card exam-admin-kpi success"><span>متوسط النتائج</span><strong>${avgResults}%</strong><small>${passCount}/${demoResults.length} ناجح</small></div>
-      <div class="card exam-admin-kpi purple"><span>أعلى نتيجة</span><strong>${highest.score}%</strong><small>${highest.name}</small></div>
+      <div class="card exam-admin-kpi success"><span>متوسط النتائج</span><strong>${avgResults}%</strong><small>${passCount}/${actualAttempts.length} ناجح</small></div>
+      <div class="card exam-admin-kpi purple"><span>أعلى نتيجة</span><strong>${highest?highest.percent:0}%</strong><small>${highest?esc(highest.studentName):"—"}</small></div>
     </div>
 
     <div class="grid-2 trainer-exam-main-grid">
       <div class="card">
-        <div class="exam-admin-card-head"><div><span class="eyebrow blue">إعدادات الاختبار</span><h3>خصائص الاختبار</h3></div><span class="badge green">محلي Demo</span></div>
+        <div class="exam-admin-card-head"><div><span class="eyebrow blue">إعدادات الاختبار</span><h3>خصائص الاختبار</h3></div><span class="badge blue">بيانات فعلية</span></div>
         <form id="trainer-exam-settings-form" class="exam-settings-form">
           <label>اسم الاختبار<input name="title" value="${esc(cfg.title)}"></label>
           <div class="exam-setting-grid">
@@ -360,17 +352,20 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       </div>
     </div>
 
-    <div class="section-title"><h3>نتائج المتدربين</h3><div class="exam-result-filter">
+    <div class="section-title"><h3>النتائج الحقيقية</h3><div class="exam-result-filter">
       <button class="filter-chip active" data-exam-result-filter="all">الكل</button>
       <button class="filter-chip" data-exam-result-filter="passed">ناجح</button>
       <button class="filter-chip" data-exam-result-filter="review">يحتاج مراجعة</button>
       <button class="filter-chip" data-exam-result-filter="stopped">متوقف</button>
     </div></div>
     <div class="card exam-results-table-card">
-      <div class="exam-results-toolbar"><div><strong>${demoResults.length} متدربين</strong><span class="muted">نتائج العرض الحالية</span></div><span class="badge green">${passCount} ناجح</span></div>
+      <div class="exam-results-toolbar"><div><strong>${actualAttempts.length} محاولة</strong><span class="muted">نتائج مسجلة فعليًا</span></div><span class="badge green">${passCount} ناجح</span></div>
       <div class="table-scroll">
-      <table class="table exam-results-table"><thead><tr><th>المتدرب</th><th>المجموعة</th><th>النتيجة</th><th>الحالة</th><th>المحاولات</th><th>الوقت</th><th>أضعف موضوع</th><th>الإجراء</th></tr></thead><tbody>
-      ${demoResults.map(x=>'<tr data-exam-result-status="'+(x.status==="متوقف"?"stopped":x.passed?"passed":"review")+'"><td><div class="trainer-student-name"><div class="student-mini-avatar">'+x.name.slice(0,1)+'</div><div><strong>'+x.name+'</strong><small>آخر متابعة</small></div></div></td><td><span class="badge">'+x.group+'</span></td><td><strong class="exam-score-value">'+x.score+'%</strong></td><td><span class="badge '+(x.status==="متوقف"?"red":x.passed?"green":"orange")+'">'+x.status+'</span></td><td>'+x.attempts+'</td><td>'+x.time+'</td><td><span class="badge '+(x.weak==="—"?"green":"orange")+'">'+esc(x.weak)+'</span></td><td><button class="btn btn-soft mini-btn" data-student-id="'+x.studentId+'">Student 360</button></td></tr>').join("")}
+      <table class="table exam-results-table"><thead><tr><th>المتدرب</th><th>الاختبار</th><th>النتيجة</th><th>الحالة</th><th>المحاولة</th><th>الوقت</th><th>التسليم</th><th>التحليل</th></tr></thead><tbody>
+      ${actualAttempts.map(x=>{
+        const mins=Math.floor((x.durationSec||0)/60),secs=String((x.durationSec||0)%60).padStart(2,"0");
+        return '<tr data-exam-result-status="'+(x.passed?"passed":"review")+'"><td><div class="trainer-student-name"><div class="student-mini-avatar">'+esc((x.studentName||"م").slice(0,1))+'</div><div><strong>'+esc(x.studentName||"—")+'</strong><small>المجموعة '+esc(x.group||"1")+'</small></div></div></td><td><small>'+esc(x.exam)+'</small></td><td><strong class="exam-score-value">'+x.percent+'%</strong></td><td><span class="badge '+(x.passed?"green":"orange")+'">'+(x.passed?"ناجح":"يحتاج مراجعة")+'</span></td><td>'+x.attemptNo+'</td><td>'+mins+':'+secs+'</td><td><span class="badge">'+(x.autoSubmitted?"تلقائي":"يدوي")+'</span></td><td><span class="muted">تحليل السؤال بالأسفل</span></td></tr>';
+      }).join("") || '<tr><td colspan="8"><div class="empty">لا توجد نتائج فعلية بعد. أكمل المتدرب اختبارًا منشورًا لتظهر النتيجة هنا.</div></td></tr>'}
       </tbody></table></div>
     </div>
 
@@ -440,7 +435,7 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       ${last?last.topics.map(x=>'<div class="exam-result-topic-row"><strong>'+esc(x.topic)+'</strong><div class="progress"><span style="width:'+x.percent+'%"></span></div><span>'+x.percent+'%</span></div>').join(""):'<div class="empty">بعد أول محاولة سيظهر أداء كل موضوع هنا.</div>'}
     </div>
 
-    <div class="card exam-admin-note"><strong>V3.26:</strong> بنك الأسئلة أصبح مصدر الاختبار مباشرة؛ ويمكن تحديد مجموعة الأسئلة من بنك الأسئلة ثم اعتمادها للاختبار. النتائج ما زالت تجريبية حتى ربط Supabase.</div>
+    <div class="card exam-admin-note"><strong>V3.28:</strong> بنك الأسئلة أصبح مصدر الاختبار مباشرة؛ ويمكن تحديد مجموعة الأسئلة من بنك الأسئلة ثم اعتمادها للاختبار. النتائج ما زالت تجريبية حتى ربط Supabase.</div>
     `;
   }
   if(page==="labs")return '<div class="page-intro"><span class="eyebrow green">06 • المختبرات</span><h2>المختبرات العملية</h2><p>تابع استخدام الطلاب للمختبرات.</p></div><div class="grid-3"><div class="card"><h3>Subnetting Lab</h3><div class="kpi-value">34</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>IOS Lab</h3><div class="kpi-value">18</div><div class="muted">محاولة هذا الأسبوع</div></div><div class="card"><h3>Packet Tracer</h3><div class="kpi-value">21</div><div class="muted">محاولة هذا الأسبوع</div></div></div>';
