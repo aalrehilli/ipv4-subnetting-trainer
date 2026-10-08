@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=451";
+import {getSupabaseConfig} from "./supabase-v30.js?v=453";
 
 const COURSES_KEY="ipv4AcademyV36Courses";
 const BACKUP_KEY="ipv4AcademyV38AllCourses";
@@ -198,24 +198,24 @@ export async function getCourseRoster(courseId,group){
 }
 
 
-const V3.51_PROGRESS_QUEUE="ipv4AcademyV51ProgressQueue";
-const V3.51_LOCAL_PROGRESS="ipv4AcademyV51LocalProgress";
+const V3_51_PROGRESS_QUEUE="ipv4AcademyV51ProgressQueue";
+const V3_51_LOCAL_PROGRESS="ipv4AcademyV51LocalProgress";
 
 function readQueue(){
-  try{const a=JSON.parse(localStorage.getItem(V3.51_PROGRESS_QUEUE)||"[]");return Array.isArray(a)?a:[];}catch(e){return[];}
+  try{const a=JSON.parse(localStorage.getItem(V3_51_PROGRESS_QUEUE)||"[]");return Array.isArray(a)?a:[];}catch(e){return[];}
 }
-function writeQueue(a){localStorage.setItem(V3.51_PROGRESS_QUEUE,JSON.stringify(Array.isArray(a)?a:[]));}
+function writeQueue(a){localStorage.setItem(V3_51_PROGRESS_QUEUE,JSON.stringify(Array.isArray(a)?a:[]));}
 function readLocalProgress(){
-  try{const a=JSON.parse(localStorage.getItem(V3.51_LOCAL_PROGRESS)||"[]");return Array.isArray(a)?a:[];}catch(e){return[];}
+  try{const a=JSON.parse(localStorage.getItem(V3_51_LOCAL_PROGRESS)||"[]");return Array.isArray(a)?a:[];}catch(e){return[];}
 }
-function writeLocalProgress(a){localStorage.setItem(V3.51_LOCAL_PROGRESS,JSON.stringify(Array.isArray(a)?a:[]));}
+function writeLocalProgress(a){localStorage.setItem(V3_51_LOCAL_PROGRESS,JSON.stringify(Array.isArray(a)?a:[]));}
 
 export function getLocalCourseProgress(courseId){
   return readLocalProgress().filter(function(x){return String(x.courseId)===String(courseId);});
 }
 
 export async function getCourseConnectionState(){
-  const {getSupabaseStatus}=await import("./supabase-v30.js?v=451");
+  const {getSupabaseStatus}=await import("./supabase-v30.js?v=453");
   return getSupabaseStatus();
 }
 
