@@ -8,7 +8,7 @@ const studentNav=[
 
 const trainerNav=[
   ["tdash","الرئيسية"],["students","المتدربون"],["groups","المجموعات"],["courses","المقررات"],
-  ["questions","بنك الأسئلة"],["exams","الاختبارات"],["labs","المختبرات"],["analytics","التحليلات"],
+  ["questions","بنك الأسئلة"],["exams","الاختبارات"],["results","مركز النتائج"],["qintel","ذكاء السؤال"],["labs","المختبرات"],["analytics","التحليلات"],
   ["interventions","مركز التدخل"],["notifications","الإشعارات"]
 ];
 
