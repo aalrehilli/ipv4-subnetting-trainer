@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=455";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=456";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -201,6 +201,18 @@ export async function persistAttemptToSupabase(result,answers,selectedQuestions)
   return {ok:true,attemptId:attempt.id};
 }
 
+
+export async function signInWithGitHub(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const redirectTo=window.location.origin+window.location.pathname;
+  const result=await client.auth.signInWithOAuth({
+    provider:"github",
+    options:{redirectTo}
+  });
+  if(result.error)return {ok:false,error:result.error.message};
+  return {ok:true};
+}
 
 export async function signInWithPassword(email,password){
   const client=await getClient();
