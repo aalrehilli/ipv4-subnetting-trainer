@@ -128,13 +128,14 @@ export function getExamAttempts(examTitle=getExamConfig().title){
 export function getQuestionAnalytics(examTitle=getExamConfig().title){
   const cfg=getExamConfig(),attempts=getExamAttempts(examTitle),source=availableQuestions();
   return cfg.questionIds.map(id=>{
-    const q=source.find(x=>Number(x.id)===Number(id));
-    if(!q)return null;
+    const remoteOrLocal=source.find(x=>Number(x.id)===Number(id));
+    const snapshot=attempts.flatMap(a=>a.questionResults||[]).find(x=>Number(x.id)===Number(id));
+    const q=remoteOrLocal||{id:Number(id),q:(snapshot&&snapshot.prompt)||"سؤال محفوظ في نتيجة سابقة",opts:Array.isArray(snapshot&&snapshot.options)?snapshot.options:[],topic:(snapshot&&snapshot.topic)||"غير محدد",difficulty:(snapshot&&snapshot.difficulty)||"easy"};
     const responses=attempts.flatMap(a=>(a.questionResults||[]).filter(x=>Number(x.id)===Number(id)));
     const total=responses.length,answered=responses.filter(x=>x.selected!==null&&x.selected!==undefined).length,correct=responses.filter(x=>x.correct===true).length,unanswered=total-answered;
     const optionCounts=(q.opts||[]).map((opt,index)=>({index,text:opt,count:responses.filter(x=>Number(x.selected)===index).length}));
-    return {id:Number(q.id),question:q.q,topic:q.topic,difficulty:q.difficulty,total,answered,correct,wrong:Math.max(0,answered-correct),unanswered,accuracy:total?Math.round(correct/total*100):0,options:optionCounts};
-  }).filter(Boolean);
+    return {id:Number(q.id),question:q.q,topic:q.topic,difficulty:q.difficulty,total,answered,correct,wrong:Math.max(0,answered-correct),unanswered,accuracy:total?Math.round(correct/total*100):0,options:optionCounts,linkedToBank:!!remoteOrLocal};
+  }).filter(x=>x.total>0||x.linkedToBank);
 }
 function getAttemptCount(){return getExamAttempts().filter(x=>x.studentId===getStudentIdentity().id).length}
 function incrementAttemptCount(){const n=getAttemptCount()+1;localStorage.setItem(EXAM_ATTEMPT_KEY,String(n));return n}
