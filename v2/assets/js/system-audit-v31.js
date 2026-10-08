@@ -1,15 +1,15 @@
 const CORE_CHECKS=[
   {name:"صفحة المقرر",path:"./course-learning-v38.js?v=432",exports:["learnerCourse","lessonPage","assessmentView","handleLearningAction","submitLessonAssessment"]},
-  {name:"محرك الاختبارات",path:"./exam-v23.js?v=430",exports:["examPage","handleExamAction","getTrainerExamConfig","saveTrainerExamBuilderFromForm","getExamPreviewQuestions","getExamAttempts","getQuestionAnalytics"]},
-  {name:"بنك الأسئلة",path:"./question-bank-v32.js?v=430",exports:["questionBankView","refreshBank","getQuestionBank","handleQuestionBankAction"]},
-  {name:"لوحة المدرب",path:"./trainer-v22.js?v=430",exports:["getTrainerView"]},
-  {name:"منصة المتدرب",path:"./student.js?v=430",exports:["studentPage"]},
+  {name:"محرك الاختبارات",path:"./exam-v23.js?v=432",exports:["examPage","handleExamAction","getTrainerExamConfig","saveTrainerExamBuilderFromForm","getExamPreviewQuestions","getExamAttempts","getQuestionAnalytics"]},
+  {name:"بنك الأسئلة",path:"./question-bank-v32.js?v=432",exports:["questionBankView","refreshBank","getQuestionBank","handleQuestionBankAction"]},
+  {name:"لوحة المدرب",path:"./trainer-v22.js?v=432",exports:["getTrainerView"]},
+  {name:"منصة المتدرب",path:"./student.js?v=432",exports:["studentPage"]},
   {name:"المختبر Subnetting",path:"./subnet-lab-v25.js",exports:["labPage"]},
   {name:"المختبر FLSM",path:"./flsm-v26.js",exports:["flsmPage"]},
   {name:"المختبر VLSM",path:"./vlsm-v27.js",exports:["vlsmPage"]},
   {name:"المحرك الذكي",path:"./smart-engine-v28.js",exports:["getLearningSnapshot","getSmartRecommendation","getWeakTopics"]},
   {name:"الإشعارات",path:"./notifications-v30.js",exports:["notificationsPage","getUnreadCount"]},
-  {name:"Supabase",path:"./supabase-v30.js?v=430",exports:["isSupabaseConfigured","getSupabaseStatus","syncAllFromSupabase","syncTrainerExamToSupabase","persistAttemptToSupabase"]}
+  {name:"Supabase",path:"./supabase-v30.js?v=432",exports:["isSupabaseConfigured","getSupabaseStatus","syncAllFromSupabase","syncTrainerExamToSupabase","persistAttemptToSupabase"]}
 ];
 
 const exportNames=content=>{
