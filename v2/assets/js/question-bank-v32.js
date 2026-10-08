@@ -125,7 +125,7 @@ export function questionBankView(){
 
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.32</span><h2>بنك الأسئلة النهائي</h2><p>المصدر المركزي للمتدربين والاختبارات والتحليلات. كل سؤال يمتلك هوية وموضوعًا ومستوى ومهارة وبيانات أداء قابلة للتتبع.</p></div>
+    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.66</span><h2>بنك الأسئلة المركزي</h2><p>المصدر المركزي للمتدربين والاختبارات والتصحيح والتحليلات. كل سؤال يمتلك هوية وموضوعًا ومستوى ومهارة وبيانات أداء قابلة للتتبع.</p></div>
     <button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button>
   </div>
 
@@ -143,7 +143,7 @@ export function questionBankView(){
     <div class="qbank-count"><strong>${rows.length}</strong><span>سؤال مطابق</span></div><div class="qbank-count qbank-selected"><strong>${getExamPick().length}</strong><span>محدد للاختبار</span></div><button class="btn btn-orange mini-btn" data-q-action="apply-exam">اعتماد المحدد للاختبار</button><button class="btn btn-soft mini-btn" data-q-action="export-json">تصدير JSON</button><button class="btn btn-soft mini-btn" data-q-action="export-xml">تصدير XML</button><button class="btn btn-soft mini-btn" data-q-action="export-aiken">تصدير Aiken</button><button class="btn btn-purple mini-btn" data-q-action="import-json">استيراد JSON</button><button class="btn btn-purple mini-btn" data-q-action="import-xml">استيراد XML</button><button class="btn btn-purple mini-btn" data-q-action="import-aiken">استيراد Aiken</button><input id="qbank-import-json-file" type="file" accept=".json,application/json" hidden><input id="qbank-import-xml-file" type="file" accept=".xml,text/xml,application/xml" hidden><input id="qbank-import-aiken-file" type="file" accept=".txt,.aiken,text/plain" hidden>
   </div>
 
-  <div class="card qbank-management-note"><strong>V3.32:</strong> البنك الآن مصدر مركزي للسؤال. تم ترحيل بيانات V3.24 تلقائيًا، وتُحتسب الإحصاءات من المحاولات الفعلية.</div>
+  <div class="card qbank-management-note"><strong>V3.66:</strong> البنك متزامن مع Supabase، وهو المصدر المركزي للسؤال والإجابة الصحيحة. التصحيح النهائي للاختبار يتم في الخادم وليس في المتصفح.</div>
 
   <div class="card qbank-table-wrap">
     <table class="table qbank-table">
