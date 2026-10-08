@@ -347,8 +347,8 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
         ${last
           ? '<div class="last-exam-result-card"><strong>'+last.percent+'%</strong><span class="badge '+(last.passed?"green":"orange")+'">'+(last.passed?"ناجح":"يحتاج مراجعة")+'</span><p class="muted">'+last.score+'/'+last.total+' إجابات صحيحة • '+(weak?"أضعف موضوع: "+esc(weak.topic):"")+'</p></div>'
           : '<div class="empty"><h3>لا توجد نتيجة فعلية بعد</h3><p class="muted">سيظهر آخر اختبار فعلي هنا بعد تجربة المتدرب.</p></div>'}
-        <div class="stat-row"><span>أدنى نتيجة في القائمة</span><b>${lowest.score}% • ${lowest.name}</b></div>
-        <div class="stat-row"><span>المحاولات المسجلة فعليًا</span><b>${r.attemptsUsed||0}</b></div>
+        <div class="stat-row"><span>أدنى نتيجة في القائمة</span><b>${lowest?lowest.percent:0}% • ${lowest?esc(lowest.studentName):"—"}</b></div>
+        <div class="stat-row"><span>المحاولات المسجلة فعليًا</span><b>${actualAttempts.length}</b></div>
       </div>
     </div>
 
@@ -430,6 +430,15 @@ export function getTrainerView(page="tdash",filter="",id=null,group=""){
       ${getExamPreviewQuestions().length>8?'<div class="qbank-import-more">يظهر أول 8 أسئلة فقط في المعاينة، وسيظهر كامل الاختبار للمتدرب.</div>':''}
     </div>
 
+    <div class="section-title"><h3>V3.28 • تحليل مستوى كل سؤال</h3><span class="badge purple">${questionAnalytics.filter(x=>x.total>0).length} سؤال تم تحليله</span></div>
+    <div class="card question-analytics-summary">
+      <div><span>أصعب سؤال</span><strong>${hardestQuestion?hardestQuestion.accuracy:0}%</strong><small>${hardestQuestion?esc(hardestQuestion.question):"لا توجد محاولات بعد"}</small></div>
+      <div><span>أفضل سؤال</span><strong>${easiestQuestion?easiestQuestion.accuracy:0}%</strong><small>${easiestQuestion?esc(easiestQuestion.question):"لا توجد محاولات بعد"}</small></div>
+      <div><span>إجمالي المحاولات</span><strong>${actualAttempts.length}</strong><small>مصدر التحليل الحالي</small></div>
+    </div>
+    <div class="card question-analytics-table-card"><div class="table-scroll"><table class="table question-analytics-table"><thead><tr><th>#</th><th>السؤال</th><th>الموضوع</th><th>المستوى</th><th>المحاولات</th><th>صحيح</th><th>خطأ</th><th>بدون إجابة</th><th>الدقة</th></tr></thead><tbody>
+      ${questionAnalytics.map(x=>'<tr class="'+(x.total===0?"no-data":x.accuracy<50?"critical":x.accuracy<70?"needs-review":"good")+'"><td><strong>#'+x.id+'</strong></td><td><div class="question-analytics-q">'+esc(x.question)+'</div></td><td>'+esc(x.topic)+'</td><td><span class="badge '+(x.difficulty==="hard"?"red":x.difficulty==="medium"?"orange":"green")+'">'+(x.difficulty==="hard"?"متقدم":x.difficulty==="medium"?"متوسط":"سهل")+'</span></td><td>'+x.total+'</td><td>'+x.correct+'</td><td>'+x.wrong+'</td><td>'+x.unanswered+'</td><td><strong class="question-accuracy">'+x.accuracy+'%</strong><div class="progress"><span style="width:'+x.accuracy+'%"></span></div></td></tr>').join("")}
+      </tbody></table></div><div class="question-analytics-legend"><span><b class="dot green"></b> ≥ 70% جيد</span><span><b class="dot orange"></b> 50–69% يحتاج مراجعة</span><span><b class="dot red"></b> أقل من 50% حرج</span></div></div>
     <div class="section-title"><h3>تحليل آخر نتيجة</h3><button class="link-btn" data-trainer-page="analytics">فتح التحليلات</button></div>
     <div class="card exam-result-topics">
       ${last?last.topics.map(x=>'<div class="exam-result-topic-row"><strong>'+esc(x.topic)+'</strong><div class="progress"><span style="width:'+x.percent+'%"></span></div><span>'+x.percent+'%</span></div>').join(""):'<div class="empty">بعد أول محاولة سيظهر أداء كل موضوع هنا.</div>'}
