@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.30 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.31 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -117,8 +117,8 @@ async function loadPage(){
       return interventions.interventionCenterView();
     }
 
-    if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360"].indexOf(state.page)>=0){
-      var trainer=await import("./trainer-v22.js?v=430");
+    if(state.role==="trainer" && ["students","groups","courses","questions","exams","labs","analytics","tdash","student360","audit"].indexOf(state.page)>=0){
+      var trainer=await import("./trainer-v22.js?v=431");
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
