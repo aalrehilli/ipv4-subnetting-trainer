@@ -151,3 +151,24 @@ export async function syncForRole(role){
   if(role==="student")return pullCentralCourses();
   return syncTrainerCourses();
 }
+
+
+export async function recordLessonProgress(courseId,unitId,lessonId,completed,score,total){
+  return rpc("academy_record_lesson_progress",{
+    p_course_id:String(courseId),
+    p_unit_id:Number(unitId),
+    p_lesson_id:Number(lessonId),
+    p_completed:!!completed,
+    p_score:score===null||score===undefined?null:Number(score),
+    p_total:total===null||total===undefined?null:Number(total)
+  });
+}
+
+export async function getCourseRoster(courseId,group){
+  const result=await rpc("academy_course_student_roster",{
+    p_course_id:String(courseId),
+    p_group_no:group?String(group):null
+  });
+  if(!result.ok)return result;
+  return {ok:true,rows:Array.isArray(result.data)?result.data:[]};
+}
