@@ -303,11 +303,12 @@ async function startExam(){
   state.mode="live";
   state.index=0;
   state.answers={};
-  state.questionIds=buildAttemptQuestionIds(cfg);
+  const runtimeCfg=getExamConfig();
+  state.questionIds=buildAttemptQuestionIds(runtimeCfg);
   state.optionOrders={};
   state.startedAt=Date.now();
-  state.expiresAt=state.startedAt+cfg.durationMin*60*1000;
-  state.optionOrders=buildOptionOrders(selectedQuestions(),cfg);
+  state.expiresAt=state.startedAt+runtimeCfg.durationMin*60*1000;
+  state.optionOrders=buildOptionOrders(selectedQuestions(),runtimeCfg);
   state.submitted=false;
   state.result=null;
   state.centralAttemptId=central&&central.ok?String(central.data?.attemptId||""):null;
