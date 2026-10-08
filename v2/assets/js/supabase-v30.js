@@ -36,7 +36,7 @@ async function getClient(){
   if(!clientPromise){
     clientPromise=import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm").then(m=>{
       const c=getSupabaseConfig();
-      return m.createClient(c.url,c.anonKey,{db:{schema:"academy_v2"}});
+      return m.createClient(c.url,c.anonKey,{db:{schema:"public"}});
     });
   }
   return clientPromise;
