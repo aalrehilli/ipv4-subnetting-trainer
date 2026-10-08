@@ -4,7 +4,7 @@ import {questionBankView,refreshBank} from "./question-bank-v32.js?v=434";
 import {student360View} from "./student360-v29.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
 import {interventionCenterView,getOpenInterventions} from "./intervention-v31.js";
-import {courseManagerView} from "./course-manager-v36.js?v=403";
+import {courseManagerView} from "./course-manager-v36.js?v=446";
 import {auditView} from "./system-audit-v31.js?v=434";
 import {getLabStats} from "./lab-center-v37.js?v=445";
 
