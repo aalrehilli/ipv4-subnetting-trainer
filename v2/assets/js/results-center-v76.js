@@ -1,4 +1,4 @@
-import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail,fetchTrainerResultsSummary,fetchTrainerLiveExamMonitor} from "./supabase-v30.js?v=481";
+import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail,fetchTrainerResultsSummary,fetchTrainerLiveExamMonitor} from "./supabase-v30.js?v=482";
 
 let resultRows=[];
 let dashboard={summary:{},exams:[],groups:[],students:[],recent:[]};
