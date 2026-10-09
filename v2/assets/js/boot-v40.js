@@ -40,45 +40,46 @@ function topbar(){
     '<div class="avatar">'+(state.role==="student"?"م":"د")+'</div></div></header>';
 }
 
-function home(){
+async function home(){
+  var mastery={ok:false,summary:{overall:65,lessonProgress:68,examAvg:0,assessmentAvg:0},topics:[],recommendation:null};
+  try{
+    var sb=await import("./supabase-v30.js?v=471");
+    mastery=await sb.fetchStudentMastery("");
+  }catch{}
+  var s=mastery.summary||{};
+  var overall=Number(s.overall||0),lessonProgress=Number(s.lessonProgress||0);
+  var topics=Array.isArray(mastery.topics)?mastery.topics:[];
+  var rec=mastery.recommendation;
+  var topTopic=topics[0]?.topic||"Subnetting";
+  var topAccuracy=Number(topics[0]?.accuracy||0);
+  var nextPage=rec?.page||"review";
   return '<section class="student-hero home-hero"><div class="student-hero-copy">'+
-    '<span class="eyebrow">IPv4 Academy • منصة التدريب الشبكي</span>'+
-    '<h1>أهلًا بك في IPv4 Academy 👋</h1>'+
-    '<p>منصة تدريب عملية تجمع التعلم والتدريب والاختبارات والتحليل في مسار واحد.</p>'+
-    '<div class="hero-actions"><button class="btn btn-white" data-page="review">✦ المراجعة الذكية</button>'+
+    '<span class="eyebrow">V3.69 • التقدم الذكي</span><h1>أهلًا بك في IPv4 Academy 👋</h1>'+
+    '<p>المنصة تجمع تقدم الدروس ونتائج الاختبارات وتحدد لك الخطوة التالية تلقائيًا.</p>'+
+    '<div class="hero-actions"><button class="btn btn-white" data-page="'+nextPage+'">✦ '+(rec?.action||"ابدأ المراجعة")+'</button>'+
     '<button class="btn btn-outline-white" data-page="level">🎯 اختبار تحديد المستوى</button></div></div>'+
-    '<div class="student-hero-side"><div class="hero-mini-label">الإتقان العام</div><div class="hero-level">65%</div>'+
-    '<div class="progress hero-progress"><span style="width:65%"></span></div>'+
-    '<div class="hero-progress-row"><span>IPv4 & Subnetting</span><span>320 XP</span></div></div></section>'+
+    '<div class="student-hero-side"><div class="hero-mini-label">الإتقان العام</div><div class="hero-level">'+overall+'%</div>'+
+    '<div class="progress hero-progress"><span style="width:'+overall+'%"></span></div>'+
+    '<div class="hero-progress-row"><span>المؤشر الموحد</span><span>'+Number(s.examAvg||0)+'% اختبارات</span></div></div></section>'+
     '<div class="home-utility-grid"><div class="card home-utility-card notification-utility"><div class="home-utility-icon">🔔</div>'+
-    '<div><span class="eyebrow purple">تنبيهات</span><h3>مركز الإشعارات</h3><p class="muted">تابع نتائجك وخطواتك القادمة.</p></div>'+
-    '<button class="btn btn-purple" data-page="notifications">فتح الإشعارات</button></div>'+
+    '<div><span class="eyebrow purple">مركز المتابعة</span><h3>الخطوة التالية</h3><p class="muted">'+esc(rec?.reason||"تابع التعلم ثم نفّذ اختبارًا لرفع دقة المؤشر.")+'</p></div>'+
+    '<button class="btn btn-purple" data-page="'+nextPage+'">فتح</button></div>'+
     '<div class="card home-utility-card"><div class="home-utility-icon green">✓</div>'+
-    '<div><span class="eyebrow green">الخطوة التالية</span><h3>راجع VLSM</h3><p class="muted">الموضوع يحتاج تدريبًا إضافيًا.</p></div>'+
-    '<button class="btn btn-green" data-page="review">ابدأ الآن</button></div></div>'+
+    '<div><span class="eyebrow green">أولوية التحسين</span><h3>'+esc(topTopic)+'</h3><p class="muted">الدقة الحالية '+topAccuracy+'% وفق النتائج المركزية.</p></div>'+
+    '<button class="btn btn-green" data-page="review">راجع الآن</button></div></div>'+
     '<div class="student-grid-4 home-kpis">'+
-    card("تقدم المقرر","68%","+6% هذا الأسبوع")+
-    card("الإتقان العام","65%","Smart Engine")+
-    card("سلسلة التعلم","4 أيام","استمر غدًا")+
-    card("نقاط الخبرة","320 XP","الهدف التالي 500")+
+    card("تقدم الدروس",lessonProgress+"%","المحتوى المكتمل")+
+    card("الإتقان العام",overall+"%","المؤشر الموحد")+
+    card("متوسط الاختبارات",Number(s.examAvg||0)+"%",Number(s.examAttempts||0)+" محاولة")+
+    card("تقييمات الدروس",Number(s.assessmentAvg||0)+"%","Assessment")+
     '</div>'+
-    '<div class="section-title"><h3>خريطة الإتقان</h3><span class="badge purple">Smart Learning</span></div>'+
+    '<div class="section-title"><h3>خريطة الإتقان المركزية</h3><span class="badge purple">V3.69 Smart Progress</span></div>'+
     '<div class="card mastery-grid">'+
-    ["IPv4","Binary","Prefix","Subnet Mask","FLSM","VLSM"].map(function(x,i){
-      var v=[84,72,58,46,62,42][i];
-      var cls=v<50?"red":(v<70?"orange":"green");
-      var txt=v<50?"يحتاج تدخل":(v<70?"يحتاج تدريب":"جيد");
-      return '<div class="mastery-item"><div><strong>'+x+'</strong><span class="badge '+cls+'">'+v+'%</span></div>'+
-        '<div class="progress"><span style="width:'+v+'%"></span></div><small>'+txt+'</small></div>';
-    }).join("")+'</div>'+
-    '<div class="section-title"><h3>المسار التدريبي</h3></div>'+
-    '<div class="card"><div class="learning-path">'+
-    '<div class="path-item completed"><div class="path-dot">✓</div><div class="path-content"><div class="path-top"><strong>أساسيات IPv4</strong><span class="badge green">مكتمل</span></div><div class="muted">فهم العناوين وأساسيات الشبكات.</div><div class="progress"><span style="width:100%"></span></div></div></div>'+
-    '<div class="path-item current"><div class="path-dot">2</div><div class="path-content"><div class="path-top"><strong>Binary وPrefix</strong><span class="badge orange">أنت هنا</span></div><div class="muted">اربط التحويل الثنائي بالـPrefix.</div><div class="progress"><span style="width:72%"></span></div></div></div>'+
-    '<div class="path-item"><div class="path-dot">3</div><div class="path-content"><div class="path-top"><strong>Subnetting</strong><span class="badge">قادم</span></div><div class="muted">Network وFirst Host وLast Host وBroadcast.</div><div class="progress"><span style="width:20%"></span></div></div></div>'+
-    '</div></div>';
+    (topics.length?topics.slice(0,6).map(function(x){var v=Number(x.accuracy||0);var cls=v<50?"red":v<70?"orange":"green";return '<div class="mastery-item"><div><strong>'+esc(x.topic)+'</strong><span class="badge '+cls+'">'+v+'%</span></div><div class="progress"><span style="width:'+v+'%"></span></div><small>'+esc(x.status||"")+'</small></div>';}).join(""):'<div class="empty">بعد أول اختبار مركزي ستظهر خريطة الإتقان هنا.</div>')+
+    '</div>'+
+    '<div class="section-title"><h3>التقدم</h3><button class="link-btn" data-page="progress">عرض التفاصيل</button></div>'+
+    '<div class="card"><div class="learning-path"><div class="path-item current"><div class="path-dot">1</div><div class="path-content"><div class="path-top"><strong>التعلم → التدريب → الاختبار → المراجعة</strong><span class="badge purple">ذكي</span></div><div class="muted">كل نتيجة جديدة تعيد حساب مستوى الإتقان والتوصية القادمة.</div><div class="progress"><span style="width:'+overall+'%"></span></div></div></div></div></div>';
 }
-
 function placeholder(title,desc){
   return '<div class="page-intro"><span class="eyebrow blue">IPv4 Academy</span><h2>'+title+'</h2><p>'+desc+'</p></div>'+
     '<div class="card"><h3>هذه الشاشة جاهزة للتطوير</h3><p class="muted">تم تثبيت التشغيل الأساسي أولًا لمنع الشاشة البيضاء. يمكن الآن تشغيل المكونات المتقدمة من داخل الشاشة نفسها.</p>'+
