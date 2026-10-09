@@ -1,4 +1,4 @@
-import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail,fetchTrainerResultsSummary} from "./supabase-v30.js?v=478";
+import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail,fetchTrainerResultsSummary} from "./supabase-v30.js?v=479";
 
 let resultRows=[];
 let dashboard={summary:{},exams:[],groups:[],students:[],recent:[]};
@@ -80,13 +80,13 @@ export async function resultsCenterView(){
     fetchCentralTrainerExamResults({}).catch(()=>({ok:false}))
   ]);
   if(!summaryRes.ok && !rowsRes.ok){
-    return '<div class="page-intro"><span class="eyebrow red">V3.76 • مركز النتائج</span><h2>تعذر تحميل النتائج المركزية</h2><p>يلزم حساب مدرب أو مدير واتصال Supabase صالح.</p></div><div class="card" style="border-right:4px solid var(--red)"><strong>المصدر المركزي غير متاح</strong><p class="muted">'+esc(summaryRes.error||rowsRes.error||summaryRes.reason||rowsRes.reason||"خطأ غير معروف")+'</p></div>';
+    return '<div class="page-intro"><span class="eyebrow red">V3.77 • مركز النتائج</span><h2>تعذر تحميل النتائج المركزية</h2><p>يلزم حساب مدرب أو مدير واتصال Supabase صالح.</p></div><div class="card" style="border-right:4px solid var(--red)"><strong>المصدر المركزي غير متاح</strong><p class="muted">'+esc(summaryRes.error||rowsRes.error||summaryRes.reason||rowsRes.reason||"خطأ غير معروف")+'</p></div>';
   }
   dashboard=summaryRes.ok?summaryRes.payload:{summary:{},exams:[],groups:[],students:[],recent:[]};
   resultRows=rowsRes.ok?rowsRes.rows:[];
   const s=dashboard.summary||{};
   return '<div class="page-intro with-action">'+
-    '<div><span class="eyebrow purple">V3.76 • مركز النتائج الموحد</span><h2>مركز النتائج + Student 360</h2><p>النتيجة الرسمية، تحليل الاختبار، مقارنة المجموعات وربط مباشر بملف المتدرب المركزي.</p></div>'+
+    '<div><span class="eyebrow purple">V3.77 • مركز النتائج الموحد</span><h2>مركز النتائج + Student 360</h2><p>النتيجة الرسمية، تحليل الاختبار، مقارنة المجموعات وربط مباشر بملف المتدرب المركزي.</p></div>'+
     '<div class="trainer-exam-head-actions"><span class="badge green">Supabase • مباشر</span><button class="btn btn-soft" data-results-refresh>تحديث</button><button class="btn btn-soft" data-results-export>تصدير CSV</button></div></div>'+
     summaryCards(s)+
     '<div class="section-title"><h3>أداء الاختبارات</h3><span class="badge purple">Central Results</span></div>'+
@@ -98,7 +98,7 @@ export async function resultsCenterView(){
     '<div class="section-title"><h3>النشاط الأخير</h3><span class="badge">'+dashboard.recent.length+' نتيجة</span></div>'+
     recentTable()+
     '<div id="results-detail-panel"></div>'+
-    '<div class="card trainer-results-note"><strong>V3.76:</strong> النتائج الرسمية تأتي من <code>academy_exam_attempts</code>، وملف Student 360 يعتمد على الهوية المركزية نفسها.</div>';
+    '<div class="card trainer-results-note"><strong>V3.77:</strong> النتائج الرسمية تأتي من <code>academy_exam_attempts</code>، وملف Student 360 يعتمد على الهوية المركزية نفسها.</div>';
 }
 
 function applySearches(){
@@ -127,7 +127,7 @@ export async function showResultDetailV76(attemptId){
   const student=resultRows.find(x=>String(x.id)===String(attemptId));
   const studentId=student?.studentId||"";
   panel.innerHTML='<div class="card" style="margin-top:16px">'+
-    '<div class="section-title"><div><span class="eyebrow purple">تفاصيل النتيجة • V3.76</span><h3>'+esc(a.title||"اختبار")+'</h3><p class="muted">'+esc(student?.studentName||"متدرب")+'</p></div><div><button class="btn btn-primary" '+(studentId?'data-student-id="'+esc(studentId)+'"':'disabled')+'>فتح Student 360</button> <button class="btn btn-soft" data-results-detail-close>إغلاق</button></div></div>'+
+    '<div class="section-title"><div><span class="eyebrow purple">تفاصيل النتيجة • V3.77</span><h3>'+esc(a.title||"اختبار")+'</h3><p class="muted">'+esc(student?.studentName||"متدرب")+'</p></div><div><button class="btn btn-primary" '+(studentId?'data-student-id="'+esc(studentId)+'"':'disabled')+'>فتح Student 360</button> <button class="btn btn-soft" data-results-detail-close>إغلاق</button></div></div>'+
     '<div class="trainer-results-kpis" style="margin-top:0">'+
     kpi("النتيجة",Number(a.percent||0)+"%",Number(a.score||0)+" / "+Number(a.total||0))+
     kpi("الحالة",a.passed?"ناجح":"غير مجتاز","المحاولة "+Number(a.attemptNo||1),a.passed?"success":"warning")+
