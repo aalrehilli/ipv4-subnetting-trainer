@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=469";
-import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions,saveCentralExamDraftAnswer} from "./supabase-v30.js?v=481";
+import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions,saveCentralExamDraftAnswer} from "./supabase-v30.js?v=482";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
@@ -395,6 +395,80 @@ async function startExam(){
   ensureTimer();
   return {ok:true,resumed:central?.data?.resumed===true};
 }
+async function recoverActiveExam(){
+  if(state.submitting||state.starting)return {blocked:true,reason:"الاختبار قيد البدء أو المعالجة."};
+  state.starting=true;
+
+  const remote=await fetchStudentActiveExam().catch(function(error){return {ok:false,error:String(error&&error.message||error)}});
+  if(!remote.ok){
+    state.starting=false;
+    return {blocked:true,reason:remote.error||"تعذر البحث عن محاولة محفوظة."};
+  }
+
+  const d=remote.data||{};
+  if(d.hasActiveAttempt!==true){
+    state.starting=false;
+    return {blocked:true,reason:"لا توجد محاولة اختبار نشطة محفوظة لهذا الحساب."};
+  }
+
+  const questions=Array.isArray(d.questions)?d.questions:[];
+  if(!questions.length){
+    state.starting=false;
+    return {blocked:true,reason:"تم العثور على المحاولة، لكن أسئلتها غير متاحة حاليًا."};
+  }
+
+  const runtimeCfg={
+    ...getExamConfig(),
+    title:String(d.title||getExamConfig().title),
+    durationMin:Number(d.durationMinutes||getExamConfig().durationMin),
+    passPercent:Number(d.passPercent??getExamConfig().passPercent),
+    attemptsLimit:Number(d.attemptsLimit??getExamConfig().attemptsLimit),
+    questionCount:Number(d.questionCount||questions.length),
+    selectionMode:d.selectionMode||getExamConfig().selectionMode,
+    difficultyMode:d.difficultyMode||getExamConfig().difficultyMode,
+    questionIds:Array.isArray(d.questionIds)?d.questionIds:questions.map(q=>q.id),
+    shuffleQuestions:d.shuffleQuestions!==false,
+    shuffleOptions:d.shuffleOptions!==false,
+    published:true,
+    version:381,
+    updatedAt:Date.now()
+  };
+  localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify(runtimeCfg));
+
+  state.mode="live";
+  state.index=0;
+  state.answers={};
+  state.startedAt=d.startedAt?Date.parse(d.startedAt):Date.now();
+  if(!Number.isFinite(state.startedAt))state.startedAt=Date.now();
+  const expiry=d.expiresAt?Date.parse(d.expiresAt):NaN;
+  state.expiresAt=Number.isFinite(expiry)?expiry:state.startedAt+runtimeCfg.durationMin*60*1000;
+  state.submitted=false;
+  state.result=null;
+  state.submitting=false;
+  state.centralAttemptId=String(d.attemptId||"");
+  state.centralAttemptNo=Number(d.attemptNo||0);
+  state.centralExamId=String(d.examId||"");
+  state.resumedAttempt=true;
+  state.centralQuestions=questions.map(function(q){
+    return {...q,id:String(q.id),opts:Array.isArray(q.opts)?q.opts:(Array.isArray(q.options)?q.options:[]),options:Array.isArray(q.options)?q.options:[]};
+  });
+  state.questionIds=state.centralQuestions.map(q=>q.id);
+  state.optionOrders=buildOptionOrders(state.centralQuestions,runtimeCfg);
+
+  const drafts=d.draftAnswers&&typeof d.draftAnswers==="object"?d.draftAnswers:{};
+  Object.entries(drafts).forEach(function(entry){
+    const raw=entry[1];
+    const selected=raw===null||raw===undefined?-1:Number(raw);
+    if(Number.isInteger(selected)&&selected>=0&&selected<=3)state.answers[String(entry[0])]=selected;
+  });
+
+  localStorage.setItem(CENTRAL_ATTEMPT_KEY,state.centralAttemptId);
+  state.starting=false;
+  saveState();
+  ensureTimer();
+  return {ok:true,resumed:true};
+}
+
 async function answer(displayIndex){
   const q=currentQuestion();
   const option=displayOptions(q)[Number(displayIndex)];
@@ -552,6 +626,7 @@ function introPage(){
         <div>✓ بعد التسليم سيظهر تحليل الأخطاء والموضوعات</div>
       </div>
       <button class="btn btn-primary" id="start-exam" ${blocked?"disabled":""}>${startLabel}</button>
+      <button class="btn btn-soft" id="recover-exam" style="margin-top:9px">↻ استعادة محاولة محفوظة</button>
     </div>
     <div class="card exam-preview-card">
       <span class="eyebrow blue">آخر نتيجة</span>
@@ -666,6 +741,10 @@ export function examPage(){
 }
 
 export async function handleExamAction(target){
+  if(target.id==="recover-exam"){
+    const recovered=await recoverActiveExam();
+    return recovered?.blocked?{blocked:true,message:recovered.reason}:{rerender:true};
+  }
   if(target.id==="start-exam"){
     const started=await startExam();
     return started?.blocked?{blocked:true,message:started.reason}:{rerender:true};
