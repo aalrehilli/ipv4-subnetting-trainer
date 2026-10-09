@@ -664,3 +664,56 @@ export async function signOut(){
   if(error)return {ok:false,error:error.message};
   return {ok:true};
 }
+
+
+export async function fetchAdminUsers(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_admin_users");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,payload:data||{summary:{},users:[]}};
+}
+
+export async function updateAdminUser({id,fullName,studentId,groupNo,role,isActive}={}){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  if(!id)return {ok:false,reason:"USER_REQUIRED"};
+  const {data,error}=await client.rpc("academy_admin_update_user",{
+    p_user_id:String(id),
+    p_full_name:String(fullName||""),
+    p_student_id:String(studentId||""),
+    p_group_no:String(groupNo||""),
+    p_role:String(role||"student"),
+    p_is_active:Boolean(isActive)
+  });
+  if(error){
+    const msg=String(error.message||error);
+    const map={
+      ADMIN_REQUIRED:"صلاحية المدير مطلوبة.",
+      USER_REQUIRED:"المستخدم غير محدد.",
+      USER_NOT_FOUND:"المستخدم غير موجود.",
+      INVALID_ROLE:"الدور المحدد غير صحيح.",
+      CANNOT_REMOVE_SELF_ADMIN:"لا يمكن للمدير إزالة صلاحية حسابه أو تعطيله.",
+      LAST_ADMIN_PROTECTED:"لا يمكن تعطيل أو تخفيض آخر مدير نشط في المنصة."
+    };
+    const key=Object.keys(map).find(k=>msg.includes(k));
+    return {ok:false,error:key?map[key]:msg};
+  }
+  return {ok:true,data:data||null};
+}
+
+export async function sendUserPasswordReset(email){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const target=String(email||"").trim();
+  if(!target)return {ok:false,reason:"EMAIL_REQUIRED"};
+  const origin=window.location.origin;
+  const redirectTo=origin+window.location.pathname+"?reset=1";
+  const {error}=await client.auth.resetPasswordForEmail(target,{redirectTo});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true};
+}
