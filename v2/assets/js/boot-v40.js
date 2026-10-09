@@ -135,7 +135,7 @@ async function adminDashboard(){
   const recent=Array.isArray(results.payload?.recent)?results.payload.recent:[];
   const active=Number(live.payload?.activeCount||0);
   return '<section class="student-hero home-hero">'+
-    '<div class="student-hero-copy"><span class="eyebrow">V3.95 • إدارة المنصة</span>'+
+    '<div class="student-hero-copy"><span class="eyebrow">V3.96 • إدارة المنصة</span>'+
     '<h1>مرحبًا '+esc(name)+' 👋</h1>'+
     '<p>لوحة الإدارة المركزية لمنصة IPv4 Academy. من هنا تتابع المتدربين والاختبارات والنتائج والتحليلات.</p>'+
     '<div class="hero-actions"><button class="btn btn-white" data-page="students">👥 إدارة المتدربين</button>'+
@@ -233,7 +233,10 @@ async function loadPage(){
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
   if(state.role==="student" && state.page==="home") return await home();
-  if(state.role==="admin" && state.page==="adash") return await adminDashboard();
+  if(state.role==="admin" && state.page==="adash"){
+    var admin96=await import("./admin-dashboard-v96.js?v=501");
+    return await admin96.adminDashboardV96();
+  }
   if(state.role==="admin" && state.page==="users"){
     var userManagement=await import("./user-management-v94.js?v=500");
     return await userManagement.userManagementView();
