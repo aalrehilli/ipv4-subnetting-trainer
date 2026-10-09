@@ -1,4 +1,4 @@
-const state={role:"student",page:"home",filter:"",group:"",studentId:null,analyticsCourse:""};
+const state={role:"student",page:"home",filter:"",group:"",studentId:null,analyticsCourse:"",authMode:"login"};
 
 const studentNav=[
   ["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],
@@ -32,18 +32,21 @@ function sidebar(){
 }
 
 function topbar(){
-  return '<header class="topbar"><div class="topbar-title">'+(state.role==="student"?"مساحة المتدرب":"مركز المدرب")+
-    ' <span class="badge" style="margin-right:8px">نسخة مستقرة</span></div>'+
-    '<div class="topbar-actions"><button class="btn btn-soft" id="switch-role">عرض '+
-    (state.role==="student"?"المدرب":"المتدرب")+
-    '</button><button class="btn btn-ghost" id="hard-refresh">تحديث</button>'+
-    '<div class="avatar">'+(state.role==="student"?"م":"د")+'</div></div></header>';
+  const name=window.__IPV4_SUPABASE_STATUS__?.name||"متدرب";
+  const role=String(window.__IPV4_SUPABASE_STATUS__?.role||"student");
+  const label=role==="admin"?"المدير":role==="trainer"?"المدرب":"المتدرب";
+  return '<header class="topbar"><div class="topbar-title">'+
+    (role==="admin"?"مركز المدير":role==="trainer"?"مركز المدرب":"مساحة المتدرب")+
+    ' <span class="badge" style="margin-right:8px">'+label+'</span></div>'+
+    '<div class="topbar-actions"><span class="muted">'+esc(name)+'</span>'+
+    '<button class="btn btn-soft" id="auth-logout">تسجيل الخروج</button>'+
+    '<button class="btn btn-ghost" id="hard-refresh">تحديث</button>'+
+    '<div class="avatar">'+esc((name||label).slice(0,1))+'</div></div></header>';
 }
-
 async function home(){
   var mastery={ok:false,summary:{overall:65,lessonProgress:68,examAvg:0,assessmentAvg:0},topics:[],recommendation:null};
   try{
-    var sb=await import("./supabase-v30.js?v=473");
+    var sb=await import("./supabase-v30.js?v=474");
     mastery=await sb.fetchStudentMastery("");
   }catch{}
   var s=mastery.summary||{};
@@ -98,18 +101,27 @@ function shell(content){
 }
 
 async function loadPage(){
+  const sbStatus=window.__IPV4_SUPABASE_STATUS__||{};
+  if(state.authMode==="reset"){
+    const auth=await import("./auth-v72.js?v=474");
+    return auth.authView("reset");
+  }
+  if(sbStatus.configured && !sbStatus.authenticated){
+    const auth=await import("./auth-v72.js?v=474");
+    return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
+  }
   if(state.role==="student" && state.page==="home") return await home();
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
-      var learning=await import("./course-learning-v38.js?v=473");
+      var learning=await import("./course-learning-v38.js?v=474");
       if(state.page==="course") return learning.learnerCourse();
       if(state.page==="lesson-assessment") return learning.assessmentView();
       return learning.lessonPage();
     }
 
     if(state.page==="notifications"){
-      var centralNotifications=await import("./notifications-v64.js?v=473");
+      var centralNotifications=await import("./notifications-v64.js?v=474");
       return centralNotifications.notificationsV64View(state.role);
     }
 
@@ -122,41 +134,41 @@ async function loadPage(){
     }
 
     if(state.role==="trainer" && state.page==="analytics"){
-      var centralAnalytics=await import("./trainer-analytics-v63.js?v=473");
+      var centralAnalytics=await import("./trainer-analytics-v63.js?v=474");
       return centralAnalytics.trainerAnalyticsView(state.analyticsCourse||"");
     }
 
     if(state.role==="trainer" && state.page==="interventions"){
-      var interventions=await import("./intervention-v31.js?v=473");
+      var interventions=await import("./intervention-v31.js?v=474");
       return interventions.interventionCenterView();
     }
 
     if(state.role==="trainer" && (state.page==="students" || state.page==="groups")){
-      var rosterV71=await import("./trainer-students-v71.js?v=473");
+      var rosterV71=await import("./trainer-students-v71.js?v=474");
       if(state.page==="students") return await rosterV71.trainerStudentsView(state.filter||"",state.group||"");
       return await rosterV71.trainerGroupsView();
     }
 
     if(state.role==="trainer" && ["students","groups","courses","questions","exams","results","labs","analytics","tdash","student360","audit","qintel"].indexOf(state.page)>=0){
       if(state.page==="tdash"){
-        var finalDash=await import("./trainer-dashboard-v64.js?v=473");
+        var finalDash=await import("./trainer-dashboard-v64.js?v=474");
         return finalDash.trainerDashboardView();
       }
-      var trainer=await import("./trainer-v22.js?v=473");
-      if(state.page==="student360"){var s360=await import("./student360-v70.js?v=473");return await s360.student360View(state.studentId||"");}
-      if(state.page==="results"){var results=await import("./results-center-v34.js?v=473");return results.resultsCenterView();}
-      if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=473");return qi.questionIntelligenceView();}
+      var trainer=await import("./trainer-v22.js?v=474");
+      if(state.page==="student360"){var s360=await import("./student360-v70.js?v=474");return await s360.student360View(state.studentId||"");}
+      if(state.page==="results"){var results=await import("./results-center-v34.js?v=474");return results.resultsCenterView();}
+      if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=474");return qi.questionIntelligenceView();}
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
     if(state.role==="student" && (state.page==="review" || state.page==="review-session")){
-      var smartReview=await import("./smart-review-v38.js?v=473");
+      var smartReview=await import("./smart-review-v38.js?v=474");
       return await smartReview.smartReviewPage();
     }
 
     if(state.role==="student"){
-      if(state.page==="labs"){var labCenter=await import("./lab-center-v37.js?v=473");return labCenter.labCenterView();}
-      var student=await import("./student.js?v=473");
+      if(state.page==="labs"){var labCenter=await import("./lab-center-v37.js?v=474");return labCenter.labCenterView();}
+      var student=await import("./student.js?v=474");
       student.studentState.page=state.page;
       return await student.studentPage();
     }
@@ -170,16 +182,22 @@ async function loadPage(){
 
 async function syncSupabaseRuntime(){
   try{
-    var sb=await import("./supabase-v30.js?v=473");
+    var sb=await import("./supabase-v30.js?v=474");
+    await sb.installAuthStateListener();
     var result=await sb.syncAllFromSupabase();
     window.__IPV4_SUPABASE_STATUS__=result.status||window.__IPV4_SUPABASE_STATUS__||{configured:false,authenticated:false};
+    if(window.__IPV4_SUPABASE_STATUS__.authenticated){
+      const r=String(window.__IPV4_SUPABASE_STATUS__.role||"student");
+      state.role=(r==="trainer"||r==="admin")?"trainer":"student";
+      if(state.role==="trainer" && ["home","level","course","practice","review","review-session","progress","achievements","certificate"].includes(state.page)) state.page="tdash";
+      if(state.role==="student" && ["tdash","students","groups","courses","questions","exams","results","qintel","analytics","interventions","student360","audit"].includes(state.page)) state.page="home";
+    }
     return result;
   }catch(error){
     window.__IPV4_SUPABASE_STATUS__={configured:false,authenticated:false,message:"تعذر مزامنة Supabase",error:String(error&&error.message||error)};
     return null;
   }
 }
-
 async function render(){
   var app=document.getElementById("app");
   if(!app){
@@ -192,7 +210,8 @@ async function render(){
 
   await syncSupabaseRuntime();
   var content=await loadPage();
-  app.innerHTML=shell(content||placeholder("صفحة فارغة","لا يوجد محتوى لهذه الشاشة."));
+  const authOnly=state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured && !window.__IPV4_SUPABASE_STATUS__?.authenticated);
+  app.innerHTML=authOnly?content:shell(content||placeholder("صفحة فارغة","لا يوجد محتوى لهذه الشاشة."));
   bind();
 }
 
@@ -203,6 +222,31 @@ window.addEventListener("ipv4-course-progress-sync",function(){
   });
 });
 
+window.addEventListener("ipv4-auth-mode",function(event){
+  state.authMode=event.detail?.mode||"login";
+  render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});
+});
+
+window.addEventListener("ipv4-auth-success",function(){
+  state.authMode="login";state.page="home";
+  state.filter="";state.group="";state.studentId=null;
+  render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});
+});
+
+window.addEventListener("ipv4-auth-password-updated",async function(){
+  try{const m=await import("./supabase-v30.js?v=474");await m.signOut();}catch{}
+  state.authMode="login";state.page="auth";window.location.hash="";
+  render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});
+});
+
+window.addEventListener("ipv4-auth-state",function(event){
+  const e=event.detail?.event;
+  if(e==="PASSWORD_RECOVERY") state.authMode="reset";
+  else if(e==="SIGNED_OUT"){state.authMode="login";state.page="auth";}
+  else if(e==="SIGNED_IN"||e==="INITIAL_SESSION"){if(state.authMode!=="reset")state.authMode="login";}
+  setTimeout(function(){render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});},0);
+});
+
 window.addEventListener("ipv4-course-switch",function(){
   render().catch(function(error){
     const app=document.getElementById("app");
@@ -211,7 +255,10 @@ window.addEventListener("ipv4-course-switch",function(){
 });
 
 function bind(){
-  import("./notifications-v64.js?v=473").then(function(m){
+  if(state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured && !window.__IPV4_SUPABASE_STATUS__?.authenticated)){
+    import("./auth-v72.js?v=474").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
+  }
+  import("./notifications-v64.js?v=474").then(function(m){
     if(typeof m.bindCentralNotifications==="function")m.bindCentralNotifications();
   }).catch(function(){});
   document.querySelectorAll("[data-lab-page]").forEach(function(btn){
@@ -226,7 +273,7 @@ function bind(){
   document.querySelectorAll("[data-smart-review-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./smart-review-v38.js?v=473");
+        var m=await import("./smart-review-v38.js?v=474");
         var result=await m.handleSmartReviewAction(btn);
         state.role="student";
         state.page="review";
@@ -257,14 +304,16 @@ function bind(){
     });
   });
 
-  var sw=document.getElementById("switch-role");
-  if(sw) sw.addEventListener("click",function(){
-    state.role=state.role==="student"?"trainer":"student";
-    state.page=state.role==="student"?"home":"tdash";
-    state.filter="";
-    state.group="";
-    state.studentId=null;
-    render();
+  var logout=document.getElementById("auth-logout");
+  if(logout) logout.addEventListener("click",async function(){
+    try{
+      const m=await import("./supabase-v30.js?v=474");
+      const result=await m.signOut();
+      if(!result.ok) throw new Error(result.error||result.reason||"تعذر تسجيل الخروج");
+      window.location.reload();
+    }catch(error){
+      window.alert(String(error&&error.message||error));
+    }
   });
 
   var refresh=document.getElementById("hard-refresh");
@@ -347,7 +396,7 @@ function bind(){
   document.querySelectorAll("[data-360-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./student360-v70.js?v=473");
+        var m=await import("./student360-v70.js?v=474");
         var result=m.handleStudent360Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
@@ -359,7 +408,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=473");
+        var m=await import("./intervention-v31.js?v=474");
         var result=m.handleInterventionAction(btn);
         if(result&&result.studentId){
           state.role="trainer";
@@ -377,7 +426,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-filter]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=473");
+        var m=await import("./intervention-v31.js?v=474");
         m.setInterventionFilter(btn.getAttribute("data-intervention-filter")||"open");
         await render();
       }catch(error){
@@ -407,22 +456,22 @@ function bind(){
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v32.js?v=473").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v32.js?v=474").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=473");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=474");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=473");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=474");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankStatus&&qbankStatus.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=473");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=474");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v32.js?v=473");
+        var m=await import("./question-bank-v32.js?v=474");
         var result=m.handleQuestionBankAction(btn);
         if(result&&result.export){
           var fmt=result.export;
@@ -444,7 +493,7 @@ function bind(){
         }
         if(result&&result.message){window.alert(result.message);}
         try{
-          var sb=await import("./supabase-v30.js?v=473");
+          var sb=await import("./supabase-v30.js?v=474");
           if(typeof sb.syncLocalQuestionsToSupabase==="function") await sb.syncLocalQuestionsToSupabase(m.getQuestionBank());
         }catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
         if(result&&result.rerender) await render();
@@ -461,7 +510,7 @@ function bind(){
       var reader=new FileReader();
       reader.onload=async function(){
         try{
-          var m=await import("./question-bank-v32.js?v=473");
+          var m=await import("./question-bank-v32.js?v=474");
           var format=event.target.id.indexOf("xml")>=0?"xml":event.target.id.indexOf("aiken")>=0?"aiken":"json";
           var result=m.importQuestionBankText(String(reader.result||""),format);
           if(result&&result.ok&&result.rows){
@@ -482,9 +531,9 @@ function bind(){
   if(examSettings) examSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=473");
+      var m=await import("./exam-v23.js?v=474");
       var cfg=m.saveTrainerExamConfigFromForm(event.currentTarget);
-      try{var sb=await import("./supabase-v30.js?v=473");await sb.syncTrainerExamToSupabase(cfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=474");await sb.syncTrainerExamToSupabase(cfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -495,7 +544,7 @@ function bind(){
   if(examQuestionSettings) examQuestionSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=473");
+      var m=await import("./exam-v23.js?v=474");
       var cfg=m.saveTrainerExamBuilderFromForm(event.currentTarget);
       var msg=document.getElementById("exam-question-msg");
       if(msg) msg.textContent="تم بناء الاختبار بـ "+cfg.questionIds.length+" سؤال.";
@@ -507,10 +556,10 @@ function bind(){
 
   document.getElementById("publish-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=473");
+      var m=await import("./exam-v23.js?v=474");
       if(examQuestionSettings) m.saveTrainerExamBuilderFromForm(examQuestionSettings);
       var publishedCfg=m.publishTrainerExam(true);
-      try{var sb=await import("./supabase-v30.js?v=473");await sb.syncTrainerExamToSupabase(publishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=474");await sb.syncTrainerExamToSupabase(publishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -519,9 +568,9 @@ function bind(){
 
   document.getElementById("unpublish-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=473");
+      var m=await import("./exam-v23.js?v=474");
       var unpublishedCfg=m.publishTrainerExam(false);
-      try{var sb=await import("./supabase-v30.js?v=473");await sb.syncTrainerExamToSupabase(unpublishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=474");await sb.syncTrainerExamToSupabase(unpublishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -530,7 +579,7 @@ function bind(){
 
   document.getElementById("reset-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=473");
+      var m=await import("./exam-v23.js?v=474");
       m.resetTrainerExamConfig();
       await render();
     }catch(error){
@@ -541,7 +590,7 @@ function bind(){
   document.querySelectorAll("#start-exam,#exam-prev,#exam-next,#submit-exam,#exam-review-back,#exam-review-submit,[data-exam-answer],[data-exam-jump],[data-exam-review-jump],[data-exam-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./exam-v23.js?v=473");
+        var m=await import("./exam-v23.js?v=474");
         var result;
         if(btn.id==="start-exam") result=await m.handleExamAction(btn);
         else if(btn.id==="exam-prev") result=m.handleExamAction(btn);
@@ -580,17 +629,17 @@ function bind(){
 
   document.querySelectorAll("#results-search,#results-exam-filter,#results-status-filter,#results-group-filter").forEach(function(el){
     el.addEventListener("input",async function(){
-      var m=await import("./results-center-v34.js?v=473");
+      var m=await import("./results-center-v34.js?v=474");
       m.filterResultsDom();
     });
     el.addEventListener("change",async function(){
-      var m=await import("./results-center-v34.js?v=473");
+      var m=await import("./results-center-v34.js?v=474");
       m.filterResultsDom();
     });
   });
   document.querySelectorAll("[data-results-export]").forEach(function(btn){
     btn.addEventListener("click",async function(){
-      var m=await import("./results-center-v34.js?v=473");
+      var m=await import("./results-center-v34.js?v=474");
       var blob=new Blob(["\uFEFF"+m.getResultsCsv()],{type:"text/csv;charset=utf-8"});
       var url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download="ipv4-academy-results-v3.67.csv";
@@ -601,7 +650,7 @@ function bind(){
   document.querySelectorAll("[data-results-detail],[data-results-detail-close]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./results-center-v34.js?v=473");
+        var m=await import("./results-center-v34.js?v=474");
         var result=await m.handleResultsDetailClick(btn);
         if(result&&result.rerender) await render();
       }catch(error){
@@ -615,16 +664,16 @@ function bind(){
   });
 
   document.querySelectorAll("#qintel-status-filter,#qintel-topic-filter,#qintel-difficulty-filter").forEach(function(el){
-    el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=473");m.filterQuestionIntelligence();});
+    el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=474");m.filterQuestionIntelligence();});
   });
   document.querySelectorAll("[data-qintel-export]").forEach(function(btn){
-    btn.addEventListener("click",async function(){var m=await import("./question-intelligence-v35.js?v=473");var blob=new Blob(["\\uFEFF"+m.getQuestionIntelligenceJson()],{type:"application/json;charset=utf-8"});var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ipv4-academy-question-intelligence-v3.35.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
+    btn.addEventListener("click",async function(){var m=await import("./question-intelligence-v35.js?v=474");var blob=new Blob(["\\uFEFF"+m.getQuestionIntelligenceJson()],{type:"application/json;charset=utf-8"});var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ipv4-academy-question-intelligence-v3.35.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
   });
 
   document.querySelectorAll("[data-course-action],[data-course-editor-action],[data-lesson-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-manager-v36.js?v=473");
+        var m=await import("./course-manager-v36.js?v=474");
         var result;
         if(btn.hasAttribute("data-course-action")) result=m.handleCourseAction(btn);
         else if(btn.hasAttribute("data-course-editor-action")) result=m.handleCourseEditorAction(btn);
@@ -639,7 +688,7 @@ function bind(){
   document.querySelectorAll("[data-course-learning-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-learning-v38.js?v=473");
+        var m=await import("./course-learning-v38.js?v=474");
         var result=m.handleLearningAction(btn);
         if(result && result.page) state.page=result.page;
         if(result && result.rerender) await render();
@@ -653,7 +702,7 @@ function bind(){
   if(assessment) assessment.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./course-learning-v38.js?v=473");
+      var m=await import("./course-learning-v38.js?v=474");
       var result=m.submitLessonAssessment(event.currentTarget);
       if(result && result.rerender) await render();
     }catch(error){
