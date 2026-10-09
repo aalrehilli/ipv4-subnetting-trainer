@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=480";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=481";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -299,6 +299,20 @@ export async function fetchCentralQuestionBank(){
   const {data,error}=await client.rpc("academy_question_bank");
   if(error)return {ok:false,error:String(error.message||error)};
   return {ok:true,rows:Array.isArray(data)?data:[]};
+}
+
+export async function saveCentralExamDraftAnswer(attemptId,questionId,selected){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_save_exam_draft_answer",{
+    p_attempt_id:String(attemptId),
+    p_question_id:String(questionId),
+    p_selected:selected===null||selected===undefined?null:Number(selected)
+  });
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data:data||null};
 }
 
 export async function prepareCentralExamAttempt(examId,title,courseId){
