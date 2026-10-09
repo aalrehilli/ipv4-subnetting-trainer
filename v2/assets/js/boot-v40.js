@@ -1,4 +1,29 @@
 const state={role:"student",page:"auth",filter:"",group:"",studentId:null,analyticsCourse:"",authMode:"login"};
+const NAV_STATE_KEY="ipv4AcademyNavStateV1";
+function restoreNavState(){
+  try{
+    const saved=JSON.parse(sessionStorage.getItem(NAV_STATE_KEY)||"null");
+    if(!saved)return;
+    if(["student","trainer","admin"].includes(String(saved.role))) state.role=String(saved.role);
+    if(saved.page)state.page=String(saved.page);
+    state.filter=String(saved.filter||"");
+    state.group=String(saved.group||"");
+    state.studentId=saved.studentId||null;
+    state.analyticsCourse=String(saved.analyticsCourse||"");
+  }catch{}
+}
+function persistNavState(){
+  try{
+    sessionStorage.setItem(NAV_STATE_KEY,JSON.stringify({
+      role:state.role,page:state.page,filter:state.filter,group:state.group,
+      studentId:state.studentId,analyticsCourse:state.analyticsCourse
+    }));
+  }catch{}
+}
+function clearNavState(){
+  try{sessionStorage.removeItem(NAV_STATE_KEY);}catch{}
+}
+restoreNavState();
 
 const studentNav=[
   ["home","الرئيسية"],["level","ابدأ من مستواي"],["course","المقرر"],["practice","التدريب"],
@@ -349,12 +374,27 @@ async function syncSupabaseRuntime(){
       state.role="admin";
       state.page="adash";
     }else if(window.__IPV4_SUPABASE_STATUS__.authenticated){
-      const r=String(window.__IPV4_SUPABASE_STATUS__.role||"student");
-      state.role=(r==="admin"?"admin":r==="trainer"?"trainer":"student");
-      if(state.role==="admin" && ["auth","home","level","course","practice","review","progress","achievements","certificate"].includes(state.page)) state.page="adash";
-      if(state.role!=="admin" && state.page==="users") state.page=state.role==="trainer"?"tdash":"home";
-      if(state.role==="trainer" && ["auth","home","level","course","practice","review","review-session","progress","achievements","certificate"].includes(state.page)) state.page="tdash";
-      if(state.role==="student" && ["auth","tdash","students","groups","courses","questions","exams","results","qintel","analytics","interventions","student360","audit"].includes(state.page)) state.page="home";
+      const actualRole=String(window.__IPV4_SUPABASE_STATUS__.role||"student");
+      const rememberedRole=String(state.role||"");
+      const rememberedPage=String(state.page||"");
+      state.role=(actualRole==="admin"?"admin":actualRole==="trainer"?"trainer":"student");
+
+      const studentPages=["home","level","course","practice","exams","review","review-session","labs","progress","notifications","achievements","certificate","subnet-lab","flsm","vlsm"];
+      const trainerPages=["tdash","students","groups","courses","questions","qbaudit","examcheck","exams","results","qintel","labs","analytics","interventions","notifications","student360","audit"];
+      const adminPages=["adash","users","students","groups","courses","questions","qbaudit","examcheck","exams","results","analytics","interventions","notifications","student360","audit"];
+
+      const allowed=state.role==="admin"?adminPages:state.role==="trainer"?trainerPages:studentPages;
+      const canRestore=rememberedRole===state.role && allowed.includes(rememberedPage);
+      if(canRestore){
+        state.page=rememberedPage;
+      }else if(state.role==="admin"){
+        state.page="adash";
+      }else if(state.role==="trainer"){
+        state.page="tdash";
+      }else{
+        state.page="home";
+      }
+      persistNavState();
     }
     return result;
   }catch(error){
@@ -415,7 +455,7 @@ window.addEventListener("ipv4-auth-success",async function(event){
 
 window.addEventListener("ipv4-auth-password-updated",async function(){
   try{const m=await import("./supabase-v30.js?v=498");await m.signOut();}catch{}
-  state.authMode="login";state.page="auth";window.location.hash="";
+  state.authMode="login";state.page="auth";window.location.hash="";clearNavState();
   render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});
 });
 
@@ -484,6 +524,7 @@ function bind(){
         }catch(e){}
       }
       state.page=target;
+      persistNavState();
       render().catch(function(error){
         document.getElementById("app").innerHTML=shell(errorView(error));
         bind();
@@ -497,6 +538,7 @@ function bind(){
       const m=await import("./supabase-v30.js?v=498");
       const result=await m.signOut();
       if(!result.ok) throw new Error(result.error||result.reason||"تعذر تسجيل الخروج");
+      clearNavState();
       window.location.reload();
     }catch(error){
       window.alert(String(error&&error.message||error));
@@ -512,6 +554,7 @@ function bind(){
       state.page=btn.getAttribute("data-trainer-page")||"tdash";
       state.filter=btn.getAttribute("data-risk")||"";
       state.group=btn.getAttribute("data-group")||"";
+      persistNavState();
       render();
     });
   });
@@ -521,6 +564,7 @@ function bind(){
       state.role="trainer";
       state.page="student360";
       state.studentId=btn.getAttribute("data-student-id")||null;
+      persistNavState();
       state.filter="";
       render();
     });
@@ -531,6 +575,7 @@ function bind(){
       state.role="trainer";
       state.page="groups";
       state.group=btn.getAttribute("data-group-filter")||"1";
+      persistNavState();
       document.querySelectorAll("[data-group-panel]").forEach(function(panel){
         panel.hidden=panel.getAttribute("data-group-panel")!==state.group;
       });
@@ -543,6 +588,7 @@ function bind(){
       state.role="trainer";
       state.page="students";
       state.filter=btn.getAttribute("data-trainer-risk-chip")||"";
+      persistNavState();
       state.studentId=null;
       render();
     });
