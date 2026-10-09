@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=478";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=479";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -322,6 +322,21 @@ export async function startCentralExamAttempt(examId,title,courseId){
     return {ok:false,error:msg};
   }
   return {ok:true,data};
+}
+
+export async function fetchExamE2EReadiness(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_exam_e2e_readiness");
+  if(error)return {ok:false,error:String(error.message||error)};
+  const payload=data||{};
+  return {ok:true,payload:{
+    generatedAt:payload.generatedAt||null,
+    summary:payload.summary||{},
+    exams:Array.isArray(payload.exams)?payload.exams:[]
+  }};
 }
 
 export async function fetchTrainerResultsSummary(courseId=""){
