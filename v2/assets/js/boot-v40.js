@@ -135,13 +135,10 @@ async function adminDashboard(){
   const recent=Array.isArray(results.payload?.recent)?results.payload.recent:[];
   const active=Number(live.payload?.activeCount||0);
   return '<section class="student-hero home-hero">'+
-    '<div class="student-hero-copy"><span class="eyebrow">V3.96 • إدارة المنصة</span>'+
+    '<div class="student-hero-copy"><span class="eyebrow">V3.97 • إدارة المنصة</span>'+
     '<h1>مرحبًا '+esc(name)+' 👋</h1>'+
     '<p>لوحة الإدارة المركزية لمنصة IPv4 Academy. من هنا تتابع المتدربين والاختبارات والنتائج والتحليلات.</p>'+
-    '<div class="hero-actions"><button class="btn btn-white" data-page="students">👥 إدارة المتدربين</button>'+
-    '<button class="btn btn-outline-white" data-page="results">📊 مركز النتائج</button>'+
-    '<button class="btn btn-outline-white" data-page="exams">📝 إدارة الاختبارات</button></div></div>'+
-    '<div class="student-hero-side"><div class="hero-mini-label">المراقبة الحية</div>'+
+    '<div class="admin-core-actions"><button class="admin-core-action admin-core-action-students" data-page="students"><span class="admin-core-icon">👥</span><span class="admin-core-copy"><strong>إدارة المتدربين</strong><small>المتدربون والمجموعات وملفات Student 360</small></span><span class="admin-core-arrow">←</span></button><button class="admin-core-action admin-core-action-results" data-page="results"><span class="admin-core-icon">📊</span><span class="admin-core-copy"><strong>عرض النتائج</strong><small>النتائج الرسمية والأداء ونسب الاجتياز</small></span><span class="admin-core-arrow">←</span></button><button class="admin-core-action admin-core-action-exams" data-page="exams"><span class="admin-core-icon">📝</span><span class="admin-core-copy"><strong>فحص الاختبارات</strong><small>الجاهزية والنشر والاختبارات الحالية</small></span><span class="admin-core-arrow">←</span></button></div></div><div class="student-hero-side"><div class="hero-mini-label">المراقبة الحية</div>'+
     '<div class="hero-level">'+active+'</div><div class="muted">اختبارات قيد التنفيذ</div></div></section>'+
     '<div class="student-grid-4 home-kpis">'+
     card("المتدربون",Number(summary.students||students.length||0),"ملفات لها نتائج")+
