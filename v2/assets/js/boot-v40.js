@@ -632,20 +632,17 @@ function bind(){
   });
 
 
-  document.querySelectorAll("#results-search,#results-exam-filter,#results-status-filter,#results-group-filter").forEach(function(el){
+  document.querySelectorAll("#v76-student-search,#v76-results-search").forEach(function(el){
     el.addEventListener("input",async function(){
-      var m=await import("./results-center-v34.js?v=478");
+      var m=await import("./results-center-v76.js?v=478");
       m.bindResultsV76();
     });
-    el.addEventListener("change",async function(){
-      var m=await import("./results-center-v34.js?v=478");
-      m.filterResultsDom();
-    });
   });
+
   document.querySelectorAll("[data-results-export]").forEach(function(btn){
     btn.addEventListener("click",async function(){
-      var m=await import("./results-center-v34.js?v=478");
-      var blob=new Blob(["\uFEFF"+m.getResultsCsv()],{type:"text/csv;charset=utf-8"});
+      var m=await import("./results-center-v76.js?v=478");
+      var blob=new Blob(["\uFEFF"+m.getResultsCsvV76()],{type:"text/csv;charset=utf-8"});
       var url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download="ipv4-academy-results-v3.76.csv";
       document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
@@ -655,8 +652,8 @@ function bind(){
   document.querySelectorAll("[data-results-detail],[data-results-detail-close]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./results-center-v34.js?v=478");
-        var result=await m.handleResultsDetailClick(btn);
+        var m=await import("./results-center-v76.js?v=478");
+        var result=await m.handleResultsV76Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
         document.getElementById("app").innerHTML=shell(errorView(error));bind();
