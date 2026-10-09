@@ -79,7 +79,7 @@ export function authView(mode="login",notice=""){
 
   if(mode==="reset-request"){
     return '<div class="auth-wrap"><div class="auth-card">'+
-      '<div class="brand" style="padding:0 0 18px"><div class="brand-mark">IP</div><div><h1>IPv4 Academy</h1><div class="muted">V3.72 • الحسابات</div></div></div>'+
+      '<div class="brand" style="padding:0 0 18px"><div class="brand-mark">IP</div><div><h1>IPv4 Academy</h1><div class="muted">V3.98 • الحسابات</div></div></div>'+
       '<h2 style="margin:0 0 8px">استعادة كلمة المرور</h2><p class="muted">سنرسل رسالة إلى بريدك الإلكتروني لإعادة تعيين كلمة المرور.</p>'+
       '<form id="auth-reset-request-form">'+
       field("البريد الإلكتروني","auth-reset-email","email","name@example.com","email")+
@@ -89,7 +89,7 @@ export function authView(mode="login",notice=""){
   }
 
   return '<div class="auth-wrap"><div class="auth-card">'+
-    '<div class="brand" style="padding:0 0 18px"><div class="brand-mark">IP</div><div><h1>IPv4 Academy</h1><div class="muted">منصة التدريب الذكية • V3.72</div></div></div>'+
+    '<div class="brand" style="padding:0 0 18px"><div class="brand-mark">IP</div><div><h1>IPv4 Academy</h1><div class="muted">منصة التدريب الذكية • V3.98</div></div></div>'+
     '<h2 style="margin:0 0 8px">'+title+'</h2><p class="muted">'+desc+'</p>'+
     (notice?'<div id="auth-notice" class="note" style="margin:14px 0">'+esc(notice)+'</div>':'<div id="auth-notice" class="note" style="display:none;margin:14px 0"></div>')+
     '<div id="auth-message" style="margin:12px 0"></div>'+
