@@ -238,7 +238,7 @@ async function loadPage(){
     return await admin96.adminDashboardV96();
   }
   if(state.role==="admin" && state.page==="users"){
-    var userManagement=await import("./user-management-v94.js?v=500");
+    var userManagement=await import("./user-management-v94.js?v=505");
     return await userManagement.userManagementView();
   }
 
