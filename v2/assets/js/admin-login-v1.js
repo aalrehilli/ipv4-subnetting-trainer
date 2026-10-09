@@ -5,7 +5,10 @@ import {
   fetchTrainerStudentRoster,
   fetchTrainerStudent360,
   fetchTrainerResultsSummary,
-  fetchTrainerLiveExamMonitor
+  fetchTrainerLiveExamMonitor,
+  fetchExamE2EReadiness,
+  fetchQuestionBankAudit,
+  fetchTrainerLearningSignals
 } from "./supabase-v30.js?v=494";
 
 const $=id=>document.getElementById(id);
@@ -38,7 +41,7 @@ function header(title,subtitle){
   const name=window.__IPV4_SUPABASE_STATUS__?.name||"المدير";
   return '<div class="adm-wrap">'+
     '<section class="adm-hero">'+
-      '<div><div class="ver">🔐 بوابة الإدارة • V3.90</div><h1>'+esc(title)+'</h1><p>'+esc(subtitle)+'</p>'+
+      '<div><div class="ver">🔐 بوابة الإدارة • V3.91</div><h1>'+esc(title)+'</h1><p>'+esc(subtitle)+'</p>'+
       '<div class="actions"><button class="adm-btn primary" id="go-dashboard">لوحة الإدارة</button><button class="adm-btn" id="go-refresh">تحديث</button><button class="adm-btn" id="go-student-site">منصة المتدربين</button><button class="adm-btn danger" id="go-logout">تسجيل الخروج</button></div></div>'+
       '<div class="mark">IP</div>'+
     '</section></div>';
@@ -128,6 +131,57 @@ async function renderStudent360(key){
     bindHeader();
   }
 }
+async function resultsView(){
+  let summary={},recent=[],students=[],live=[];
+  try{const r=await fetchTrainerResultsSummary("");const p=r?.payload||{};summary=p.summary||{};recent=Array.isArray(p.recent)?p.recent:[];students=Array.isArray(p.students)?p.students:[];}catch{}
+  try{const r=await fetchTrainerLiveExamMonitor();live=Array.isArray(r?.payload?.attempts)?r.payload.attempts:[]}catch{}
+  shell(header("مركز النتائج","النتائج الرسمية والمراقبة الحية للاختبارات.")+
+    '<div class="adm-wrap"><div class="kpis">'+
+    kpi("النتائج",Number(summary.submitted_attempts||0),"محاولات مسلّمة")+
+    kpi("الاختبارات",Number(summary.exams||0),"اختبارات لها نتائج")+
+    kpi("المتدربون",students.length,"لهم نتائج")+
+    kpi("قيد التنفيذ",live.length,"جلسات نشطة")+
+    '</div><section class="panel"><h2>النتائج الرسمية</h2><div class="table-wrap"><table class="table"><thead><tr><th>المتدرب</th><th>المجموعة</th><th>الاختبار</th><th>النتيجة</th><th>الحالة</th></tr></thead><tbody>'+
+    (recent.length?recent.slice(0,50).map(x=>'<tr><td>'+esc(x.studentName||"متدرب")+'</td><td>'+esc(x.groupNo||"—")+'</td><td>'+esc(x.title||"اختبار")+'</td><td><strong>'+Number(x.percent||0)+'%</strong></td><td><span class="badge '+(x.passed?"green":"orange")+'">'+(x.passed?"ناجح":"غير مجتاز")+'</span></td></tr>').join(""):'<tr><td colspan="5" class="empty">لا توجد نتائج حتى الآن.</td></tr>')+
+    '</tbody></table></div></section><section class="panel"><h2>المراقبة الحية</h2><div class="table-wrap"><table class="table"><thead><tr><th>المتدرب</th><th>الاختبار</th><th>المجاب</th><th>المتبقي</th></tr></thead><tbody>'+
+    (live.length?live.map(x=>'<tr><td>'+esc(x.studentName||"متدرب")+'</td><td>'+esc(x.title||x.examTitle||"اختبار")+'</td><td>'+Number(x.answeredCount||0)+'/'+Number(x.totalQuestions||0)+'</td><td>'+Number(x.remainingSeconds||0)+' ثانية</td></tr>').join(""):'<tr><td colspan="4" class="empty">لا توجد اختبارات قيد التنفيذ.</td></tr>')+
+    '</tbody></table></div></section></div>');
+  bindHeader();
+}
+async function examsView(){
+  let ready={},audit={};
+  try{const r=await fetchExamE2EReadiness();ready=r?.payload||{};}catch{}
+  try{const r=await fetchQuestionBankAudit();audit=r?.payload||{};}catch{}
+  const s=ready.summary||{}, b=audit.summary||{}, rows=Array.isArray(ready.exams)?ready.exams:[];
+  shell(header("مركز الاختبارات","فحص جاهزية الاختبارات وبنك الأسئلة.")+
+    '<div class="adm-wrap"><div class="kpis">'+
+    kpi("منشورة",Number(s.published||s.publishedExams||0),"اختبارات مركزية")+
+    kpi("جاهزة",Number(s.ready||s.readyExams||0),"جاهزة للتشغيل")+
+    kpi("محجوبة",Number(s.blocked||s.blockedExams||0),"تحتاج مراجعة")+
+    kpi("بنك الأسئلة",Number(b.active||b.activeQuestions||b.total||0),"أسئلة نشطة")+
+    '</div><section class="panel"><h2>جاهزية الاختبارات</h2><div class="table-wrap"><table class="table"><thead><tr><th>الاختبار</th><th>الحالة</th><th>الأسئلة</th></tr></thead><tbody>'+
+    (rows.length?rows.map(x=>'<tr><td>'+esc(x.title||x.examTitle||"اختبار")+'</td><td><span class="badge '+(x.ready?"green":"orange")+'">'+(x.ready?"جاهز":"يحتاج مراجعة")+'</span></td><td>'+Number(x.questionCount||x.questions||0)+'</td></tr>').join(""):'<tr><td colspan="3" class="empty">لا توجد بيانات جاهزية.</td></tr>')+
+    '</tbody></table></div></section></div>');
+  bindHeader();
+}
+async function analyticsView(){
+  let payload={summary:{},topics:[],students:[]};
+  try{const r=await fetchTrainerLearningSignals();payload=r||payload;}catch{}
+  const sum=payload.summary||{}, topics=Array.isArray(payload.topics)?payload.topics:[], students=Array.isArray(payload.students)?payload.students:[];
+  shell(header("التحليلات","مؤشرات الأداء وإشارات التعلم من النظام المركزي.")+
+    '<div class="adm-wrap"><div class="kpis">'+
+    kpi("المتدربون",Number(sum.students||students.length||0),"ضمن التحليل")+
+    kpi("متوسط الأداء",Number(sum.average||sum.avg||0)+"%","المؤشر العام")+
+    kpi("عالية الخطورة",Number(sum.highRisk||sum.high_risk||0),"تحتاج تدخلًا")+
+    kpi("الموضوعات",topics.length,"موضوعات مرصودة")+
+    '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px"><section class="panel"><h2>الموضوعات</h2>'+
+    (topics.length?topics.slice(0,15).map(t=>'<div style="padding:12px 0;border-bottom:1px solid #edf2f6"><div class="subhead"><strong>'+esc(t.topic||t.name||"موضوع")+'</strong><span>'+Number(t.accuracy||t.percent||t.avg||0)+'%</span></div></div>').join(""):'<div class="empty">لا توجد بيانات موضوعات.</div>')+
+    '</section><section class="panel"><h2>إشارات المتدربين</h2>'+
+    (students.length?students.slice(0,15).map(x=>'<div style="padding:12px 0;border-bottom:1px solid #edf2f6"><div class="subhead"><strong>'+esc(x.studentName||x.name||"متدرب")+'</strong><span class="badge blue">'+esc(x.risk||"متابعة")+'</span></div></div>').join(""):'<div class="empty">لا توجد إشارات حالية.</div>')+
+    '</section></div></div>');
+  bindHeader();
+}
+
 function showInfo(title){
   const el=document.getElementById("admin-temp-message");
   if(el){el.remove();return;}
@@ -140,6 +194,9 @@ async function renderView(view){
   currentView=view;
   if(view==="dashboard"){await dashboard();return;}
   if(view==="students"){await students();return;}
+  if(view==="results"){await resultsView();return;}
+  if(view==="exams"){await examsView();return;}
+  if(view==="analytics"){await analyticsView();return;}
   showInfo(view);
 }
 async function init(){
