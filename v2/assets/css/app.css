@@ -151,3 +151,16 @@ a{text-decoration:none;color:inherit}
 @media(max-width:1200px){.admin96-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.admin96-actions{grid-template-columns:repeat(2,1fr)}.admin96-footer-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.admin96-hero,.admin96-grid-2{grid-template-columns:1fr}}
 @media(max-width:700px){.admin96-kpis{grid-template-columns:1fr 1fr}.admin96-actions,.admin96-footer-grid{grid-template-columns:1fr}.admin96-hero-main h1{font-size:26px}.admin96-performance{flex-direction:column;align-items:flex-start}.admin96-score-ring{width:112px;height:112px}}
+
+
+/* V3.97 • تحسين أزرار الإدارة الرئيسية */
+.admin-core-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.admin-core-action{min-height:92px;border:1px solid #ffffff2e;border-radius:16px;padding:14px 15px;background:#ffffff12;color:#fff;display:flex;align-items:center;gap:12px;text-align:right;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+.admin-core-action:hover{transform:translateY(-3px);background:#ffffff1c;border-color:#ffffff66;box-shadow:0 12px 26px rgba(0,0,0,.12)}
+.admin-core-action:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.admin-core-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--primary);font-size:22px;flex:0 0 auto;box-shadow:0 7px 16px rgba(0,0,0,.12)}
+.admin-core-copy{min-width:0;flex:1}.admin-core-copy strong{display:block;font-size:15px;line-height:1.4;color:#fff}.admin-core-copy small{display:block;margin-top:5px;font-size:11px;line-height:1.65;color:#dfeeff;opacity:.95}
+.admin-core-arrow{font-size:19px;color:#fff;opacity:.75;transition:transform .18s ease}.admin-core-action:hover .admin-core-arrow{transform:translateX(-4px);opacity:1}
+.admin-core-action-students .admin-core-icon{background:#eaf4ff}.admin-core-action-results .admin-core-icon{background:#eaf8ef}.admin-core-action-exams .admin-core-icon{background:#fff3e5}
+@media(max-width:900px){.admin-core-actions{grid-template-columns:1fr}}
+@media(max-width:700px){.admin-core-action{min-height:82px;padding:12px}.admin-core-icon{width:44px;height:44px}.admin-core-copy strong{font-size:14px}}
