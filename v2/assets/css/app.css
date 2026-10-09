@@ -73,3 +73,8 @@ a{text-decoration:none;color:inherit}
 .live-exam-progress{height:7px}.live-exam-progress>span{background:var(--orange)}
 @media(max-width:1050px){.trainer-results-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.trainer-results-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.live-exam-main{align-items:flex-start;flex-direction:column}}
+
+
+/* V3.82 • Official student exam results */
+.student-exam-result-card{border-top:3px solid var(--purple)}
+.student-exam-result-score{font-size:42px;font-weight:900;color:var(--primary);line-height:1;margin:8px 0}
