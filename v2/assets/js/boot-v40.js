@@ -33,7 +33,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:(state.role==="admin"?adminNav:trainerNav);
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V3.94 • Unified Platform</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V3.95 • Unified Platform</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -135,7 +135,7 @@ async function adminDashboard(){
   const recent=Array.isArray(results.payload?.recent)?results.payload.recent:[];
   const active=Number(live.payload?.activeCount||0);
   return '<section class="student-hero home-hero">'+
-    '<div class="student-hero-copy"><span class="eyebrow">V3.94 • إدارة المنصة</span>'+
+    '<div class="student-hero-copy"><span class="eyebrow">V3.95 • إدارة المنصة</span>'+
     '<h1>مرحبًا '+esc(name)+' 👋</h1>'+
     '<p>لوحة الإدارة المركزية لمنصة IPv4 Academy. من هنا تتابع المتدربين والاختبارات والنتائج والتحليلات.</p>'+
     '<div class="hero-actions"><button class="btn btn-white" data-page="students">👥 إدارة المتدربين</button>'+
