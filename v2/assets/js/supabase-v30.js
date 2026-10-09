@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=473";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=474";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -49,7 +49,14 @@ export async function getSupabaseStatus(){
     const {data:{session}}=await client.auth.getSession();
     if(!session)return {configured:true,authenticated:false,role:null,message:"Supabase مهيأ — يلزم تسجيل الدخول"};
     const {data:profile}=await client.from("profiles").select("id,full_name,role,group_no,is_active").eq("id",session.user.id).maybeSingle();
-    return {configured:true,authenticated:true,role:profile?.role||"student",name:profile?.full_name||session.user.email||"متدرب",group:profile?.group_no||"",message:"Supabase متصل"};
+    if(!profile){
+      return {configured:true,authenticated:false,role:null,name:session.user.email||"",group:"",message:"الحساب مسجل لكن ملف المتدرب غير موجود."};
+    }
+    if(profile.is_active===false){
+      return {configured:true,authenticated:false,role:null,name:profile.full_name||session.user.email||"",group:profile.group_no||"",message:"هذا الحساب غير نشط. راجع مدير المنصة."};
+    }
+    const safeRole=["student","trainer","admin"].includes(String(profile.role||""))?String(profile.role):"student";
+    return {configured:true,authenticated:true,role:safeRole,name:profile.full_name||session.user.email||"متدرب",group:profile.group_no||"",message:"Supabase متصل"};
   }catch(error){
     return {configured:true,authenticated:false,role:null,message:"تعذر الاتصال بـ Supabase",error:String(error?.message||error)};
   }
@@ -435,6 +442,68 @@ export async function syncUnifiedExamAttempts(){
   });
   localStorage.setItem(ATTEMPTS_KEY,JSON.stringify(Array.from(map.values()).sort(function(a,b){return Number(b.submittedAt||0)-Number(a.submittedAt||0)}).slice(0,500)));
   return {ok:true,count:remote.length};
+}
+
+export function translateAuthError(message){
+  const m=String(message||"");
+  const map={
+    "Invalid login credentials":"بيانات الدخول غير صحيحة.",
+    "Email not confirmed":"يجب تأكيد البريد الإلكتروني أولًا.",
+    "User already registered":"هذا البريد مسجل بالفعل. استخدم تسجيل الدخول.",
+    "Password should be at least 6 characters.":"كلمة المرور قصيرة جدًا.",
+    "New password should be different from the old password.":"استخدم كلمة مرور مختلفة عن القديمة.",
+    "Email rate limit exceeded":"تم تجاوز حد إرسال الرسائل مؤقتًا. حاول لاحقًا.",
+    "For security purposes, you can only request this once every 60 seconds":"لأسباب أمنية، انتظر قليلًا قبل طلب رسالة أخرى."
+  };
+  return map[m]||m||"حدث خطأ غير متوقع.";
+}
+
+function authRedirectUrl(){
+  return window.location.origin+window.location.pathname;
+}
+
+export async function signUpWithPassword(email,password,fullName){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const result=await client.auth.signUp({
+    email:String(email||"").trim(),
+    password:String(password||""),
+    options:{
+      data:{full_name:String(fullName||"").trim()},
+      emailRedirectTo:authRedirectUrl()
+    }
+  });
+  if(result.error)return {ok:false,error:result.error.message};
+  return {ok:true,session:result.data.session,user:result.data.user};
+}
+
+export async function requestPasswordReset(email){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const result=await client.auth.resetPasswordForEmail(String(email||"").trim(),{
+    redirectTo:authRedirectUrl()
+  });
+  if(result.error)return {ok:false,error:result.error.message};
+  return {ok:true};
+}
+
+export async function updatePassword(password){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const result=await client.auth.updateUser({password:String(password||"")});
+  if(result.error)return {ok:false,error:result.error.message};
+  return {ok:true,user:result.data.user};
+}
+
+let authListenerInstalled=false;
+export async function installAuthStateListener(){
+  if(authListenerInstalled)return;
+  const client=await getClient();
+  if(!client)return;
+  authListenerInstalled=true;
+  client.auth.onAuthStateChange((event)=>{
+    window.dispatchEvent(new CustomEvent("ipv4-auth-state",{detail:{event}}));
+  });
 }
 
 export async function signInWithGitHub(){
