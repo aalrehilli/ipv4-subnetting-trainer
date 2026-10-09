@@ -6,7 +6,7 @@ import {
   translateAuthError,
   getSupabaseStatus,
   signOut
-} from "./supabase-v30.js?v=503";
+} from "./supabase-v30.js?v=507";
 
 let authBusy=false;
 let selectedRole="student";
@@ -123,23 +123,16 @@ async function submitLogin(form){
     return setMessage(translateAuthError(r.error||r.reason||"تعذر تسجيل الدخول."),"error");
   }
   const status=await getSupabaseStatus();
-  const actual=String(status.role||"student");
-  if(!status.authenticated){
+  const actual=String(status.role||"");
+  if(!status.authenticated || !["student","trainer","admin"].includes(actual)){
     await signOut().catch(()=>{});
     window.__IPV4_AUTH_ROUTING__=false;
     authBusy=false;setBusy(form,false);
     return setMessage(status.message||"تعذر التحقق من صلاحية الحساب.","error");
   }
-  if(actual!==selectedRole){
-    await signOut().catch(()=>{});
-    window.__IPV4_AUTH_ROUTING__=false;
-    authBusy=false;setBusy(form,false);
-    const labels={student:"المتدرب",trainer:"المدرب",admin:"الإدارة"};
-    return setMessage("هذا الحساب مصنف كـ "+(labels[actual]||"حساب آخر")+"، بينما اخترت تبويب "+(labels[selectedRole]||"آخر")+" . اختر التبويب الصحيح ثم حاول مرة أخرى.","error");
-  }
   window.__IPV4_AUTH_ROUTING__=false;
   authBusy=false;setBusy(form,false);
-  window.dispatchEvent(new CustomEvent("ipv4-auth-success",{detail:{role:actual}}));
+  window.dispatchEvent(new CustomEvent("ipv4-auth-success",{detail:{role:actual,selectedRole:selectedRole}}));
 }
 
 async function submitSignup(form){
