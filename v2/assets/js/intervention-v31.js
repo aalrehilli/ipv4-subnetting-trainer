@@ -1,3 +1,5 @@
+import {fetchTrainerLearningSignals} from "./supabase-v30.js?v=470";
+
 const KEY="ipv4AcademyV31Interventions";
 
 const demo=[
@@ -149,7 +151,10 @@ function row(item){
   '</article>';
 }
 
-export function interventionCenterView(){
+export async function interventionCenterView(){
+  const central=await fetchTrainerLearningSignals().catch(()=>({ok:false}));
+  const signalTopics=central.ok?central.topics:[];
+  const signalStudents=central.ok?central.students:[];
   const all=getInterventions();
   const filter=getFilter();
   const list=filter==="all"?all:all.filter(x=>x.status===filter);
@@ -158,7 +163,7 @@ export function interventionCenterView(){
   const totalDone=all.filter(x=>x.status==="done").length;
   const totalOverdue=all.filter(isOverdue).length;
   const avgScore=all.length?Math.round(all.reduce((a,x)=>a+Number(x.score||0),0)/all.length):0;
-  return '<div class="page-intro with-action"><div><span class="eyebrow red">V3.14 • مركز التدخل</span><h2>مركز التدخل والمتابعة</h2><p>إدارة دورة التدخل كاملة: اكتشاف → تعيين → متابعة → نتيجة → إغلاق.</p></div><div class="intervention-head-actions"><span class="badge red">'+totalOpen+' مفتوحة</span><button class="btn btn-primary" data-trainer-page="students">إدارة المتدربين</button></div></div>'+
+  return '<div class="page-intro with-action"><div><span class="eyebrow red">V3.68 • مركز التدخل</span><h2>مركز التدخل والمتابعة</h2><p>إدارة دورة التدخل كاملة: اكتشاف → تعيين → متابعة → نتيجة → إغلاق.</p></div><div class="intervention-head-actions"><span class="badge red">'+totalOpen+' مفتوحة</span><button class="btn btn-primary" data-trainer-page="students">إدارة المتدربين</button></div></div>'+
     '<div class="student-grid-4 intervention-kpis">'+
       '<div class="card trainer-kpi"><div class="muted">مفتوحة</div><div class="kpi-value">'+totalOpen+'</div><div class="muted">تحتاج إجراء</div></div>'+
       '<div class="card trainer-kpi"><div class="muted">قيد المتابعة</div><div class="kpi-value">'+totalAssigned+'</div><div class="muted">لها موعد متابعة</div></div>'+
@@ -166,6 +171,11 @@ export function interventionCenterView(){
       '<div class="card trainer-kpi"><div class="muted">مغلقة</div><div class="kpi-value">'+totalDone+'</div><div class="muted">متوسط الإتقان عند الإنشاء '+avgScore+'%</div></div>'+
     '</div>'+
     '<div class="card intervention-workflow v314-workflow"><div><b>1</b><span>اكتشاف</span><small>نقطة ضعف</small></div><div class="workflow-arrow">←</div><div><b>2</b><span>تعيين</span><small>مسؤول + موعد</small></div><div class="workflow-arrow">←</div><div><b>3</b><span>متابعة</span><small>ملاحظة + قياس</small></div><div class="workflow-arrow">←</div><div><b>4</b><span>إغلاق</span><small>نتيجة واضحة</small></div></div>'+
+    (central.ok?'<section class="card" style="margin-bottom:14px;border-right:4px solid var(--purple)"><div class="section-title"><div><span class="eyebrow purple">V3.68 • إشارات النتائج</span><h3>الحالات المستخرجة من الاختبارات المركزية</h3><p class="muted">إشارات تحليلية من النتائج المركزية تساعد المدرب على تحديد أولوية التدخل.</p></div><span class="badge purple">'+signalStudents.length+' متدرب</span></div><div class="grid-2"><div><h4>أضعف الموضوعات</h4>'+
+      (signalTopics.length?signalTopics.slice(0,6).map(t=>'<div class="stat-row"><span>'+esc(t.topic)+'</span><strong>'+Number(t.accuracy||0)+'%</strong></div><div class="progress"><span style="width:'+Number(t.accuracy||0)+'%"></span></div>').join(""):'<div class="empty">لا توجد نتائج مركزية.</div>')+
+      '</div><div><h4>أولوية المتدربين</h4>'+
+      (signalStudents.length?signalStudents.slice(0,6).map((s,i)=>'<div class="risk-row"><div class="risk-rank">'+(i+1)+'</div><div class="risk-person"><strong>'+esc(s.student_name||"متدرب")+'</strong><span class="muted">المجموعة '+esc(s.group_no||"—")+'</span></div><span class="badge '+(Number(s.avg_percent||0)<60?"red":"orange")+'">'+Number(s.avg_percent||0)+'%</span><div class="risk-topic"><span class="muted">'+Number(s.attempts||0)+' محاولات</span></div></div>').join(""):'<div class="empty">لا توجد محاولات مركزية بعد.</div>')+
+      '</div></div></section>':'')+
     '<div class="section-title"><h3>التدخلات</h3><div class="filter-chips">'+
       '<button class="filter-chip '+(filter==="open"?"active":"")+'" data-intervention-filter="open">مفتوحة ('+totalOpen+')</button>'+
       '<button class="filter-chip '+(filter==="assigned"?"active":"")+'" data-intervention-filter="assigned">قيد المتابعة ('+totalAssigned+')</button>'+
