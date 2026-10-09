@@ -164,3 +164,18 @@ a{text-decoration:none;color:inherit}
 .admin-core-action-students .admin-core-icon{background:#eaf4ff}.admin-core-action-results .admin-core-icon{background:#eaf8ef}.admin-core-action-exams .admin-core-icon{background:#fff3e5}
 @media(max-width:900px){.admin-core-actions{grid-template-columns:1fr}}
 @media(max-width:700px){.admin-core-action{min-height:82px;padding:12px}.admin-core-icon{width:44px;height:44px}.admin-core-copy strong{font-size:14px}}
+
+
+/* V3.98 • تبويبات أدوار تسجيل الدخول */
+.auth-role-panel{margin:18px 0 9px}
+.auth-role-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.auth-role-tab{border:1px solid #d5e3ef;background:#f8fbfe;border-radius:13px;padding:10px 9px;display:flex;align-items:center;gap:8px;text-align:right;color:var(--text);transition:.18s;min-height:70px}
+.auth-role-tab:hover{border-color:#a9c9e4;background:#f2f8fd;transform:translateY(-1px)}
+.auth-role-tab.active{border-color:var(--primary);background:linear-gradient(180deg,#edf7ff,#e6f2fd);box-shadow:0 0 0 2px #0b6bcb16}
+.auth-role-icon{width:34px;height:34px;border-radius:10px;background:#fff;display:grid;place-items:center;font-size:17px;flex:0 0 auto;box-shadow:0 4px 10px rgba(25,52,78,.08)}
+.auth-role-tab.active .auth-role-icon{background:var(--primary);filter:saturate(1.05)}
+.auth-role-tab strong{display:block;font-size:12px;color:var(--primary-2)}
+.auth-role-tab small{display:block;font-size:9.5px;line-height:1.5;color:var(--muted);margin-top:3px}
+.auth-role-description{background:#f7fafc;border:1px solid var(--line);border-radius:10px;padding:9px 11px;color:var(--muted);font-size:11px;line-height:1.7;margin-bottom:12px}
+.auth-login-btn{width:100%;display:flex;justify-content:center;align-items:center;gap:9px;font-size:16px;min-height:48px}
+@media(max-width:700px){.auth-role-tabs{grid-template-columns:1fr}.auth-role-tab{min-height:58px}.auth-role-tab small{font-size:10px}.auth-role-icon{width:32px;height:32px}}
