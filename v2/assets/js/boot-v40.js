@@ -137,6 +137,7 @@ async function loadPage(){
         return finalDash.trainerDashboardView();
       }
       var trainer=await import("./trainer-v22.js?v=472");
+      if(state.page==="student360"){var s360=await import("./student360-v70.js?v=472");return await s360.student360View(state.studentId||"");}
       if(state.page==="results"){var results=await import("./results-center-v34.js?v=472");return results.resultsCenterView();}
       if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=472");return qi.questionIntelligenceView();}
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
