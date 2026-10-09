@@ -33,7 +33,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:(state.role==="admin"?adminNav:trainerNav);
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V3.96 • Unified Platform</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V3.98 • Unified Platform</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -222,11 +222,11 @@ function shell(content){
 async function loadPage(){
   const sbStatus=window.__IPV4_SUPABASE_STATUS__||{};
   if(state.authMode==="reset"){
-    const auth=await import("./auth-v72.js?v=498");
+    const auth=await import("./auth-v72.js?v=503");
     return auth.authView("reset");
   }
   if(sbStatus.configured && !sbStatus.authenticated){
-    const auth=await import("./auth-v72.js?v=498");
+    const auth=await import("./auth-v72.js?v=503");
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
   if(state.role==="student" && state.page==="home") return await home();
@@ -432,7 +432,7 @@ window.addEventListener("ipv4-course-switch",function(){
 
 function bind(){
   if(state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured && !window.__IPV4_SUPABASE_STATUS__?.authenticated)){
-    import("./auth-v72.js?v=498").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
+    import("./auth-v72.js?v=503").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
   }
   import("./notifications-v64.js?v=498").then(function(m){
     if(typeof m.bindCentralNotifications==="function")m.bindCentralNotifications();
