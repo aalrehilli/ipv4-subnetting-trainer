@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=469";
-import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=480";
+import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions,saveCentralExamDraftAnswer} from "./supabase-v30.js?v=481";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
@@ -188,7 +188,8 @@ const state={
   centralExamId:null,
   centralQuestions:[],
   submitting:false,
-  starting:false
+  starting:false,
+  resumedAttempt:false
 };
 
 let timer=null;
@@ -358,6 +359,7 @@ async function startExam(){
     ?String(central.data.examId)
     :(courseExamId||localStorage.getItem("ipv4AcademyV365ExamId")||"");
   state.centralQuestions=[];
+  state.resumedAttempt=central?.data?.resumed===true;
 
   if(state.centralAttemptId&&state.centralExamId){
     try{
@@ -375,6 +377,12 @@ async function startExam(){
         return {blocked:true,reason:"عدد أسئلة الاختبار المركزي لا يطابق الإعدادات."};
       }
       state.questionIds=state.centralQuestions.map(q=>q.id);
+      const drafts=central?.data?.draftAnswers&&typeof central.data.draftAnswers==="object"?central.data.draftAnswers:{};
+      Object.entries(drafts).forEach(function(entry){
+        const raw=entry[1];
+        const selected=raw===null||raw===undefined?-1:Number(raw);
+        if(Number.isInteger(selected)&&selected>=0&&selected<=3)state.answers[String(entry[0])]=selected;
+      });
     }catch(e){
       state.starting=false;
       return {blocked:true,reason:"تعذر تحميل أسئلة الاختبار المركزية."};
@@ -387,12 +395,28 @@ async function startExam(){
   ensureTimer();
   return {ok:true,resumed:central?.data?.resumed===true};
 }
-function answer(displayIndex){
+async function answer(displayIndex){
   const q=currentQuestion();
   const option=displayOptions(q)[Number(displayIndex)];
-  if(!option)return;
-  state.answers[String(q.id)]=option.originalIndex;
+  if(!option)return {ok:false};
+  const questionId=String(q.id);
+  const selected=option.originalIndex;
+  state.answers[questionId]=selected;
   saveState();
+
+  if(state.centralAttemptId){
+    try{
+      const remote=await saveCentralExamDraftAnswer(state.centralAttemptId,questionId,selected);
+      if(!remote.ok){
+        localStorage.setItem("ipv4AcademySupabaseDraftSyncError",String(remote.error||remote.reason||"تعذر حفظ الإجابة مركزيًا."));
+      }else{
+        localStorage.removeItem("ipv4AcademySupabaseDraftSyncError");
+      }
+    }catch(error){
+      localStorage.setItem("ipv4AcademySupabaseDraftSyncError",String(error&&error.message||error));
+    }
+  }
+  return {ok:true};
 }
 function next(){
   if(state.index<selectedQuestions().length-1)state.index++;
@@ -548,7 +572,7 @@ function livePage(){
   const left=Math.max(0,Math.floor((state.expiresAt-Date.now())/1000));
   return `
   <div class="exam-live-head">
-    <div><span class="eyebrow orange">الاختبار قيد التنفيذ</span><h2>${esc(getExamConfig().title)}</h2><p class="muted">السؤال ${state.index+1} من ${selectedQuestions().length}</p></div>
+    <div><span class="eyebrow orange">الاختبار قيد التنفيذ</span><h2>${esc(getExamConfig().title)}</h2>${state.resumedAttempt?'<span class="badge purple">تم استئناف المحاولة السابقة</span>':""}<p class="muted">السؤال ${state.index+1} من ${selectedQuestions().length}</p></div>
     <div class="exam-timer-wrap"><span>الوقت المتبقي</span><strong id="exam-timer" class="${left<=60?"timer-danger":""}">${formatTime(left)}</strong></div>
   </div>
   <div class="exam-layout">
@@ -647,7 +671,7 @@ export async function handleExamAction(target){
     return started?.blocked?{blocked:true,message:started.reason}:{rerender:true};
   }
   if(target.dataset.examAnswer!==undefined){
-    answer(Number(target.dataset.examAnswer));
+    await answer(Number(target.dataset.examAnswer));
     return {rerender:true}
   }
   if(target.id==="exam-prev"){prev();return {rerender:true}}
