@@ -165,7 +165,7 @@ async function loadPage(){
       }
       var trainer=await import("./trainer-v22.js?v=481");
       if(state.page==="student360"){var s360=await import("./student360-v70.js?v=481");return await s360.student360View(state.studentId||"");}
-      if(state.page==="results"){var results=await import("./results-center-v76.js?v=481");return results.resultsCenterView();}
+      if(state.page==="results"){var results=await import("./results-center-v76.js?v=482");return results.resultsCenterView();}
       if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=481");return qi.questionIntelligenceView();}
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
@@ -636,16 +636,16 @@ function bind(){
   });
 
 
-  import("./results-center-v76.js?v=481").then(function(m){m.bindResultsV76();}).catch(function(){});
+  import("./results-center-v76.js?v=482").then(function(m){m.bindResultsV76();}).catch(function(){});
   document.querySelectorAll("#v76-student-search,#v76-results-search").forEach(function(el){
     el.addEventListener("input",function(){
-      import("./results-center-v76.js?v=481").then(function(m){m.bindResultsV76();}).catch(function(){});
+      import("./results-center-v76.js?v=482").then(function(m){m.bindResultsV76();}).catch(function(){});
     });
   });
 
   document.querySelectorAll("[data-results-export]").forEach(function(btn){
     btn.addEventListener("click",async function(){
-      var m=await import("./results-center-v76.js?v=481");
+      var m=await import("./results-center-v76.js?v=482");
       var blob=new Blob(["\uFEFF"+m.getResultsCsvV76()],{type:"text/csv;charset=utf-8"});
       var url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download="ipv4-academy-results-v3.76.csv";
@@ -656,7 +656,7 @@ function bind(){
   document.querySelectorAll("[data-results-detail],[data-results-detail-close]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./results-center-v76.js?v=481");
+        var m=await import("./results-center-v76.js?v=482");
         var result=await m.handleResultsV76Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
