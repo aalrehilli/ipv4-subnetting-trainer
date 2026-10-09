@@ -365,6 +365,25 @@ export async function fetchExamE2EReadiness(){
   }};
 }
 
+export async function fetchTrainerLiveExamMonitor(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_trainer_live_exam_monitor");
+  if(error)return {ok:false,error:String(error.message||error)};
+  const payload=data||{};
+  return {
+    ok:true,
+    payload:{
+      generatedAt:payload.generatedAt||null,
+      finalizedExpired:Number(payload.finalizedExpired||0),
+      activeCount:Number(payload.activeCount||0),
+      attempts:Array.isArray(payload.attempts)?payload.attempts:[]
+    }
+  };
+}
+
 export async function fetchTrainerResultsSummary(courseId=""){
   const client=await getClient();
   if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
