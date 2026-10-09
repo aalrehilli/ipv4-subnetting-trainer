@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=469";
-import {startCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=475";
+import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=478";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
@@ -282,7 +282,13 @@ async function startExam(){
   const courseId=localStorage.getItem("ipv4AcademyV341CourseId")||"";
   const status=window.__IPV4_SUPABASE_STATUS__||{};
   let central=null;
-  try{central=await startCentralExamAttempt(courseExamId,cfg.title,courseId);}catch(e){central={ok:false,error:String(e&&e.message||e)};}
+  try{
+    if(courseExamId){
+      central=await prepareCentralExamAttempt(courseExamId,cfg.title,courseId);
+    }else{
+      central=await startCentralExamAttempt(courseExamId,cfg.title,courseId);
+    }
+  }catch(e){central={ok:false,error:String(e&&e.message||e)};}
 
   // عند وجود حساب مركزي فعال، الاختبار الإنتاجي يجب أن يبدأ من Supabase فقط.
   if(status.configured && status.authenticated){
@@ -330,7 +336,8 @@ async function startExam(){
 
   if(state.centralAttemptId && state.centralExamId){
     try{
-      const qset=await fetchCentralExamQuestions(state.centralExamId);
+      const preparedQuestions=Array.isArray(central?.data?.questions)?central.data.questions:[];
+      const qset=preparedQuestions.length?{ok:true,rows:preparedQuestions}:await fetchCentralExamQuestions(state.centralExamId);
       if(!qset.ok || !qset.rows.length) {
         return {blocked:true,reason:"تعذر تحميل أسئلة الاختبار المركزية. لم يبدأ الاختبار في الواجهة."};
       }
