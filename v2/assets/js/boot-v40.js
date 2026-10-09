@@ -98,7 +98,7 @@ function shell(content){
 }
 
 async function loadPage(){
-  if(state.role==="student" && state.page==="home") return home();
+  if(state.role==="student" && state.page==="home") return await home();
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
