@@ -41,7 +41,7 @@ function header(title,subtitle){
   const name=window.__IPV4_SUPABASE_STATUS__?.name||"المدير";
   return '<div class="adm-wrap">'+
     '<section class="adm-hero">'+
-      '<div><div class="ver">🔐 بوابة الإدارة • V3.91</div><h1>'+esc(title)+'</h1><p>'+esc(subtitle)+'</p>'+
+      '<div><div class="ver">🔐 بوابة الإدارة • V3.92</div><h1>'+esc(title)+'</h1><p>'+esc(subtitle)+'</p>'+
       '<div class="actions"><button class="adm-btn primary" id="go-dashboard">لوحة الإدارة</button><button class="adm-btn" id="go-refresh">تحديث</button><button class="adm-btn" id="go-student-site">منصة المتدربين</button><button class="adm-btn danger" id="go-logout">تسجيل الخروج</button></div></div>'+
       '<div class="mark">IP</div>'+
     '</section></div>';
@@ -57,26 +57,94 @@ function shell(body){
   document.body.innerHTML=baseStyles()+'<div class="admin-page">'+body+'</div>';
 }
 async function dashboard(){
-  let students=0,groups=0,exams=0,active=0,recent=[];
+  let students=0,groups=0,exams=0,active=0,recent=[],signals={summary:{},students:[]},readiness={summary:{}};
   try{const r=await fetchTrainerStudentRoster("","");const p=r?.payload||{};students=Array.isArray(p.students)?p.students.length:0;groups=Array.isArray(p.groups)?p.groups.length:0;}catch{}
-  try{const r=await fetchTrainerResultsSummary("");const p=r?.payload||{};exams=Number(p.summary?.exams||0);recent=Array.isArray(p.recent)?p.recent.slice(0,10):[];}catch{}
+  try{const r=await fetchTrainerResultsSummary("");const p=r?.payload||{};exams=Number(p.summary?.exams||0);recent=Array.isArray(p.recent)?p.recent.slice(0,8):[];}catch{}
   try{const r=await fetchTrainerLiveExamMonitor();active=Number(r?.payload?.activeCount||0);}catch{}
+  try{signals=await fetchTrainerLearningSignals();}catch{}
+  try{const r=await fetchExamE2EReadiness();readiness=r?.payload||{};}catch{}
   const name=window.__IPV4_SUPABASE_STATUS__?.name||"المدير";
-  shell(header("مرحبًا "+name+" 👋","لوحة مدير IPv4 Academy المستقلة عن مساحة المتدربين.")+
-    '<div class="adm-wrap">'+
-      '<div class="kpis">'+kpi("المتدربون",students,"السجلات الظاهرة")+kpi("المجموعات",groups,"المجموعات المسجلة")+kpi("الاختبارات",exams,"لها نتائج")+kpi("اختبارات نشطة",active,"المراقبة الحية")+'</div>'+
-      '<section class="panel"><div class="subhead"><h2>إدارة المنصة</h2><span class="badge green">مدير النظام</span></div><div class="quick">'+
-      action("go-students","👥 إدارة المتدربين")+action("go-results","📊 مركز النتائج")+action("go-exams","📝 الاختبارات")+action("go-analytics","📈 التحليلات")+
-      '</div></section>'+
-      '<section class="panel"><h2>آخر النتائج</h2><div class="table-wrap"><table class="table"><thead><tr><th>المتدرب</th><th>المجموعة</th><th>الاختبار</th><th>النتيجة</th></tr></thead><tbody>'+
-      (recent.length?recent.map(x=>'<tr><td>'+esc(x.studentName||"متدرب")+'</td><td>'+esc(x.groupNo||"—")+'</td><td>'+esc(x.title||"اختبار")+'</td><td><strong>'+Number(x.percent||0)+'%</strong></td></tr>').join(""):'<tr><td colspan="4" class="empty">لا توجد نتائج مركزية بعد.</td></tr>')+
-      '</tbody></table></div></section>'+
-    '</div>');
-  bindHeader();
-  $("go-students")?.addEventListener("click",()=>renderView("students"));
-  $("go-results")?.addEventListener("click",()=>showInfo("مركز النتائج"));
-  $("go-exams")?.addEventListener("click",()=>showInfo("مركز الاختبارات"));
-  $("go-analytics")?.addEventListener("click",()=>showInfo("التحليلات"));
+  const sum=signals?.summary||{}, riskStudents=Array.isArray(signals?.students)?signals.students.slice(0,5):[];
+  const topics=Array.isArray(signals?.topics)?signals.topics.slice(0,5):[];
+  const rs=readiness?.summary||{};
+  const published=Number(rs.published||rs.publishedExams||0),ready=Number(rs.ready||rs.readyExams||0),blocked=Number(rs.blocked||rs.blockedExams||0);
+  const avg=Number(sum.average||sum.avg||0);
+  const highRisk=Number(sum.highRisk||sum.high_risk||0);
+
+  document.body.innerHTML=
+  '<div class="pro-admin">'+
+  '<style>'+
+  '.pro-admin{min-height:100vh;background:#f5f8fc;direction:rtl;font-family:Tahoma,Arial,sans-serif;color:#182b3c;display:flex}.pro-sidebar{width:250px;background:#0a5fae;color:#fff;position:sticky;top:0;height:100vh;padding:22px 15px;box-sizing:border-box;display:flex;flex-direction:column}.pro-brand{display:flex;align-items:center;gap:12px;padding:5px 8px 24px;border-bottom:1px solid rgba(255,255,255,.14)}.pro-logo{width:44px;height:44px;border-radius:13px;background:#fff;color:#0a67c0;display:grid;place-items:center;font-weight:900}.pro-brand strong{font-size:18px}.pro-brand small{display:block;color:#d9edff;margin-top:3px}.pro-nav{padding:18px 0;display:grid;gap:7px}.pro-nav button{border:0;background:transparent;color:#dfefff;text-align:right;padding:12px 13px;border-radius:11px;font-weight:800;font-family:inherit;cursor:pointer}.pro-nav button:hover,.pro-nav button.active{background:rgba(255,255,255,.13);color:#fff}.pro-side-footer{margin-top:auto;padding:14px 10px;border-top:1px solid rgba(255,255,255,.14);font-size:12px;color:#cbe6fb;line-height:1.8}.pro-main{flex:1;min-width:0}.pro-topbar{height:76px;background:#fff;border-bottom:1px solid #e2eaf2;display:flex;align-items:center;justify-content:space-between;padding:0 28px;box-sizing:border-box}.pro-topbar-title{font-weight:900;font-size:18px}.pro-topbar-meta{display:flex;align-items:center;gap:10px;color:#6c8296;font-size:13px}.pro-avatar{width:38px;height:38px;border-radius:50%;background:#eaf4ff;color:#0a68bd;display:grid;place-items:center;font-weight:900}.pro-container{padding:24px 28px 34px;max-width:1400px;margin:auto}.pro-hero{background:linear-gradient(135deg,#0a67bd 0%,#0b7edb 60%,#0d5da5 100%);color:#fff;border-radius:22px;padding:28px;display:grid;grid-template-columns:1.6fr .8fr;gap:24px;box-shadow:0 14px 34px rgba(10,89,155,.16)}.pro-hero h1{margin:0 0 8px;font-size:31px}.pro-hero p{margin:0;color:#e4f2ff;line-height:1.9}.pro-hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.pro-hero-actions button{border:0;border-radius:11px;padding:11px 16px;font-weight:900;font-family:inherit;cursor:pointer}.hero-primary{background:#fff;color:#0b67bd}.hero-light{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.5)!important;color:#fff}.pro-status-card{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:18px}.pro-status-card .label{color:#d9ecfb;font-size:13px}.pro-score{font-size:42px;font-weight:900;margin:5px 0}.pro-progress{height:9px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}.pro-progress span{display:block;height:100%;background:#fff}.pro-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.pro-kpi{background:#fff;border:1px solid #e0e9f1;border-radius:17px;padding:18px;box-shadow:0 7px 22px rgba(30,75,115,.05)}.pro-kpi-head{display:flex;justify-content:space-between;align-items:center;color:#71879a;font-size:13px;font-weight:800}.pro-kpi-icon{width:34px;height:34px;border-radius:10px;background:#edf6ff;display:grid;place-items:center;color:#0b6cc6}.pro-kpi-value{font-size:30px;font-weight:900;color:#0b63b7;margin:8px 0 2px}.pro-kpi-sub{font-size:12px;color:#91a0ae}.pro-grid{display:grid;grid-template-columns:1.6fr .95fr;gap:16px;margin-top:16px}.pro-card{background:#fff;border:1px solid #e0e9f1;border-radius:18px;padding:18px;box-shadow:0 7px 22px rgba(30,75,115,.04)}.pro-card h2{font-size:18px;margin:0}.pro-card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.pro-link{border:0;background:transparent;color:#0b68bd;font-weight:900;cursor:pointer;font-family:inherit}.pro-table{width:100%;border-collapse:collapse}.pro-table th,.pro-table td{text-align:right;padding:11px 7px;border-bottom:1px solid #edf2f6;white-space:nowrap}.pro-table th{font-size:12px;color:#7a8e9f}.pro-table td{font-size:13px}.pro-badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:900}.pro-green{background:#e8f7ee;color:#198754}.pro-orange{background:#fff4e4;color:#a56500}.pro-blue{background:#edf6ff;color:#0b68bd}.pro-live{display:flex;align-items:center;gap:10px;padding:13px;border-radius:13px;background:#f7fbff;border:1px solid #e2edf6}.live-dot{width:10px;height:10px;border-radius:50%;background:#1aac61;box-shadow:0 0 0 5px #e5f7ed}.pro-action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.pro-action{border:1px solid #deebf5;background:#f9fcff;border-radius:14px;padding:15px;text-align:right;cursor:pointer;font-family:inherit}.pro-action strong{display:block;color:#0b5fae;font-size:14px}.pro-action span{display:block;color:#8194a5;font-size:11px;margin-top:4px}.pro-mini-list{display:grid;gap:10px}.pro-mini-item{padding:11px 12px;border:1px solid #e7eef4;border-radius:12px;background:#fbfdff}.pro-mini-item .row{display:flex;justify-content:space-between;gap:10px}.pro-topic{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:7px}.mini-bar{height:7px;background:#edf2f6;border-radius:99px;overflow:hidden}.mini-bar span{display:block;height:100%;background:#0b6cc6}.pro-footer-note{margin-top:16px;font-size:12px;color:#91a0ae}.pro-logout{margin-top:8px}.pro-mobile{display:none}@media(max-width:1050px){.pro-sidebar{width:210px}.pro-grid{grid-template-columns:1fr}.pro-hero{grid-template-columns:1fr}.pro-kpis{grid-template-columns:1fr 1fr}}@media(max-width:700px){.pro-sidebar{display:none}.pro-mobile{display:inline-flex}.pro-topbar{padding:0 15px}.pro-container{padding:15px}.pro-kpis{grid-template-columns:1fr 1fr}.pro-action-grid{grid-template-columns:1fr}.pro-topbar-title{font-size:15px}}@media(max-width:480px){.pro-kpis{grid-template-columns:1fr}.pro-hero h1{font-size:24px}}'+
+  '</style>'+
+  '<aside class="pro-sidebar">'+
+    '<div class="pro-brand"><div class="pro-logo">IP</div><div><strong>IPv4 Academy</strong><small>لوحة الإدارة • V3.92</small></div></div>'+
+    '<nav class="pro-nav">'+
+      '<button class="active" id="nav-dashboard">⌂ لوحة التحكم</button>'+
+      '<button id="nav-students">👥 المتدربون</button>'+
+      '<button id="nav-results">📊 النتائج</button>'+
+      '<button id="nav-exams">📝 الاختبارات</button>'+
+      '<button id="nav-analytics">📈 التحليلات</button>'+
+      '<button id="nav-audit">🛡️ التدقيق والجاهزية</button>'+
+    '</nav>'+
+    '<div class="pro-side-footer">مدير النظام<br>'+esc(name)+'<div class="pro-logout"><button id="side-logout" style="width:100%;border:0;background:rgba(255,255,255,.1);color:#fff;border-radius:10px;padding:10px;font-family:inherit;font-weight:900;cursor:pointer">تسجيل الخروج</button></div></div>'+
+  '</aside>'+
+  '<main class="pro-main">'+
+    '<header class="pro-topbar"><div class="pro-topbar-title">لوحة التحكم الرئيسية</div><div class="pro-topbar-meta"><span>آخر تحديث: الآن</span><div class="pro-avatar">'+esc((name||"م").slice(0,1))+'</div><span>'+esc(name)+'</span></div></header>'+
+    '<div class="pro-container">'+
+      '<section class="pro-hero">'+
+        '<div><div style="font-size:13px;font-weight:900;color:#d8edff;margin-bottom:7px">SMART ADMIN • مركز الإدارة</div><h1>مرحبًا '+esc(name)+' 👋</h1><p>من هنا تدير المتدربين والاختبارات والنتائج وتتابع مؤشرات الأداء في مكان واحد.</p>'+
+        '<div class="pro-hero-actions"><button class="hero-primary" id="hero-students">إدارة المتدربين</button><button class="hero-light" id="hero-results">عرض النتائج</button><button class="hero-light" id="hero-exams">فحص الاختبارات</button></div></div>'+
+        '<div class="pro-status-card"><div class="label">متوسط الأداء العام</div><div class="pro-score">'+(avg||0)+'%</div><div class="pro-progress"><span style="width:'+Math.max(0,Math.min(100,avg))+'%"></span></div><div style="margin-top:8px;font-size:12px;color:#d7ebf9">إشارات متابعة عالية: '+highRisk+'</div></div>'+
+      '</section>'+
+      '<section class="pro-kpis">'+
+        '<div class="pro-kpi"><div class="pro-kpi-head"><span>المتدربون</span><div class="pro-kpi-icon">👥</div></div><div class="pro-kpi-value">'+students+'</div><div class="pro-kpi-sub">السجلات الظاهرة حاليًا</div></div>'+
+        '<div class="pro-kpi"><div class="pro-kpi-head"><span>المجموعات</span><div class="pro-kpi-icon">🏷️</div></div><div class="pro-kpi-value">'+groups+'</div><div class="pro-kpi-sub">المجموعات المسجلة</div></div>'+
+        '<div class="pro-kpi"><div class="pro-kpi-head"><span>الاختبارات</span><div class="pro-kpi-icon">📝</div></div><div class="pro-kpi-value">'+exams+'</div><div class="pro-kpi-sub">اختبارات لها نتائج</div></div>'+
+        '<div class="pro-kpi"><div class="pro-kpi-head"><span>اختبارات مباشرة</span><div class="pro-kpi-icon">🔴</div></div><div class="pro-kpi-value">'+active+'</div><div class="pro-kpi-sub">'+(active?"توجد جلسات قيد التنفيذ":"لا توجد جلسات الآن")+'</div></div>'+
+      '</section>'+
+      '<div class="pro-grid">'+
+        '<section class="pro-card"><div class="pro-card-head"><h2>آخر النتائج</h2><button class="pro-link" id="results-more">عرض الكل ←</button></div><div class="table-wrap"><table class="pro-table"><thead><tr><th>المتدرب</th><th>الاختبار</th><th>النتيجة</th><th>الحالة</th></tr></thead><tbody>'+
+          (recent.length?recent.map(x=>'<tr><td><strong>'+esc(x.studentName||"متدرب")+'</strong><br><span style="font-size:10px;color:#8b9aa8">مجموعة '+esc(x.groupNo||"—")+'</span></td><td>'+esc(x.title||"اختبار")+'</td><td><strong>'+Number(x.percent||0)+'%</strong></td><td><span class="pro-badge '+(x.passed?"pro-green":"pro-orange")+'">'+(x.passed?"ناجح":"غير مجتاز")+'</span></td></tr>').join(""):'<tr><td colspan="4" style="text-align:center;padding:28px;color:#8a9baa">لا توجد نتائج مركزية بعد.</td></tr>')+
+        '</tbody></table></div></section>'+
+        '<section class="pro-card"><div class="pro-card-head"><h2>حالة المنصة</h2><span class="pro-badge pro-green">متصل</span></div>'+
+          '<div class="pro-live"><div class="live-dot"></div><div><strong>المراقبة الحية</strong><div style="font-size:12px;color:#7a8e9f">'+active+' اختبار قيد التنفيذ</div></div></div>'+
+          '<div style="height:10px"></div>'+
+          '<div class="pro-live"><div style="font-size:21px">✅</div><div><strong>جاهزية الاختبارات</strong><div style="font-size:12px;color:#7a8e9f">'+ready+' جاهز / '+published+' منشور / '+blocked+' محجوب</div></div></div>'+
+          '<div style="height:10px"></div>'+
+          '<div class="pro-live"><div style="font-size:21px">🎯</div><div><strong>إشارات التدخل</strong><div style="font-size:12px;color:#7a8e9f">'+highRisk+' متدرب يحتاج متابعة مرتفعة</div></div></div>'+
+        '</section>'+
+      '</div>'+
+      '<div class="pro-grid">'+
+        '<section class="pro-card"><div class="pro-card-head"><h2>إجراءات سريعة</h2></div><div class="pro-action-grid">'+
+          '<button class="pro-action" id="quick-students"><strong>👥 إدارة المتدربين</strong><span>بحث، مجموعات، Student 360</span></button>'+
+          '<button class="pro-action" id="quick-results"><strong>📊 مركز النتائج</strong><span>نتائج رسمية ومراقبة حية</span></button>'+
+          '<button class="pro-action" id="quick-exams"><strong>📝 مركز الاختبارات</strong><span>جاهزية وبنك الأسئلة</span></button>'+
+          '<button class="pro-action" id="quick-analytics"><strong>📈 التحليلات</strong><span>الأداء وإشارات التعلم</span></button>'+
+        '</div></section>'+
+        '<section class="pro-card"><div class="pro-card-head"><h2>الموضوعات الأهم</h2><button class="pro-link" id="topics-more">التحليلات ←</button></div><div class="pro-mini-list">'+
+          (topics.length?topics.map(t=>{const v=Math.max(0,Math.min(100,Number(t.accuracy||t.percent||t.avg||0)));return '<div class="pro-topic"><strong>'+esc(t.topic||t.name||"موضوع")+'</strong><span>'+v+'%</span></div><div class="mini-bar"><span style="width:'+v+'%"></span></div>';}).join(""):'<div style="color:#8b9ba9">لا توجد بيانات تحليلية كافية بعد.</div>')+
+        '</div></section>'+
+      '</div>'+
+      '<div class="pro-footer-note">IPv4 Academy • لوحة إدارة مركزية • يتم تحديث البيانات من Supabase عند فتح اللوحة.</div>'+
+    '</div>'+
+  '</main></div>';
+
+  $("nav-dashboard")?.addEventListener("click",()=>dashboard());
+  $("nav-students")?.addEventListener("click",()=>renderView("students"));
+  $("nav-results")?.addEventListener("click",()=>renderView("results"));
+  $("nav-exams")?.addEventListener("click",()=>renderView("exams"));
+  $("nav-analytics")?.addEventListener("click",()=>renderView("analytics"));
+  $("nav-audit")?.addEventListener("click",()=>showInfo("التدقيق والجاهزية"));
+  $("hero-students")?.addEventListener("click",()=>renderView("students"));
+  $("hero-results")?.addEventListener("click",()=>renderView("results"));
+  $("hero-exams")?.addEventListener("click",()=>renderView("exams"));
+  $("results-more")?.addEventListener("click",()=>renderView("results"));
+  $("quick-students")?.addEventListener("click",()=>renderView("students"));
+  $("quick-results")?.addEventListener("click",()=>renderView("results"));
+  $("quick-exams")?.addEventListener("click",()=>renderView("exams"));
+  $("quick-analytics")?.addEventListener("click",()=>renderView("analytics"));
+  $("topics-more")?.addEventListener("click",()=>renderView("analytics"));
+  $("side-logout")?.addEventListener("click",async()=>{await signOut();location.href="./admin.html";});
 }
 async function students(){
   const r=await fetchTrainerStudentRoster("","");
