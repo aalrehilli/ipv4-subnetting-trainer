@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=470";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=471";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -323,6 +323,20 @@ export async function fetchCentralExamResultDetail(attemptId){
   const {data,error}=await client.rpc("academy_exam_result_detail",{p_attempt_id:String(attemptId)});
   if(error)return {ok:false,error:String(error.message||error)};
   return {ok:true,data:data||null};
+}
+
+export async function fetchStudentMastery(courseId="",studentId=""){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_student_mastery",{
+    p_course_id:courseId?String(courseId):null,
+    p_student_id:studentId?String(studentId):null
+  });
+  if(error)return {ok:false,error:String(error.message||error)};
+  const payload=data||{};
+  return {ok:true,summary:payload.summary||{},courses:Array.isArray(payload.courses)?payload.courses:[],topics:Array.isArray(payload.topics)?payload.topics:[],recommendation:payload.recommendation||null};
 }
 
 export async function fetchStudentSmartReviewPlan(limit=10){
