@@ -134,7 +134,7 @@ async function submitLogin(form){
     return setMessage("هذا الحساب مصنف كـ "+(labels[actual]||"حساب آخر")+"، بينما اخترت تبويب "+(labels[selectedRole]||"آخر")+" . اختر التبويب الصحيح ثم حاول مرة أخرى.","error");
   }
   authBusy=false;setBusy(form,false);
-  window.dispatchEvent(new CustomEvent("ipv4-auth-success"));
+  window.dispatchEvent(new CustomEvent("ipv4-auth-success",{detail:{role:actual}}));
 }
 
 async function submitSignup(form){
