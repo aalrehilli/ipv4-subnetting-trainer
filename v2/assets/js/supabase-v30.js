@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=469";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=470";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -323,6 +323,40 @@ export async function fetchCentralExamResultDetail(attemptId){
   const {data,error}=await client.rpc("academy_exam_result_detail",{p_attempt_id:String(attemptId)});
   if(error)return {ok:false,error:String(error.message||error)};
   return {ok:true,data:data||null};
+}
+
+export async function fetchStudentSmartReviewPlan(limit=10){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_student_smart_review_plan",{p_limit:Number(limit||10)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  const payload=data||{};
+  return {ok:true,topics:Array.isArray(payload.topics)?payload.topics:[],questions:Array.isArray(payload.questions)?payload.questions:[]};
+}
+
+export async function checkStudentSmartReviewAnswer(questionId,selected){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_student_smart_review_check",{
+    p_question_id:String(questionId),p_selected:Number(selected)
+  });
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data:data||{}};
+}
+
+export async function fetchTrainerLearningSignals(){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_trainer_learning_signals");
+  if(error)return {ok:false,error:String(error.message||error)};
+  const payload=data||{};
+  return {ok:true,summary:payload.summary||{},topics:Array.isArray(payload.topics)?payload.topics:[],students:Array.isArray(payload.students)?payload.students:[]};
 }
 
 export async function getCentralAttemptResult(){
