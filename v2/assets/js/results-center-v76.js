@@ -21,8 +21,8 @@ function summaryCards(s){
     kpi("متوسط الدرجات",Number(s.avg_percent||0)+"%","المحاولات المسلّمة","success")+
     kpi("نسبة الاجتياز",passRate+"%",passed+" من "+submitted,"success")+
     kpi("المتدربون",Number(s.students||0),"لهم نتائج")+
-    kpi("الاختبارات",Number(s.exams||0),"في السجل");
-  +'</div>';
+    kpi("الاختبارات",Number(s.exams||0),"في السجل")+
+    '</div>';
 }
 
 function examTable(){
