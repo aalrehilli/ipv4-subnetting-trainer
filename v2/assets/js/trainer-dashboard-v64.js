@@ -1,5 +1,5 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=464";
-import {getQuestionBankStats} from "./question-bank-v32.js?v=464";
+import {getSupabaseConfig} from "./supabase-v30.js?v=473";
+import {getQuestionBankStats} from "./question-bank-v32.js?v=473";
 
 let clientPromise=null;
 const esc=v=>String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -45,7 +45,7 @@ export async function trainerDashboardView(){
   const topRisk=students.slice(0,5);
 
   return '<div class="page-intro with-action">'+
-    '<div><span class="eyebrow blue">V3.64 • لوحة المدرب المركزية</span><h2>مركز قيادة المدرب</h2><p>اللوحة الآن تقرأ مؤشرات المتدربين من البيانات المركزية عند توفرها، مع الاحتفاظ بالبنك المحلي كنسخة تشغيلية.</p></div>'+
+    '<div><span class="eyebrow blue">V3.71 • لوحة المدرب المركزية</span><h2>مركز قيادة المدرب</h2><p>اللوحة الآن تقرأ مؤشرات المتدربين من البيانات المركزية عند توفرها، مع الاحتفاظ بالبنك المحلي كنسخة تشغيلية.</p></div>'+
     '<div class="trainer-exam-head-actions"><span class="badge '+(source?"green":"orange")+'">'+(source?"Supabase • مباشر":"بيانات محلية")+'</span><button class="btn btn-soft" data-trainer-page="analytics">التحليلات الكاملة</button></div>'+
   '</div>'+
   '<div class="trainer-v36-kpis">'+
@@ -64,7 +64,7 @@ export async function trainerDashboardView(){
     '</section>'+
   '</div>'+
   '<section class="card" style="margin-top:14px"><div class="section-title"><div><span class="eyebrow red">أولوية اليوم</span><h3>أعلى حالات الخطورة</h3><p class="muted">مرتبة من البيانات المركزية حسب الخطورة ومتوسط الإكمال.</p></div><span class="badge red">'+high+' عالي الخطورة • '+medium+' متوسط</span></div>'+
-    (topRisk.length?'<div class="risk-list">'+topRisk.map((r,i)=>'<div class="risk-row"><div class="risk-rank">'+(i+1)+'</div><div class="risk-person"><strong>'+esc(r.student_name||"متدرب")+'</strong><span class="muted">المجموعة '+esc(r.group_no||"—")+'</span></div><span class="badge '+(r.risk==="مرتفع"?"red":"orange")+'">'+esc(r.risk||"—")+'</span><div class="risk-topic"><strong>'+Number(r.avg_progress||0)+'% إكمال</strong><span class="muted">'+Number(r.avg_score||0)+'% تقييم</span></div></div>').join("")+'</div>':'<div class="empty"><h3>لا توجد حالات خطرة حاليًا</h3><p class="muted">ستظهر هنا تلقائيًا عند توفر تقدم مركزي.</p></div>')+
+    (topRisk.length?'<div class="risk-list">'+topRisk.map((r,i)=>'<div class="risk-row"><div class="risk-rank">'+(i+1)+'</div><div class="risk-person"><strong>'+esc(r.student_name||"متدرب")+'</strong><span class="muted">المجموعة '+esc(r.group_no||"—")+'</span></div><span class="badge '+(r.risk==="مرتفع"?"red":"orange")+'">'+esc(r.risk||"—")+'</span><div class="risk-topic"><strong>'+Number(r.avg_progress||0)+'% إكمال</strong><span class="muted">'+Number(r.avg_score||0)+'% تقييم</span></div><button class="btn btn-soft mini-btn" data-student-id="'+esc(r.student_id)+'">Student 360</button></div>').join("")+'</div>':'<div class="empty"><h3>لا توجد حالات خطرة حاليًا</h3><p class="muted">ستظهر هنا تلقائيًا عند توفر تقدم مركزي.</p></div>')+
   '</section>'+
   '<div class="grid-3" style="margin-top:14px">'+
     '<div class="card"><span class="muted">بنك الأسئلة</span><strong style="display:block;font-size:28px">'+localBank.active+'</strong><small class="muted">'+localBank.needsReview+' تحتاج مراجعة</small></div>'+
