@@ -55,7 +55,7 @@ function topbar(){
 function adminPortalLoginView(){
   return '<div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#eef6ff,#f7fbff);direction:rtl;font-family:Tahoma,Arial,sans-serif">'+
     '<section style="width:min(460px,100%);background:#fff;border:1px solid #d7e6f5;border-radius:22px;box-shadow:0 18px 50px rgba(22,68,110,.10);padding:32px">'+
-    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px"><div style="width:52px;height:52px;border-radius:15px;background:#0b6bcb;color:#fff;display:grid;place-items:center;font-weight:900;font-size:19px">IP</div><div><h1 style="margin:0;color:#0b5dab;font-size:26px">IPv4 Academy</h1><small style="color:#70859a">بوابة الإدارة • V3.96</small></div></div>'+
+    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px"><div style="width:52px;height:52px;border-radius:15px;background:#0b6bcb;color:#fff;display:grid;place-items:center;font-weight:900;font-size:19px">IP</div><div><h1 style="margin:0;color:#0b5dab;font-size:26px">IPv4 Academy</h1><small style="color:#70859a">بوابة الإدارة • V3.99</small></div></div>'+
     '<div style="display:inline-flex;padding:7px 11px;border-radius:999px;background:#edf6ff;color:#0b6bcb;font-weight:800;font-size:13px;margin-bottom:18px">🔐 دخول المدير فقط</div>'+
     '<h2 style="margin:0 0 8px;font-size:28px;color:#102d48">تسجيل دخول الإدارة</h2>'+
     '<p style="margin:0 0 22px;color:#6c7f91;line-height:1.8">هذه الصفحة مستقلة عن دخول المتدربين، ومخصصة للوصول إلى لوحة مدير المنصة.</p>'+
@@ -222,7 +222,7 @@ function shell(content){
 async function loadPage(){
   const sbStatus=window.__IPV4_SUPABASE_STATUS__||{};
   if(state.authMode==="reset"){
-    const auth=await import("./auth-v72.js?v=503");
+    const auth=await import("./auth-v72.js?v=504");
     return auth.authView("reset");
   }
   if(sbStatus.configured && !sbStatus.authenticated){
