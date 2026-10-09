@@ -115,8 +115,10 @@ async function submitLogin(form){
   const password=form.querySelector("#auth-login-password")?.value||"";
   if(!email||!password) return setMessage("أدخل البريد الإلكتروني وكلمة المرور.","error");
   authBusy=true;setBusy(form,true);
+  window.__IPV4_AUTH_ROUTING__=true;
   const r=await signInWithPassword(email,password);
   if(!r.ok){
+    window.__IPV4_AUTH_ROUTING__=false;
     authBusy=false;setBusy(form,false);
     return setMessage(translateAuthError(r.error||r.reason||"تعذر تسجيل الدخول."),"error");
   }
@@ -124,15 +126,18 @@ async function submitLogin(form){
   const actual=String(status.role||"student");
   if(!status.authenticated){
     await signOut().catch(()=>{});
+    window.__IPV4_AUTH_ROUTING__=false;
     authBusy=false;setBusy(form,false);
     return setMessage(status.message||"تعذر التحقق من صلاحية الحساب.","error");
   }
   if(actual!==selectedRole){
     await signOut().catch(()=>{});
+    window.__IPV4_AUTH_ROUTING__=false;
     authBusy=false;setBusy(form,false);
     const labels={student:"المتدرب",trainer:"المدرب",admin:"الإدارة"};
     return setMessage("هذا الحساب مصنف كـ "+(labels[actual]||"حساب آخر")+"، بينما اخترت تبويب "+(labels[selectedRole]||"آخر")+" . اختر التبويب الصحيح ثم حاول مرة أخرى.","error");
   }
+  window.__IPV4_AUTH_ROUTING__=false;
   authBusy=false;setBusy(form,false);
   window.dispatchEvent(new CustomEvent("ipv4-auth-success",{detail:{role:actual}}));
 }
