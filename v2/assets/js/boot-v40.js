@@ -33,7 +33,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:(state.role==="admin"?adminNav:trainerNav);
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V4.00 • Unified Platform</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V4.01 • Unified Platform</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -55,7 +55,7 @@ function topbar(){
 function adminPortalLoginView(){
   return '<div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#eef6ff,#f7fbff);direction:rtl;font-family:Tahoma,Arial,sans-serif">'+
     '<section style="width:min(460px,100%);background:#fff;border:1px solid #d7e6f5;border-radius:22px;box-shadow:0 18px 50px rgba(22,68,110,.10);padding:32px">'+
-    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px"><div style="width:52px;height:52px;border-radius:15px;background:#0b6bcb;color:#fff;display:grid;place-items:center;font-weight:900;font-size:19px">IP</div><div><h1 style="margin:0;color:#0b5dab;font-size:26px">IPv4 Academy</h1><small style="color:#70859a">بوابة الإدارة • V4.00</small></div></div>'+
+    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px"><div style="width:52px;height:52px;border-radius:15px;background:#0b6bcb;color:#fff;display:grid;place-items:center;font-weight:900;font-size:19px">IP</div><div><h1 style="margin:0;color:#0b5dab;font-size:26px">IPv4 Academy</h1><small style="color:#70859a">بوابة الإدارة • V4.01</small></div></div>'+
     '<div style="display:inline-flex;padding:7px 11px;border-radius:999px;background:#edf6ff;color:#0b6bcb;font-weight:800;font-size:13px;margin-bottom:18px">🔐 دخول المدير فقط</div>'+
     '<h2 style="margin:0 0 8px;font-size:28px;color:#102d48">تسجيل دخول الإدارة</h2>'+
     '<p style="margin:0 0 22px;color:#6c7f91;line-height:1.8">هذه الصفحة مستقلة عن دخول المتدربين، ومخصصة للوصول إلى لوحة مدير المنصة.</p>'+
@@ -290,8 +290,8 @@ async function loadPage(){
 
     if((state.role==="trainer" || state.role==="admin") && ["students","groups","courses","qbaudit","examcheck","exams","results","labs","analytics","tdash","adash","student360","audit","qintel","questions"].indexOf(state.page)>=0){
       if(state.page==="tdash"){
-        var finalDash=await import("./trainer-dashboard-v64.js?v=498");
-        return finalDash.trainerDashboardView();
+        var trainer101=await import("./trainer-dashboard-v101.js?v=506");
+        return await trainer101.trainerDashboardV101();
       }
       var trainer=await import("./trainer-v22.js?v=498");
       if(state.page==="student360"){var s360=await import("./student360-v70.js?v=498");return await s360.student360View(state.studentId||"");}
