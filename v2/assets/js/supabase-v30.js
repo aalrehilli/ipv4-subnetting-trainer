@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=477";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=478";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -305,6 +305,27 @@ export async function startCentralExamAttempt(examId,title,courseId){
     return {ok:false,error:msg};
   }
   return {ok:true,data};
+}
+
+export async function fetchTrainerResultsSummary(courseId=""){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_trainer_results_summary",{p_course_id:courseId?String(courseId):null});
+  if(error)return {ok:false,error:String(error.message||error)};
+  const payload=data||{};
+  return {
+    ok:true,
+    payload:{
+      generatedAt:payload.generatedAt||null,
+      summary:payload.summary||{},
+      exams:Array.isArray(payload.exams)?payload.exams:[],
+      groups:Array.isArray(payload.groups)?payload.groups:[],
+      students:Array.isArray(payload.students)?payload.students:[],
+      recent:Array.isArray(payload.recent)?payload.recent:[]
+    }
+  };
 }
 
 export async function fetchCentralTrainerExamResults(filters={}) {
