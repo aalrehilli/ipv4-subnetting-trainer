@@ -1,7 +1,9 @@
-import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail,fetchTrainerResultsSummary} from "./supabase-v30.js?v=479";
+import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail,fetchTrainerResultsSummary,fetchTrainerLiveExamMonitor} from "./supabase-v30.js?v=481";
 
 let resultRows=[];
 let dashboard={summary:{},exams:[],groups:[],students:[],recent:[]};
+let liveTimer=null;
+let liveData={activeCount:0,attempts:[],finalizedExpired:0,generatedAt:null};
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 const dateText=ts=>{try{return ts?new Date(ts).toLocaleString("ar-SA",{dateStyle:"short",timeStyle:"short"}):"—"}catch{return "—"}};
@@ -23,6 +25,44 @@ function summaryCards(s){
     kpi("المتدربون",Number(s.students||0),"لهم نتائج")+
     kpi("الاختبارات",Number(s.exams||0),"في السجل")+
     '</div>';
+}
+
+function liveMonitorMarkup(data=liveData){
+  const items=Array.isArray(data.attempts)?data.attempts:[];
+  if(!items.length){
+    return '<div class="card live-exam-empty"><div><span class="eyebrow green">المراقبة الحية</span><h3>لا توجد اختبارات قيد التنفيذ</h3><p class="muted">عند بدء متدرب للاختبار سيظهر هنا الوقت المتبقي وحالة الإجابات مباشرة.</p></div><span class="badge green">جاهز</span></div>';
+  }
+  return '<div class="card live-exam-monitor-card" id="results-live-monitor">'+
+    '<div class="section-title"><div><span class="eyebrow orange">V3.80 • Live Monitoring</span><h3>الاختبارات قيد التنفيذ</h3><span class="muted">تحديث تلقائي كل 10 ثوانٍ</span></div><div class="trainer-exam-head-actions"><span class="badge orange">'+items.length+' قيد التنفيذ</span><button class="btn btn-soft mini-btn" data-live-refresh>تحديث الآن</button></div></div>'+
+    '<div class="live-exam-list">'+items.map(function(x){
+      const left=Math.max(0,Number(x.remainingSeconds||0));
+      const total=Math.max(1,Number(x.durationMinutes||1)*60);
+      const pct=Math.max(0,Math.min(100,Math.round(left/total*100)));
+      const answered=Number(x.answeredCount||0), totalQ=Number(x.questionCount||0);
+      return '<div class="live-exam-row">'+
+        '<div class="live-exam-main"><div><strong>'+esc(x.studentName||"متدرب")+'</strong><small>'+esc(x.studentCode||"")+' • المجموعة '+esc(x.groupNo||"—")+'</small></div><span class="badge purple">'+esc(x.title||"اختبار")+'</span></div>'+
+        '<div class="live-exam-meta"><span>المحاولة '+Number(x.attemptNo||1)+'</span><span>أجاب '+answered+'/'+totalQ+'</span><span>بدأ '+dateText(x.startedAt)+'</span><strong class="'+(left<=60?"live-danger":"")+'">'+durationText(left)+'</strong></div>'+
+        '<div class="progress live-exam-progress"><span style="width:'+pct+'%"></span></div>'+
+        '</div>';
+    }).join("")+'</div></div>';
+}
+
+async function refreshLiveMonitor(){
+  const r=await fetchTrainerLiveExamMonitor().catch(()=>({ok:false}));
+  if(!r.ok)return;
+  liveData=r.payload||{activeCount:0,attempts:[],finalizedExpired:0,generatedAt:null};
+  const host=document.getElementById("results-live-monitor-host");
+  if(host)host.innerHTML=liveMonitorMarkup(liveData);
+}
+
+function startLiveMonitor(){
+  if(liveTimer)clearInterval(liveTimer);
+  liveTimer=setInterval(function(){
+    if(!document.getElementById("results-live-monitor-host")){
+      clearInterval(liveTimer);liveTimer=null;return;
+    }
+    refreshLiveMonitor().catch(()=>{});
+  },10000);
 }
 
 function examTable(){
@@ -80,15 +120,19 @@ export async function resultsCenterView(){
     fetchCentralTrainerExamResults({}).catch(()=>({ok:false}))
   ]);
   if(!summaryRes.ok && !rowsRes.ok){
-    return '<div class="page-intro"><span class="eyebrow red">V3.77 • مركز النتائج</span><h2>تعذر تحميل النتائج المركزية</h2><p>يلزم حساب مدرب أو مدير واتصال Supabase صالح.</p></div><div class="card" style="border-right:4px solid var(--red)"><strong>المصدر المركزي غير متاح</strong><p class="muted">'+esc(summaryRes.error||rowsRes.error||summaryRes.reason||rowsRes.reason||"خطأ غير معروف")+'</p></div>';
+    return '<div class="page-intro"><span class="eyebrow red">V3.80 • مركز النتائج</span><h2>تعذر تحميل النتائج المركزية</h2><p>يلزم حساب مدرب أو مدير واتصال Supabase صالح.</p></div><div class="card" style="border-right:4px solid var(--red)"><strong>المصدر المركزي غير متاح</strong><p class="muted">'+esc(summaryRes.error||rowsRes.error||summaryRes.reason||rowsRes.reason||"خطأ غير معروف")+'</p></div>';
   }
   dashboard=summaryRes.ok?summaryRes.payload:{summary:{},exams:[],groups:[],students:[],recent:[]};
+  const liveRes=await fetchTrainerLiveExamMonitor().catch(()=>({ok:false}));
+  liveData=liveRes.ok?liveRes.payload:{activeCount:0,attempts:[],finalizedExpired:0,generatedAt:null};
   resultRows=rowsRes.ok?rowsRes.rows:[];
   const s=dashboard.summary||{};
   return '<div class="page-intro with-action">'+
-    '<div><span class="eyebrow purple">V3.77 • مركز النتائج الموحد</span><h2>مركز النتائج + Student 360</h2><p>النتيجة الرسمية، تحليل الاختبار، مقارنة المجموعات وربط مباشر بملف المتدرب المركزي.</p></div>'+
+    '<div><span class="eyebrow purple">V3.80 • مركز النتائج الموحد</span><h2>مركز النتائج + Student 360</h2><p>النتيجة الرسمية، تحليل الاختبار، مقارنة المجموعات وربط مباشر بملف المتدرب المركزي.</p></div>'+
     '<div class="trainer-exam-head-actions"><span class="badge green">Supabase • مباشر</span><button class="btn btn-soft" data-results-refresh>تحديث</button><button class="btn btn-soft" data-results-export>تصدير CSV</button></div></div>'+
     summaryCards(s)+
+    '<div class="section-title"><h3>المراقبة الحية</h3><span class="badge orange">'+Number(dashboard.summary?.in_progress_attempts||0)+' قيد التنفيذ</span></div>'+
+    '<div id="results-live-monitor-host">'+liveMonitorMarkup(liveData)+'</div>'+
     '<div class="section-title"><h3>أداء الاختبارات</h3><span class="badge purple">Central Results</span></div>'+
     examTable()+
     '<div class="section-title"><h3>أداء المجموعات</h3><span class="badge blue">'+dashboard.groups.length+' مجموعات</span></div>'+
@@ -98,7 +142,7 @@ export async function resultsCenterView(){
     '<div class="section-title"><h3>النشاط الأخير</h3><span class="badge">'+dashboard.recent.length+' نتيجة</span></div>'+
     recentTable()+
     '<div id="results-detail-panel"></div>'+
-    '<div class="card trainer-results-note"><strong>V3.77:</strong> النتائج الرسمية تأتي من <code>academy_exam_attempts</code>، وملف Student 360 يعتمد على الهوية المركزية نفسها.</div>';
+    '<div class="card trainer-results-note"><strong>V3.80:</strong> النتائج الرسمية تأتي من <code>academy_exam_attempts</code>، وملف Student 360 يعتمد على الهوية المركزية نفسها.</div>';
 }
 
 function applySearches(){
@@ -127,7 +171,7 @@ export async function showResultDetailV76(attemptId){
   const student=resultRows.find(x=>String(x.id)===String(attemptId));
   const studentId=student?.studentId||"";
   panel.innerHTML='<div class="card" style="margin-top:16px">'+
-    '<div class="section-title"><div><span class="eyebrow purple">تفاصيل النتيجة • V3.77</span><h3>'+esc(a.title||"اختبار")+'</h3><p class="muted">'+esc(student?.studentName||"متدرب")+'</p></div><div><button class="btn btn-primary" '+(studentId?'data-student-id="'+esc(studentId)+'"':'disabled')+'>فتح Student 360</button> <button class="btn btn-soft" data-results-detail-close>إغلاق</button></div></div>'+
+    '<div class="section-title"><div><span class="eyebrow purple">تفاصيل النتيجة • V3.80</span><h3>'+esc(a.title||"اختبار")+'</h3><p class="muted">'+esc(student?.studentName||"متدرب")+'</p></div><div><button class="btn btn-primary" '+(studentId?'data-student-id="'+esc(studentId)+'"':'disabled')+'>فتح Student 360</button> <button class="btn btn-soft" data-results-detail-close>إغلاق</button></div></div>'+
     '<div class="trainer-results-kpis" style="margin-top:0">'+
     kpi("النتيجة",Number(a.percent||0)+"%",Number(a.score||0)+" / "+Number(a.total||0))+
     kpi("الحالة",a.passed?"ناجح":"غير مجتاز","المحاولة "+Number(a.attemptNo||1),a.passed?"success":"warning")+
@@ -142,6 +186,7 @@ export async function showResultDetailV76(attemptId){
 }
 
 export async function handleResultsV76Action(btn){
+  if(btn.hasAttribute("data-live-refresh")){ await refreshLiveMonitor(); return {rerender:false}; }
   if(btn.hasAttribute("data-results-detail")){
     await showResultDetailV76(btn.getAttribute("data-results-detail")||"");
     return {rerender:false};
