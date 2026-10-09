@@ -340,7 +340,7 @@ function bind(){
   document.querySelectorAll("[data-360-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./student360-v29.js?v=471");
+        var m=await import("./student360-v70.js?v=471");
         var result=m.handleStudent360Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
