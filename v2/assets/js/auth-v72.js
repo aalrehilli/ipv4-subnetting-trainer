@@ -3,14 +3,36 @@ import {
   signUpWithPassword,
   requestPasswordReset,
   updatePassword,
-  translateAuthError
-} from "./supabase-v30.js?v=487";
+  translateAuthError,
+  getSupabaseStatus,
+  signOut
+} from "./supabase-v30.js?v=503";
 
 let authBusy=false;
+let selectedRole="student";
 
 const esc=v=>String(v==null?"":v)
   .replace(/&/g,"&amp;").replace(/</g,"&lt;")
   .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function roleTabs(){
+  const roles=[
+    ["student","👨‍🎓","المتدرب","الوصول إلى المقرر والتدريب والاختبارات"],
+    ["trainer","👨‍🏫","المدرب","إدارة المتدربين والمحتوى والنتائج"],
+    ["admin","🛡️","الإدارة","إدارة المستخدمين والمنصة بالكامل"]
+  ];
+  return '<div class="auth-role-tabs" role="tablist" aria-label="نوع الحساب">'+roles.map(function(r){
+    return '<button type="button" class="auth-role-tab '+(selectedRole===r[0]?"active":"")+'" data-auth-role="'+r[0]+'" role="tab" aria-selected="'+(selectedRole===r[0]?"true":"false")+'"><span class="auth-role-icon">'+r[1]+'</span><span><strong>'+r[2]+'</strong><small>'+r[3]+'</small></span></button>';
+  }).join("")+'</div>';
+}
+function selectedRoleNote(){
+  const notes={
+    student:"للمتدربين: الدروس، التمارين، الاختبارات، المراجعة والنتائج.",
+    trainer:"للمدربين: إدارة المتدربين والمجموعات والمقررات والاختبارات والنتائج.",
+    admin:"للإدارة: التحكم الكامل بالمستخدمين والمنصة وإعداداتها."
+  };
+  return notes[selectedRole]||notes.student;
+}
 
 function field(label,id,type,placeholder,autocomplete){
   return '<div class="field"><label for="'+id+'">'+label+'</label>'+
@@ -41,15 +63,18 @@ export function authView(mode="login",notice=""){
       '<div class="auth-links"><button type="button" class="link-btn" data-auth-mode="login">لدي حساب بالفعل</button></div>'+
       '</form>';
   }else{
-    form='<form id="auth-login-form">'+
+    form='<div id="auth-role-panel" class="auth-role-panel">'+roleTabs()+'</div>'+
+      '<div id="auth-role-description" class="auth-role-description">'+selectedRoleNote()+'</div>'+
+      '<form id="auth-login-form">'+
       field("البريد الإلكتروني","auth-login-email","email","name@example.com","email")+
       field("كلمة المرور","auth-login-password","password","كلمة المرور","current-password")+
-      '<button class="btn btn-primary" id="auth-login-submit" type="submit">دخول</button>'+
+      '<button class="btn btn-primary auth-login-btn" id="auth-login-submit" type="submit"><span>دخول</span><span>←</span></button>'+
       '<div class="auth-links">'+
       '<button type="button" class="link-btn" data-auth-mode="reset-request">نسيت كلمة المرور؟</button>'+
-      '<button type="button" class="link-btn" data-auth-mode="signup">إنشاء حساب جديد</button>'+
+      '<button type="button" class="link-btn" data-auth-mode="signup">إنشاء حساب متدرب</button>'+
       '</div>'+
       '</form>';
+
   }
 
   if(mode==="reset-request"){
@@ -91,8 +116,24 @@ async function submitLogin(form){
   if(!email||!password) return setMessage("أدخل البريد الإلكتروني وكلمة المرور.","error");
   authBusy=true;setBusy(form,true);
   const r=await signInWithPassword(email,password);
+  if(!r.ok){
+    authBusy=false;setBusy(form,false);
+    return setMessage(translateAuthError(r.error||r.reason||"تعذر تسجيل الدخول."),"error");
+  }
+  const status=await getSupabaseStatus();
+  const actual=String(status.role||"student");
+  if(!status.authenticated){
+    await signOut().catch(()=>{});
+    authBusy=false;setBusy(form,false);
+    return setMessage(status.message||"تعذر التحقق من صلاحية الحساب.","error");
+  }
+  if(actual!==selectedRole){
+    await signOut().catch(()=>{});
+    authBusy=false;setBusy(form,false);
+    const labels={student:"المتدرب",trainer:"المدرب",admin:"الإدارة"};
+    return setMessage("هذا الحساب مصنف كـ "+(labels[actual]||"حساب آخر")+"، بينما اخترت تبويب "+(labels[selectedRole]||"آخر")+" . اختر التبويب الصحيح ثم حاول مرة أخرى.","error");
+  }
   authBusy=false;setBusy(form,false);
-  if(!r.ok)return setMessage(translateAuthError(r.error||r.reason||"تعذر تسجيل الدخول."),"error");
   window.dispatchEvent(new CustomEvent("ipv4-auth-success"));
 }
 
@@ -142,6 +183,18 @@ async function submitReset(form){
 
 export function bindAuth(){
   if(authBusy)return;
+  document.querySelectorAll("[data-auth-role]").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      selectedRole=btn.getAttribute("data-auth-role")||"student";
+      document.querySelectorAll("[data-auth-role]").forEach(function(x){
+        const active=x.getAttribute("data-auth-role")===selectedRole;
+        x.classList.toggle("active",active);
+        x.setAttribute("aria-selected",active?"true":"false");
+      });
+      const note=document.getElementById("auth-role-description");
+      if(note)note.textContent=selectedRoleNote();
+    });
+  });
   document.querySelectorAll("[data-auth-mode]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const mode=btn.getAttribute("data-auth-mode")||"login";
