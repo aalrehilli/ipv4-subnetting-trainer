@@ -226,7 +226,7 @@ async function loadPage(){
     return auth.authView("reset");
   }
   if(sbStatus.configured && !sbStatus.authenticated){
-    const auth=await import("./auth-v72.js?v=503");
+    const auth=await import("./auth-v72.js?v=504");
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
   if(state.role==="student" && state.page==="home") return await home();
@@ -394,16 +394,17 @@ window.addEventListener("ipv4-auth-mode",function(event){
   render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});
 });
 
-window.addEventListener("ipv4-auth-success",async function(){
+window.addEventListener("ipv4-auth-success",async function(event){
   state.authMode="login";
   state.filter="";state.group="";state.studentId=null;
   try{
-    await syncSupabaseRuntime();
-    const role=String(window.__IPV4_SUPABASE_STATUS__?.role||state.role||"student");
-    state.role=(role==="admin"?"admin":role==="trainer"?"trainer":"student");
+    const role=String(event.detail?.role||"student");
+    state.role=role==="admin"?"admin":role==="trainer"?"trainer":"student";
     state.page=state.role==="admin"?"adash":state.role==="trainer"?"tdash":"home";
+    window.__IPV4_AUTH_ROUTING__=false;
     await render();
   }catch(error){
+    window.__IPV4_AUTH_ROUTING__=false;
     const app=document.getElementById("app");
     if(app){app.innerHTML=errorView(error);bind();}
   }
@@ -419,7 +420,10 @@ window.addEventListener("ipv4-auth-state",function(event){
   const e=event.detail?.event;
   if(e==="PASSWORD_RECOVERY") state.authMode="reset";
   else if(e==="SIGNED_OUT"){state.authMode="login";state.page="auth";}
-  else if(e==="SIGNED_IN"||e==="INITIAL_SESSION"){if(state.authMode!=="reset")state.authMode="login";}
+  else if(e==="SIGNED_IN"||e==="INITIAL_SESSION"){
+    if(state.authMode!=="reset")state.authMode="login";
+    if(e==="SIGNED_IN" && window.__IPV4_AUTH_ROUTING__) return;
+  }
   setTimeout(function(){render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});},0);
 });
 
@@ -432,7 +436,7 @@ window.addEventListener("ipv4-course-switch",function(){
 
 function bind(){
   if(state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured && !window.__IPV4_SUPABASE_STATUS__?.authenticated)){
-    import("./auth-v72.js?v=503").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
+    import("./auth-v72.js?v=504").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
   }
   import("./notifications-v64.js?v=498").then(function(m){
     if(typeof m.bindCentralNotifications==="function")m.bindCentralNotifications();
