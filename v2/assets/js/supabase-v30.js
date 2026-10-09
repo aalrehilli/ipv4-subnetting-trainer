@@ -289,6 +289,23 @@ export async function fetchCentralQuestionBank(){
   return {ok:true,rows:Array.isArray(data)?data:[]};
 }
 
+export async function prepareCentralExamAttempt(examId,title,courseId){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const args=examId
+    ? {p_exam_id:String(examId)}
+    : {p_exam_id:String(examId||"")};
+  const {data,error}=await client.rpc("academy_prepare_exam_attempt",args);
+  if(error){
+    const msg=String(error.message||error);
+    if(msg.includes("ATTEMPTS_LIMIT"))return {ok:false,reason:"ATTEMPTS_LIMIT",error:"تم استنفاد عدد المحاولات المسموح بها."};
+    return {ok:false,error:msg};
+  }
+  return {ok:true,data:data||null};
+}
+
 export async function startCentralExamAttempt(examId,title,courseId){
   const client=await getClient();
   if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
