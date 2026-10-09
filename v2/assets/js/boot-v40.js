@@ -24,7 +24,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:trainerNav;
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.79 Stable</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.80 Stable</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
@@ -129,7 +129,7 @@ async function loadPage(){
       window.__IPV4_SUPABASE_STATUS__?.authenticated &&
       ["trainer","admin"].includes(String(window.__IPV4_SUPABASE_STATUS__?.role||""))
     )){
-      return '<div class="page-intro"><span class="eyebrow red">V3.79 • الصلاحيات</span><h2>الوصول إلى مركز المدرب مقيد</h2><p>يلزم تسجيل الدخول بحساب مدرب أو مدير للوصول إلى بيانات المتدربين والتحليلات.</p></div>'+
+      return '<div class="page-intro"><span class="eyebrow red">V3.80 • الصلاحيات</span><h2>الوصول إلى مركز المدرب مقيد</h2><p>يلزم تسجيل الدخول بحساب مدرب أو مدير للوصول إلى بيانات المتدربين والتحليلات.</p></div>'+
         '<div class="card" style="border-right:4px solid var(--red)"><h3>تسجيل الدخول مطلوب</h3><p class="muted">واجهة المدرب محمية الآن عند تشغيل Supabase. المحتوى العام للمتدرب يبقى متاحًا.</p><button class="btn btn-primary" data-page="home">العودة لمساحة المتدرب</button></div>';
     }
 
