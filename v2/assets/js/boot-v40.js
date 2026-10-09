@@ -469,7 +469,7 @@ function bind(){
   });
 
   if(state.role==="admin" && state.page==="users"){
-    import("./user-management-v94.js?v=500").then(function(m){if(typeof m.bindUsers==="function")m.bindUsers();}).catch(function(){});
+    import("./user-management-v94.js?v=505").then(function(m){if(typeof m.bindUsers==="function")m.bindUsers();}).catch(function(){});
   }
 
   document.querySelectorAll("[data-page]").forEach(function(btn){
