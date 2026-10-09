@@ -94,7 +94,7 @@ function editor(){
 
 function view(){
   return '<div class="page-intro with-action">'+
-    '<div><span class="eyebrow purple">V3.94 • إدارة المنصة</span><h2>إدارة المستخدمين</h2><p>مركز موحد لمتابعة الحسابات والأدوار والمجموعات وحالة الدخول، مع حماية خاصة بصلاحيات المدير.</p></div>'+
+    '<div><span class="eyebrow purple">V3.95 • إدارة المنصة</span><h2>إدارة المستخدمين</h2><p>مركز موحد لمتابعة الحسابات والأدوار والمجموعات وحالة الدخول، مع حماية خاصة بصلاحيات المدير.</p></div>'+
     '<div><span class="badge green">إدارة آمنة</span></div></div>'+
     summaryCards()+
     '<div class="users-layout">'+
