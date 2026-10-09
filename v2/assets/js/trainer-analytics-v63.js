@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=463";
+import {getSupabaseConfig,fetchTrainerLearningSignals} from "./supabase-v30.js?v=470";
 
 let clientPromise=null;
 
@@ -82,25 +82,34 @@ function riskStudents(rows){
 }
 
 export async function trainerAnalyticsView(courseId=""){
-  const local=await loadAnalytics(courseId||"");
+  const [local,signals]=await Promise.all([loadAnalytics(courseId||""),fetchTrainerLearningSignals().catch(()=>({ok:false}))]);
   if(!local.ok){
     const label=local.reason==="AUTH_REQUIRED"?"تسجيل الدخول بحساب مدرب/مدير مطلوب":"تعذر الاتصال بالبيانات المركزية";
-    return '<div class="page-intro"><span class="eyebrow purple">V3.63 • التحليلات المركزية</span><h2>مركز التحليلات</h2><p>'+label+'</p></div>'+
+    return '<div class="page-intro"><span class="eyebrow purple">V3.68 • التحليلات المركزية</span><h2>مركز التحليلات</h2><p>'+label+'</p></div>'+
       '<div class="card"><h3>التحليلات المركزية غير متاحة</h3><p class="muted">'+esc(local.error||local.reason||"تعذر تحميل البيانات.")+'</p></div>';
   }
 
   const courses=local.courses;
+  const signalTopics=signals?.ok?signals.topics:[];
+  const signalSummary=signals?.ok?signals.summary:{};
+  const signalSection='<section class="card" style="margin-top:14px"><div class="section-title"><div><span class="eyebrow orange">V3.68 • ذكاء النتائج</span><h3>إشارة الاختبارات المركزية</h3><p class="muted">تحليل مباشر لنتائج الاختبارات المسجلة مركزيًا.</p></div><span class="badge blue">'+Number(signalSummary.attempts||0)+' محاولة</span></div>'+
+    '<div class="trainer-analytics-kpis"><div class="card analytics-kpi"><span>متوسط الاختبارات</span><strong>'+Number(signalSummary.avg_percent||0)+'%</strong><small>'+Number(signalSummary.passed||0)+' ناجحة</small></div><div class="card analytics-kpi"><span>متدربون اختبروا</span><strong>'+Number(signalSummary.students||0)+'</strong><small>من النتائج المركزية</small></div></div>'+
+    '<div class="table-scroll"><table class="table trainer-table"><thead><tr><th>الموضوع</th><th>الدقة</th><th>الإجابات</th><th>الحالة</th></tr></thead><tbody>'+
+    (signalTopics.length?signalTopics.slice(0,10).map(t=>'<tr><td><strong>'+esc(t.topic)+'</strong></td><td><strong>'+Number(t.accuracy||0)+'%</strong></td><td>'+Number(t.responses||0)+'</td><td><span class="badge '+tone(t.accuracy)+'">'+(Number(t.accuracy||0)<70?'يحتاج تدريب':'جيد')+'</span></td></tr>').join(""):'<tr><td colspan="4"><div class="empty">لا توجد نتائج اختبارات مركزية بعد.</div></td></tr>')+
+    '</tbody></table></div></section>';
+
   return '<div class="page-intro with-action">'+
-    '<div><span class="eyebrow purple">V3.63 • التحليلات المركزية</span><h2>لوحة تحليلات المدرب</h2><p>صورة مركزية لجميع المقررات والمجموعات والمتدربين، مبنية على بيانات Supabase الحالية.</p></div>'+
+    '<div><span class="eyebrow purple">V3.68 • التحليلات المركزية</span><h2>لوحة تحليلات المدرب</h2><p>صورة مركزية لجميع المقررات والمجموعات والمتدربين، مبنية على بيانات Supabase الحالية.</p></div>'+
     '<div class="trainer-analytics-head-actions"><span class="badge green">Supabase • مباشر</span><button class="btn btn-soft" data-trainer-page="tdash">لوحة المدرب</button></div>'+
   '</div>'+
   '<section class="card" style="margin-bottom:14px"><div class="section-title"><div><h3>نطاق التحليل</h3><p class="muted">اختر مقررًا لمقارنة أدائه أو اعرض جميع المقررات.</p></div><button class="btn btn-primary mini-btn" data-v63-refresh>تحديث</button></div>'+
   '<div class="lesson-form-grid"><label>المقرر<select id="v63-course-filter"><option value="">جميع المقررات المنشورة</option>'+courses.map(c=>'<option value="'+esc(c.course_id)+'">'+esc(c.title)+'</option>').join("")+'</select></label><div class="muted" style="align-self:end">المصدر: academy_course_lesson_progress</div></div></section>'+
-  '<div id="v63-analytics-body">'+metrics(local.summary)+
+  '<div id="v68-analytics-body">'+metrics(local.summary)+
+  +signalSection
   '<div class="grid-2" style="margin-top:14px"><section class="card"><div class="section-title"><div><h3>المقررات</h3><span class="badge blue">'+courses.length+' مقرر</span></div></div>'+courseTable(courses)+'</section>'+
   '<section class="card"><div class="section-title"><div><h3>المجموعات</h3><span class="badge purple">'+local.groups.length+' مجموعة</span></div></div>'+groupTable(local.groups)+'</section></div>'+
   '<section class="card" style="margin-top:14px"><div class="section-title"><div><span class="eyebrow red">أولوية المدرب</span><h3>المتدربون الذين يحتاجون متابعة</h3><p class="muted">يتم ترتيبهم حسب مستوى الخطورة ومتوسط الإكمال.</p></div><span class="badge red">'+local.students.length+' حالة</span></div><div class="risk-list">'+riskStudents(local.students)+'</div></section>'+
-  '<div class="card" style="margin-top:14px"><strong>V3.63:</strong> تم تحويل التحليلات من بيانات Demo إلى بيانات مركزية من Supabase للمقررات المنشورة وتقدم الدروس.</div></div>'+
+  '<div class="card" style="margin-top:14px"><strong>V3.68:</strong> تم تحويل التحليلات من بيانات Demo إلى بيانات مركزية من Supabase للمقررات المنشورة وتقدم الدروس.</div></div>'+
   '<script></script>';
 }
 
