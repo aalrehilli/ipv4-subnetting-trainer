@@ -142,6 +142,10 @@ export async function showResultDetail(attemptId){
         answers.map(x=>'<tr><td>'+Number(x.questionOrder||0)+'</td><td>'+esc(x.question||"سؤال")+'</td><td>'+esc(x.topic||"")+'</td><td>'+esc(JSON.stringify(x.selected))+'</td><td><span class="badge '+(x.isCorrect?"green":"red")+'">'+(x.isCorrect?"صحيح":"خطأ")+'</span></td></tr>').join("")+
       '</tbody></table></div>'+
     '</div>';
+  panel.querySelector("[data-results-detail-close]")?.addEventListener("click",function(){
+    panel.innerHTML="";
+  });
+
 }
 
 export async function handleResultsDetailClick(btn){
