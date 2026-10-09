@@ -235,7 +235,7 @@ async function loadPage(){
   if(state.role==="student" && state.page==="home") return await home();
   if(state.role==="admin" && state.page==="adash") return await adminDashboard();
   if(state.role==="admin" && state.page==="users"){
-    var userManagement=await import("./user-management-v94.js?v=499");
+    var userManagement=await import("./user-management-v94.js?v=500");
     return await userManagement.userManagementView();
   }
 
@@ -462,7 +462,7 @@ function bind(){
   });
 
   if(state.role==="admin" && state.page==="users"){
-    import("./user-management-v94.js?v=499").then(function(m){if(typeof m.bindUsers==="function")m.bindUsers();}).catch(function(){});
+    import("./user-management-v94.js?v=500").then(function(m){if(typeof m.bindUsers==="function")m.bindUsers();}).catch(function(){});
   }
 
   document.querySelectorAll("[data-page]").forEach(function(btn){
