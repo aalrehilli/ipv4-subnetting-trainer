@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=469";
-import {startCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=469";
+import {startCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=474";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
@@ -186,7 +186,8 @@ const state={
   centralAttemptId:null,
   centralAttemptNo:null,
   centralExamId:null,
-  centralQuestions:[]
+  centralQuestions:[],
+  submitting:false
 };
 
 let timer=null;
@@ -274,17 +275,32 @@ function stopTimer(){
   if(timer){clearInterval(timer);timer=null}
 }
 async function startExam(){
+  if(state.submitting)return {blocked:true,reason:"الاختبار قيد المعالجة."};
   const cfg=getExamConfig();
   const attempts=getAttemptCount();
   const courseExamId=localStorage.getItem("ipv4AcademyV341CourseExamId")||"";
   const courseId=localStorage.getItem("ipv4AcademyV341CourseId")||"";
+  const status=window.__IPV4_SUPABASE_STATUS__||{};
   let central=null;
   try{central=await startCentralExamAttempt(courseExamId,cfg.title,courseId);}catch(e){central={ok:false,error:String(e&&e.message||e)};}
 
-  if(central&&central.reason==="ATTEMPTS_LIMIT")return {blocked:true,reason:central.error||"تم استنفاد عدد المحاولات المسموح بها."};
-  if(!(central&&central.ok)){
-    if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
-    if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
+  // عند وجود حساب مركزي فعال، الاختبار الإنتاجي يجب أن يبدأ من Supabase فقط.
+  if(status.configured && status.authenticated){
+    if(!(central&&central.ok)){
+      const raw=String(central?.error||central?.reason||"تعذر بدء الاختبار.");
+      const msg=raw.includes("EXAM_NOT_READY")?"الاختبار غير جاهز للإطلاق: تحقق من عدد الأسئلة وصحة خيارات الإجابة.":
+        raw.includes("EXAM_NOT_FOR_GROUP")?"هذا الاختبار غير مخصص لمجموعتك.":
+        raw.includes("EXAM_NOT_STARTED")?"لم يبدأ الاختبار بعد.":
+        raw.includes("EXAM_CLOSED")?"انتهى وقت الاختبار.":
+        raw.includes("EXAM_NOT_PUBLISHED")?"الاختبار غير منشور حاليًا.":
+        raw.includes("ATTEMPTS_LIMIT")?"تم استنفاد عدد المحاولات المسموح بها.":raw;
+      return {blocked:true,reason:msg};
+    }
+  }else{
+    if(!(central&&central.ok)){
+      if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
+      if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
+    }
   }
 
   if(central&&central.ok){
@@ -300,37 +316,41 @@ async function startExam(){
     }));
   }
 
-  state.mode="live";
-  state.index=0;
-  state.answers={};
+  state.mode="live";state.index=0;state.answers={};
   const runtimeCfg=getExamConfig();
   state.questionIds=buildAttemptQuestionIds(runtimeCfg);
-  state.optionOrders={};
-  state.startedAt=Date.now();
+  state.optionOrders={};state.startedAt=Date.now();
   state.expiresAt=state.startedAt+runtimeCfg.durationMin*60*1000;
   state.optionOrders=buildOptionOrders(selectedQuestions(),runtimeCfg);
-  state.submitted=false;
-  state.result=null;
+  state.submitted=false;state.result=null;state.submitting=false;
   state.centralAttemptId=central&&central.ok?String(central.data?.attemptId||""):null;
   state.centralAttemptNo=central&&central.ok?Number(central.data?.attemptNo||0):null;
   state.centralExamId=courseExamId || localStorage.getItem("ipv4AcademyV365ExamId") || (central&&central.data?.examId?String(central.data.examId):"");
   state.centralQuestions=[];
+
   if(state.centralAttemptId && state.centralExamId){
     try{
       const qset=await fetchCentralExamQuestions(state.centralExamId);
-      if(qset.ok && qset.rows.length){
-        state.centralQuestions=qset.rows.map(function(q){
-          return {...q,id:String(q.id),opts:Array.isArray(q.opts)?q.opts:[],options:Array.isArray(q.options)?q.options:[]};
-        });
-        state.questionIds=state.centralQuestions.map(q=>q.id);
+      if(!qset.ok || !qset.rows.length) {
+        return {blocked:true,reason:"تعذر تحميل أسئلة الاختبار المركزية. لم يبدأ الاختبار في الواجهة."};
       }
-    }catch(e){}
+      state.centralQuestions=qset.rows.map(function(q){
+        return {...q,id:String(q.id),opts:Array.isArray(q.opts)?q.opts:[],options:Array.isArray(q.options)?q.options:[]};
+      });
+      if(state.centralQuestions.length!==Number(runtimeCfg.questionCount||state.centralQuestions.length)){
+        return {blocked:true,reason:"عدد أسئلة الاختبار المركزي لا يطابق الإعدادات."};
+      }
+      state.questionIds=state.centralQuestions.map(q=>q.id);
+    }catch(e){
+      return {blocked:true,reason:"تعذر تحميل أسئلة الاختبار المركزية."};
+    }
   }
+
   if(state.centralAttemptId)localStorage.setItem(CENTRAL_ATTEMPT_KEY,state.centralAttemptId);
   saveState();
   ensureTimer();
+  return {ok:true};
 }
-
 function answer(displayIndex){
   const q=currentQuestion();
   const option=displayOptions(q)[Number(displayIndex)];
@@ -379,7 +399,10 @@ function scoreExam(){
   };
 }
 async function submitExam(auto=false){
-  if(state.mode!=="live")return;
+  if(state.mode!=="live" || state.submitting)return {ok:false,reason:"لا توجد محاولة قابلة للتسليم."};
+  state.submitting=true;
+  saveState();
+
   let result=scoreExam();
   result.autoSubmitted=auto;
 
@@ -394,23 +417,34 @@ async function submitExam(auto=false){
         })
       };
       const central=await recordUnifiedExamAttempt(centralPayload);
-      if(central.ok && central.data){
-        result={...result,score:Number(central.data.score||0),total:Number(central.data.total||0),
-          percent:Number(central.data.percent||0),passed:central.data.passed===true,
-          topics:Array.isArray(central.data.topics)?central.data.topics:result.topics};
-      }else{
-        localStorage.setItem("ipv4AcademySupabaseLastSyncError",String(central.error||central.reason||"تعذر تسجيل المحاولة المركزية."));
+      if(!(central&&central.ok&&central.data)){
+        const msg=String(central?.error||central?.reason||"تعذر تسجيل المحاولة المركزية.");
+        localStorage.setItem("ipv4AcademySupabaseLastSyncError",msg);
+        state.submitting=false;
+        state.mode="review";
+        saveState();
+        stopTimer();
+        return {ok:false,reason:"تعذر حفظ نتيجة الاختبار مركزيًا. بقيت إجاباتك محفوظة، أعد المحاولة.",error:msg};
       }
+      result={...result,score:Number(central.data.score||0),total:Number(central.data.total||0),
+        percent:Number(central.data.percent||0),passed:central.data.passed===true,
+        autoSubmitted:central.data.autoSubmitted===true || !!result.autoSubmitted,
+        topics:Array.isArray(central.data.topics)?central.data.topics:result.topics};
     }catch(error){
       localStorage.setItem("ipv4AcademySupabaseLastSyncError",String(error&&error.message||error));
+      state.submitting=false;
+      state.mode="review";
+      saveState();
+      stopTimer();
+      return {ok:false,reason:"تعذر حفظ نتيجة الاختبار مركزيًا. بقيت إجاباتك محفوظة، أعد المحاولة.",error:String(error&&error.message||error)};
     }
   }
 
   saveAttemptRecord(result);
   state.result=result;
-
   state.mode="result";
   state.submitted=true;
+  state.submitting=false;
   localStorage.setItem(RESULT_KEY,JSON.stringify(result));
   incrementAttemptCount();
   localStorage.setItem(WEAK_KEY,JSON.stringify(result.topics.filter(x=>x.percent<70).slice(0,3).map(x=>x.topic)));
@@ -418,8 +452,8 @@ async function submitExam(auto=false){
   localStorage.removeItem(CENTRAL_ATTEMPT_KEY);
   savePractice({...loadPractice(),lastExam:{score:result.score,total:result.total,percent:result.percent,submittedAt:result.submittedAt}});
   document.dispatchEvent(new CustomEvent("ipv4-exam-updated"));
+  return {ok:true,result};
 }
-
 function resetExam(){
   clearState();
   state.mode="intro";
@@ -599,8 +633,14 @@ export async function handleExamAction(target){
     ensureTimer();
     return {rerender:true};
   }
-  if(target.id==="exam-review-submit"){await submitExam(false);return {rerender:true}}
-  if(target.id==="submit-exam"){await submitExam(false);return {rerender:true}}
+  if(target.id==="exam-review-submit"){
+    const r=await submitExam(false);
+    return r?.ok?{rerender:true}:{blocked:true,message:r?.reason||"تعذر تسليم الاختبار."};
+  }
+  if(target.id==="submit-exam"){
+    const r=await submitExam(false);
+    return r?.ok?{rerender:true}:{blocked:true,message:r?.reason||"تعذر تسليم الاختبار."};
+  }
   if(target.dataset.examAction==="retry"){
     const started=await startExam();
     return started?.blocked?{blocked:true,message:started.reason}:{rerender:true}
