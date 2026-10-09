@@ -226,7 +226,7 @@ async function loadPage(){
     return auth.authView("reset");
   }
   if(sbStatus.configured && !sbStatus.authenticated){
-    const auth=await import("./auth-v72.js?v=504");
+    const auth=await import("./auth-v72.js?v=506");
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
   if(state.role==="student" && state.page==="home"){
@@ -351,10 +351,10 @@ async function syncSupabaseRuntime(){
     }else if(window.__IPV4_SUPABASE_STATUS__.authenticated){
       const r=String(window.__IPV4_SUPABASE_STATUS__.role||"student");
       state.role=(r==="admin"?"admin":r==="trainer"?"trainer":"student");
-      if(state.role==="admin" && ["home","level","course","practice","review","progress","achievements","certificate"].includes(state.page)) state.page="adash";
+      if(state.role==="admin" && ["auth","home","level","course","practice","review","progress","achievements","certificate"].includes(state.page)) state.page="adash";
       if(state.role!=="admin" && state.page==="users") state.page=state.role==="trainer"?"tdash":"home";
-      if(state.role==="trainer" && ["home","level","course","practice","review","review-session","progress","achievements","certificate"].includes(state.page)) state.page="tdash";
-      if(state.role==="student" && ["tdash","students","groups","courses","questions","exams","results","qintel","analytics","interventions","student360","audit"].includes(state.page)) state.page="home";
+      if(state.role==="trainer" && ["auth","home","level","course","practice","review","review-session","progress","achievements","certificate"].includes(state.page)) state.page="tdash";
+      if(state.role==="student" && ["auth","tdash","students","groups","courses","questions","exams","results","qintel","analytics","interventions","student360","audit"].includes(state.page)) state.page="home";
     }
     return result;
   }catch(error){
@@ -439,7 +439,7 @@ window.addEventListener("ipv4-course-switch",function(){
 
 function bind(){
   if(state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured && !window.__IPV4_SUPABASE_STATUS__?.authenticated)){
-    import("./auth-v72.js?v=504").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
+    import("./auth-v72.js?v=506").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
   }
   import("./notifications-v64.js?v=498").then(function(m){
     if(typeof m.bindCentralNotifications==="function")m.bindCentralNotifications();
