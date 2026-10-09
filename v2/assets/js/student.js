@@ -1,10 +1,11 @@
 import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent,resetDemo,loadPractice,savePractice} from "./demo-data.js";
-import {examPage,getLastWeakTopics} from "./exam-v23.js?v=471";
+import {examPage,getLastWeakTopics} from "./exam-v23.js?v=483";
 import {labPage} from "./subnet-lab-v25.js";
 import {flsmPage} from "./flsm-v26.js";
 import {vlsmPage} from "./vlsm-v27.js";
 import {getLearningSnapshot,getSmartRecommendation,getWeakTopics} from "./smart-engine-v28.js";
 import {notificationsPage,getUnreadCount} from "./notifications-v30.js";
+import {fetchStudentExamResults} from "./supabase-v30.js?v=483";
 
 let student=loadStudent();
 
@@ -165,6 +166,13 @@ async function progressPage(){
   const attempts=central?Number(summary.examAttempts||0):0;
   const completed=central?courses.reduce((n,c)=>n+Number(c.completedLessons||0),0):localCompleted;
 
+  let recentResults=[];
+  try{
+    const examResults=await fetchStudentExamResults(8);
+    if(examResults.ok)recentResults=examResults.rows||[];
+  }catch{}
+
+
   return `
   <div class="page-intro with-action"><div><span class="eyebrow blue">V3.69 • التقدم الذكي</span><h2>لوحة إتقانك</h2><p>${central?"تم دمج تقدم الدروس والتقييمات والاختبارات في مؤشر إتقان مركزي واحد.":"البيانات المركزية غير متاحة حاليًا؛ يتم عرض التقدم المحلي مؤقتًا."}</p></div><span class="badge ${central?"green":"orange"}">${central?"Supabase • مركزي":"محلي"}</span></div>
 
@@ -187,6 +195,12 @@ async function progressPage(){
     ${topics.length?topics.map(x=>'<div class="mastery-item"><div><strong>'+esc(x.topic)+'</strong><span class="badge '+(Number(x.accuracy||0)<50?"red":Number(x.accuracy||0)<70?"orange":"green")+'">'+Number(x.accuracy||0)+'%</span></div><div class="progress"><span style="width:'+Number(x.accuracy||0)+'%"></span></div><small>'+esc(x.status||"")+' • '+Number(x.attempts||0)+' إجابة</small></div>').join(""):'<div class="empty">ستظهر خريطة الموضوعات بعد تنفيذ اختبارات مركزية.</div>'}
   </div>
 
+  <div class="section-title"><h3>نتائج الاختبارات الرسمية</h3><span class="badge green">${recentResults.length} نتيجة</span></div>
+  <div class="grid-2">
+    ${recentResults.length?recentResults.map(function(r){
+      return '<div class="card student-exam-result-card"><div class="section-title" style="margin-top:0"><div><span class="eyebrow purple">اختبار مركزي</span><h3>'+esc(r.title||"اختبار")+'</h3><span class="muted">المحاولة '+Number(r.attemptNo||1)+' • '+new Date(r.submittedAt||Date.now()).toLocaleString("ar-SA",{dateStyle:"medium",timeStyle:"short"})+'</span></div><span class="badge '+(r.passed?"green":"orange")+'">'+(r.passed?"ناجح":"غير مجتاز")+'</span></div><div class="student-exam-result-score">'+Number(r.percent||0)+'%</div><p class="muted">'+Number(r.score||0)+' من '+Number(r.total||0)+(r.autoSubmitted?" • تسليم تلقائي":"")+'</p></div>';
+    }).join(""):'<div class="card empty">ستظهر نتائج الاختبارات المركزية هنا بعد تنفيذ أول اختبار.</div>'}
+  </div>
   <div class="section-title"><h3>مسار التعلم</h3></div>
   <div class="card">${pathHtml()}</div>
 
