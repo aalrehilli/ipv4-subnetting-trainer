@@ -632,10 +632,10 @@ function bind(){
   });
 
 
+  import("./results-center-v76.js?v=478").then(function(m){m.bindResultsV76();}).catch(function(){});
   document.querySelectorAll("#v76-student-search,#v76-results-search").forEach(function(el){
-    el.addEventListener("input",async function(){
-      var m=await import("./results-center-v76.js?v=478");
-      m.bindResultsV76();
+    el.addEventListener("input",function(){
+      import("./results-center-v76.js?v=478").then(function(m){m.bindResultsV76();}).catch(function(){});
     });
   });
 
