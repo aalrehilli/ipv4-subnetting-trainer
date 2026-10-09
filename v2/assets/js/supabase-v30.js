@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=468";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=469";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -298,6 +298,31 @@ export async function startCentralExamAttempt(examId,title,courseId){
     return {ok:false,error:msg};
   }
   return {ok:true,data};
+}
+
+export async function fetchCentralTrainerExamResults(filters={}) {
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_trainer_exam_results",{
+    p_course_id:filters.courseId?String(filters.courseId):null,
+    p_exam_id:filters.examId?String(filters.examId):null,
+    p_group_no:filters.groupNo?String(filters.groupNo):null,
+    p_student_id:filters.studentId?String(filters.studentId):null
+  });
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,rows:Array.isArray(data)?data:[]};
+}
+
+export async function fetchCentralExamResultDetail(attemptId){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_exam_result_detail",{p_attempt_id:String(attemptId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data:data||null};
 }
 
 export async function getCentralAttemptResult(){
