@@ -159,7 +159,9 @@ function applySearches(){
 export function bindResultsV76(){
   document.getElementById("v76-student-search")?.addEventListener("input",applySearches);
   document.getElementById("v76-results-search")?.addEventListener("input",applySearches);
-  document.querySelector("[data-live-refresh]")?.addEventListener("click",function(){refreshLiveMonitor().catch(()=>{});});
+  document.getElementById("results-live-monitor-host")?.addEventListener("click",function(event){
+    if(event.target.closest("[data-live-refresh]"))refreshLiveMonitor().catch(()=>{});
+  });
   startLiveMonitor();
 }
 
