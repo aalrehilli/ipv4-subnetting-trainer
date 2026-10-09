@@ -27,7 +27,7 @@ function layout(title,body){
   const name=window.__IPV4_SUPABASE_STATUS__?.name||"المدير";
   document.body.innerHTML=injectStyles()+
   '<div class="admin-page"><div class="admin-layout">'+
-  '<aside class="side"><div class="brand"><div class="logo">IP</div><div><strong>IPv4 Academy</strong><small>لوحة الإدارة • V3.94</small></div></div>'+
+  '<aside class="side"><div class="brand"><div class="logo">IP</div><div><strong>IPv4 Academy</strong><small>لوحة الإدارة • V3.96</small></div></div>'+
   '<nav class="nav">'+
   '<button id="nav-dashboard">⌂ لوحة التحكم</button>'+
   '<button id="nav-students">👥 المتدربون</button>'+
