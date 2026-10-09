@@ -125,8 +125,8 @@ export function questionBankView(){
 
   return `
   <div class="page-intro with-action">
-    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.66</span><h2>بنك الأسئلة المركزي</h2><p>المصدر المركزي للمتدربين والاختبارات والتصحيح والتحليلات. كل سؤال يمتلك هوية وموضوعًا ومستوى ومهارة وبيانات أداء قابلة للتتبع.</p></div>
-    <button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button>
+    <div><span class="eyebrow purple">04 • بنك الأسئلة • V3.74</span><h2>بنك الأسئلة المركزي</h2><p>المصدر المركزي للمتدربين والاختبارات والتصحيح والتحليلات. كل سؤال يمتلك هوية وموضوعًا ومستوى ومهارة وبيانات أداء قابلة للتتبع.</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-soft" data-trainer-page="qbaudit">تدقيق الجودة</button><button class="btn btn-purple" data-q-action="new">+ إنشاء سؤال</button></div>
   </div>
 
   <div class="student-grid-4 qbank-kpis">
