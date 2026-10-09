@@ -1,5 +1,5 @@
 import {lessons,questions,defaultStudent,defaultActivity,loadStudent,saveStudent,resetDemo,loadPractice,savePractice} from "./demo-data.js";
-import {examPage,getLastWeakTopics} from "./exam-v23.js?v=438";
+import {examPage,getLastWeakTopics} from "./exam-v23.js?v=471";
 import {labPage} from "./subnet-lab-v25.js";
 import {flsmPage} from "./flsm-v26.js";
 import {vlsmPage} from "./vlsm-v27.js";
@@ -142,17 +142,56 @@ function labsPage(){
  <div class="lab-hub-note"><strong>منهج المختبرات:</strong><span>كل مختبر يعطي نتيجة، ويحفظ المحاولة، ويغذي التقدم والمراجعة الذكية في النسخة النهائية.</span></div>`
 }
 
-function progressPage(){
- const snapshot=getLearningSnapshot();
- const completed=lessons.filter(l=>l.progress===100).length;
- const overall=Math.round(Object.values(snapshot.scores).reduce((a,b)=>a+b,0)/Object.keys(snapshot.scores).length);
- return `
- <div class="page-intro"><span class="eyebrow blue">07 • التقدم</span><h2>لوحة إتقانك</h2><p>التقدم هنا لا يعتمد على إكمال الدروس فقط؛ بل على مستوى الإتقان الفعلي.</p></div>
- <div class="student-grid-4">${statCard("إكمال المقرر",student.progress+"%",completed+" من "+lessons.length+" وحدات")}${statCard("الإتقان العام",overall+"%","Smart Engine")}${statCard("سلسلة التعلم",student.streak+" أيام","أفضل سلسلة 7")}${statCard("XP",student.xp,"الهدف التالي 500")}</div>
- <div class="section-title"><h3>الإتقان حسب الموضوع</h3><span class="badge purple">يُحدّث تلقائيًا</span></div>
- <div class="card mastery-grid large">${snapshot.ranked.map(x=>`<div class="mastery-item"><div><strong>${x.topic}</strong><span class="badge ${x.score<50?"red":x.score<70?"orange":"green"}">${x.score}%</span></div><div class="progress"><span style="width:${x.score}%"></span></div><small>${x.level}</small></div>`).join("")}</div>
- <div class="section-title"><h3>مسار التعلم</h3></div><div class="card">${pathHtml()}</div>
- <div class="grid-2" style="margin-top:14px"><div class="card"><h3>أعلى نقاط القوة</h3>${snapshot.strong.slice(0,3).map(x=>`<div class="stat-row"><span>${x.topic}</span><strong>${x.score}%</strong></div>`).join("")||'<div class="empty">سيظهر هنا أعلى أداء بعد تسجيل المحاولات.</div>'}</div><div class="card"><h3>أولوية التحسين</h3>${snapshot.weak.map(x=>`<div class="stat-row"><span>${x.topic}</span><strong>${x.score}%</strong></div>`).join("")||'<div class="empty">لا توجد نقاط ضعف حرجة حاليًا.</div>'}</div></div>`
+async function progressPage(){
+  const snapshot=getLearningSnapshot();
+  const localCompleted=lessons.filter(l=>l.progress===100).length;
+  const localOverall=Math.round(Object.values(snapshot.scores).reduce((a,b)=>a+b,0)/Math.max(1,Object.keys(snapshot.scores).length));
+
+  let central=null;
+  try{
+    const r=await fetchStudentMastery("");
+    if(r.ok) central=r;
+  }catch{}
+
+  const summary=central?.summary||{};
+  const courses=central?.courses||[];
+  const topics=central?.topics||[];
+  const recommendation=central?.recommendation||null;
+
+  const overall=central?Number(summary.overall||0):localOverall;
+  const lessonProgress=central?Number(summary.lessonProgress||0):Number(student.progress||0);
+  const assessmentAvg=central?Number(summary.assessmentAvg||0):0;
+  const examAvg=central?Number(summary.examAvg||0):0;
+  const attempts=central?Number(summary.examAttempts||0):0;
+  const completed=central?courses.reduce((n,c)=>n+Number(c.completedLessons||0),0):localCompleted;
+
+  return `
+  <div class="page-intro with-action"><div><span class="eyebrow blue">V3.69 • التقدم الذكي</span><h2>لوحة إتقانك</h2><p>${central?"تم دمج تقدم الدروس والتقييمات والاختبارات في مؤشر إتقان مركزي واحد.":"البيانات المركزية غير متاحة حاليًا؛ يتم عرض التقدم المحلي مؤقتًا."}</p></div><span class="badge ${central?"green":"orange"}">${central?"Supabase • مركزي":"محلي"}</span></div>
+
+  <div class="student-grid-4">
+    ${statCard("الإتقان العام",overall+"%","المؤشر الموحد")}
+    ${statCard("تقدم الدروس",lessonProgress+"%",completed+" درسًا مكتملًا")}
+    ${statCard("متوسط الاختبارات",examAvg+"%",attempts+" محاولة مركزية")}
+    ${statCard("التقييمات",assessmentAvg+"%","تقييمات الدروس")}
+  </div>
+
+  ${recommendation?'<div class="smart-next-card card" style="margin-top:14px"><div class="smart-next-icon">✦</div><div><span class="eyebrow purple">التوصية الحالية</span><h3>'+esc(recommendation.action||"الخطوة التالية")+'</h3><p class="muted">'+esc(recommendation.reason||"")+'</p><small class="muted">الموضوع: '+esc(recommendation.topic||"")+'</small></div><button class="btn btn-purple" data-page="'+esc(recommendation.page||"review")+'">ابدأ الآن</button></div>':""}
+
+  <div class="section-title"><h3>إتقان المقررات</h3><span class="badge purple">${courses.length} مقرر</span></div>
+  <div class="grid-2">
+    ${courses.length?courses.map(c=>'<div class="card"><div class="section-title"><div><h3>'+esc(c.title||"مقرر")+'</h3><span class="muted">'+Number(c.completedLessons||0)+' / '+Number(c.totalLessons||0)+' دروس</span></div><strong>'+Number(c.mastery||0)+'%</strong></div><div class="progress"><span style="width:'+Number(c.mastery||0)+'%"></span></div><div class="course-stats"><span>الدروس '+Number(c.lessonProgress||0)+'%</span><span>الاختبارات '+Number(c.examAvg||0)+'%</span><span>التقييم '+Number(c.assessmentAvg||0)+'%</span></div></div>').join(""):'<div class="card empty">لا توجد مقررات مركزية أو لم يبدأ التقدم بعد.</div>'}
+  </div>
+
+  <div class="section-title"><h3>الإتقان حسب الموضوع</h3><span class="badge orange">أولوية التحسين</span></div>
+  <div class="card mastery-grid large">
+    ${topics.length?topics.map(x=>'<div class="mastery-item"><div><strong>'+esc(x.topic)+'</strong><span class="badge '+(Number(x.accuracy||0)<50?"red":Number(x.accuracy||0)<70?"orange":"green")+'">'+Number(x.accuracy||0)+'%</span></div><div class="progress"><span style="width:'+Number(x.accuracy||0)+'%"></span></div><small>'+esc(x.status||"")+' • '+Number(x.attempts||0)+' إجابة</small></div>').join(""):'<div class="empty">ستظهر خريطة الموضوعات بعد تنفيذ اختبارات مركزية.</div>'}
+  </div>
+
+  <div class="section-title"><h3>مسار التعلم</h3></div>
+  <div class="card">${pathHtml()}</div>
+
+  <div class="card smart-rule" style="margin-top:14px"><strong>V3.69:</strong><p class="muted">مؤشر الإتقان يوازن بين تقدم الدروس ونتائج الاختبارات وتقييمات الدروس، ثم يحدد تلقائيًا الخطوة التعليمية التالية.</p></div>
+  `;
 }
 function reviewPage(){
  const snapshot=getLearningSnapshot();
@@ -177,7 +216,7 @@ function certificatePage(){
  <div class="certificate-card card"><div class="certificate-title">IPv4 Academy</div><div class="certificate-sub">شهادة إتقان أساسيات IPv4 وSubnetting</div><div class="certificate-name">${esc(student.name)}</div><div class="certificate-ready">جاهزية الشهادة <strong>42%</strong></div><div class="certificate-reqs"><div><b>✓</b><span>إكمال المقرر</span><strong>18%</strong></div><div><b>✓</b><span>الاختبار النهائي</span><strong>غير مكتمل</strong></div><div><b>✓</b><span>المختبر العملي</span><strong>غير مكتمل</strong></div><div><b>✓</b><span>حد الإتقان</span><strong>80%</strong></div></div></div>`
 }
 
-export function studentPage(){
+export async function studentPage(){
   if(studentState.page==="level") return levelPage();
   if(studentState.page==="course") return coursePage();
   if(studentState.page==="practice") return practicePage(false);
@@ -187,7 +226,7 @@ export function studentPage(){
   if(studentState.page==="review") return reviewPage();
   if(studentState.page==="exams") return examsPage();
   if(studentState.page==="labs") return labsPage();
-  if(studentState.page==="progress") return progressPage();
+  if(studentState.page==="progress") return await progressPage();
   if(studentState.page==="notifications") return notificationsPage("student");
   if(studentState.page==="achievements") return achievementsPage();
   if(studentState.page==="certificate") return certificatePage();
