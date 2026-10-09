@@ -24,7 +24,7 @@ function localAttempts(){
     startedAt:null,
     submittedAt:x.submittedAt?new Date(x.submittedAt).toISOString():null,
     resultsPublished:true
-  })):[];
+  }));
   }catch{return []}
 }
 
