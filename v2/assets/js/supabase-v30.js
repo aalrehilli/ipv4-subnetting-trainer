@@ -176,19 +176,31 @@ export async function syncLocalQuestionsToSupabase(list){
   if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
   const {data:{session}}=await client.auth.getSession();
   if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+
   const payload=(list||[]).map(function(q){
+    const opts=Array.isArray(q.opts)?q.opts:(Array.isArray(q.options)?q.options:[]);
+    const normalized=opts.map(function(x){return String(x??"").trim()});
+    const isValidMcq=normalized.length===4 &&
+      normalized.every(Boolean) &&
+      new Set(normalized.map(function(x){return x.toLowerCase()})).size===4 &&
+      Number.isInteger(Number(q.a)) && Number(q.a)>=0 && Number(q.a)<=3;
+
+    // الأسئلة النشطة غير السليمة لا يجوز أن تستبدل النسخة المركزية السليمة.
+    if(q.active!==false && !isValidMcq)return null;
+
     return {
       id:Number(q.id),q:q.q||q.prompt||"",prompt:q.q||q.prompt||"",
-      options:Array.isArray(q.opts)?q.opts:(Array.isArray(q.options)?q.options:[]),
-      a:Number(q.a||0),difficulty:q.difficulty||"easy",topic:q.topic||"",
+      options:opts,a:Number(q.a||0),difficulty:q.difficulty||"easy",topic:q.topic||"",
       active:q.active!==false,points:Number(q.points||1)
     };
-  });
-  if(!payload.length)return {ok:true,count:0};
+  }).filter(Boolean);
+
+  if(!payload.length)return {ok:true,count:0,skipped:(list||[]).length};
   const {data,error}=await client.rpc("academy_sync_question_bank",{p_questions:payload});
   if(error)return {ok:false,error:String(error.message||error)};
-  return {ok:true,count:Number(data?.count||payload.length)};
+  return {ok:true,count:Number(data?.count||payload.length),skipped:Math.max(0,(list||[]).length-payload.length)};
 }
+
 export async function syncTrainerExamToSupabase(cfg){
   const client=await getClient();
   if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
