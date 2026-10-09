@@ -13,7 +13,7 @@ const trainerNav=[
 ];
 
 const adminNav=[
-  ["adash","لوحة المدير"],["students","المتدربون"],["groups","المجموعات"],["courses","المقررات"],
+  ["adash","لوحة المدير"],["users","إدارة المستخدمين"],["students","المتدربون"],["groups","المجموعات"],["courses","المقررات"],
   ["questions","بنك الأسئلة"],["qbaudit","تدقيق البنك"],["examcheck","فحص الاختبار"],
   ["exams","الاختبارات"],["results","مركز النتائج"],["analytics","التحليلات"],
   ["interventions","مركز التدخل"],["notifications","الإشعارات"]
@@ -150,6 +150,9 @@ async function adminDashboard(){
     card("النتائج",Number(summary.submitted_attempts||0),"محاولة مسلّمة")+
     '</div>'+
     '<div class="section-title"><h3>إجراءات المدير</h3><span class="badge purple">Central Admin</span></div>'+
+    '<div class="action-grid" style="margin-bottom:14px">'+
+      '<div class="action-card"><strong>إدارة المستخدمين</strong><span class="muted">الأدوار، المجموعات، حالة الحساب وإعادة تعيين كلمة المرور.</span><div style="margin-top:10px"><button class="btn btn-soft" data-page="users">فتح مركز المستخدمين</button></div></div>'+
+    '</div>'+
     '<div class="action-grid">'+
       '<div class="action-card"><strong>إدارة المتدربين</strong><span class="muted">عرض المتدربين والمجموعات وStudent 360.</span><div style="margin-top:10px"><button class="btn btn-soft" data-page="students">فتح</button></div></div>'+
       '<div class="action-card"><strong>إدارة الاختبارات</strong><span class="muted">الاختبارات المنشورة وبنك الأسئلة وفحص الجاهزية.</span><div style="margin-top:10px"><button class="btn btn-soft" data-page="exams">فتح</button></div></div>'+
@@ -231,6 +234,10 @@ async function loadPage(){
   }
   if(state.role==="student" && state.page==="home") return await home();
   if(state.role==="admin" && state.page==="adash") return await adminDashboard();
+  if(state.role==="admin" && state.page==="users"){
+    var userManagement=await import("./user-management-v94.js?v=499");
+    return await userManagement.userManagementView();
+  }
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
@@ -342,6 +349,7 @@ async function syncSupabaseRuntime(){
       const r=String(window.__IPV4_SUPABASE_STATUS__.role||"student");
       state.role=(r==="admin"?"admin":r==="trainer"?"trainer":"student");
       if(state.role==="admin" && ["home","level","course","practice","review","progress","achievements","certificate"].includes(state.page)) state.page="adash";
+      if(state.role!=="admin" && state.page==="users") state.page=state.role==="trainer"?"tdash":"home";
       if(state.role==="trainer" && ["home","level","course","practice","review","review-session","progress","achievements","certificate"].includes(state.page)) state.page="tdash";
       if(state.role==="student" && ["tdash","students","groups","courses","questions","exams","results","qintel","analytics","interventions","student360","audit"].includes(state.page)) state.page="home";
     }
@@ -452,6 +460,10 @@ function bind(){
       }
     });
   });
+
+  if(state.role==="admin" && state.page==="users"){
+    import("./user-management-v94.js?v=499").then(function(m){if(typeof m.bindUsers==="function")m.bindUsers();}).catch(function(){});
+  }
 
   document.querySelectorAll("[data-page]").forEach(function(btn){
     btn.addEventListener("click",function(){
@@ -828,7 +840,7 @@ function bind(){
     btn.addEventListener("click",function(){render();});
   });
   window.addEventListener("ipv4-e2e-refresh",function(){render();});
-  if(state.role==="trainer" && state.page==="examcheck") import("./exam-e2e-v77.js?v=498").then(function(m){m.bindExamE2E();}).catch(function(){});
+  if((state.role==="trainer" || state.role==="admin") && state.page==="examcheck") import("./exam-e2e-v77.js?v=498").then(function(m){m.bindExamE2E();}).catch(function(){});
 
   document.querySelectorAll("#qintel-status-filter,#qintel-topic-filter,#qintel-difficulty-filter").forEach(function(el){
     el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=498");m.filterQuestionIntelligence();});
