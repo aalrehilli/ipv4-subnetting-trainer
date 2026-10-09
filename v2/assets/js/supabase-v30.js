@@ -1,4 +1,4 @@
-import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=472";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./supabase-config.js?v=473";
 
 const CONFIG_KEY="ipv4AcademySupabaseConfig";
 const QUESTION_KEY="ipv4AcademyV32QuestionBank";
@@ -323,6 +323,19 @@ export async function fetchCentralExamResultDetail(attemptId){
   const {data,error}=await client.rpc("academy_exam_result_detail",{p_attempt_id:String(attemptId)});
   if(error)return {ok:false,error:String(error.message||error)};
   return {ok:true,data:data||null};
+}
+
+export async function fetchTrainerStudentRoster(courseId="",groupNo=""){
+  const client=await getClient();
+  if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data:{session}}=await client.auth.getSession();
+  if(!session)return {ok:false,reason:"AUTH_REQUIRED"};
+  const {data,error}=await client.rpc("academy_trainer_student_roster",{
+    p_course_id:courseId?String(courseId):null,
+    p_group_no:groupNo?String(groupNo):null
+  });
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,payload:data||{summary:{},students:[],groups:[],courses:[]}};
 }
 
 export async function fetchTrainerStudent360(key){
