@@ -234,8 +234,8 @@ async function loadPage(){
     return await student100.studentDashboardV100();
   }
   if(state.role==="admin" && state.page==="adash"){
-    var admin96=await import("./admin-dashboard-v96.js?v=501");
-    return await admin96.adminDashboardV96();
+    var admin106=await import("./admin-dashboard-v106.js?v=507");
+    return await admin106.adminDashboardV106();
   }
   if(state.role==="admin" && state.page==="users"){
     var userManagement=await import("./user-management-v94.js?v=505");
