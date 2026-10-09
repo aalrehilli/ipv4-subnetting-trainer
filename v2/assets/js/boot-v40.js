@@ -222,14 +222,17 @@ function shell(content){
 async function loadPage(){
   const sbStatus=window.__IPV4_SUPABASE_STATUS__||{};
   if(state.authMode==="reset"){
-    const auth=await import("./auth-v72.js?v=504");
+    const auth=await import("./auth-v72.js?v=505");
     return auth.authView("reset");
   }
   if(sbStatus.configured && !sbStatus.authenticated){
     const auth=await import("./auth-v72.js?v=504");
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
-  if(state.role==="student" && state.page==="home") return await home();
+  if(state.role==="student" && state.page==="home"){
+    var student100=await import("./student-dashboard-v100.js?v=504");
+    return await student100.studentDashboardV100();
+  }
   if(state.role==="admin" && state.page==="adash"){
     var admin96=await import("./admin-dashboard-v96.js?v=501");
     return await admin96.adminDashboardV96();
