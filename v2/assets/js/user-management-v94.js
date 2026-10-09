@@ -1,4 +1,4 @@
-import {fetchAdminUsers, updateAdminUser, sendUserPasswordReset} from "./supabase-v30.js?v=499";
+import {fetchAdminUsers, updateAdminUser, sendUserPasswordReset} from "./supabase-v30.js?v=500";
 
 let state={summary:{},users:[],query:"",role:"all",status:"all",selectedId:""};
 
