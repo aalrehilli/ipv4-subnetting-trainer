@@ -33,7 +33,7 @@ function card(title,value,sub){
 
 function sidebar(){
   const items=state.role==="student"?studentNav:(state.role==="admin"?adminNav:trainerNav);
-  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.83 Admin Ready</small></div></div>'+
+  return '<aside class="sidebar"><div class="brand"><div class="brand-mark">IP</div><div class="brand-text"><h1>IPv4 Academy</h1><small>V2 • V3.82 Admin Ready</small></div></div>'+
     '<nav class="nav">'+items.map(function(item){
       return '<button class="'+(state.page===item[0]?"active":"")+'" data-page="'+item[0]+'">'+item[1]+'</button>';
     }).join("")+'</nav>'+
