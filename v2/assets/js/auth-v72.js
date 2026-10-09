@@ -4,7 +4,7 @@ import {
   requestPasswordReset,
   updatePassword,
   translateAuthError
-} from "./supabase-v30.js?v=485";
+} from "./supabase-v30.js?v=486";
 
 let authBusy=false;
 
