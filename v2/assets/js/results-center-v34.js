@@ -1,5 +1,5 @@
-import {getExamAttempts} from "./exam-v23.js?v=469";
-import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail} from "./supabase-v30.js?v=469";
+import {getExamAttempts} from "./exam-v23.js?v=470";
+import {fetchCentralTrainerExamResults,fetchCentralExamResultDetail} from "./supabase-v30.js?v=470";
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 
