@@ -1,4 +1,4 @@
-import { signInWithPassword, signOut, getSupabaseStatus } from "./supabase-v30.js?v=485";
+import { signInWithPassword, signOut, getSupabaseStatus } from "./supabase-v30.js?v=488";
 
 const $ = id => document.getElementById(id);
 const msg = $("msg");
