@@ -94,7 +94,7 @@ export async function adminDashboardV96(){
       '</div>'+
       '<div class="card admin96-panel">'+
         '<div class="admin96-panel-head"><div><span class="eyebrow green">Performance</span><h3>ملخص الأداء</h3></div><span class="badge green">مباشر</span></div>'+
-        '<div class="admin96-performance"><div class="admin96-score-ring"><strong>'+Math.round(avg)+'%</strong><small>المتوسط</small></div><div class="admin96-performance-stats"><div><span>نسبة الاجتياز</span><strong>'+Math.round(pass)+'%</strong></div><div><span>المحاولات</span><strong>'+Number(sum.submitted_attempts||0)+'</strong></div><div><span>أفضل اختبار</span><strong>'+esc(topExam?.title||"—")+'</strong></div></div></div>'+
+        '<div class="admin96-performance"><div class="admin96-score-ring" style="--p:'+pct(avg)+'%"><strong>'+Math.round(avg)+'%</strong><small>المتوسط</small></div><div class="admin96-performance-stats"><div><span>نسبة الاجتياز</span><strong>'+Math.round(pass)+'%</strong></div><div><span>المحاولات</span><strong>'+Number(sum.submitted_attempts||0)+'</strong></div><div><span>أفضل اختبار</span><strong>'+esc(topExam?.title||"—")+'</strong></div></div></div>'+
       '</div>'+
     '</div>'+
 
