@@ -1,4 +1,4 @@
-import {fetchQuestionBankAudit} from "./supabase-v30.js?v=476";
+import {fetchQuestionBankAudit} from "./supabase-v30.js?v=477";
 
 const esc=v=>String(v==null?"":v)
   .replace(/&/g,"&amp;").replace(/</g,"&lt;")
@@ -17,7 +17,7 @@ function issueBadge(issue){
 export async function questionBankAuditView(){
   const remote=await fetchQuestionBankAudit();
   if(!remote.ok){
-    return '<div class="page-intro"><span class="eyebrow red">V3.74 • تدقيق بنك الأسئلة</span><h2>تعذر تشغيل التدقيق</h2><p class="muted">يجب استخدام حساب مدرب أو مدير للوصول إلى التدقيق المركزي.</p></div>'+
+    return '<div class="page-intro"><span class="eyebrow red">V3.75 • تدقيق بنك الأسئلة</span><h2>تعذر تشغيل التدقيق</h2><p class="muted">يجب استخدام حساب مدرب أو مدير للوصول إلى التدقيق المركزي.</p></div>'+
       '<div class="card"><strong>'+esc(remote.error||remote.reason||"خطأ غير معروف")+'</strong></div>';
   }
 
@@ -29,7 +29,7 @@ export async function questionBankAuditView(){
   const readiness=mcqActive?Math.round(mcqReady/mcqActive*100):0;
 
   return '<div class="page-intro with-action">'+
-    '<div><span class="eyebrow purple">V3.74 • جودة المحتوى</span><h2>تدقيق واعتماد بنك الأسئلة</h2>'+
+    '<div><span class="eyebrow purple">V3.75 • جودة المحتوى</span><h2>تدقيق واعتماد بنك الأسئلة • جاهز للإنتاج</h2>'+
     '<p>المراجعة الآن مركزية. لا يتم حذف أو تعديل أي سؤال تلقائيًا؛ الشاشة تحدد فقط ما هو جاهز وما يحتاج مراجعة.</p></div>'+
     '<div><span class="badge green">Supabase • مباشر</span><span class="badge">آخر تدقيق: '+esc(p.generatedAt||"الآن")+'</span></div>'+
   '</div>'+
@@ -72,6 +72,6 @@ export async function questionBankAuditView(){
       '</tbody></table></div>':
       '<div class="empty"><h3>بنك الأسئلة نظيف ✅</h3><p>لا توجد مشكلات بنيوية مكتشفة.</p></div>')+
   '</section>'+
-  '<div class="card" style="margin-top:14px;border-right:4px solid var(--primary)"><strong>قرار V3.74</strong>'+
+  '<div class="card" style="margin-top:14px;border-right:4px solid var(--primary)"><strong>قرار V3.75</strong>'+
     '<p class="muted">'+(readiness===100&&Number(s.duplicateGroups||0)===0?"البنك متعدد الخيارات جاهز بنيويًا للإطلاق، مع استمرار المراجعة التعليمية اليدوية للصياغة.":"البنك لم يصل بعد إلى الجاهزية الكاملة للاختبارات متعددة الخيارات؛ أصلح عناصر قائمة المراجعة أولًا.")+'</p></div>';
 }
