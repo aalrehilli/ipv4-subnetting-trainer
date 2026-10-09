@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=469";
-import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=479";
+import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=480";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
@@ -187,7 +187,8 @@ const state={
   centralAttemptNo:null,
   centralExamId:null,
   centralQuestions:[],
-  submitting:false
+  submitting:false,
+  starting:false
 };
 
 let timer=null;
@@ -275,23 +276,27 @@ function stopTimer(){
   if(timer){clearInterval(timer);timer=null}
 }
 async function startExam(){
-  if(state.submitting)return {blocked:true,reason:"الاختبار قيد المعالجة."};
+  if(state.submitting||state.starting)return {blocked:true,reason:"الاختبار قيد البدء أو المعالجة."};
+  state.starting=true;
+
   const cfg=getExamConfig();
   const attempts=getAttemptCount();
   const courseExamId=localStorage.getItem("ipv4AcademyV341CourseExamId")||"";
   const courseId=localStorage.getItem("ipv4AcademyV341CourseId")||"";
   const status=window.__IPV4_SUPABASE_STATUS__||{};
   let central=null;
+
   try{
     if(courseExamId){
       central=await prepareCentralExamAttempt(courseExamId,cfg.title,courseId);
     }else{
       central=await startCentralExamAttempt(courseExamId,cfg.title,courseId);
     }
-  }catch(e){central={ok:false,error:String(e&&e.message||e)};}
+  }catch(e){
+    central={ok:false,error:String(e&&e.message||e)};
+  }
 
-  // عند وجود حساب مركزي فعال، الاختبار الإنتاجي يجب أن يبدأ من Supabase فقط.
-  if(status.configured && status.authenticated){
+  if(status.configured&&status.authenticated){
     if(!(central&&central.ok)){
       const raw=String(central?.error||central?.reason||"تعذر بدء الاختبار.");
       const msg=raw.includes("EXAM_NOT_READY")?"الاختبار غير جاهز للإطلاق: تحقق من عدد الأسئلة وصحة خيارات الإجابة.":
@@ -300,63 +305,87 @@ async function startExam(){
         raw.includes("EXAM_CLOSED")?"انتهى وقت الاختبار.":
         raw.includes("EXAM_NOT_PUBLISHED")?"الاختبار غير منشور حاليًا.":
         raw.includes("ATTEMPTS_LIMIT")?"تم استنفاد عدد المحاولات المسموح بها.":raw;
+      state.starting=false;
       return {blocked:true,reason:msg};
     }
-  }else{
-    if(!(central&&central.ok)){
-      if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
-      if(cfg.attemptsLimit>0 && attempts>=cfg.attemptsLimit)return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
-    }
+  }else if(!(central&&central.ok)){
+    state.starting=false;
+    if(!cfg.published)return {blocked:true,reason:"الاختبار غير منشور حاليًا. اطلب من المدرب نشره أولًا."};
+    if(cfg.attemptsLimit>0&&attempts>=cfg.attemptsLimit)return {blocked:true,reason:"تم استنفاد عدد المحاولات المسموح بها."};
   }
 
   if(central&&central.ok){
     const d=central.data||{};
-    if(d.title)localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify({
-      ...cfg,title:String(d.title),durationMin:Number(d.durationMinutes||cfg.durationMin),
-      passPercent:Number(d.passPercent||cfg.passPercent),attemptsLimit:Number(d.attemptsLimit??cfg.attemptsLimit),
-      questionCount:Number(d.questionCount||cfg.questionCount),selectionMode:d.selectionMode||cfg.selectionMode,
-      difficultyMode:d.difficultyMode||cfg.difficultyMode,
-      questionIds:Array.isArray(d.questionIds)?d.questionIds:cfg.questionIds,
-      shuffleQuestions:d.shuffleQuestions!==false,shuffleOptions:d.shuffleOptions!==false,published:true,
-      topicTargets:cfg.topicTargets||{},updatedAt:Date.now(),version:365
-    }));
+    if(d.title){
+      localStorage.setItem(EXAM_CONFIG_KEY,JSON.stringify({
+        ...cfg,
+        title:String(d.title),
+        durationMin:Number(d.durationMinutes||cfg.durationMin),
+        passPercent:Number(d.passPercent||cfg.passPercent),
+        attemptsLimit:Number(d.attemptsLimit??cfg.attemptsLimit),
+        questionCount:Number(d.questionCount||cfg.questionCount),
+        selectionMode:d.selectionMode||cfg.selectionMode,
+        difficultyMode:d.difficultyMode||cfg.difficultyMode,
+        questionIds:Array.isArray(d.questionIds)?d.questionIds:cfg.questionIds,
+        shuffleQuestions:d.shuffleQuestions!==false,
+        shuffleOptions:d.shuffleOptions!==false,
+        published:true,
+        topicTargets:cfg.topicTargets||{},
+        updatedAt:Date.now(),
+        version:365
+      }));
+    }
   }
 
-  state.mode="live";state.index=0;state.answers={};
+  state.mode="live";
+  state.index=0;
+  state.answers={};
   const runtimeCfg=getExamConfig();
+  const d=central?.data||{};
   state.questionIds=buildAttemptQuestionIds(runtimeCfg);
-  state.optionOrders={};state.startedAt=Date.now();
-  state.expiresAt=state.startedAt+runtimeCfg.durationMin*60*1000;
+  state.optionOrders={};
+  state.startedAt=d.startedAt?Date.parse(d.startedAt):Date.now();
+  if(!Number.isFinite(state.startedAt))state.startedAt=Date.now();
+  const serverExpiry=d.expiresAt?Date.parse(d.expiresAt):NaN;
+  state.expiresAt=Number.isFinite(serverExpiry)?serverExpiry:state.startedAt+runtimeCfg.durationMin*60*1000;
   state.optionOrders=buildOptionOrders(selectedQuestions(),runtimeCfg);
-  state.submitted=false;state.result=null;state.submitting=false;
+  state.submitted=false;
+  state.result=null;
+  state.submitting=false;
   state.centralAttemptId=central&&central.ok?String(central.data?.attemptId||""):null;
   state.centralAttemptNo=central&&central.ok?Number(central.data?.attemptNo||0):null;
-  state.centralExamId=courseExamId || localStorage.getItem("ipv4AcademyV365ExamId") || (central&&central.data?.examId?String(central.data.examId):"");
+  state.centralExamId=central&&central.ok&&central.data?.examId
+    ?String(central.data.examId)
+    :(courseExamId||localStorage.getItem("ipv4AcademyV365ExamId")||"");
   state.centralQuestions=[];
 
-  if(state.centralAttemptId && state.centralExamId){
+  if(state.centralAttemptId&&state.centralExamId){
     try{
       const preparedQuestions=Array.isArray(central?.data?.questions)?central.data.questions:[];
       const qset=preparedQuestions.length?{ok:true,rows:preparedQuestions}:await fetchCentralExamQuestions(state.centralExamId);
-      if(!qset.ok || !qset.rows.length) {
+      if(!qset.ok||!qset.rows.length){
+        state.starting=false;
         return {blocked:true,reason:"تعذر تحميل أسئلة الاختبار المركزية. لم يبدأ الاختبار في الواجهة."};
       }
       state.centralQuestions=qset.rows.map(function(q){
         return {...q,id:String(q.id),opts:Array.isArray(q.opts)?q.opts:[],options:Array.isArray(q.options)?q.options:[]};
       });
       if(state.centralQuestions.length!==Number(runtimeCfg.questionCount||state.centralQuestions.length)){
+        state.starting=false;
         return {blocked:true,reason:"عدد أسئلة الاختبار المركزي لا يطابق الإعدادات."};
       }
       state.questionIds=state.centralQuestions.map(q=>q.id);
     }catch(e){
+      state.starting=false;
       return {blocked:true,reason:"تعذر تحميل أسئلة الاختبار المركزية."};
     }
   }
 
   if(state.centralAttemptId)localStorage.setItem(CENTRAL_ATTEMPT_KEY,state.centralAttemptId);
+  state.starting=false;
   saveState();
   ensureTimer();
-  return {ok:true};
+  return {ok:true,resumed:central?.data?.resumed===true};
 }
 function answer(displayIndex){
   const q=currentQuestion();
