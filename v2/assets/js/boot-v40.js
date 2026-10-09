@@ -277,7 +277,7 @@ function bind(){
     btn.addEventListener("click",function(){
       state.role="trainer";
       state.page="student360";
-      state.studentId=Number(btn.getAttribute("data-student-id")||0)||null;
+      state.studentId=btn.getAttribute("data-student-id")||null;
       state.filter="";
       render();
     });
