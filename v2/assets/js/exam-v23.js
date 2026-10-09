@@ -1,6 +1,6 @@
 import {questions,loadPractice,savePractice} from "./demo-data.js";
 import {refreshBank} from "./question-bank-v32.js?v=469";
-import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=478";
+import {startCentralExamAttempt,prepareCentralExamAttempt,recordUnifiedExamAttempt,fetchCentralExamQuestions} from "./supabase-v30.js?v=479";
 
 
 const EXAM_KEY="ipv4AcademyV23Exam";
