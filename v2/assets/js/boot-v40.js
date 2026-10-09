@@ -52,8 +52,76 @@ function topbar(){
     '<button class="btn btn-ghost" id="hard-refresh">تحديث</button>'+
     '<div class="avatar">'+esc((name||label).slice(0,1))+'</div></div></header>';
 }
+function adminPortalLoginView(){
+  return '<div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#eef6ff,#f7fbff);direction:rtl;font-family:Tahoma,Arial,sans-serif">'+
+    '<section style="width:min(460px,100%);background:#fff;border:1px solid #d7e6f5;border-radius:22px;box-shadow:0 18px 50px rgba(22,68,110,.10);padding:32px">'+
+    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px"><div style="width:52px;height:52px;border-radius:15px;background:#0b6bcb;color:#fff;display:grid;place-items:center;font-weight:900;font-size:19px">IP</div><div><h1 style="margin:0;color:#0b5dab;font-size:26px">IPv4 Academy</h1><small style="color:#70859a">بوابة الإدارة • V3.86</small></div></div>'+
+    '<div style="display:inline-flex;padding:7px 11px;border-radius:999px;background:#edf6ff;color:#0b6bcb;font-weight:800;font-size:13px;margin-bottom:18px">🔐 دخول المدير فقط</div>'+
+    '<h2 style="margin:0 0 8px;font-size:28px;color:#102d48">تسجيل دخول الإدارة</h2>'+
+    '<p style="margin:0 0 22px;color:#6c7f91;line-height:1.8">هذه الصفحة مستقلة عن دخول المتدربين، ومخصصة للوصول إلى لوحة مدير المنصة.</p>'+
+    '<div id="admin-login-msg" style="display:none;margin:14px 0;padding:12px 14px;border-radius:12px;line-height:1.7"></div>'+
+    '<form id="admin-login-form">'+
+    '<label style="display:block;font-weight:800;margin:14px 0 7px">البريد الإلكتروني</label>'+
+    '<input id="admin-login-email" type="email" autocomplete="username" placeholder="adel.alrehili@gmail.com" required style="width:100%;height:50px;border:1px solid #cbdbea;border-radius:12px;padding:0 14px;font-size:16px">'+
+    '<label style="display:block;font-weight:800;margin:14px 0 7px">كلمة المرور</label>'+
+    '<input id="admin-login-password" type="password" autocomplete="current-password" placeholder="كلمة المرور" required style="width:100%;height:50px;border:1px solid #cbdbea;border-radius:12px;padding:0 14px;font-size:16px">'+
+    '<button id="admin-login-submit" type="submit" style="width:100%;height:52px;border:0;border-radius:12px;background:#0b6bcb;color:#fff;font-size:17px;font-weight:900;cursor:pointer;margin-top:20px">دخول الإدارة</button>'+
+    '</form>'+
+    '<div style="margin-top:20px;text-align:center;color:#7a8d9f;font-size:13px"><a href="./index.html" style="color:#0b6bcb;text-decoration:none;font-weight:800">العودة إلى منصة المتدربين</a></div>'+
+    '</section></div>';
+}
+
+async function bindAdminPortalLogin(){
+  const form=document.getElementById("admin-login-form");
+  if(!form)return;
+  const msg=document.getElementById("admin-login-msg");
+  const btn=document.getElementById("admin-login-submit");
+  const show=(text,ok)=>{
+    msg.style.display="block";
+    msg.style.background=ok?"#f0fbf4":"#fff5f5";
+    msg.style.color=ok?"#206c3e":"#a42626";
+    msg.style.borderRight="4px solid "+(ok?"#2d9a58":"#d64545");
+    msg.textContent=text;
+  };
+  try{
+    const sb=await import("./supabase-v30.js?v=489");
+    const current=await sb.getSupabaseStatus();
+    if(current?.authenticated){
+      if(String(current.role)==="admin"){
+        window.location.href="./index.html?admin=1";
+        return;
+      }
+      await sb.signOut();
+    }
+    form.addEventListener("submit",async function(e){
+      e.preventDefault();
+      const email=String(document.getElementById("admin-login-email")?.value||"").trim();
+      const password=String(document.getElementById("admin-login-password")?.value||"");
+      if(!email||!password){show("أدخل البريد الإلكتروني وكلمة المرور.");return;}
+      btn.disabled=true;btn.textContent="جاري التحقق…";
+      try{
+        const login=await sb.signInWithPassword(email,password);
+        if(!login.ok){show(String(login.error||"تعذر تسجيل الدخول."));return;}
+        const status=await sb.getSupabaseStatus();
+        if(!status?.authenticated || String(status.role)!=="admin"){
+          await sb.signOut();
+          show("تم رفض الدخول: الحساب لا يملك صلاحية المدير.");
+          return;
+        }
+        show("تم التحقق من حساب المدير. جاري فتح لوحة الإدارة…",true);
+        setTimeout(()=>window.location.href="./index.html?admin=1",250);
+      }catch(error){
+        try{await sb.signOut();}catch{}
+        show("تعذر إكمال تسجيل دخول الإدارة.");
+      }finally{
+        btn.disabled=false;btn.textContent="دخول الإدارة";
+      }
+    });
+  }catch(error){show("تعذر تشغيل بوابة الإدارة.");}
+}
+
 async function adminDashboard(){
-  const sb=await import("./supabase-v30.js?v=488");
+  const sb=await import("./supabase-v30.js?v=489");
   let roster={ok:false,payload:{summary:{},students:[],groups:[],courses:[]}};
   let results={ok:false,payload:{summary:{},exams:[],groups:[],students:[],recent:[]}};
   let live={ok:false,payload:{activeCount:0,attempts:[]}};
@@ -97,7 +165,7 @@ async function adminDashboard(){
 async function home(){
   var mastery={ok:false,summary:{overall:65,lessonProgress:68,examAvg:0,assessmentAvg:0},topics:[],recommendation:null};
   try{
-    var sb=await import("./supabase-v30.js?v=488");
+    var sb=await import("./supabase-v30.js?v=489");
     mastery=await sb.fetchStudentMastery("");
   }catch{}
   var s=mastery.summary||{};
@@ -154,11 +222,11 @@ function shell(content){
 async function loadPage(){
   const sbStatus=window.__IPV4_SUPABASE_STATUS__||{};
   if(state.authMode==="reset"){
-    const auth=await import("./auth-v72.js?v=488");
+    const auth=await import("./auth-v72.js?v=489");
     return auth.authView("reset");
   }
   if(sbStatus.configured && !sbStatus.authenticated){
-    const auth=await import("./auth-v72.js?v=488");
+    const auth=await import("./auth-v72.js?v=489");
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
   if(state.role==="student" && state.page==="home") return await home();
@@ -166,14 +234,14 @@ async function loadPage(){
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
-      var learning=await import("./course-learning-v38.js?v=488");
+      var learning=await import("./course-learning-v38.js?v=489");
       if(state.page==="course") return learning.learnerCourse();
       if(state.page==="lesson-assessment") return learning.assessmentView();
       return learning.lessonPage();
     }
 
     if(state.page==="notifications"){
-      var centralNotifications=await import("./notifications-v64.js?v=488");
+      var centralNotifications=await import("./notifications-v64.js?v=489");
       return centralNotifications.notificationsV64View(state.role);
     }
 
@@ -186,50 +254,50 @@ async function loadPage(){
     }
 
     if((state.role==="trainer" || state.role==="admin") && state.page==="analytics"){
-      var centralAnalytics=await import("./trainer-analytics-v63.js?v=488");
+      var centralAnalytics=await import("./trainer-analytics-v63.js?v=489");
       return centralAnalytics.trainerAnalyticsView(state.analyticsCourse||"");
     }
 
     if((state.role==="trainer" || state.role==="admin") && state.page==="interventions"){
-      var interventions=await import("./intervention-v31.js?v=488");
+      var interventions=await import("./intervention-v31.js?v=489");
       return interventions.interventionCenterView();
     }
 
     if((state.role==="trainer" || state.role==="admin") && state.page==="qbaudit"){
-      var qbaudit=await import("./question-bank-audit-v74.js?v=488");
+      var qbaudit=await import("./question-bank-audit-v74.js?v=489");
       return await qbaudit.questionBankAuditView();
     }
     if((state.role==="trainer" || state.role==="admin") && state.page==="examcheck"){
-      var e2e=await import("./exam-e2e-v77.js?v=488");
+      var e2e=await import("./exam-e2e-v77.js?v=489");
       return await e2e.examE2EView();
     }
 
     if((state.role==="trainer" || state.role==="admin") && (state.page==="students" || state.page==="groups")){
-      var rosterV71=await import("./trainer-students-v71.js?v=488");
+      var rosterV71=await import("./trainer-students-v71.js?v=489");
       if(state.page==="students") return await rosterV71.trainerStudentsView(state.filter||"",state.group||"");
       return await rosterV71.trainerGroupsView();
     }
 
     if((state.role==="trainer" || state.role==="admin") && ["students","groups","courses","qbaudit","examcheck","exams","results","labs","analytics","tdash","adash","student360","audit","qintel","questions"].indexOf(state.page)>=0){
       if(state.page==="tdash"){
-        var finalDash=await import("./trainer-dashboard-v64.js?v=488");
+        var finalDash=await import("./trainer-dashboard-v64.js?v=489");
         return finalDash.trainerDashboardView();
       }
-      var trainer=await import("./trainer-v22.js?v=488");
-      if(state.page==="student360"){var s360=await import("./student360-v70.js?v=488");return await s360.student360View(state.studentId||"");}
-      if(state.page==="results"){var results=await import("./results-center-v76.js?v=488");return results.resultsCenterView();}
-      if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=488");return qi.questionIntelligenceView();}
+      var trainer=await import("./trainer-v22.js?v=489");
+      if(state.page==="student360"){var s360=await import("./student360-v70.js?v=489");return await s360.student360View(state.studentId||"");}
+      if(state.page==="results"){var results=await import("./results-center-v76.js?v=489");return results.resultsCenterView();}
+      if(state.page==="qintel"){var qi=await import("./question-intelligence-v35.js?v=489");return qi.questionIntelligenceView();}
       return trainer.getTrainerView(state.page,state.filter||"",state.studentId,state.group||"");
     }
 
     if(state.role==="student" && (state.page==="review" || state.page==="review-session")){
-      var smartReview=await import("./smart-review-v38.js?v=488");
+      var smartReview=await import("./smart-review-v38.js?v=489");
       return await smartReview.smartReviewPage();
     }
 
     if(state.role==="student"){
-      if(state.page==="labs"){var labCenter=await import("./lab-center-v37.js?v=488");return labCenter.labCenterView();}
-      var student=await import("./student.js?v=488");
+      if(state.page==="labs"){var labCenter=await import("./lab-center-v37.js?v=489");return labCenter.labCenterView();}
+      var student=await import("./student.js?v=489");
       student.studentState.page=state.page;
       return await student.studentPage();
     }
@@ -243,7 +311,7 @@ async function loadPage(){
 
 async function syncSupabaseRuntime(){
   try{
-    var sb=await import("./supabase-v30.js?v=488");
+    var sb=await import("./supabase-v30.js?v=489");
     await sb.installAuthStateListener();
     var result=await sb.syncAllFromSupabase();
     window.__IPV4_SUPABASE_STATUS__=result.status||window.__IPV4_SUPABASE_STATUS__||{configured:false,authenticated:false};
@@ -285,6 +353,12 @@ async function render(){
   app.innerHTML=shell('<div class="card"><h3>جاري تحميل الشاشة…</h3><p class="muted">IPv4 Academy</p></div>');
 
   await syncSupabaseRuntime();
+  const adminLoginMode=new URLSearchParams(window.location.search).get("admin")==="login";
+  if(adminLoginMode && !window.__IPV4_SUPABASE_STATUS__?.authenticated){
+    app.innerHTML=adminPortalLoginView();
+    await bindAdminPortalLogin();
+    return;
+  }
   var content=await loadPage();
   const authOnly=state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured !== false && !window.__IPV4_SUPABASE_STATUS__?.authenticated);
   app.innerHTML=authOnly?content:shell(content||placeholder("صفحة فارغة","لا يوجد محتوى لهذه الشاشة."));
@@ -319,7 +393,7 @@ window.addEventListener("ipv4-auth-success",async function(){
 });
 
 window.addEventListener("ipv4-auth-password-updated",async function(){
-  try{const m=await import("./supabase-v30.js?v=488");await m.signOut();}catch{}
+  try{const m=await import("./supabase-v30.js?v=489");await m.signOut();}catch{}
   state.authMode="login";state.page="auth";window.location.hash="";
   render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});
 });
@@ -341,9 +415,9 @@ window.addEventListener("ipv4-course-switch",function(){
 
 function bind(){
   if(state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured && !window.__IPV4_SUPABASE_STATUS__?.authenticated)){
-    import("./auth-v72.js?v=488").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
+    import("./auth-v72.js?v=489").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
   }
-  import("./notifications-v64.js?v=488").then(function(m){
+  import("./notifications-v64.js?v=489").then(function(m){
     if(typeof m.bindCentralNotifications==="function")m.bindCentralNotifications();
   }).catch(function(){});
   document.querySelectorAll("[data-lab-page]").forEach(function(btn){
@@ -358,7 +432,7 @@ function bind(){
   document.querySelectorAll("[data-smart-review-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./smart-review-v38.js?v=488");
+        var m=await import("./smart-review-v38.js?v=489");
         var result=await m.handleSmartReviewAction(btn);
         state.role="student";
         state.page="review";
@@ -392,7 +466,7 @@ function bind(){
   var logout=document.getElementById("auth-logout");
   if(logout) logout.addEventListener("click",async function(){
     try{
-      const m=await import("./supabase-v30.js?v=488");
+      const m=await import("./supabase-v30.js?v=489");
       const result=await m.signOut();
       if(!result.ok) throw new Error(result.error||result.reason||"تعذر تسجيل الخروج");
       window.location.reload();
@@ -481,7 +555,7 @@ function bind(){
   document.querySelectorAll("[data-360-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./student360-v70.js?v=488");
+        var m=await import("./student360-v70.js?v=489");
         var result=m.handleStudent360Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
@@ -493,7 +567,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=488");
+        var m=await import("./intervention-v31.js?v=489");
         var result=m.handleInterventionAction(btn);
         if(result&&result.studentId){
           state.role="trainer";
@@ -511,7 +585,7 @@ function bind(){
   document.querySelectorAll("[data-intervention-filter]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./intervention-v31.js?v=488");
+        var m=await import("./intervention-v31.js?v=489");
         m.setInterventionFilter(btn.getAttribute("data-intervention-filter")||"open");
         await render();
       }catch(error){
@@ -541,22 +615,22 @@ function bind(){
     });
   }
   qbankSearch&&qbankSearch.addEventListener("input",function(){
-    import("./question-bank-v32.js?v=488").then(function(m){m.updateFilter("search",qbankSearch.value);});
+    import("./question-bank-v32.js?v=489").then(function(m){m.updateFilter("search",qbankSearch.value);});
     applyQbankDomFilters();
   });
   qbankTopic&&qbankTopic.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=488");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=489");m.updateFilter("topic",qbankTopic.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankDifficulty&&qbankDifficulty.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=488");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=489");m.updateFilter("difficulty",qbankDifficulty.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   qbankStatus&&qbankStatus.addEventListener("change",async function(){
-    try{var m=await import("./question-bank-v32.js?v=488");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
+    try{var m=await import("./question-bank-v32.js?v=489");m.updateFilter("status",qbankStatus.value);await render();}catch(error){document.getElementById("app").innerHTML=shell(errorView(error));bind();}
   });
   document.querySelectorAll("[data-q-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./question-bank-v32.js?v=488");
+        var m=await import("./question-bank-v32.js?v=489");
         var result=m.handleQuestionBankAction(btn);
         if(result&&result.export){
           var fmt=result.export;
@@ -578,7 +652,7 @@ function bind(){
         }
         if(result&&result.message){window.alert(result.message);}
         try{
-          var sb=await import("./supabase-v30.js?v=488");
+          var sb=await import("./supabase-v30.js?v=489");
           if(typeof sb.syncLocalQuestionsToSupabase==="function") await sb.syncLocalQuestionsToSupabase(m.getQuestionBank());
         }catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
         if(result&&result.rerender) await render();
@@ -595,7 +669,7 @@ function bind(){
       var reader=new FileReader();
       reader.onload=async function(){
         try{
-          var m=await import("./question-bank-v32.js?v=488");
+          var m=await import("./question-bank-v32.js?v=489");
           var format=event.target.id.indexOf("xml")>=0?"xml":event.target.id.indexOf("aiken")>=0?"aiken":"json";
           var result=m.importQuestionBankText(String(reader.result||""),format);
           if(result&&result.ok&&result.rows){
@@ -616,9 +690,9 @@ function bind(){
   if(examSettings) examSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=488");
+      var m=await import("./exam-v23.js?v=489");
       var cfg=m.saveTrainerExamConfigFromForm(event.currentTarget);
-      try{var sb=await import("./supabase-v30.js?v=488");await sb.syncTrainerExamToSupabase(cfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=489");await sb.syncTrainerExamToSupabase(cfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -629,7 +703,7 @@ function bind(){
   if(examQuestionSettings) examQuestionSettings.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./exam-v23.js?v=488");
+      var m=await import("./exam-v23.js?v=489");
       var cfg=m.saveTrainerExamBuilderFromForm(event.currentTarget);
       var msg=document.getElementById("exam-question-msg");
       if(msg) msg.textContent="تم بناء الاختبار بـ "+cfg.questionIds.length+" سؤال.";
@@ -641,10 +715,10 @@ function bind(){
 
   document.getElementById("publish-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=488");
+      var m=await import("./exam-v23.js?v=489");
       if(examQuestionSettings) m.saveTrainerExamBuilderFromForm(examQuestionSettings);
       var publishedCfg=m.publishTrainerExam(true);
-      try{var sb=await import("./supabase-v30.js?v=488");await sb.syncTrainerExamToSupabase(publishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=489");await sb.syncTrainerExamToSupabase(publishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -653,9 +727,9 @@ function bind(){
 
   document.getElementById("unpublish-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=488");
+      var m=await import("./exam-v23.js?v=489");
       var unpublishedCfg=m.publishTrainerExam(false);
-      try{var sb=await import("./supabase-v30.js?v=488");await sb.syncTrainerExamToSupabase(unpublishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
+      try{var sb=await import("./supabase-v30.js?v=489");await sb.syncTrainerExamToSupabase(unpublishedCfg);}catch(syncError){window.__IPV4_SUPABASE_LAST_ERROR__=String(syncError&&syncError.message||syncError)}
       await render();
     }catch(error){
       document.getElementById("app").innerHTML=shell(errorView(error)); bind();
@@ -664,7 +738,7 @@ function bind(){
 
   document.getElementById("reset-trainer-exam")?.addEventListener("click",async function(){
     try{
-      var m=await import("./exam-v23.js?v=488");
+      var m=await import("./exam-v23.js?v=489");
       m.resetTrainerExamConfig();
       await render();
     }catch(error){
@@ -675,7 +749,7 @@ function bind(){
   document.querySelectorAll("#start-exam,#recover-exam,#exam-prev,#exam-next,#submit-exam,#exam-review-back,#exam-review-submit,[data-exam-answer],[data-exam-jump],[data-exam-review-jump],[data-exam-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./exam-v23.js?v=488");
+        var m=await import("./exam-v23.js?v=489");
         var result;
         if(btn.id==="start-exam") result=await m.handleExamAction(btn);
         else if(btn.id==="exam-prev") result=m.handleExamAction(btn);
@@ -712,16 +786,16 @@ function bind(){
   });
 
 
-  import("./results-center-v76.js?v=488").then(function(m){m.bindResultsV76();}).catch(function(){});
+  import("./results-center-v76.js?v=489").then(function(m){m.bindResultsV76();}).catch(function(){});
   document.querySelectorAll("#v76-student-search,#v76-results-search").forEach(function(el){
     el.addEventListener("input",function(){
-      import("./results-center-v76.js?v=488").then(function(m){m.bindResultsV76();}).catch(function(){});
+      import("./results-center-v76.js?v=489").then(function(m){m.bindResultsV76();}).catch(function(){});
     });
   });
 
   document.querySelectorAll("[data-results-export]").forEach(function(btn){
     btn.addEventListener("click",async function(){
-      var m=await import("./results-center-v76.js?v=488");
+      var m=await import("./results-center-v76.js?v=489");
       var blob=new Blob(["\uFEFF"+m.getResultsCsvV76()],{type:"text/csv;charset=utf-8"});
       var url=URL.createObjectURL(blob),a=document.createElement("a");
       a.href=url;a.download="ipv4-academy-results-v3.76.csv";
@@ -732,7 +806,7 @@ function bind(){
   document.querySelectorAll("[data-results-detail],[data-results-detail-close]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./results-center-v76.js?v=488");
+        var m=await import("./results-center-v76.js?v=489");
         var result=await m.handleResultsV76Action(btn);
         if(result&&result.rerender) await render();
       }catch(error){
@@ -745,19 +819,19 @@ function bind(){
     btn.addEventListener("click",function(){render();});
   });
   window.addEventListener("ipv4-e2e-refresh",function(){render();});
-  if(state.role==="trainer" && state.page==="examcheck") import("./exam-e2e-v77.js?v=488").then(function(m){m.bindExamE2E();}).catch(function(){});
+  if(state.role==="trainer" && state.page==="examcheck") import("./exam-e2e-v77.js?v=489").then(function(m){m.bindExamE2E();}).catch(function(){});
 
   document.querySelectorAll("#qintel-status-filter,#qintel-topic-filter,#qintel-difficulty-filter").forEach(function(el){
-    el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=488");m.filterQuestionIntelligence();});
+    el.addEventListener("change",async function(){var m=await import("./question-intelligence-v35.js?v=489");m.filterQuestionIntelligence();});
   });
   document.querySelectorAll("[data-qintel-export]").forEach(function(btn){
-    btn.addEventListener("click",async function(){var m=await import("./question-intelligence-v35.js?v=488");var blob=new Blob(["\\uFEFF"+m.getQuestionIntelligenceJson()],{type:"application/json;charset=utf-8"});var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ipv4-academy-question-intelligence-v3.35.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
+    btn.addEventListener("click",async function(){var m=await import("./question-intelligence-v35.js?v=489");var blob=new Blob(["\\uFEFF"+m.getQuestionIntelligenceJson()],{type:"application/json;charset=utf-8"});var url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ipv4-academy-question-intelligence-v3.35.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);});
   });
 
   document.querySelectorAll("[data-course-action],[data-course-editor-action],[data-lesson-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-manager-v36.js?v=488");
+        var m=await import("./course-manager-v36.js?v=489");
         var result;
         if(btn.hasAttribute("data-course-action")) result=m.handleCourseAction(btn);
         else if(btn.hasAttribute("data-course-editor-action")) result=m.handleCourseEditorAction(btn);
@@ -772,7 +846,7 @@ function bind(){
   document.querySelectorAll("[data-course-learning-action]").forEach(function(btn){
     btn.addEventListener("click",async function(){
       try{
-        var m=await import("./course-learning-v38.js?v=488");
+        var m=await import("./course-learning-v38.js?v=489");
         var result=m.handleLearningAction(btn);
         if(result && result.page) state.page=result.page;
         if(result && result.rerender) await render();
@@ -786,7 +860,7 @@ function bind(){
   if(assessment) assessment.addEventListener("submit",async function(event){
     event.preventDefault();
     try{
-      var m=await import("./course-learning-v38.js?v=488");
+      var m=await import("./course-learning-v38.js?v=489");
       var result=m.submitLessonAssessment(event.currentTarget);
       if(result && result.rerender) await render();
     }catch(error){
