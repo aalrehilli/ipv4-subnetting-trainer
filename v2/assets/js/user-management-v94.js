@@ -1,4 +1,4 @@
-import {fetchAdminUsers, updateAdminUser, sendUserPasswordReset} from "./supabase-v30.js?v=500";
+import {fetchAdminUsers, updateAdminUser, sendUserPasswordReset} from "./supabase-v30.js?v=505";
 
 let state={summary:{},users:[],query:"",role:"all",status:"all",selectedId:""};
 
@@ -150,7 +150,8 @@ export function bindUsers(){
     const host=document.querySelector(".container"); if(host){host.innerHTML=view();bindUsers();}
   });
   document.querySelector("[data-users-refresh]")?.addEventListener("click",()=>rerender().catch(()=>{}));
-  document.querySelector("[data-user-save]")?.addEventListener("click",async btn=>{
+  document.querySelector("[data-user-save]")?.addEventListener("click",async function(event){
+    const btn=event.currentTarget;
     const id=btn.getAttribute("data-user-save")||"";
     btn.disabled=true; btn.textContent="جاري الحفظ…";
     const result=await updateAdminUser({
