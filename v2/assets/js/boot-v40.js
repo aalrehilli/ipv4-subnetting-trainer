@@ -226,7 +226,7 @@ async function loadPage(){
     return auth.authView("reset");
   }
   if(sbStatus.configured && !sbStatus.authenticated){
-    const auth=await import("./auth-v72.js?v=506");
+    const auth=await import("./auth-v72.js?v=507");
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
   if(state.role==="student" && state.page==="home"){
@@ -439,7 +439,7 @@ window.addEventListener("ipv4-course-switch",function(){
 
 function bind(){
   if(state.authMode==="reset" || (window.__IPV4_SUPABASE_STATUS__?.configured && !window.__IPV4_SUPABASE_STATUS__?.authenticated)){
-    import("./auth-v72.js?v=506").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
+    import("./auth-v72.js?v=507").then(function(m){if(typeof m.bindAuth==="function")m.bindAuth();}).catch(function(){});
   }
   import("./notifications-v64.js?v=498").then(function(m){
     if(typeof m.bindCentralNotifications==="function")m.bindCentralNotifications();
