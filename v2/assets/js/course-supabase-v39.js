@@ -73,6 +73,20 @@ function normalizeCourse(c){
   };
 }
 
+export async function syncMyActiveCoursesToLocal(){
+  const result=await rpc("academy_my_active_courses",{});
+  if(!result.ok)return result;
+  const rows=Array.isArray(result.data)?result.data:[];
+  const all=await fetchCentralCourses();
+  if(!all.ok)return all;
+  const ids=new Set(rows.map(function(x){return String(x.id);}));
+  const visible=all.courses.filter(function(c){return ids.has(String(c.id));});
+  writeLocal(visible);
+  lastCentralIds=visible.map(function(c){return String(c.id);});
+  lastSignature=signature(visible);
+  return {ok:true,count:visible.length,courses:visible};
+}
+
 export async function fetchCentralCourses(){
   const result=await rpc("academy_course_bundles",{});
   if(!result.ok)return result;
