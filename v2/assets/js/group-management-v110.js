@@ -2,7 +2,7 @@ import {
   adminGroups,adminTrainers,adminCreateGroup,adminAssignGroupTrainer,
   trainerGroups,trainerGroupMembers,trainerAvailableStudents,
   trainerAddStudentToGroup,trainerRemoveStudentFromGroup,
-  trainerAssignCourseToGroup,trainerGroupCourses,publishedCourses
+  trainerAssignCourseToGroup,trainerRemoveCourseFromGroup,trainerGroupCourses,publishedCourses
 } from "./supabase-v30.js?v=516";
 
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -83,7 +83,7 @@ async function trainerGroupPanel(groupId,available,allCourses){
       '</div>'+
       '<div class="gm110-note" style="margin-top:12px">عند إضافة متدرب إلى المجموعة، يحصل تلقائيًا على جميع المقررات المفعلة للمجموعة. وعند تفعيل مقرر جديد للمجموعة يصبح متاحًا لجميع أعضائها.</div>'+
       '<div class="gm110-list" style="margin-top:14px">'+
-        (assigned.length?assigned.map(x=>'<div class="gm110-row"><div class="gm110-person"><strong>'+esc(x.title)+'</strong><small>'+esc(x.code||"")+' • مقرر منشور</small></div><span class="badge green">مفعل</span></div>').join(''):'<div class="gm110-note">لا توجد مقررات مفعلة لهذه المجموعة بعد.</div>')+
+        (assigned.length?assigned.map(x=>'<div class="gm110-row"><div class="gm110-person"><strong>'+esc(x.title)+'</strong><small>'+esc(x.code||"")+' • مقرر منشور</small></div><button type="button" class="btn btn-soft mini-btn" data-gm-remove-course="'+esc(groupId)+'" data-course-id="'+esc(x.id)+'">إلغاء التفعيل</button></div>').join(''):'<div class="gm110-note">لا توجد مقررات مفعلة لهذه المجموعة بعد.</div>')+
       '</div>'+
     '</div>'+
   '</section>';
@@ -139,6 +139,14 @@ export async function bindGroupManagement(){
     btn.addEventListener("click",async()=>{
       const r=await trainerRemoveStudentFromGroup(btn.getAttribute("data-gm-remove-student"),btn.getAttribute("data-student-id"));
       if(!r.ok){alert(r.error||r.reason||"تعذر إزالة المتدرب");return;}
+      await window.__IPV4_RENDER__?.();
+    });
+  });
+  document.querySelectorAll("[data-gm-remove-course]").forEach(btn=>{
+    if(btn.__gm)return; btn.__gm=true;
+    btn.addEventListener("click",async()=>{
+      const r=await trainerRemoveCourseFromGroup(btn.getAttribute("data-gm-remove-course"),btn.getAttribute("data-course-id"));
+      if(!r.ok){alert(r.error||r.reason||"تعذر إلغاء تفعيل المقرر");return;}
       await window.__IPV4_RENDER__?.();
     });
   });
