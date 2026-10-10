@@ -81,8 +81,8 @@ function sidebar(){
 }
 
 function topbar(){
-  const name=window.__IPV4_SUPABASE_STATUS__?.name||"متدرب";
-  const role=String(window.__IPV4_SUPABASE_STATUS__?.role||"student");
+  const role=String(state.role||"student");
+  const name=window.__IPV4_SUPABASE_STATUS__?.name||(role==="admin"?"المدير":role==="trainer"?"المدرب":"المتدرب");
   const label=role==="admin"?"المدير":role==="trainer"?"المدرب":"المتدرب";
   return '<header class="topbar"><div class="topbar-title">'+
     (role==="admin"?"مركز المدير":role==="trainer"?"مساحة المدرب":"مساحة المتدرب")+
@@ -404,7 +404,9 @@ async function syncSupabaseRuntime(){
     }
     return result;
   }catch(error){
-    window.__IPV4_SUPABASE_STATUS__={configured:false,authenticated:false,message:"تعذر مزامنة Supabase",error:String(error&&error.message||error)};
+    const previous=window.__IPV4_SUPABASE_STATUS__;
+    window.__IPV4_SUPABASE_STATUS__={...(previous||{}),configured:previous?.configured!==false,authenticated:previous?.authenticated!==false,role:state.role,name:previous?.name||((state.role==="trainer")?"المدرب":state.role==="admin"?"المدير":"المتدرب"),message:"تعذر تحديث بيانات الحساب مؤقتًا.",error:String(error&&error.message||error)};
+    normalizeRolePage();
     return null;
   }
 }
@@ -471,7 +473,8 @@ window.addEventListener("ipv4-auth-state",function(event){
   else if(e==="SIGNED_OUT"){state.authMode="login";state.page="auth";}
   else if(e==="SIGNED_IN"||e==="INITIAL_SESSION"){
     if(state.authMode!=="reset")state.authMode="login";
-    if(e==="SIGNED_IN" && window.__IPV4_AUTH_ROUTING__) return;
+    if(e==="INITIAL_SESSION") return;
+    if(window.__IPV4_AUTH_ROUTING__) return;
   }
   setTimeout(function(){render().catch(function(error){document.getElementById("app").innerHTML=errorView(error);bind();});},0);
 });
