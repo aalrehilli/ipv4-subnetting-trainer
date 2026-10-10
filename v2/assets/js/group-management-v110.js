@@ -21,7 +21,7 @@ async function adminView(){
   const groups=g.groups||[], trainers=t.trainers||[];\n  window.__IPV4_GROUPS__=groups;
   const assigned=groups.filter(x=>x.trainer_id).length;
   return '<div class="gm110-page">'+
-    '<div class="gm110-hero"><div><span class="eyebrow purple">V4.11 • إدارة المجموعات</span><h2>المجموعات تحت إدارة المدير</h2><p class="muted">المدير ينشئ المجموعة ويحدد المدرب المسؤول عنها. بعد ذلك يدير المدرب المتدربين والمقررات داخل مجموعته.</p></div><span class="badge blue">المدير</span></div>'+
+    '<div class="gm110-hero"><div><span class="eyebrow purple">V4.14 • إدارة المجموعات</span><h2>المجموعات تحت إدارة المدير</h2><p class="muted">المدير ينشئ المجموعة ويحدد المدرب المسؤول عنها. بعد ذلك يدير المدرب المتدربين والمقررات داخل مجموعته.</p></div><span class="badge blue">المدير</span></div>'+
     '<div class="gm110-kpis">'+
       '<div class="card gm110-kpi"><span>إجمالي المجموعات</span><strong>'+groups.length+'</strong></div>'+
       '<div class="card gm110-kpi"><span>مجموعات لديها مدرب</span><strong>'+assigned+'</strong></div>'+
@@ -78,7 +78,7 @@ async function trainerView(){
   const groups=g.groups||[], available=students.students||[], allCourses=courses.courses||[];
   const selectedId=window.__IPV4_GROUP_SELECTED__||groups[0]?.id||"";
   return '<div class="gm110-page">'+
-    '<div class="gm110-hero"><div><span class="eyebrow blue">V4.11 • مركز مجموعات المدرب</span><h2>مجموعاتي</h2><p class="muted">المدير يملك إنشاء المجموعات وتعيين المدربين. أنت تدير أعضاء مجموعتك وتفعيل المقرر لهم.</p></div><span class="badge green">'+groups.length+' مجموعات</span></div>'+
+    '<div class="gm110-hero"><div><span class="eyebrow blue">V4.14 • مركز مجموعات المدرب</span><h2>مجموعاتي</h2><p class="muted">المدير يملك إنشاء المجموعات وتعيين المدربين. أنت تدير أعضاء مجموعتك وتفعيل المقرر لهم.</p></div><span class="badge green">'+groups.length+' مجموعات</span></div>'+
     '<div class="gm110-group-list">'+
       (groups.length?groups.map(x=>'<button type="button" class="card gm110-group-card '+(String(x.id)===String(selectedId)?'active':'')+'" data-gm-select-group="'+esc(x.id)+'"><span class="eyebrow purple">المجموعة</span><h3 style="margin:5px 0">'+esc(x.group_no)+'</h3><div class="muted">'+esc(x.group_name)+'</div><div class="gm110-actions"><span class="badge">'+Number(x.student_count||0)+' متدرب</span><span class="badge green">'+Number(x.course_count||0)+' مقرر</span></div></button>').join(''):'<div class="card gm110-card"><h3>لا توجد مجموعات مسندة لك</h3><p class="muted">سيظهر هنا أي مجموعة يعيّنها المدير لك.</p></div>')+
     '</div>'+
