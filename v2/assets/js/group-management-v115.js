@@ -18,7 +18,8 @@ function injectStyle(){
 async function adminView(){
   const [g,t]=await Promise.all([adminGroups(),adminTrainers()]);
   if(!g.ok)return '<div class="card"><h3>تعذر تحميل المجموعات</h3><p class="muted">'+esc(g.error||g.reason||"")+'</p></div>';
-  const groups=g.groups||[], trainers=t.trainers||[];\n  window.__IPV4_GROUPS__=groups;
+  const groups=g.groups||[], trainers=t.trainers||[];
+  window.__IPV4_GROUPS__=groups;
   const assigned=groups.filter(x=>x.trainer_id).length;
   return '<div class="gm110-page">'+
     '<div class="gm110-hero"><div><span class="eyebrow purple">V4.15 • إدارة المجموعات</span><h2>المجموعات تحت إدارة المدير</h2><p class="muted">المدير ينشئ المجموعة ويحدد المدرب المسؤول عنها. بعد ذلك يدير المدرب المتدربين والمقررات داخل مجموعته.</p></div><span class="badge blue">المدير</span></div>'+
