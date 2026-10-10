@@ -633,6 +633,12 @@ export async function trainerAssignCourseToGroup(groupId,courseId){
   if(error)return {ok:false,error:String(error.message||error)};
   return {ok:true,data};
 }
+export async function trainerRemoveCourseFromGroup(groupId,courseId){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_remove_course_from_group",{p_group_id:String(groupId),p_course_id:String(courseId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data};
+}
 export async function trainerGroupCourses(groupId){
   const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
   const {data,error}=await client.rpc("academy_trainer_group_courses",{p_group_id:String(groupId)});
