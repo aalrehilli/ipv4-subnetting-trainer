@@ -23,6 +23,21 @@ function persistNavState(){
 function clearNavState(){
   try{sessionStorage.removeItem(NAV_STATE_KEY);}catch{}
 }
+const STUDENT_PAGES=["home","level","course","practice","exams","review","review-session","labs","progress","notifications","achievements","certificate","lesson-content","lesson-assessment","subnet-lab","flsm","vlsm"];
+const TRAINER_PAGES=["tdash","students","groups","courses","questions","qbaudit","examcheck","exams","results","qintel","labs","analytics","interventions","notifications","student360","audit"];
+const ADMIN_PAGES=["adash","users","students","groups","courses","questions","qbaudit","examcheck","exams","results","analytics","interventions","notifications","audit"];
+function normalizeRolePage(){
+  const role=String(state.role||"student");
+  const page=String(state.page||"auth");
+  if(role==="admin"){
+    if(!ADMIN_PAGES.includes(page)) state.page="adash";
+  }else if(role==="trainer"){
+    if(!TRAINER_PAGES.includes(page)) state.page="tdash";
+  }else{
+    if(!STUDENT_PAGES.includes(page)) state.page="home";
+  }
+  persistNavState();
+}
 restoreNavState();
 
 const studentNav=[
@@ -379,22 +394,13 @@ async function syncSupabaseRuntime(){
       const rememberedPage=String(state.page||"");
       state.role=(actualRole==="admin"?"admin":actualRole==="trainer"?"trainer":"student");
 
-      const studentPages=["home","level","course","practice","exams","review","review-session","labs","progress","notifications","achievements","certificate","subnet-lab","flsm","vlsm"];
-      const trainerPages=["tdash","students","groups","courses","questions","qbaudit","examcheck","exams","results","qintel","labs","analytics","interventions","notifications","student360","audit"];
-      const adminPages=["adash","users","students","groups","courses","questions","qbaudit","examcheck","exams","results","analytics","interventions","notifications","student360","audit"];
-
-      const allowed=state.role==="admin"?adminPages:state.role==="trainer"?trainerPages:studentPages;
+      const allowed=state.role==="admin"?ADMIN_PAGES:state.role==="trainer"?TRAINER_PAGES:STUDENT_PAGES;
       const canRestore=rememberedRole===state.role && allowed.includes(rememberedPage);
-      if(canRestore){
-        state.page=rememberedPage;
-      }else if(state.role==="admin"){
-        state.page="adash";
-      }else if(state.role==="trainer"){
-        state.page="tdash";
-      }else{
-        state.page="home";
-      }
-      persistNavState();
+      if(canRestore) state.page=rememberedPage;
+      else if(state.role==="admin") state.page="adash";
+      else if(state.role==="trainer") state.page="tdash";
+      else state.page="home";
+      normalizeRolePage();
     }
     return result;
   }catch(error){
@@ -524,7 +530,7 @@ function bind(){
         }catch(e){}
       }
       state.page=target;
-      persistNavState();
+      normalizeRolePage();
       render().catch(function(error){
         document.getElementById("app").innerHTML=shell(errorView(error));
         bind();
@@ -554,7 +560,7 @@ function bind(){
       state.page=btn.getAttribute("data-trainer-page")||"tdash";
       state.filter=btn.getAttribute("data-risk")||"";
       state.group=btn.getAttribute("data-group")||"";
-      persistNavState();
+      normalizeRolePage();
       render();
     });
   });
@@ -839,7 +845,7 @@ function bind(){
           return;
         }
         if(result&&result.review){
-          state.role="student";state.page="review";await render();return;
+          if(state.role==="student"){state.page="review";normalizeRolePage();await render();}return;
         }
         if(result&&result.rerender) await render();
       }catch(error){
