@@ -323,9 +323,16 @@ async function loadPage(){
     }
 
     if((state.role==="trainer" || state.role==="admin") && (state.page==="students" || state.page==="groups")){
-      var rosterV71=await import("./trainer-students-v71.js?v=498");
-      if(state.page==="students") return await rosterV71.trainerStudentsView(state.filter||"",state.group||"");
-      return await rosterV71.trainerGroupsView();
+      if(state.page==="groups"){
+        var groupManagement=await import("./group-management-v110.js?v=519");
+        return await groupManagement.groupManagementView();
+      }
+      if(state.role==="admin"){
+        var adminRoster=await import("./trainer-students-v71.js?v=519");
+        return await adminRoster.trainerStudentsView(state.filter||"",state.group||"");
+      }
+      var rosterV71=await import("./trainer-students-v71.js?v=519");
+      return await rosterV71.trainerStudentsView(state.filter||"",state.group||"");
     }
 
     if((state.role==="trainer" || state.role==="admin") && ["students","groups","courses","qbaudit","examcheck","exams","results","labs","analytics","tdash","adash","student360","audit","qintel","questions"].indexOf(state.page)>=0){
