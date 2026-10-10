@@ -417,7 +417,7 @@
     if(centralBusy||centralReady)return;
     centralBusy=true;
     try{
-      const m=await import("./course-supabase-v39.js?v=468");
+      const m=await import("./course-supabase-v39.js?v=518");
       if(role==="trainer"){
         const result=await m.pullCentralCourses({preserveOnEmpty:true});
         centralReady=true;
@@ -450,7 +450,7 @@
       filterCourseCards();
       if(centralReady){
         try{
-          const m=await import("./course-supabase-v39.js?v=468");
+          const m=await import("./course-supabase-v39.js?v=518");
           await m.syncTrainerCourses();
         }catch(e){}
       }
