@@ -85,7 +85,7 @@ function topbar(){
   const role=String(window.__IPV4_SUPABASE_STATUS__?.role||"student");
   const label=role==="admin"?"المدير":role==="trainer"?"المدرب":"المتدرب";
   return '<header class="topbar"><div class="topbar-title">'+
-    (role==="admin"?"مركز المدير":role==="trainer"?"مركز المدرب":"مساحة المتدرب")+
+    (role==="admin"?"مركز المدير":role==="trainer"?"مساحة المدرب":"مساحة المتدرب")+
     ' <span class="badge" style="margin-right:8px">'+label+'</span></div>'+
     '<div class="topbar-actions"><span class="muted">'+esc(name)+'</span>'+
     '<button class="btn btn-soft" id="auth-logout">تسجيل الخروج</button>'+
