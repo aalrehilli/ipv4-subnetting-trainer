@@ -270,7 +270,7 @@ async function loadPage(){
     return auth.authView(state.authMode||"login",sbStatus.message&&sbStatus.message!=="Supabase مهيأ — يلزم تسجيل الدخول"?sbStatus.message:"");
   }
   if(state.role==="student" && state.page==="home"){
-    var student100=await import("./student-dashboard-v100.js?v=505");
+    var student100=await import("./student-dashboard-v100.js?v=521");
     return await student100.studentDashboardV100();
   }
   if(state.role==="admin" && state.page==="adash"){
