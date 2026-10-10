@@ -3,7 +3,7 @@ import {
   trainerGroups,trainerGroupMembers,trainerAvailableStudents,
   trainerAddStudentToGroup,trainerRemoveStudentFromGroup,
   trainerAssignCourseToGroup,trainerRemoveCourseFromGroup,trainerGroupCourses,publishedCourses
-} from "./supabase-v30.js?v=516";
+} from "./supabase-v30.js?v=522";
 
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 
