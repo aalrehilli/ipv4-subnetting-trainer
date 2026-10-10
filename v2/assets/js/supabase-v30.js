@@ -572,6 +572,86 @@ export async function syncUnifiedExamAttempts(){
   return {ok:true,count:remote.length};
 }
 
+
+export async function adminGroups(){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_admin_groups");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,groups:Array.isArray(data)?data:[]};
+}
+export async function adminTrainers(){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_admin_trainers");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,trainers:Array.isArray(data)?data:[]};
+}
+export async function adminCreateGroup(groupNo,groupName,trainerId=null){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_admin_create_group",{p_group_no:String(groupNo||"").trim(),p_group_name:String(groupName||"").trim(),p_trainer_id:trainerId||null});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,id:data};
+}
+export async function adminAssignGroupTrainer(groupId,trainerId=null){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_admin_assign_group_trainer",{p_group_id:String(groupId),p_trainer_id:trainerId||null});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data};
+}
+export async function trainerGroups(){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_groups");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,groups:Array.isArray(data)?data:[]};
+}
+export async function trainerGroupMembers(groupId){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_group_members",{p_group_id:String(groupId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,members:Array.isArray(data)?data:[]};
+}
+export async function trainerAvailableStudents(){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_available_students");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,students:Array.isArray(data)?data:[]};
+}
+export async function trainerAddStudentToGroup(groupId,studentId){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_add_student_to_group",{p_group_id:String(groupId),p_student_id:String(studentId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data};
+}
+export async function trainerRemoveStudentFromGroup(groupId,studentId){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_remove_student_from_group",{p_group_id:String(groupId),p_student_id:String(studentId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data};
+}
+export async function trainerAssignCourseToGroup(groupId,courseId){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_assign_course_to_group",{p_group_id:String(groupId),p_course_id:String(courseId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,data};
+}
+export async function trainerGroupCourses(groupId){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_trainer_group_courses",{p_group_id:String(groupId)});
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,courses:Array.isArray(data)?data:[]};
+}
+export async function publishedCourses(){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_published_courses");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,courses:Array.isArray(data)?data:[]};
+}
+export async function myActiveCourses(){
+  const client=await getClient(); if(!client)return {ok:false,reason:"SUPABASE_NOT_CONFIGURED"};
+  const {data,error}=await client.rpc("academy_my_active_courses");
+  if(error)return {ok:false,error:String(error.message||error)};
+  return {ok:true,courses:Array.isArray(data)?data:[]};
+}
+
 export function translateAuthError(message){
   const m=String(message||"");
   const map={
