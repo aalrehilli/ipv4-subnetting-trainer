@@ -678,7 +678,12 @@ export function translateAuthError(message){
   const map={
     "Invalid login credentials":"بيانات الدخول غير صحيحة.",
     "Email not confirmed":"يجب تأكيد البريد الإلكتروني أولًا.",
-    "User already registered":"هذا البريد مسجل بالفعل. استخدم تسجيل الدخول.",\n    "GROUP_NO_EXISTS":"رقم المجموعة مستخدم بالفعل. اختر رقمًا آخر.",\n    "GROUP_DATA_REQUIRED":"أدخل رقم المجموعة واسم المجموعة.",\n    "INVALID_TRAINER":"المدرب المحدد غير صالح أو غير نشط.",\n    "GROUP_NOT_FOUND":"المجموعة غير موجودة.",\n    "INVALID_GROUP_STATUS":"حالة المجموعة غير صالحة.",
+    "User already registered":"هذا البريد مسجل بالفعل. استخدم تسجيل الدخول.",
+    "GROUP_NO_EXISTS":"رقم المجموعة مستخدم بالفعل. اختر رقمًا آخر.",
+    "GROUP_DATA_REQUIRED":"أدخل رقم المجموعة واسم المجموعة.",
+    "INVALID_TRAINER":"المدرب المحدد غير صالح أو غير نشط.",
+    "GROUP_NOT_FOUND":"المجموعة غير موجودة.",
+    "INVALID_GROUP_STATUS":"حالة المجموعة غير صالحة.",
     "Password should be at least 6 characters.":"كلمة المرور قصيرة جدًا.",
     "New password should be different from the old password.":"استخدم كلمة مرور مختلفة عن القديمة.",
     "Email rate limit exceeded":"تم تجاوز حد إرسال الرسائل مؤقتًا. حاول لاحقًا.",
