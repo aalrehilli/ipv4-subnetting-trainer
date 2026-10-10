@@ -284,7 +284,11 @@ async function loadPage(){
 
   try{
     if(state.role==="student" && (state.page==="course" || state.page==="lesson-content" || state.page==="lesson-assessment")){
-      var learning=await import("./course-learning-v38.js?v=498");
+      try{
+        var courseSync=await import("./course-supabase-v39.js?v=520");
+        await courseSync.syncMyActiveCoursesToLocal();
+      }catch(e){}
+      var learning=await import("./course-learning-v38.js?v=520");
       if(state.page==="course") return learning.learnerCourse();
       if(state.page==="lesson-assessment") return learning.assessmentView();
       return learning.lessonPage();
