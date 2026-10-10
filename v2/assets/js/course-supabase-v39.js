@@ -1,4 +1,4 @@
-import {getSupabaseConfig} from "./supabase-v30.js?v=465";
+import {getSupabaseConfig,getSupabaseStatus} from "./supabase-v30.js?v=517";
 
 const COURSES_KEY="ipv4AcademyV36Courses";
 const BACKUP_KEY="ipv4AcademyV38AllCourses";
@@ -77,7 +77,15 @@ export async function fetchCentralCourses(){
   const result=await rpc("academy_course_bundles",{});
   if(!result.ok)return result;
   const rows=Array.isArray(result.data)?result.data:[];
-  const courses=rows.map(normalizeCourse);
+  let courses=rows.map(normalizeCourse);
+  const status=await getSupabaseStatus().catch(function(){return null;});
+  if(status?.authenticated && status.role==="student"){
+    const active=await rpc("academy_my_active_courses",{});
+    if(!active.ok)return {ok:true,courses:[]};
+    const activeRows=Array.isArray(active.data)?active.data:[];
+    const activeIds=new Set(activeRows.map(function(x){return String(x.id);}));
+    courses=courses.filter(function(c){return activeIds.has(String(c.id));});
+  }
   return {ok:true,courses};
 }
 
