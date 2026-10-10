@@ -1,4 +1,4 @@
-import {fetchStudentMastery,fetchStudentSmartReviewPlan,fetchStudentExamResults,fetchStudentActiveExam,fetchMyNotifications} from "./supabase-v30.js?v=504";
+import {fetchStudentMastery,fetchStudentSmartReviewPlan,fetchStudentExamResults,fetchStudentActiveExam,fetchMyNotifications,getSupabaseStatus,myActiveCourses} from "./supabase-v30.js?v=521";
 
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const pct=v=>Math.max(0,Math.min(100,Number(v||0)));
@@ -22,6 +22,8 @@ export async function studentDashboardV100(){
   const results=await fetchStudentExamResults(5).catch(()=>({ok:false}));
   const active=await fetchStudentActiveExam().catch(()=>({ok:false}));
   const notifications=await fetchMyNotifications().catch(()=>({ok:false}));
+  const activeCourses=await myActiveCourses().catch(()=>({ok:false,courses:[]}));
+  const profileStatus=await getSupabaseStatus().catch(()=>({}));
 
   const s=mastery.summary||{};
   const topics=Array.isArray(mastery.topics)?mastery.topics:[];
@@ -30,6 +32,8 @@ export async function studentDashboardV100(){
   const rows=Array.isArray(results.rows)?results.rows:[];
   const notes=Array.isArray(notifications.rows)?notifications.rows:[];
   const unread=notes.filter(x=>!x.read_at).length;
+  const assignedCourses=Array.isArray(activeCourses.courses)?activeCourses.courses:[];
+  const groupNo=String(profileStatus.group||"").trim();
   const activeExam=active.data||active.payload||null;
 
   const overall=pct(s.overall);
@@ -71,6 +75,10 @@ export async function studentDashboardV100(){
         '<button class="btn btn-orange" data-page="exams">متابعة الاختبار ←</button></div>'+
       '</section>':'')+
 
+    '<section class="card student100-group-card" style="margin-bottom:16px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">'+
+      '<div><span class="student100-eyebrow blue">المجموعة والمقرر</span><h3 style="margin:5px 0">مجموعة '+esc(groupNo||"غير معين")+'</h3><p class="muted" style="margin:0">'+(assignedCourses.length?("لديك "+assignedCourses.length+" مقررًا مفعلًا لمجموعتك."):"لا يوجد مقرر مفعل لك حاليًا. يفعّل المدرب المقرر لأعضاء المجموعة.")+'</p></div>'+
+      '<div style="display:flex;gap:8px;align-items:center"><span class="badge '+(groupNo?"green":"orange")+'">'+(groupNo?"مرتبط بالمجموعة":"غير مرتبط")+'</span><span class="badge purple">'+assignedCourses.length+' مقرر مفعل</span><button class="btn btn-primary" data-page="course">فتح المقرر</button></div>'+
+    '</section>'+
     '<div class="student100-stats">'+
       stat("📚","تقدم الدروس",Math.round(lesson)+"%","المحتوى المكتمل","green")+
       stat("🎯","متوسط الاختبارات",Math.round(examAvg)+"%",num(s.examAttempts)+" محاولة","blue")+
