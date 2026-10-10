@@ -533,7 +533,7 @@ function bind(){
     import("./user-management-v94.js?v=505").then(function(m){if(typeof m.bindUsers==="function")m.bindUsers();}).catch(function(){});
   }
   if((state.role==="admin" || state.role==="trainer") && state.page==="groups"){
-    import("./group-management-v110.js?v=523").then(function(m){if(typeof m.bindGroupManagement==="function")m.bindGroupManagement();}).catch(function(error){console.error("group-management bind failed",error);});
+    import("./group-management-v110.js?v=524").then(function(m){if(typeof m.bindGroupManagement==="function")m.bindGroupManagement();}).catch(function(error){console.error("group-management bind failed",error);});
   }
 
   document.querySelectorAll("[data-page]").forEach(function(btn){
