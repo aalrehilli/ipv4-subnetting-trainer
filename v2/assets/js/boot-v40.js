@@ -328,7 +328,7 @@ async function loadPage(){
 
     if((state.role==="trainer" || state.role==="admin") && (state.page==="students" || state.page==="groups")){
       if(state.page==="groups"){
-        var groupManagement=await import("./group-management-v110.js?v=525");
+        var groupManagement=await import("./group-management-v115.js?v=1");
         return await groupManagement.groupManagementView();
       }
       if(state.role==="admin"){
@@ -533,7 +533,7 @@ function bind(){
     import("./user-management-v94.js?v=505").then(function(m){if(typeof m.bindUsers==="function")m.bindUsers();}).catch(function(){});
   }
   if((state.role==="admin" || state.role==="trainer") && state.page==="groups"){
-    import("./group-management-v110.js?v=525").then(function(m){if(typeof m.bindGroupManagement==="function")m.bindGroupManagement();}).catch(function(error){console.error("group-management bind failed",error);});
+    import("./group-management-v115.js?v=1").then(function(m){if(typeof m.bindGroupManagement==="function")m.bindGroupManagement();}).catch(function(error){console.error("group-management bind failed",error);});
   }
 
   document.querySelectorAll("[data-page]").forEach(function(btn){
