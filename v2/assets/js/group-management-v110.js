@@ -1,5 +1,5 @@
 import {
-  adminGroups,adminTrainers,adminCreateGroup,adminAssignGroupTrainer,
+  adminGroups,adminTrainers,adminCreateGroup,adminAssignGroupTrainer,adminUpdateGroup,adminDeleteGroup,
   trainerGroups,trainerGroupMembers,trainerAvailableStudents,
   trainerAddStudentToGroup,trainerRemoveStudentFromGroup,
   trainerAssignCourseToGroup,trainerRemoveCourseFromGroup,trainerGroupCourses,publishedCourses
@@ -11,14 +11,14 @@ function injectStyle(){
   if(document.getElementById("group-management-v110-style"))return;
   const s=document.createElement("style");
   s.id="group-management-v110-style";
-  s.textContent=".gm110-page{display:grid;gap:16px}.gm110-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}.gm110-hero h2{margin:4px 0 8px}.gm110-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.gm110-kpi{padding:18px}.gm110-kpi span{display:block;color:#71869b;font-size:13px}.gm110-kpi strong{display:block;font-size:28px;margin-top:7px}.gm110-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.gm110-card{padding:18px}.gm110-card h3{margin:0 0 8px}.gm110-form{display:grid;gap:12px}.gm110-form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.gm110-field label{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.gm110-field input,.gm110-field select{width:100%;height:44px;border:1px solid #cbdbea;border-radius:10px;padding:0 11px;background:#fff}.gm110-table-wrap{overflow:auto}.gm110-table{width:100%;border-collapse:collapse}.gm110-table th,.gm110-table td{padding:11px 9px;border-bottom:1px solid #e7eef5;text-align:right;white-space:nowrap}.gm110-table th{font-size:12px;color:#71869b;background:#f7fbff}.gm110-list{display:grid;gap:8px;max-height:360px;overflow:auto}.gm110-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid #e4ecf4;border-radius:12px;background:#fbfdff}.gm110-person strong,.gm110-person small{display:block}.gm110-person small{color:#71869b;margin-top:3px}.gm110-group-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.gm110-group-card{padding:14px;cursor:pointer;text-align:right}.gm110-group-card.active{outline:2px solid #5aa7e8;box-shadow:0 8px 28px rgba(24,93,150,.10)}.gm110-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.gm110-note{padding:11px 12px;border-radius:10px;background:#f4f9fd;color:#5d7287;line-height:1.7}@media(max-width:1100px){.gm110-layout{grid-template-columns:1fr}.gm110-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.gm110-form-grid{grid-template-columns:1fr}.gm110-group-list{grid-template-columns:1fr}}";
+  s.textContent=".gm110-modal{position:fixed;inset:0;background:rgba(8,35,61,.42);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}.gm110-modal.open{display:flex}.gm110-modal-box{width:min(620px,100%);background:#fff;border-radius:18px;padding:20px;box-shadow:0 20px 60px rgba(10,45,80,.18)}.gm110-modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.gm110-modal-actions{display:flex;gap:8px;justify-content:flex-start;margin-top:16px}.gm110-status{font-weight:800}.gm110-controls{display:flex;gap:6px;flex-wrap:wrap}.gm110-btn{border:1px solid #cadbea;background:#fff;border-radius:9px;padding:7px 10px;font-weight:800;cursor:pointer}.gm110-btn.primary{background:#0b6bcb;color:#fff;border-color:#0b6bcb}.gm110-btn.green{background:#effaf2;color:#18733b;border-color:#b7e1c1}.gm110-btn.orange{background:#fff6e9;color:#a76000;border-color:#efd29b}.gm110-btn.red{background:#fff0f0;color:#b22e2e;border-color:#efb8b8}.gm110-page{display:grid;gap:16px}.gm110-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}.gm110-hero h2{margin:4px 0 8px}.gm110-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.gm110-kpi{padding:18px}.gm110-kpi span{display:block;color:#71869b;font-size:13px}.gm110-kpi strong{display:block;font-size:28px;margin-top:7px}.gm110-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}.gm110-card{padding:18px}.gm110-card h3{margin:0 0 8px}.gm110-form{display:grid;gap:12px}.gm110-form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.gm110-field label{display:block;font-weight:800;font-size:13px;margin-bottom:6px}.gm110-field input,.gm110-field select{width:100%;height:44px;border:1px solid #cbdbea;border-radius:10px;padding:0 11px;background:#fff}.gm110-table-wrap{overflow:auto}.gm110-table{width:100%;border-collapse:collapse}.gm110-table th,.gm110-table td{padding:11px 9px;border-bottom:1px solid #e7eef5;text-align:right;white-space:nowrap}.gm110-table th{font-size:12px;color:#71869b;background:#f7fbff}.gm110-list{display:grid;gap:8px;max-height:360px;overflow:auto}.gm110-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid #e4ecf4;border-radius:12px;background:#fbfdff}.gm110-person strong,.gm110-person small{display:block}.gm110-person small{color:#71869b;margin-top:3px}.gm110-group-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.gm110-group-card{padding:14px;cursor:pointer;text-align:right}.gm110-group-card.active{outline:2px solid #5aa7e8;box-shadow:0 8px 28px rgba(24,93,150,.10)}.gm110-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.gm110-note{padding:11px 12px;border-radius:10px;background:#f4f9fd;color:#5d7287;line-height:1.7}@media(max-width:1100px){.gm110-layout{grid-template-columns:1fr}.gm110-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.gm110-form-grid{grid-template-columns:1fr}.gm110-group-list{grid-template-columns:1fr}}";
   document.head.appendChild(s);
 }
 
 async function adminView(){
   const [g,t]=await Promise.all([adminGroups(),adminTrainers()]);
   if(!g.ok)return '<div class="card"><h3>تعذر تحميل المجموعات</h3><p class="muted">'+esc(g.error||g.reason||"")+'</p></div>';
-  const groups=g.groups||[], trainers=t.trainers||[];
+  const groups=g.groups||[], trainers=t.trainers||[];\n  window.__IPV4_GROUPS__=groups;
   const assigned=groups.filter(x=>x.trainer_id).length;
   return '<div class="gm110-page">'+
     '<div class="gm110-hero"><div><span class="eyebrow purple">V4.11 • إدارة المجموعات</span><h2>المجموعات تحت إدارة المدير</h2><p class="muted">المدير ينشئ المجموعة ويحدد المدرب المسؤول عنها. بعد ذلك يدير المدرب المتدربين والمقررات داخل مجموعته.</p></div><span class="badge blue">المدير</span></div>'+
@@ -39,9 +39,36 @@ async function adminView(){
       '<section class="card gm110-card"><h3>آلية إدارة المجموعات</h3><div class="gm110-note"><strong>مدير ← مجموعة ← مدرب ← متدربون ← مقررات مفعلة</strong><br>المدير ينشئ المجموعة ويعيّن المدرب. المدرب لا يرى إلا مجموعاته، ويضيف متدربيه ويحدد المقرر المنشور الذي يفعّل لأعضاء المجموعة.</div></section>'+
     '</div>'+
     '<section class="card gm110-card"><div class="section-title"><div><h3>المجموعات الحالية</h3><p class="muted">يمكن للمدير تغيير المدرب في أي وقت.</p></div><span class="badge green">'+groups.length+' مجموعة</span></div>'+
-      '<div class="gm110-table-wrap"><table class="gm110-table"><thead><tr><th>المجموعة</th><th>المدرب</th><th>المتدربون</th><th>المقررات</th><th>تغيير المدرب</th></tr></thead><tbody>'+
-      (groups.length?groups.map(x=>'<tr><td><strong>'+esc(x.group_no)+'</strong><small style="display:block;color:#71869b">'+esc(x.group_name)+'</small></td><td>'+esc(x.trainer_name||"غير معيّن")+'</td><td>'+Number(x.student_count||0)+'</td><td>'+Number(x.course_count||0)+'</td><td><select data-gm-admin-trainer="'+esc(x.id)+'"><option value="">-- بدون مدرب --</option>'+trainers.map(tn=>'<option value="'+esc(tn.id)+'" '+(String(tn.id)===String(x.trainer_id||"")?"selected":"")+'>'+esc(tn.full_name)+'</option>').join('')+'</select></td></tr>').join(''):'<tr><td colspan="5"><div class="empty">لا توجد مجموعات حتى الآن.</div></td></tr>')+
-      '</tbody></table></div></section>'+
+      '<div class="gm110-table-wrap"><table class="gm110-table"><thead><tr><th>المجموعة</th><th>الحالة</th><th>المدرب</th><th>المتدربون</th><th>المقررات</th><th>عناصر التحكم</th></tr></thead><tbody>'+
+      (groups.length?groups.map(x=>{
+  const published=x.status==="published";
+  return '<tr data-gm-row="'+esc(x.id)+'">'+
+    '<td><strong>'+esc(x.group_no)+'</strong><small style="display:block;color:#71869b">'+esc(x.group_name)+'</small></td>'+
+    '<td><span class="badge '+(published?"green":"orange")+'">'+(published?"منشورة":"مسودة")+'</span></td>'+
+    '<td><select data-gm-admin-trainer="'+esc(x.id)+'"><option value="">-- بدون مدرب --</option>'+trainers.map(tn=>'<option value="'+esc(tn.id)+'" '+(String(tn.id)===String(x.trainer_id||"")?"selected":"")+'>'+esc(tn.full_name)+'</option>').join('')+'</select></td>'+
+    '<td>'+Number(x.student_count||0)+'</td><td>'+Number(x.course_count||0)+'</td>'+
+    '<td><div class="gm110-controls">'+
+      '<button type="button" class="gm110-btn primary" data-gm-edit="'+esc(x.id)+'">تعديل</button>'+
+      (published?'<button type="button" class="gm110-btn orange" data-gm-draft="'+esc(x.id)+'">مسودة</button>':'<button type="button" class="gm110-btn green" data-gm-publish="'+esc(x.id)+'">نشر</button>')+
+      '<button type="button" class="gm110-btn red" data-gm-delete="'+esc(x.id)+'">حذف</button>'+
+    '</div></td></tr>';
+}).join(''):'<tr><td colspan="6"><div class="empty">لا توجد مجموعات حتى الآن.</div></td></tr>')+
+      '</tbody></table></div>'+
+    '<div id="gm-group-modal" class="gm110-modal" aria-hidden="true">'+
+      '<div class="gm110-modal-box">'+
+        '<div class="gm110-modal-head"><div><span class="eyebrow blue">تعديل المجموعة</span><h3>بيانات المجموعة</h3></div><button type="button" class="gm110-btn" data-gm-close>إغلاق</button></div>'+
+        '<form id="gm-edit-form" class="gm110-form" style="margin-top:14px">'+
+          '<input type="hidden" name="id">'+
+          '<div class="gm110-form-grid">'+
+            '<div class="gm110-field"><label>رقم المجموعة</label><input name="group_no" required></div>'+
+            '<div class="gm110-field"><label>اسم المجموعة</label><input name="group_name" required></div>'+
+            '<div class="gm110-field"><label>المدرب</label><select name="trainer_id"><option value="">-- بدون مدرب --</option>'+trainers.map(tn=>'<option value="'+esc(tn.id)+'">'+esc(tn.full_name)+'</option>').join('')+'</select></div>'+
+          '</div>'+
+          '<div class="gm110-field" style="margin-top:10px"><label>حالة المجموعة</label><select name="status"><option value="draft">مسودة</option><option value="published">منشورة</option></select></div>'+
+          '<div class="gm110-modal-actions"><button type="submit" class="btn btn-primary">حفظ التعديل</button><button type="button" class="gm110-btn" data-gm-close>إلغاء</button></div>'+
+        '</form>'+
+      '</div>'+
+    '</div></section>'+
   '</div>';
 }
 
@@ -108,6 +135,63 @@ export async function bindGroupManagement(){
       await window.__IPV4_RENDER__?.();
     });
   }
+  const modal=document.getElementById("gm-group-modal");
+  const editForm=document.getElementById("gm-edit-form");
+  const closeModal=()=>{if(modal){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");}};
+  document.querySelectorAll("[data-gm-close]").forEach(btn=>{
+    if(btn.__gm)return; btn.__gm=true; btn.addEventListener("click",closeModal);
+  });
+  document.querySelectorAll("[data-gm-edit]").forEach(btn=>{
+    if(btn.__gm)return; btn.__gm=true;
+    btn.addEventListener("click",()=>{
+      const x=(window.__IPV4_GROUPS__||[]).find(g=>String(g.id)===String(btn.getAttribute("data-gm-edit")));
+      if(!x||!modal||!editForm)return;
+      editForm.elements.id.value=x.id||"";
+      editForm.elements.group_no.value=x.group_no||"";
+      editForm.elements.group_name.value=x.group_name||"";
+      editForm.elements.trainer_id.value=x.trainer_id||"";
+      editForm.elements.status.value=x.status||"draft";
+      modal.classList.add("open"); modal.setAttribute("aria-hidden","false");
+    });
+  });
+  document.querySelectorAll("[data-gm-publish],[data-gm-draft]").forEach(btn=>{
+    if(btn.__gm)return; btn.__gm=true;
+    btn.addEventListener("click",async()=>{
+      const id=btn.getAttribute("data-gm-publish")||btn.getAttribute("data-gm-draft");
+      const x=(window.__IPV4_GROUPS__||[]).find(g=>String(g.id)===String(id));
+      if(!x)return;
+      const status=btn.hasAttribute("data-gm-publish")?"published":"draft";
+      const r=await adminUpdateGroup({groupId:id,groupNo:x.group_no,groupName:x.group_name,trainerId:x.trainer_id||null,status});
+      if(!r.ok){alert(r.error||r.reason||"تعذر تحديث حالة المجموعة");return;}
+      await window.__IPV4_RENDER__?.();
+    });
+  });
+  document.querySelectorAll("[data-gm-delete]").forEach(btn=>{
+    if(btn.__gm)return; btn.__gm=true;
+    btn.addEventListener("click",async()=>{
+      const id=btn.getAttribute("data-gm-delete");
+      const x=(window.__IPV4_GROUPS__||[]).find(g=>String(g.id)===String(id));
+      if(!confirm("سيتم حذف المجموعة نهائيًا، وقد تُحذف عضوية المتدربين وتخصيصات المقررات المرتبطة بها. هل أنت متأكد؟"))return;
+      const r=await adminDeleteGroup(id);
+      if(!r.ok){alert(r.error||r.reason||"تعذر حذف المجموعة");return;}
+      await window.__IPV4_RENDER__?.();
+    });
+  });
+  if(editForm&&!editForm.__gm){
+    editForm.__gm=true;
+    editForm.addEventListener("submit",async e=>{
+      e.preventDefault();
+      const fd=new FormData(editForm);
+      const r=await adminUpdateGroup({
+        groupId:fd.get("id"),groupNo:fd.get("group_no"),groupName:fd.get("group_name"),
+        trainerId:fd.get("trainer_id")||null,status:fd.get("status")||"draft"
+      });
+      if(!r.ok){alert(r.error||r.reason||"تعذر حفظ التعديل");return;}
+      closeModal();
+      await window.__IPV4_RENDER__?.();
+    });
+  }
+
   document.querySelectorAll("[data-gm-admin-trainer]").forEach(sel=>{
     if(sel.__gm)return; sel.__gm=true;
     sel.addEventListener("change",async()=>{
