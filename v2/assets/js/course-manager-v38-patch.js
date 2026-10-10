@@ -106,8 +106,7 @@
   function filterForStudent(){
     const a=migrateCourseSchema(allCourses());
     if(!a.length)return;
-    const group=studentGroup();
-    const visible=a.filter(function(c){return c&&c.status==="published"&&courseVisible(c,group);});
+    const visible=a.filter(function(c){return c&&c.status==="published";});
     localStorage.setItem(COURSES_KEY,JSON.stringify(visible));
   }
 
