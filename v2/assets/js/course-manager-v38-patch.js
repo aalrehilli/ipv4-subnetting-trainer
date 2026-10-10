@@ -117,7 +117,8 @@
 
   function trainerMode(){
     const title=document.querySelector(".topbar-title");
-    return !!(title&&String(title.textContent||"").indexOf("مركز المدرب")>=0);
+    const text=String(title?.textContent||"");
+    return text.indexOf("مركز المدرب")>=0 || text.indexOf("مركز المدير")>=0;
   }
 
   function courseNavButton(){
