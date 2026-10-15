@@ -127,7 +127,7 @@ function whiteboardHtml(){
 function changeWb(d){if(wbStep===wbScenes.length-1&&d>0){wbStep=0;wbQuizDone=false}else{wbStep=Math.max(0,Math.min(wbScenes.length-1,wbStep+d))}stopWb();renderPanel()}
 function answerWb(i){wbQuizDone=true;const f=document.getElementById("wbFeedback");if(f){f.className="feedback "+(i===1?"good":"bad");f.textContent=i===1?"إجابة صحيحة! الرقم 4 في خانة العشرات، لذا قيمته 40.":"ليست الإجابة الصحيحة. تذكّر: الرقم 4 في خانة العشرات، وقيمته 4 × 10 = 40."} }
 let wbAutoPlaying=false,wbAutoBound=false;
-const wbCuts=[0,9.8,21.5,25,39.2,49.16];
+const wbCuts=[0,10,15.5,20,27,39];
 function syncWbToTime(){
  const a=document.getElementById("wbAudio");if(!a||!wbAutoPlaying)return;
  let next=0;for(let i=1;i<wbCuts.length;i++){if(a.currentTime>=wbCuts[i])next=Math.min(i,wbScenes.length-1)}
